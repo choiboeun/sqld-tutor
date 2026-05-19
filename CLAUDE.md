@@ -88,16 +88,20 @@ accuracy_by_category = {
 - 검수 수정 이력: q032 데이터 오류(KIM→KANG), Cat1·Cat6 답안 편중 해소, q034·q107 문장 품질 개선
 - 난이도(difficulty): 교수님 협의 후 확정 예정 → 현재 null
 
-### ⏳ 3주차 (예정)
-- [ ] 기술 스택 검토 및 확정 (핸드북 5장 기준, 본인 상황에 맞게 조정)
-- [ ] GitHub 레포지토리 생성 (private), 폴더 구조 셋업
-- [ ] .env 관리, .gitignore, requirements.txt 작성
-- [ ] API 키 발급 (Gemini Flash, LangSmith), 무료 크레딧 확인
-- [ ] Supabase 인스턴스 생성, 테이블 스키마 초기 설계
-- [ ] 아키텍처 다이어그램 작성 (코드 1줄 안 짠 상태에서): State 스키마 / 노드 6개 + 엣지 + 라우팅 / 도구 4~5개 명세 / 데이터 흐름도
+### ✅ 3주차 (완료)
+- [x] 기술 스택 검토 및 확정 (핸드북 5장 기준, Gemini Flash / Claude API로 변경)
+- [x] GitHub 레포지토리 생성 (private), 폴더 구조 셋업
+- [x] .env 관리, .gitignore, pyproject.toml 작성 (requirements.txt → pyproject.toml)
+- [x] API 키 발급 (Gemini Flash, LangSmith 완료 / ANTHROPIC_API_KEY 교수님 대기 중)
+- [x] Supabase 인스턴스 생성, 테이블 스키마 초기 설계 (7개 테이블 생성)
+- [x] 아키텍처 다이어그램 작성: State 스키마 / 노드 6개 + 엣지 + 라우팅 / 도구 4개 명세 / 데이터 흐름도
 - [x] 난이도 기준 교수님 협의 (문제 유형 기반 방향 동의, 2026-05-15)
 
-**산출물:** 기술 스택 결정서 + 시스템 아키텍처 다이어그램 (v0.1)
+**산출물 위치:** `docs/week3/`
+- `tech_stack_decision.md` — 기술 스택 결정서 (핸드북 대비 변경 사항 포함)
+- `architecture_v0.1.md` — 시스템 아키텍처 다이어그램 v0.1
+
+**Supabase 테이블 (7개):** users, conversations, messages, student_progress, question_attempts, events, questions
 
 ### ⏳ 4주차 (예정, Gate 1)
 - [ ] LangGraph Walking Skeleton 구현
