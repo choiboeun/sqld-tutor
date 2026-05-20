@@ -83,10 +83,10 @@ accuracy_by_category = {
 - `schema_v0.1.md` — 문제 JSONL 스키마 정의
 - `question_type_distribution.md` — 카테고리별 문제 유형 분포표
 
-**데이터 위치:** `data/questions_v0.1.jsonl`
+**데이터 위치:** `backend/app/data/questions/questions_v0.1.jsonl`
 - 110문제 (11카테고리 × 10문제), verified: false
 - 검수 수정 이력: q032 데이터 오류(KIM→KANG), Cat1·Cat6 답안 편중 해소, q034·q107 문장 품질 개선
-- 난이도(difficulty): 교수님 협의 후 확정 예정 → 현재 null
+- 난이도(difficulty): 확정 완료 (A유형→하, B·E유형→상, C·D유형→중)
 
 ### ✅ 3주차 (완료)
 - [x] 기술 스택 검토 및 확정 (핸드북 5장 기준, Gemini Flash / Claude API로 변경)
