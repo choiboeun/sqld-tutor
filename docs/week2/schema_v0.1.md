@@ -100,4 +100,4 @@
 {"id": "q002", "subject": "SQL 기본 및 활용", ...}
 ```
 
-**저장 위치:** `data/questions_v0.1.jsonl`
+**저장 위치:** `backend/app/data/questions/questions_v0.1.jsonl`
