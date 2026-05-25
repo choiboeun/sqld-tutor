@@ -103,9 +103,16 @@ accuracy_by_category = {
 
 **Supabase 테이블 (7개):** users, conversations, messages, student_progress, question_attempts, events, questions
 
-### ⏳ 4주차 (예정, Gate 1)
-- [ ] LangGraph Walking Skeleton 구현
-- [ ] Gate 1 체크리스트 통과
+### ✅ 4주차 (완료, Gate 1 통과)
+- [x] LangGraph Walking Skeleton 구현
+- [x] Gate 1 체크리스트 통과
+
+**산출물 위치:** `docs/week4/`
+- `gate1_checklist.md` — Gate 1 항목별 근거 및 증거 포함 체크리스트
+- `walking_skeleton_report.md` — Walking Skeleton 구현 상세 보고서
+
+**구현 파일:** `backend/app/agent/` (state, nodes/chatbot, tools/question_tools, graph), `backend/app/main_cli.py`  
+**LangSmith:** `sqld-tutor` 프로젝트, thread_id `test-session-1` — 9 turns 정상 기록 확인
 
 ---
 
