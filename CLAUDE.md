@@ -82,6 +82,7 @@ accuracy_by_category = {
 - `dataset_strategy.md` — 데이터셋 전략 결정서
 - `schema_v0.1.md` — 문제 JSONL 스키마 정의
 - `question_type_distribution.md` — 카테고리별 문제 유형 분포표
+- `format_analysis.md` — 기출 50문항 형식 분석 (유형 분포, 2024 개정 삭제/추가 범위, 60회차 기출 현행 범위 확인)
 
 **데이터 위치:** `backend/app/data/questions/questions_v0.1.jsonl`
 - 110문제 (11카테고리 × 10문제), verified: false
@@ -111,6 +112,24 @@ accuracy_by_category = {
 - `gate1_checklist.md` — Gate 1 항목별 근거 및 증거 포함 체크리스트
 - `walking_skeleton_report.md` — Walking Skeleton 구현 상세 보고서
 
+### ✅ 5주차 (완료)
+- [x] State 스키마 확장: `student_level`, `target_score`, `accuracy_by_category`, `recent_mistakes`, `streak`, `retry_count` 등 17개 필드 (3개 → 17개, `review` 모드 추가, `attempts_by_category`·`last_grade_result` 포함)
+- [x] 노드 추가: `intent_classifier`, `drill_node`, `review_node`, `explain_node`, `diagnose_node`, `state_updater` (핸드북 대비 `review_node` 1개 추가)
+- [x] 일반 엣지 + 조건부 엣지로 연결 (`after_drill` 조건부 엣지: 채점 시 state_updater → END, 출제 시 바로 END)
+- [x] `route_by_intent` 라우팅 함수 작성 (`current_mode` 기반 5방향 분기)
+
+**추가 완료 사항 (핸드북 외):**
+- `llm.py` — 공유 LLM 모듈 분리 (Gemini 2.5 Flash)
+- `question_tools.py` — `get_random_question(exclude_ids)`, `get_question_by_id`, `explanation` 필드 추가
+- `main_cli.py` — 17개 필드 초기 state 반영
+
+**산출물 위치:** `docs/week5/`
+- `state_schema_v0.2.md` — State 스키마 v0.1→v0.2 변경 이유 및 17개 필드 상세 설명
+- `node_graph_design.md` — 노드/그래프 설계 결정서 (노드별 역할·입출력·설계 이유, 엣지 구조)
+
+**구현 파일:** `backend/app/agent/`
+- `llm.py`, `nodes/intent_classifier.py`, `drill_node.py`, `review_node.py`, `explain_node.py`, `diagnose_node.py`, `state_updater.py`
+
 **구현 파일:** `backend/app/agent/` (state, nodes/chatbot, tools/question_tools, graph), `backend/app/main_cli.py`  
 **LangSmith:** `sqld-tutor` 프로젝트, thread_id `test-session-1` — 9 turns 정상 기록 확인
 
@@ -123,6 +142,35 @@ accuracy_by_category = {
 3. **오답 복습 비효율** — 틀린 문제 재복습 체계 없음 (3건)
 4. **해설 불충분** — 왜 틀렸는지 이해 안 됨 (3건)
 5. **공부 방향 불확실** — 뭘 먼저 해야 할지 모름 (1건, 추가 검증 필요)
+
+---
+
+## 문제 확장 시 보완 우선순위 (Phase 1-A, 9주차~)
+
+> **배경:** `docs/reference/2024개정판_SQLD_개념정리.pdf` (103p) 전수 분석 결과 도출 (2026-05-25)  
+> 현재 110문제는 MVP 기능 개발에 충분. 문제 확장 시 아래 순서로 보완.
+
+### 즉시 추가 필요 (기출 빈출 + 완전 누락)
+1. **CASE WHEN / DECODE** — SELECT & WHERE 또는 함수 카테고리, 최소 2문제
+2. **반정규화** — 데이터 모델과 SQL, 1~2문제
+3. **ROWNUM 상세** (잘못된 사용 패턴 포함) — 서브쿼리 & Top N, 1~2문제
+4. **MERGE** — 관리 구문, 1문제 (60회차 기출 출제 확인)
+5. **NTILE** — 윈도우 함수, 1문제 (60회차 기출 출제 확인)
+
+### 추가 권고 (PDF 내용 있음)
+6. **VIEW** (특징/장단점/생성) — 관리 구문, 1문제
+7. **TRUNCATE vs DELETE vs DROP 비교** — 관리 구문, 1문제
+8. **계층형 가상컬럼** (CONNECT_BY_ISLEAF / CONNECT_BY_ROOT / SYS_CONNECT_BY_PATH) — SQL 활용 기타, 1문제
+9. **FETCH FIRST N ROWS ONLY** (Oracle 12c+) — 서브쿼리 & Top N, 1문제
+10. **데이터 독립성** (논리적/물리적) — 데이터 모델링 기초, 1문제
+
+### 낮은 우선순위 (커버리지 보완)
+- 비율 윈도우 함수: RATIO_TO_REPORT, PERCENT_RANK, CUME_DIST
+- 정규표현식 심화: REGEXP_SUBSTR, REGEXP_INSTR, REGEXP_COUNT
+- 분산 데이터베이스 (투명성)
+- SEQUENCE, SYNONYM, ROLE, WITH ADMIN OPTION
+- ALTER TABLE 상세 (컬럼 추가/수정/삭제, 데이터타입 변경)
+- 참조 동작 (ON DELETE CASCADE / ON DELETE SET NULL)
 
 ---
 
