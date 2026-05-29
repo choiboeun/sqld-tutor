@@ -27,7 +27,7 @@
   "hint": "힌트 텍스트",
   "explanation": "해설 텍스트",
   "tags": ["태그1", "태그2"],
-  "difficulty": null,
+  "difficulty": "하",
   "pass_rate": null,
   "created_at": "2026-05-13",
   "verified": false
@@ -53,7 +53,7 @@
 | `hint` | string | AI 튜터 "힌트 보기" 기능용. 전체 해설 전에 주는 방향 제시 |
 | `explanation` | string | 오답자에게 보여줄 상세 해설 |
 | `tags` | array | 문제에서 다루는 세부 개념 목록 — RAG 검색 및 유사 문제 추천에 활용 |
-| `difficulty` | string\|null | 난이도 (상/중/하) — 기준 교수님과 협의 후 확정 예정, 현재 null |
+| `difficulty` | string | 난이도 (상/중/하) — A유형→하, B·E유형→상, C·D유형→중 (교수님 동의 2026-05-15, 확정) |
 | `pass_rate` | float\|null | 실제 사용자 정답률 (0.0~1.0) — 서비스 운영 후 자동 집계. 난이도 기준 데이터 기반 검증에 활용 |
 | `created_at` | string | 문제 생성 날짜 (YYYY-MM-DD) |
 | `verified` | boolean | SQLD 합격자 검수 완료 여부 (true / false) |
