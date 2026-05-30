@@ -68,7 +68,7 @@ def generate_sqld_question() -> dict:
 
 **JSONL 전체 스키마와의 관계:**  
 JSONL에는 `hint`, `explanation`, `tags` 등 추가 필드가 있으나, 현재 단계(문제 출제·채점)에는 불필요하므로 제외.  
-해설 기능 구현 시(6주차 예정) `explanation` 필드를 도구에 추가할 예정.
+`explanation` 필드는 5주차 `question_tools.py` 개선 시 추가 완료.
 
 ---
 
@@ -170,7 +170,9 @@ cd backend && .venv/bin/python3 -m app.main_cli
 
 ## 8. 다음 단계 (5주차 예정)
 
-- FastAPI 서버 구축 및 그래프 연결
-- 프론트엔드(Next.js)와 API 연결
-- 문제 출제 → 채점 → 결과 Supabase 저장 흐름 완성
-- MemorySaver → PostgresSaver 전환 검토
+핸드북 5주차 과제: 풍부한 State와 다중 노드
+
+- State 스키마 확장: `student_level`, `target_score`, `accuracy_by_category`, `recent_mistakes`, `streak`, `retry_count` 등 8개 필드
+- 노드 추가: `intent_classifier`, `drill_node`, `explain_node`, `diagnose_node`, `state_updater`
+- 일반 엣지 + 조건부 엣지로 노드 연결
+- `route_by_intent` 라우팅 함수 작성

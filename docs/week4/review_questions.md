@@ -453,7 +453,6 @@
 ## q022 | SELECT & WHERE | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | EMP_NAME | DEPT   | SALARY |
@@ -469,7 +468,6 @@ SELECT EMP_NAME
 FROM EMP
 WHERE DEPT = 'SALES'
   AND SALARY >= 3000;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -492,7 +490,6 @@ WHERE DEPT = 'SALES'
 ## q023 | SELECT & WHERE | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 PRODUCT 테이블의 데이터이다.
 
 | PROD_ID | PROD_NAME | PRICE | CATEGORY |
@@ -508,7 +505,6 @@ SELECT PROD_NAME
 FROM PRODUCT
 WHERE PRICE BETWEEN 1000 AND 1500
   AND CATEGORY IN ('A', 'B');
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -531,7 +527,6 @@ WHERE PRICE BETWEEN 1000 AND 1500
 ## q024 | SELECT & WHERE | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 CUSTOMER 테이블의 데이터이다.
 
 | CUST_ID | CUST_NAME | CITY   | PHONE        |
@@ -547,7 +542,6 @@ SELECT CUST_NAME
 FROM CUSTOMER
 WHERE CUST_NAME LIKE '김%'
   AND PHONE IS NULL;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -570,7 +564,6 @@ WHERE CUST_NAME LIKE '김%'
 ## q025 | SELECT & WHERE | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SCORE 테이블의 데이터이다.
 
 | STUDENT_ID | NAME   | KOR | ENG |
@@ -584,7 +577,6 @@ WHERE CUST_NAME LIKE '김%'
 SELECT NAME, KOR + ENG AS TOTAL
 FROM SCORE
 WHERE STUDENT_ID IN (1, 3, 4);
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -607,14 +599,12 @@ WHERE STUDENT_ID IN (1, 3, 4);
 ## q026 | SELECT & WHERE | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
 SELECT EMP_NAME
 FROM EMP
 WHERE BONUS _____;
-```
 ```
 
 **문제:** BONUS 값이 없는 사원만 조회하려고 할 때, 빈칸에 들어갈 것으로 옳은 것은?
@@ -752,7 +742,6 @@ CUSTOMER 테이블에서 이름이 '김'으로 시작하고 PHONE 값이 NULL이
 ## q032 | 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | EMP_NAME |
@@ -765,7 +754,6 @@ CUSTOMER 테이블에서 이름이 '김'으로 시작하고 PHONE 값이 NULL이
 SELECT EMP_ID, LOWER(EMP_NAME) AS NM
 FROM EMP
 WHERE LENGTH(EMP_NAME) = 4;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -788,7 +776,6 @@ WHERE LENGTH(EMP_NAME) = 4;
 ## q033 | 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | ID | AMT   |
@@ -801,7 +788,6 @@ WHERE LENGTH(EMP_NAME) = 4;
 SELECT ID, ROUND(AMT, 1) AS R1, TRUNC(AMT, 1) AS T1
 FROM SALES
 WHERE ABS(AMT) >= 10;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -824,13 +810,11 @@ WHERE ABS(AMT) >= 10;
 ## q034 | 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT _____('SQLD', 6, '*') AS TXT
 FROM DUAL;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과가 '**SQLD'(전체 길이 6, 왼쪽을 '*'로 채움)가 되도록 할 때, 빈칸에 들어갈 함수는 무엇인가?
@@ -853,13 +837,11 @@ FROM DUAL;
 ## q035 | 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT _____('2026-05-14', 'YYYY-MM-DD') AS DT
 FROM DUAL;
-```
 ```
 
 **문제:** 문자열 '2026-05-14'를 날짜형으로 변환하려고 할 때 빈칸에 들어갈 함수로 옳은 것은?
@@ -1040,7 +1022,6 @@ EMP 테이블에서 HIRE_DATE를 'YYYYMMDD' 형식의 문자열로 조회하려�
 ## q043 | GROUP BY & ORDER BY | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | DEPT  | SALARY |
@@ -1056,7 +1037,6 @@ SELECT DEPT, SUM(SALARY) AS TOTAL_SAL
 FROM EMP
 GROUP BY DEPT
 ORDER BY DEPT;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1079,7 +1059,6 @@ ORDER BY DEPT;
 ## q044 | GROUP BY & ORDER BY | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | DEPT  | BONUS |
@@ -1095,7 +1074,6 @@ SELECT DEPT, COUNT(*) AS CNT_ALL, COUNT(BONUS) AS CNT_BONUS
 FROM EMP
 GROUP BY DEPT
 ORDER BY DEPT;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1118,7 +1096,6 @@ ORDER BY DEPT;
 ## q045 | GROUP BY & ORDER BY | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_NAME | DEPT  | SALARY |
@@ -1132,7 +1109,6 @@ ORDER BY DEPT;
 SELECT EMP_NAME, DEPT, SALARY
 FROM EMP
 ORDER BY DEPT ASC, SALARY DESC, EMP_NAME ASC;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과 순서로 옳은 것은?
@@ -1155,7 +1131,6 @@ ORDER BY DEPT ASC, SALARY DESC, EMP_NAME ASC;
 ## q046 | GROUP BY & ORDER BY | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SCORE 테이블의 데이터이다.
 
 | DEPT  | SCORE |
@@ -1173,7 +1148,6 @@ FROM SCORE
 GROUP BY DEPT
 HAVING AVG(SCORE) >= 85
 ORDER BY AVG_SCORE DESC, DEPT ASC;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1196,7 +1170,6 @@ ORDER BY AVG_SCORE DESC, DEPT ASC;
 ## q047 | GROUP BY & ORDER BY | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
@@ -1204,7 +1177,6 @@ SELECT DEPT, SUM(SALARY) AS TOTAL_SAL
 FROM EMP
 GROUP BY DEPT
 _____ SUM(SALARY) >= 5000;
-```
 ```
 
 **문제:** 부서별 급여 합계가 5000 이상인 그룹만 조회하려고 할 때, 빈칸에 들어갈 것은?
@@ -1227,7 +1199,6 @@ _____ SUM(SALARY) >= 5000;
 ## q048 | GROUP BY & ORDER BY | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
@@ -1235,7 +1206,6 @@ SELECT DEPT, COUNT(*) AS CNT
 FROM EMP
 GROUP BY DEPT
 ORDER BY CNT _____;
-```
 ```
 
 **문제:** 부서별 사원 수를 많은 순서대로 정렬하려고 할 때, 빈칸에 들어갈 것은?
@@ -1344,7 +1314,6 @@ SALES 테이블에서 상품분류(CATEGORY)별 평균 판매금액을 조회하
 ## q053 | 조인 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [EMP]
@@ -1368,7 +1337,6 @@ FROM EMP E INNER JOIN DEPT D
   ON E.DEPT_ID = D.DEPT_ID
 ORDER BY E.EMP_ID;
 ```
-```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
 
@@ -1390,7 +1358,6 @@ ORDER BY E.EMP_ID;
 ## q054 | 조인 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [EMP]
@@ -1411,7 +1378,6 @@ SELECT E.EMP_NAME, D.DEPT_NAME
 FROM EMP E LEFT OUTER JOIN DEPT D
   ON E.DEPT_ID = D.DEPT_ID
 ORDER BY E.EMP_ID;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1434,7 +1400,6 @@ ORDER BY E.EMP_ID;
 ## q055 | 조인 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [A]
@@ -1457,7 +1422,6 @@ FROM A FULL OUTER JOIN B
   ON A.ID = B.ID
 ORDER BY COALESCE(A.ID, B.ID);
 ```
-```
 
 **문제:** 위 SQL의 결과 행 수는 몇 건인가?
 
@@ -1479,7 +1443,6 @@ ORDER BY COALESCE(A.ID, B.ID);
 ## q056 | 조인 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [COLOR]
@@ -1498,7 +1461,6 @@ ORDER BY COALESCE(A.ID, B.ID);
 ```sql
 SELECT C.COLOR, S.SIZE
 FROM COLOR C CROSS JOIN SIZE S;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과 행 수로 옳은 것은?
@@ -1521,7 +1483,6 @@ FROM COLOR C CROSS JOIN SIZE S;
 ## q057 | 조인 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | EMP_NAME | MGR_ID |
@@ -1536,7 +1497,6 @@ SELECT E.EMP_NAME AS EMPLOYEE, M.EMP_NAME AS MANAGER
 FROM EMP E LEFT OUTER JOIN EMP M
   ON E.MGR_ID = M.EMP_ID
 ORDER BY E.EMP_ID;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1559,14 +1519,12 @@ ORDER BY E.EMP_ID;
 ## q058 | 조인 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 조인 유형을 고르시오.
 
 ```sql
 SELECT E.EMP_NAME, D.DEPT_NAME
 FROM EMP E _____ JOIN DEPT D
   ON E.DEPT_ID = D.DEPT_ID;
-```
 ```
 
 **문제:** EMP 테이블의 모든 행은 반드시 조회하고, DEPT는 일치하는 경우에만 부서명을 조회하려고 할 때 빈칸에 들어갈 것은?
@@ -1589,14 +1547,12 @@ FROM EMP E _____ JOIN DEPT D
 ## q059 | 조인 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
 SELECT DEPT_ID, DEPT_NAME, LOC
 FROM DEPT D JOIN LOC_INFO L
 _____ (DEPT_ID);
-```
 ```
 
 **문제:** 두 테이블의 공통 컬럼명인 DEPT_ID를 기준으로 표준 조인을 수행하려고 할 때, 빈칸에 들어갈 것은?
@@ -1662,7 +1618,6 @@ EMP 테이블과 DEPT 테이블을 DEPT_ID로 조인하여, 부서가 없는 사
 ## q062 | 서브쿼리 & Top N | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | EMP_NAME | DEPT_ID | SALARY |
@@ -1678,7 +1633,6 @@ SELECT EMP_NAME
 FROM EMP
 WHERE SALARY > (SELECT AVG(SALARY) FROM EMP WHERE DEPT_ID = 10)
 ORDER BY EMP_ID;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1701,7 +1655,6 @@ ORDER BY EMP_ID;
 ## q063 | 서브쿼리 & Top N | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | EMP_NAME | DEPT_ID | JOB      |
@@ -1718,7 +1671,6 @@ SELECT EMP_NAME
 FROM EMP
 WHERE DEPT_ID IN (SELECT DEPT_ID FROM EMP WHERE JOB = 'MANAGER')
 ORDER BY EMP_ID;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1741,7 +1693,6 @@ ORDER BY EMP_ID;
 ## q064 | 서브쿼리 & Top N | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | ITEM_ID | ITEM_NAME | AMOUNT |
@@ -1760,7 +1711,6 @@ FROM (
 ) T
 WHERE RN <= 2
 ORDER BY AMOUNT DESC;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -1783,14 +1733,12 @@ ORDER BY AMOUNT DESC;
 ## q065 | 서브쿼리 & Top N | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 키워드를 고르시오.
 
 ```sql
 SELECT EMP_NAME
 FROM EMP
 WHERE SALARY > _____ (SELECT SALARY FROM EMP WHERE DEPT_ID = 10);
-```
 ```
 
 **문제:** DEPT_ID가 10인 모든 사원의 급여보다 큰 급여를 받는 사원을 조회하려고 할 때, 빈칸에 들어갈 것으로 옳은 것은?
@@ -1952,7 +1900,6 @@ EMP 테이블에서 급여가 높은 순서대로 상위 3명의 사원명과 �
 ## q072 | 집합 연산자 & 그룹 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [T1]
@@ -1975,7 +1922,6 @@ UNION
 SELECT VAL FROM T2
 ORDER BY VAL;
 ```
-```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
 
@@ -1997,7 +1943,6 @@ ORDER BY VAL;
 ## q073 | 집합 연산자 & 그룹 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [SALES_A]
@@ -2018,7 +1963,6 @@ SELECT ITEM FROM SALES_A
 UNION ALL
 SELECT ITEM FROM SALES_B
 ORDER BY ITEM;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -2041,7 +1985,6 @@ ORDER BY ITEM;
 ## q074 | 집합 연산자 & 그룹 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [CLASS_A]
@@ -2064,7 +2007,6 @@ INTERSECT
 SELECT NAME FROM CLASS_B
 ORDER BY NAME;
 ```
-```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
 
@@ -2086,7 +2028,6 @@ ORDER BY NAME;
 ## q075 | 집합 연산자 & 그룹 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 두 테이블의 데이터이다.
 
 [APPLY_2025]
@@ -2109,7 +2050,6 @@ MINUS
 SELECT ID FROM PASS_2025
 ORDER BY ID;
 ```
-```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
 
@@ -2131,7 +2071,6 @@ ORDER BY ID;
 ## q076 | 집합 연산자 & 그룹 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | REGION | ITEM | AMT |
@@ -2145,7 +2084,6 @@ SELECT REGION, ITEM, SUM(AMT) AS TOTAL
 FROM SALES
 GROUP BY ROLLUP(REGION, ITEM)
 ORDER BY REGION, ITEM;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과 행 수로 옳은 것은?
@@ -2168,7 +2106,6 @@ ORDER BY REGION, ITEM;
 ## q077 | 집합 연산자 & 그룹 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | REGION | ITEM | AMT |
@@ -2181,7 +2118,6 @@ ORDER BY REGION, ITEM;
 SELECT REGION, ITEM, SUM(AMT) AS TOTAL
 FROM SALES
 GROUP BY CUBE(REGION, ITEM);
-```
 ```
 
 **문제:** 위 SQL의 실행 결과 행 수로 옳은 것은?
@@ -2204,7 +2140,6 @@ GROUP BY CUBE(REGION, ITEM);
 ## q078 | 집합 연산자 & 그룹 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
@@ -2212,7 +2147,6 @@ SELECT REGION, ITEM, SUM(AMT) AS TOTAL
 FROM SALES
 GROUP BY _____ ((REGION), (ITEM), ())
 ORDER BY REGION, ITEM;
-```
 ```
 
 **문제:** REGION별 합계, ITEM별 합계, 전체 총계만 선택적으로 조회하려고 할 때 빈칸에 들어갈 것은?
@@ -2235,14 +2169,12 @@ ORDER BY REGION, ITEM;
 ## q079 | 집합 연산자 & 그룹 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT REGION, ITEM, SUM(AMT) AS TOTAL, _____(ITEM) AS G_ITEM
 FROM SALES
 GROUP BY ROLLUP(REGION, ITEM);
-```
 ```
 
 **문제:** ROLLUP 결과에서 ITEM 컬럼이 소계 또는 총계 때문에 생성된 NULL인지 여부를 0 또는 1로 구분하려고 할 때 빈칸에 들어갈 것은?
@@ -2265,14 +2197,12 @@ GROUP BY ROLLUP(REGION, ITEM);
 ## q080 | 집합 연산자 & 그룹 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 집합 연산자를 고르시오.
 
 ```sql
 SELECT EMP_ID FROM TEAM_A
 _____
 SELECT EMP_ID FROM TEAM_B;
-```
 ```
 
 **문제:** 두 팀의 사원 ID를 합치되, 중복된 ID도 그대로 모두 조회하려고 할 때 빈칸에 들어갈 것은?
@@ -2333,7 +2263,6 @@ SELECT EMP_ID FROM TEAM_B;
 ## q083 | 윈도우 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SCORE 테이블의 데이터이다.
 
 | STUDENT | SCORE |
@@ -2349,7 +2278,6 @@ SELECT STUDENT, SCORE,
        DENSE_RANK() OVER (ORDER BY SCORE DESC) AS DRK
 FROM SCORE
 ORDER BY SCORE DESC, STUDENT;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과 중 옳은 것은?
@@ -2372,7 +2300,6 @@ ORDER BY SCORE DESC, STUDENT;
 ## q084 | 윈도우 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | MONTH | AMT |
@@ -2388,7 +2315,6 @@ SELECT MONTH, AMT,
                       ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS RUN_SUM
 FROM SALES
 ORDER BY MONTH;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -2411,7 +2337,6 @@ ORDER BY MONTH;
 ## q085 | 윈도우 함수 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | MONTH | AMT |
@@ -2427,7 +2352,6 @@ SELECT MONTH, AMT,
        LEAD(AMT, 1) OVER (ORDER BY MONTH) AS NEXT_AMT
 FROM SALES
 ORDER BY MONTH;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -2450,14 +2374,12 @@ ORDER BY MONTH;
 ## q086 | 윈도우 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT EMP_NAME, SALARY,
        _____() OVER (ORDER BY SALARY DESC) AS RN
 FROM EMP;
-```
 ```
 
 **문제:** 급여가 같더라도 각 행에 서로 다른 고유 순번을 부여하려고 할 때, 빈칸에 들어갈 함수는 무엇인가?
@@ -2480,14 +2402,12 @@ FROM EMP;
 ## q087 | 윈도우 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT EMP_ID, SALARY,
        _____(SALARY, 1) OVER (ORDER BY EMP_ID) AS NEXT_SAL
 FROM EMP;
-```
 ```
 
 **문제:** 현재 행 기준으로 다음 행의 급여를 조회하려고 할 때, 빈칸에 들어갈 함수는 무엇인가?
@@ -2510,14 +2430,12 @@ FROM EMP;
 ## q088 | 윈도우 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 절을 고르시오.
 
 ```sql
 SELECT DEPT_ID, EMP_NAME, SALARY,
        AVG(SALARY) OVER (_____ DEPT_ID) AS DEPT_AVG
 FROM EMP;
-```
 ```
 
 **문제:** 부서별로 평균 급여를 계산하려고 할 때, 빈칸에 들어갈 것은?
@@ -2540,14 +2458,12 @@ FROM EMP;
 ## q089 | 윈도우 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT DEPT_ID, EMP_NAME, SALARY,
        _____(SALARY) OVER (PARTITION BY DEPT_ID ORDER BY SALARY DESC) AS TOP_SAL
 FROM EMP;
-```
 ```
 
 **문제:** 각 부서에서 가장 높은 급여 값을 모든 행에 함께 표시하려고 할 때, 빈칸에 들어갈 함수는 무엇인가?
@@ -2570,14 +2486,12 @@ FROM EMP;
 ## q090 | 윈도우 함수 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
 SELECT ORD_DT, AMT,
        SUM(AMT) OVER (ORDER BY ORD_DT _____) AS RUN_SUM
 FROM ORDERS;
-```
 ```
 
 **문제:** 현재 행까지의 누적합을 계산하려고 할 때, 빈칸에 들어갈 구문으로 가장 적절한 것은?
@@ -2619,7 +2533,6 @@ FROM ORDERS;
 ## q092 | SQL 활용 기타 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 EMP 테이블의 데이터이다.
 
 | EMP_ID | EMP_NAME | MGR_ID |
@@ -2636,7 +2549,6 @@ FROM EMP
 START WITH MGR_ID IS NULL
 CONNECT BY PRIOR EMP_ID = MGR_ID
 ORDER SIBLINGS BY EMP_ID;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -2659,7 +2571,6 @@ ORDER SIBLINGS BY EMP_ID;
 ## q093 | SQL 활용 기타 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 SALES 테이블의 데이터이다.
 
 | REGION | QTR | AMT |
@@ -2676,7 +2587,6 @@ PIVOT (
   SUM(AMT) FOR QTR IN ('Q1' AS Q1, 'Q2' AS Q2)
 )
 ORDER BY REGION;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -2699,7 +2609,6 @@ ORDER BY REGION;
 ## q094 | SQL 활용 기타 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 USER_INFO 테이블의 데이터이다.
 
 | USER_ID | PHONE         |
@@ -2714,7 +2623,6 @@ SELECT USER_ID
 FROM USER_INFO
 WHERE REGEXP_LIKE(PHONE, '^010-[0-9]{4}-[0-9]{4}$')
 ORDER BY USER_ID;
-```
 ```
 
 **문제:** 위 SQL의 실행 결과로 옳은 것은?
@@ -2737,7 +2645,6 @@ ORDER BY USER_ID;
 ## q095 | SQL 활용 기타 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
@@ -2745,7 +2652,6 @@ SELECT EMP_ID, EMP_NAME, LEVEL
 FROM EMP
 _____ MGR_ID IS NULL
 CONNECT BY PRIOR EMP_ID = MGR_ID;
-```
 ```
 
 **문제:** 계층형 질의에서 루트 노드, 즉 최상위 관리자가 없는 사원부터 조회하려고 할 때 빈칸에 들어갈 것은?
@@ -2768,7 +2674,6 @@ CONNECT BY PRIOR EMP_ID = MGR_ID;
 ## q096 | SQL 활용 기타 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 키워드를 고르시오.
 
 ```sql
@@ -2776,7 +2681,6 @@ SELECT EMP_ID, EMP_NAME, LEVEL
 FROM EMP
 START WITH MGR_ID IS NULL
 CONNECT BY _____ EMP_ID = MGR_ID;
-```
 ```
 
 **문제:** 부모 행의 EMP_ID와 자식 행의 MGR_ID를 연결하는 계층형 질의를 작성하려고 할 때 빈칸에 들어갈 키워드는 무엇인가?
@@ -2799,7 +2703,6 @@ CONNECT BY _____ EMP_ID = MGR_ID;
 ## q097 | SQL 활용 기타 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 의사 컬럼을 고르시오.
 
 ```sql
@@ -2807,7 +2710,6 @@ SELECT EMP_NAME, _____ AS LV
 FROM EMP
 START WITH MGR_ID IS NULL
 CONNECT BY PRIOR EMP_ID = MGR_ID;
-```
 ```
 
 **문제:** 계층형 질의에서 현재 행의 깊이(루트=1)를 조회하려고 할 때 빈칸에 들어갈 것은?
@@ -2830,7 +2732,6 @@ CONNECT BY PRIOR EMP_ID = MGR_ID;
 ## q098 | SQL 활용 기타 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 키워드를 고르시오.
 
 ```sql
@@ -2839,7 +2740,6 @@ FROM SALES
 _____ (
   SUM(AMT) FOR QTR IN ('Q1' AS Q1, 'Q2' AS Q2)
 );
-```
 ```
 
 **문제:** 분기 값을 열로 바꾸어 금액 합계를 조회하려고 할 때 빈칸에 들어갈 것은?
@@ -2862,7 +2762,6 @@ _____ (
 ## q099 | SQL 활용 기타 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 키워드를 고르시오.
 
 ```sql
@@ -2871,7 +2770,6 @@ FROM SALES_WIDE
 _____ (
   AMT FOR QTR IN (Q1_AMT, Q2_AMT, Q3_AMT, Q4_AMT)
 );
-```
 ```
 
 **문제:** 분기별 금액이 열로 저장된 테이블을 분기값과 금액의 행 형태로 바꾸려고 할 때 빈칸에 들어갈 것은?
@@ -2894,13 +2792,11 @@ _____ (
 ## q100 | SQL 활용 기타 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸에 들어갈 가장 적절한 함수를 고르시오.
 
 ```sql
 SELECT _____('A-123-B', '[0-9]', '*') AS TXT
 FROM DUAL;
-```
 ```
 
 **문제:** 문자열에서 숫자를 모두 '*' 문자로 치환하려고 할 때 빈칸에 들어갈 함수는 무엇인가?
@@ -3037,7 +2933,6 @@ FROM DUAL;
 ## q107 | 관리 구문 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 BONUS_HIST 테이블의 현재 데이터이다.
 
 | EMP_ID | DEPT  | BONUS |
@@ -3051,7 +2946,6 @@ FROM DUAL;
 UPDATE BONUS_HIST
    SET BONUS = BONUS + 50
  WHERE DEPT = 'SALES';
-```
 ```
 
 **문제:** 위 SQL을 실행한 직후 BONUS_HIST 테이블의 BONUS 값 상태로 옳은 것은?
@@ -3074,7 +2968,6 @@ UPDATE BONUS_HIST
 ## q108 | 관리 구문 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 ACCOUNT 테이블의 현재 데이터이다.
 
 | ACC_NO | BALANCE |
@@ -3088,7 +2981,6 @@ SAVEPOINT S1;
 UPDATE ACCOUNT SET BALANCE = BALANCE + 100 WHERE ACC_NO = 'A2';
 ROLLBACK TO S1;
 UPDATE ACCOUNT SET BALANCE = BALANCE + 50 WHERE ACC_NO = 'A2';
-```
 ```
 
 **문제:** 위 SQL을 순서대로 실행한 직후 COMMIT 이전 ACCOUNT 테이블 상태로 옳은 것은?
@@ -3111,7 +3003,6 @@ UPDATE ACCOUNT SET BALANCE = BALANCE + 50 WHERE ACC_NO = 'A2';
 ## q109 | 관리 구문 | B유형 | 난이도: 상
 
 **[참고 자료]**
-```
 다음은 ORDERS_SRC와 ORDERS_BAK 테이블의 현재 데이터이다.
 
 [ORDERS_SRC]
@@ -3131,7 +3022,6 @@ INSERT INTO ORDERS_BAK (ORD_ID, CUST_ID, AMT)
 SELECT ORD_ID, CUST_ID, AMT
   FROM ORDERS_SRC
  WHERE AMT >= 700;
-```
 ```
 
 **문제:** 위 SQL 실행 후 ORDERS_BAK 테이블 상태로 옳은 것은?
@@ -3154,12 +3044,10 @@ SELECT ORD_ID, CUST_ID, AMT
 ## q110 | 관리 구문 | C유형 | 난이도: 중
 
 **[참고 자료]**
-```
 다음 SQL의 빈칸 ___ 에 들어갈 가장 적절한 구문을 고르시오.
 
 ```sql
 GRANT SELECT ON EMP TO USER1 ___;
-```
 ```
 
 **문제:** USER1이 EMP 테이블에 대한 SELECT 권한을 다른 사용자에게도 다시 부여할 수 있도록 하려면 빈칸에 들어갈 것은?
