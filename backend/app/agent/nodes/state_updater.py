@@ -44,4 +44,5 @@ def state_updater(state: TutorState) -> dict:
         "total_answered": (state.get("total_answered") or 0) + 1,
         "session_question_count": (state.get("session_question_count") or 0) + 1,
         "last_grade_result": None,
+        "pending_question": {},
     }
