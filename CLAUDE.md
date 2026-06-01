@@ -112,6 +112,26 @@ accuracy_by_category = {
 - `gate1_checklist.md` — Gate 1 항목별 근거 및 증거 포함 체크리스트
 - `walking_skeleton_report.md` — Walking Skeleton 구현 상세 보고서
 
+### ✅ 5주차 (완료)
+- [x] State 스키마 확장: `student_level`, `target_score`, `accuracy_by_category`, `recent_mistakes`, `streak`, `retry_count` 등 17개 필드 (3개 → 17개, `review` 모드 추가, `attempts_by_category`·`last_grade_result` 포함)
+- [x] 노드 추가: `intent_classifier`, `drill_node`, `review_node`, `explain_node`, `diagnose_node`, `state_updater` (핸드북 대비 `review_node` 1개 추가)
+- [x] 일반 엣지 + 조건부 엣지로 연결 (`after_drill` 조건부 엣지: 채점 시 state_updater → END, 출제 시 바로 END)
+- [x] `route_by_intent` 라우팅 함수 작성 (`current_mode` 기반 5방향 분기)
+
+**추가 완료 사항 (핸드북 외):**
+- `llm.py` — 공유 LLM 모듈 분리 (Gemini 2.5 Flash)
+- `question_tools.py` — `get_random_question(exclude_ids)`, `get_question_by_id`, `explanation` 필드 추가
+- `main_cli.py` — 17개 필드 초기 state 반영
+
+**산출물 위치:** `docs/week5/`
+- `state_schema_v0.2.md` — State 스키마 v0.1→v0.2 변경 이유 및 17개 필드 상세 설명
+- `node_graph_design.md` — 노드/그래프 설계 결정서 (노드별 역할·입출력·설계 이유, 엣지 구조)
+
+**구현 파일:** `backend/app/agent/`
+- `llm.py`, `nodes/intent_classifier.py`, `drill_node.py`, `review_node.py`, `explain_node.py`, `diagnose_node.py`, `state_updater.py`
+
+---
+
 ### ✅ 6주차 (완료)
 - [x] `generate_sqld_question(category, difficulty)` — 카테고리·난이도 파라미터 추가
 - [x] `grade_answer(question_id, student_answer)` — 결정론적 채점 도구 신규
@@ -132,29 +152,6 @@ accuracy_by_category = {
 - `tool_design.md` — 4개 도구 설계 결정서 (버그 수정 이력 포함)
 
 **구현 파일:** `backend/app/agent/tools/` (grade_tools.py, sql_tools.py, explain_tools.py), `backend/app/agent/nodes/sql_node.py`
-
----
-
-### ✅ 5주차 (완료)
-- [x] State 스키마 확장: `student_level`, `target_score`, `accuracy_by_category`, `recent_mistakes`, `streak`, `retry_count` 등 17개 필드 (3개 → 17개, `review` 모드 추가, `attempts_by_category`·`last_grade_result` 포함)
-- [x] 노드 추가: `intent_classifier`, `drill_node`, `review_node`, `explain_node`, `diagnose_node`, `state_updater` (핸드북 대비 `review_node` 1개 추가)
-- [x] 일반 엣지 + 조건부 엣지로 연결 (`after_drill` 조건부 엣지: 채점 시 state_updater → END, 출제 시 바로 END)
-- [x] `route_by_intent` 라우팅 함수 작성 (`current_mode` 기반 5방향 분기)
-
-**추가 완료 사항 (핸드북 외):**
-- `llm.py` — 공유 LLM 모듈 분리 (Gemini 2.5 Flash)
-- `question_tools.py` — `get_random_question(exclude_ids)`, `get_question_by_id`, `explanation` 필드 추가
-- `main_cli.py` — 17개 필드 초기 state 반영
-
-**산출물 위치:** `docs/week5/`
-- `state_schema_v0.2.md` — State 스키마 v0.1→v0.2 변경 이유 및 17개 필드 상세 설명
-- `node_graph_design.md` — 노드/그래프 설계 결정서 (노드별 역할·입출력·설계 이유, 엣지 구조)
-
-**구현 파일:** `backend/app/agent/`
-- `llm.py`, `nodes/intent_classifier.py`, `drill_node.py`, `review_node.py`, `explain_node.py`, `diagnose_node.py`, `state_updater.py`
-
-**구현 파일:** `backend/app/agent/` (state, nodes/chatbot, tools/question_tools, graph), `backend/app/main_cli.py`  
-**LangSmith:** `sqld-tutor` 프로젝트, thread_id `test-session-1` — 9 turns 정상 기록 확인
 
 ---
 
