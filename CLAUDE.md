@@ -122,8 +122,14 @@ accuracy_by_category = {
 - [x] `chatbot_node` — 4개 도구 bind_tools 연결 + ToolNode 완성
 - [x] `graph.py` — sql 노드 라우팅 추가, after_chatbot 조건부 엣지 추가
 
+**버그 수정:**
+- drill_node/review_node: options dict 형태 선택지 표시 오류 수정
+- drill_node: 카테고리·난이도 키워드 파싱 로직 추가 ("조인 문제 줘" → 카테고리 필터)
+- state_updater: 오답 후 pending_question 미초기화 버그 수정
+- sql_node: 쿼리 끝 한글 후처리 텍스트 자동 제거
+
 **산출물 위치:** `docs/week6/`
-- `tool_design.md` — 4개 도구 설계 결정서
+- `tool_design.md` — 4개 도구 설계 결정서 (버그 수정 이력 포함)
 
 **구현 파일:** `backend/app/agent/tools/` (grade_tools.py, sql_tools.py, explain_tools.py), `backend/app/agent/nodes/sql_node.py`
 
