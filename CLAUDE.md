@@ -112,6 +112,23 @@ accuracy_by_category = {
 - `gate1_checklist.md` — Gate 1 항목별 근거 및 증거 포함 체크리스트
 - `walking_skeleton_report.md` — Walking Skeleton 구현 상세 보고서
 
+### ✅ 6주차 (완료)
+- [x] `generate_sqld_question(category, difficulty)` — 카테고리·난이도 파라미터 추가
+- [x] `grade_answer(question_id, student_answer)` — 결정론적 채점 도구 신규
+- [x] `execute_sql(query)` — SQLite 샌드박스 SQL 실행 도구 신규 (EMP/DEPT/SALGRADE, SELECT만 허용)
+- [x] `explain_concept(concept, level)` — 개념 설명 도구 뼈대 신규 (7주차 RAG 교체 예정)
+- [x] `sql_node` — SQL 실행 전용 노드, 한글 후처리 텍스트 자동 제거
+- [x] `intent_classifier` — "sql" 모드 추가 (SELECT/실행/쿼리 키워드)
+- [x] `chatbot_node` — 4개 도구 bind_tools 연결 + ToolNode 완성
+- [x] `graph.py` — sql 노드 라우팅 추가, after_chatbot 조건부 엣지 추가
+
+**산출물 위치:** `docs/week6/`
+- `tool_design.md` — 4개 도구 설계 결정서
+
+**구현 파일:** `backend/app/agent/tools/` (grade_tools.py, sql_tools.py, explain_tools.py), `backend/app/agent/nodes/sql_node.py`
+
+---
+
 ### ✅ 5주차 (완료)
 - [x] State 스키마 확장: `student_level`, `target_score`, `accuracy_by_category`, `recent_mistakes`, `streak`, `retry_count` 등 17개 필드 (3개 → 17개, `review` 모드 추가, `attempts_by_category`·`last_grade_result` 포함)
 - [x] 노드 추가: `intent_classifier`, `drill_node`, `review_node`, `explain_node`, `diagnose_node`, `state_updater` (핸드북 대비 `review_node` 1개 추가)

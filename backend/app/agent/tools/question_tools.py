@@ -28,11 +28,19 @@ def _to_question_dict(q: dict) -> dict:
     }
 
 
-def get_random_question(exclude_ids: list[str] | None = None) -> dict | None:
-    """question_history를 제외한 랜덤 문제 반환. 전부 소진되면 None."""
+def get_random_question(
+    exclude_ids: list[str] | None = None,
+    category: str | None = None,
+    difficulty: str | None = None,
+) -> dict | None:
+    """조건에 맞는 랜덤 문제 반환. 전부 소진되면 None."""
     questions = _load_questions()
     exclude = set(exclude_ids or [])
     available = [q for q in questions if q["id"] not in exclude]
+    if category:
+        available = [q for q in available if q["category"] == category]
+    if difficulty:
+        available = [q for q in available if q["difficulty"] == difficulty]
     if not available:
         return None
     return _to_question_dict(random.choice(available))
@@ -47,7 +55,13 @@ def get_question_by_id(question_id: str) -> dict | None:
 
 
 @tool
-def generate_sqld_question() -> dict:
-    """SQLD 문제를 랜덤으로 1개 반환한다."""
-    result = get_random_question()
+def generate_sqld_question(category: str = "", difficulty: str = "") -> dict:
+    """SQLD 문제를 1개 반환한다.
+    category: 카테고리명 (예: '조인', 'SELECT & WHERE'). 빈 문자열이면 전체.
+    difficulty: 난이도 ('상', '중', '하'). 빈 문자열이면 전체.
+    """
+    result = get_random_question(
+        category=category or None,
+        difficulty=difficulty or None,
+    )
     return result or {}

@@ -11,8 +11,13 @@ def _format_question(q: dict) -> str:
     if q.get("context"):
         parts.append(f"\n{q['context']}")
     parts.append(f"\n{q['question']}\n")
-    for i, opt in enumerate(q["options"], 1):
-        parts.append(f"{i}. {opt}")
+    options = q["options"]
+    if isinstance(options, dict):
+        for key in sorted(options.keys(), key=int):
+            parts.append(f"{key}. {options[key]}")
+    else:
+        for i, opt in enumerate(options, 1):
+            parts.append(f"{i}. {opt}")
     parts.append("\n번호로 답하세요.")
     return "\n".join(parts)
 
