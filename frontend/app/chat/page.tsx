@@ -1,0 +1,284 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import Sidebar from "@/components/Sidebar";
+import { createClient } from "@/lib/supabase/client";
+
+interface Message {
+  role: "user" | "ai";
+  content: string;
+}
+
+const QUESTION_HDR_RE = /^\[(.+?) \/ 난이도:\s*(상|중|하)\]\n*/;
+
+function parseQuestionHeader(content: string) {
+  const m = content.match(QUESTION_HDR_RE);
+  if (!m) return null;
+  return { category: m[1], difficulty: m[2], body: content.replace(QUESTION_HDR_RE, "") };
+}
+
+const DIFF_STYLE: Record<string, string> = {
+  하: "bg-green-100 text-green-700",
+  중: "bg-amber-100 text-amber-700",
+  상: "bg-red-100 text-red-700",
+};
+
+// Fix 2+4+5: 마크다운 렌더러 — 표/번호목록/줄간격/빈 점 처리
+const mdComponents = {
+  // 단락 간격
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+  ),
+  // Fix 1: GFM 테이블
+  table: ({ children }: { children?: React.ReactNode }) => (
+    <div className="overflow-x-auto my-2">
+      <table className="border-collapse text-xs w-full">{children}</table>
+    </div>
+  ),
+  th: ({ children }: { children?: React.ReactNode }) => (
+    <th className="border border-gray-300 bg-gray-100 px-2 py-1 text-left font-semibold whitespace-nowrap">
+      {children}
+    </th>
+  ),
+  td: ({ children }: { children?: React.ReactNode }) => (
+    <td className="border border-gray-300 px-2 py-1 whitespace-nowrap">{children}</td>
+  ),
+  // Fix 2: 번호 목록(ol)은 숫자로, 불릿(ul)은 점으로
+  ol: ({ children }: { children?: React.ReactNode }) => (
+    <ol className="list-decimal ml-5 space-y-1 my-1">{children}</ol>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => (
+    <ul className="list-disc ml-5 space-y-0.5 my-1">{children}</ul>
+  ),
+  // Fix 4: 빈 li 숨김
+  li: ({ children }: { children?: React.ReactNode }) => {
+    const text = Array.isArray(children)
+      ? children.map((c) => (typeof c === "string" ? c : "")).join("").trim()
+      : typeof children === "string"
+      ? children.trim()
+      : "x";
+    if (text === "") return null;
+    return <li className="leading-relaxed">{children}</li>;
+  },
+  // 코드 블록 — pre 안의 code는 블록, 밖은 인라인
+  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+    <code className={`bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>
+      {children}
+    </code>
+  ),
+  pre: ({ children }: { children?: React.ReactNode }) => (
+    <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-xs font-mono my-1 whitespace-pre-wrap">
+      {children}
+    </pre>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold">{children}</strong>
+  ),
+  hr: () => <hr className="my-2 border-gray-200" />,
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="font-semibold text-sm mt-3 mb-1">{children}</h3>
+  ),
+};
+
+export default function ChatPage() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "ai",
+      content:
+        "안녕하세요! SQLD AI 튜터입니다.\n'문제 줘', '약점 분석해줘' 등으로 시작해보세요.",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshSidebar, setRefreshSidebar] = useState(0);
+  const [threadId, setThreadId] = useState("demo-user-1");
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => {
+        if (data.user) setThreadId(data.user.id);
+      });
+  }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || isLoading) return;
+
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setIsLoading(true);
+
+    // 빈 플레이스홀더 추가
+    setMessages((prev) => [...prev, { role: "ai", content: "" }]);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, thread_id: threadId }),
+      });
+
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let streamingContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const raw = line.slice(6).trim();
+          if (!raw) continue;
+
+          try {
+            const event = JSON.parse(raw);
+
+            if (event.type === "message") {
+              // Fix 3: 현재 플레이스홀더를 채우고 새 플레이스홀더 추가
+              setMessages((prev) => {
+                const next = [...prev];
+                next[next.length - 1] = { role: "ai", content: event.content };
+                next.push({ role: "ai", content: "" });
+                return next;
+              });
+              streamingContent = "";
+
+            } else if (event.type === "token") {
+              streamingContent += event.content;
+              setMessages((prev) => {
+                const next = [...prev];
+                next[next.length - 1] = { role: "ai", content: streamingContent };
+                return next;
+              });
+
+            } else if (event.type === "done") {
+              // 마지막 빈 플레이스홀더 제거
+              setMessages((prev) =>
+                prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
+              );
+              setRefreshSidebar((n) => n + 1);
+            }
+          } catch {
+            // JSON 파싱 실패 무시
+          }
+        }
+      }
+    } catch {
+      setMessages((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = {
+          role: "ai",
+          content: "오류가 발생했습니다. 다시 시도해주세요.",
+        };
+        return next;
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  return (
+    <div className="flex h-screen">
+      <Sidebar threadId={threadId} refresh={refreshSidebar} />
+
+      <div className="flex flex-col flex-1 min-w-0">
+        <div className="px-6 py-4 border-b border-gray-200 bg-white">
+          <h1 className="text-lg font-semibold text-gray-800">SQLD AI 튜터</h1>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  msg.role === "user"
+                    ? "max-w-[75%] bg-blue-600 text-white rounded-br-sm"
+                    : "max-w-[90%] bg-white border border-gray-200 text-gray-800 rounded-bl-sm shadow-sm"
+                }`}
+              >
+                {msg.role === "ai" ? (
+                  msg.content === "" && isLoading ? (
+                    <span className="inline-flex gap-1">
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </span>
+                  ) : (() => {
+                    const parsed = parseQuestionHeader(msg.content);
+                    return parsed ? (
+                      <>
+                        <div className="flex gap-1.5 mb-3">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                            {parsed.category}
+                          </span>
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[parsed.difficulty] ?? "bg-gray-100 text-gray-600"}`}>
+                            난이도 {parsed.difficulty}
+                          </span>
+                        </div>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                          {parsed.body}
+                        </ReactMarkdown>
+                      </>
+                    ) : (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    );
+                  })()
+                ) : (
+                  msg.content
+                )}
+              </div>
+            </div>
+          ))}
+          <div ref={bottomRef} />
+        </div>
+
+        <div className="px-6 py-4 border-t border-gray-200 bg-white">
+          <div className="flex gap-3 items-end">
+            <textarea
+              className="flex-1 resize-none border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
+              rows={1}
+              placeholder="메시지를 입력하세요... (Enter로 전송)"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={isLoading}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={isLoading || !input.trim()}
+              className="px-5 py-3 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              전송
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

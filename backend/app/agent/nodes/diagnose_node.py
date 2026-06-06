@@ -26,27 +26,36 @@ def diagnose_node(state: TutorState) -> dict:
 
     total = state.get("total_answered") or 0
     streak = state.get("streak") or 0
-    mistakes_count = len(state.get("recent_mistakes") or [])
-
-    lines = [f"학습 현황 (총 {total}문제 풀이)", ""]
+    not_attempted = [cat for cat in _CATEGORIES if attempts.get(cat, 0) == 0]
 
     sorted_cats = sorted(attempted, key=lambda x: x[1])
+    weak = [(cat, acc, cnt) for cat, acc, cnt in sorted_cats if acc < 0.6]
+    strong = [(cat, acc, cnt) for cat, acc, cnt in reversed(sorted_cats) if acc >= 0.6]
 
-    lines.append("카테고리별 정답률:")
-    for cat, acc, cnt in sorted_cats:
-        filled = int(acc * 10)
-        bar = "█" * filled + "░" * (10 - filled)
-        lines.append(f"  {cat}: {bar} {acc:.0%} ({cnt}문제)")
-
-    weak = [(cat, acc) for cat, acc, _ in sorted_cats if acc < 0.6]
-    if weak:
-        lines += ["", "취약 카테고리 (정답률 60% 미만):"]
-        for cat, acc in weak[:3]:
-            lines.append(f"  - {cat} ({acc:.0%}) → 집중 복습 권장")
-
-    lines += [
+    lines = [
+        f"**학습 현황** — 총 {total}문제 | 연속 정답 {streak}개 | {len(attempted)}/11 카테고리 학습",
         "",
-        f"현재 연속 정답: {streak}개  |  누적 오답: {mistakes_count}개",
+        "---",
     ]
+
+    if weak:
+        lines += ["", "**취약 카테고리** (정답률 60% 미만)", ""]
+        lines += ["| 카테고리 | 정답률 | 풀이 수 |", "|---|:---:|:---:|"]
+        for cat, acc, cnt in weak[:3]:
+            lines.append(f"| {cat} | **{acc:.0%}** | {cnt}문제 |")
+
+    if strong:
+        lines += ["", "**잘 하고 있는 카테고리**", ""]
+        lines += ["| 카테고리 | 정답률 | 풀이 수 |", "|---|:---:|:---:|"]
+        for cat, acc, cnt in strong[:3]:
+            lines.append(f"| {cat} | {acc:.0%} | {cnt}문제 |")
+
+    if not_attempted:
+        preview = ", ".join(not_attempted[:4])
+        suffix = f" 외 {len(not_attempted) - 4}개" if len(not_attempted) > 4 else ""
+        lines += ["", f"**미학습** ({len(not_attempted)}개): {preview}{suffix}"]
+
+    if weak:
+        lines += ["", "---", f"> '{weak[0][0]}' 관련 문제를 집중해서 풀어보세요."]
 
     return {"messages": [AIMessage(content="\n".join(lines))]}

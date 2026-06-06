@@ -1,5 +1,4 @@
 from langgraph.graph import StateGraph, START, END
-from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import ToolNode
 
 from app.agent.state import TutorState
@@ -24,6 +23,25 @@ def after_drill(state: TutorState) -> str:
     """채점이 일어났으면 state_updater로, 문제 출제만 했으면 종료."""
     if state.get("last_grade_result"):
         return "state_updater"
+    return END
+
+
+def adaptive_difficulty_router(state: TutorState) -> str:
+    """state_updater 이후 적응형 라우팅.
+    - 정답률 < 20% (2문제 이상 시도) → explain 강제
+    - streak >= 3 또는 그 외 → END
+    """
+    last_category = state.get("last_category")
+    accuracy = state.get("accuracy_by_category") or {}
+    attempts = state.get("attempts_by_category") or {}
+
+    if last_category:
+        cat_attempts = attempts.get(last_category, 0)
+        cat_accuracy = accuracy.get(last_category, 0.0)
+        already_explained = state.get("last_explained_category") == last_category
+        if cat_attempts >= 1 and cat_accuracy < 0.2 and not already_explained:
+            return "explain"
+
     return END
 
 
@@ -59,10 +77,10 @@ builder.add_conditional_edges("drill", after_drill, {"state_updater": "state_upd
 builder.add_conditional_edges("review", after_drill, {"state_updater": "state_updater", END: END})
 builder.add_conditional_edges("chatbot", after_chatbot, {"tools": "tools", END: END})
 builder.add_edge("tools", "chatbot")
-builder.add_edge("state_updater", END)
+builder.add_conditional_edges("state_updater", adaptive_difficulty_router, {"explain": "explain", END: END})
 builder.add_edge("explain", END)
 builder.add_edge("diagnose", END)
 builder.add_edge("sql", END)
 
-memory = MemorySaver()
-graph = builder.compile(checkpointer=memory)
+from app.db.checkpointer import get_checkpointer
+graph = builder.compile(checkpointer=get_checkpointer())

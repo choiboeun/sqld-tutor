@@ -78,10 +78,12 @@ def drill_node(state: TutorState) -> dict:
         category = _parse_category(text)
         difficulty = _parse_difficulty(text)
 
+        avoid = state.get("last_category") if state.get("suggest_category_switch") else None
         question = get_random_question(
             exclude_ids=history,
             category=category,
             difficulty=difficulty,
+            avoid_category=avoid,
         )
         if not question:
             hint = ""
@@ -99,6 +101,7 @@ def drill_node(state: TutorState) -> dict:
             "pending_question": question,
             "last_category": question["category"],
             "retry_count": 0,
+            "suggest_category_switch": False,
         }
 
     # 채점

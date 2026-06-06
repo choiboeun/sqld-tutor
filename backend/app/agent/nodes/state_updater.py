@@ -1,4 +1,7 @@
+from langchain_core.messages import AIMessage
 from app.agent.state import TutorState
+
+_STREAK_THRESHOLD = 3
 
 
 def state_updater(state: TutorState) -> dict:
@@ -23,17 +26,25 @@ def state_updater(state: TutorState) -> dict:
     accuracy[category] = new_correct / new_attempts
 
     # streak / consecutive_wrong
-    streak = (state.get("streak") or 0) + (1 if correct else -(state.get("streak") or 0))
-    consecutive_wrong = (state.get("consecutive_wrong") or 0) + (0 if correct else 1)
     if correct:
+        streak = (state.get("streak") or 0) + 1
         consecutive_wrong = 0
     else:
         streak = 0
+        consecutive_wrong = (state.get("consecutive_wrong") or 0) + 1
 
     # recent_mistakes — drill_node는 추가만, review_node는 이미 제거 처리
     mistakes = list(state.get("recent_mistakes") or [])
     if not correct and qid not in mistakes:
         mistakes.append(qid)
+
+    # 적응형 신호: streak >= 3 → 카테고리 전환 권장
+    suggest_switch = streak >= _STREAK_THRESHOLD
+    extra_messages = []
+    if suggest_switch:
+        extra_messages.append(
+            AIMessage(content=f"연속 {streak}개 정답! 다른 카테고리로 넘어갈게요.")
+        )
 
     return {
         "accuracy_by_category": accuracy,
@@ -45,4 +56,8 @@ def state_updater(state: TutorState) -> dict:
         "session_question_count": (state.get("session_question_count") or 0) + 1,
         "last_grade_result": None,
         "pending_question": {},
+        "suggest_category_switch": suggest_switch,
+        "messages": extra_messages,
+        # 정답 시 explain 반복 방지 플래그 리셋
+        "last_explained_category": None if correct else state.get("last_explained_category"),
     }

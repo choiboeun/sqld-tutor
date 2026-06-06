@@ -32,6 +32,7 @@ def get_random_question(
     exclude_ids: list[str] | None = None,
     category: str | None = None,
     difficulty: str | None = None,
+    avoid_category: str | None = None,
 ) -> dict | None:
     """조건에 맞는 랜덤 문제 반환. 전부 소진되면 None."""
     questions = _load_questions()
@@ -41,6 +42,11 @@ def get_random_question(
         available = [q for q in available if q["category"] == category]
     if difficulty:
         available = [q for q in available if q["difficulty"] == difficulty]
+    # 카테고리 전환 신호가 있을 때 직전 카테고리 제외 (대안이 없으면 무시)
+    if avoid_category and not category:
+        alt = [q for q in available if q["category"] != avoid_category]
+        if alt:
+            available = alt
     if not available:
         return None
     return _to_question_dict(random.choice(available))

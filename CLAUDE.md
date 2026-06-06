@@ -52,8 +52,8 @@ accuracy_by_category = {
 |------|------|------|------|
 | Phase 0-A | 1~4주 | Gate 1 | 문제 은행 + LangGraph Walking Skeleton |
 | Phase 0-B | 5~8주 | Gate 2 | 핵심 기능 MVP (문제 출제 + 오답 복습) |
-| Phase 1-A | 9~12주 | Gate 3 | 약점 분석 + RAG 개념 설명 |
-| Phase 1-B | 13~16주 | Gate 4 | 베타 테스트 5명 + 포트폴리오 완성 |
+| Phase 1-A | 9~12주 | Gate 3 | 제품화 — UI와 인프라 (CLI → 웹 서비스) |
+| Phase 1-B | 13~16주 | Gate 4 | 베타 출시와 진짜 검증 (5명 베타 + 결과 분석) |
 
 ---
 
@@ -153,6 +153,111 @@ accuracy_by_category = {
 
 **구현 파일:** `backend/app/agent/tools/` (grade_tools.py, sql_tools.py, explain_tools.py), `backend/app/agent/nodes/sql_node.py`
 
+### ✅ 7주차 (완료)
+- [x] RAG 학습 데이터 작성 — 11개 카테고리 마크다운 파일 (`docs/week7/cat01~cat11`)
+- [x] 내용 오류 7건 수정 (NULL 비교 unknown, SELF JOIN WHERE 조건, 파티션 오타 등)
+- [x] 인덱싱 파이프라인 구현 (`ingestion/build_index.py`)
+  - `##` → `###` 단위 재분할로 226개 청크 (목표 200~300개 달성)
+  - 배치 10개 × 15초 간격, 최대 4회 재시도 (Google API rate limit 대응)
+  - Chroma DB 저장 (`backend/app/data/chroma_db/`, collection: `sqld_concepts`)
+  - 임베딩 모델: `models/gemini-embedding-001` (3072차원)
+- [x] `explain_concept` 도구 RAG로 교체 (`backend/app/agent/tools/explain_tools.py`)
+  - k=3 청크 retrieval → 컨텍스트 주입 → LLM 답변
+  - `@lru_cache(maxsize=1)` 싱글턴 vectorstore
+- [x] `explain_node` 버그 수정 — 기존 llm.invoke() 직접 호출 → explain_concept.invoke() 호출로 교체
+- [x] CLI 검증 완료 ("조인이 뭐야?" → RAG 기반 시험 포인트 포함 답변)
+
+**산출물 위치:** `docs/week7/`
+- `cat01_데이터모델링기초.md` ~ `cat11_관리구문.md` — RAG 학습 데이터 11개 파일 (226개 청크)
+
+**구현 파일:**
+- `ingestion/build_index.py` — 마크다운 → Chroma 인덱싱 파이프라인
+- `backend/app/agent/tools/explain_tools.py` — RAG 기반 개념 설명 도구
+- `backend/app/agent/nodes/explain_node.py` — explain_concept.invoke() 호출로 수정
+
+---
+
+### ✅ 8주차 (완료, Gate 2 통과)
+- [x] `adaptive_difficulty_router` 작성 — streak ≥ 3 카테고리 전환, 정답률 < 20% explain 강제 유도
+- [x] 동적 시스템 프롬프트 (`build_system_prompt`) — 학생 약점·수준·streak이 매 턴 LLM에 전달
+- [x] `state_updater` 완성 — streak ≥ 3 시 `suggest_category_switch` 신호 + 전환 메시지
+- [x] `last_explained_category` 도입 — 같은 카테고리 explain 반복 방지 (정답 시 리셋)
+- [x] Intent classifier 버그 3개 수정 (범위 밖 숫자 입력, "다음" 과잉 매칭, pending 중 SQL 오발동)
+- [x] CLI 멀티 메시지 출력 — 채점 + 자동 explain 순서대로 모두 표시
+- [x] 7턴 시나리오 직접 통과 (진단→약점→훈련→설명→재훈련)
+
+**산출물 위치:** `docs/week8/`
+- `adaptive_learning_design.md` — adaptive_difficulty_router 설계 결정서
+- `dynamic_prompt_design.md` — 동적 시스템 프롬프트 설계
+- `scenario_test_report.md` — 7턴 시나리오 통과 기록 + 버그 수정 이력
+
+**구현 파일:**
+- `backend/app/agent/prompts.py` — 신규: 동적 시스템 프롬프트 빌더
+- `backend/app/agent/graph.py` — adaptive_difficulty_router + 조건부 엣지 추가
+- `backend/app/agent/state.py` — `suggest_category_switch`, `last_explained_category` 필드 추가
+- `backend/app/agent/nodes/state_updater.py` — streak 신호, last_explained_category 리셋
+- `backend/app/agent/nodes/chatbot.py` — 동적 프롬프트 적용
+- `backend/app/agent/nodes/explain_node.py` — 적응형 유도 감지, last_explained_category 설정
+- `backend/app/agent/nodes/drill_node.py` — suggest_category_switch 반영
+- `backend/app/agent/nodes/intent_classifier.py` — 버그 3개 수정
+- `backend/app/agent/tools/question_tools.py` — `avoid_category` 파라미터 추가
+- `backend/app/main_cli.py` — 멀티 메시지 출력, 초기 State 업데이트
+
+---
+
+### ✅ 9주차 (완료)
+- [x] FastAPI 백엔드 구축 — CORS, `/api/chat` SSE 스트리밍, `/api/progress` 엔드포인트
+- [x] Next.js 14 프론트엔드 초기화 — App Router, TypeScript, Tailwind CSS
+- [x] 채팅 UI — 대화 영역 + 입력창 + 토큰 단위 스트리밍 (SSE)
+- [x] 사이드바 — 풀이 수, 연속 정답, 전체 진행률(X/11), 카테고리별 정답률, 취약 카테고리
+- [x] `/api/:path*` → FastAPI 프록시 (`next.config.mjs` rewrite)
+- [x] react-markdown + remark-gfm — GFM 테이블, 번호 목록, 코드 블록 렌더링
+- [x] UI 버그 5개 수정 (테이블 렌더링, 번호 목록, 버블 분리, 빈 불릿, 줄간격)
+- [x] 약점 분석 응답 시각화 — 마크다운 테이블 + 볼드 헤더 + 구분선 포맷
+- [x] 문제 헤더 뱃지 렌더링 — `[카테고리 / 난이도: X]` 패턴을 색상 뱃지로 변환 (프론트 파싱)
+- [x] 사이드바 개선 — 전체 11개 카테고리 표시, 바 두께 증가, 0% 최소 바, 진행률 바, 0개 색상 수정
+- [x] AI 버블 너비 확장 (75% → 90%)
+- [x] 전체 디버깅 통과 — 백엔드 17개 모듈 import, 5개 시나리오(출제/정답/오답/약점/SQL) 정상 확인
+
+**구현 파일:**
+- `backend/app/main.py` — FastAPI 진입점, CORS 설정
+- `backend/app/api/chat.py` — SSE 스트리밍 엔드포인트, on_chain_end / on_chat_model_stream 이벤트 처리
+- `backend/app/api/progress.py` — 학습 현황 API (전체 11개 카테고리 반환)
+- `backend/app/agent/nodes/diagnose_node.py` — 약점 분석 마크다운 테이블 포맷으로 개선
+- `frontend/app/chat/page.tsx` — 채팅 UI, SSE 스트리밍, 뱃지 렌더링
+- `frontend/components/Sidebar.tsx` — 학습 현황 사이드바
+- `frontend/next.config.mjs` — API 프록시 rewrite
+
+---
+
+### ✅ 10주차 (완료)
+- [x] `langgraph-checkpoint-postgres`, `psycopg[binary,pool]` 설치 (백엔드)
+- [x] `@supabase/supabase-js`, `@supabase/ssr` 설치 (프론트엔드)
+- [x] DB 스키마 설계 및 Supabase SQL Editor 실행 — 6개 테이블 + RLS 정책 + 신규 가입 트리거
+- [x] `backend/app/db/checkpointer.py` — PostgresSaver + MemorySaver fallback
+- [x] `backend/app/agent/graph.py` — get_checkpointer() 연결
+- [x] `frontend/lib/supabase/client.ts` — 브라우저 클라이언트
+- [x] `frontend/lib/supabase/server.ts` — 서버 클라이언트
+- [x] `frontend/app/(auth)/login/page.tsx` — 이메일 로그인 + 카카오 OAuth 버튼
+- [x] `frontend/app/(auth)/signup/page.tsx` — 이메일 회원가입 + 인증 메일 안내
+- [x] `frontend/app/(auth)/auth/callback/route.ts` — OAuth code → session 교환
+- [x] `frontend/middleware.ts` — `/chat` 보호, 미인증 시 `/login` 리다이렉트
+- [x] `frontend/app/chat/page.tsx` — `threadId` → Supabase `user.id` 자동 연결
+- [x] 로그인/회원가입 실제 동작 확인
+
+**버그 수정:**
+- `.env.local` SUPABASE_URL 오타 수정 (`sbkrtgfensnzlkqxwx` → `sbkrtgfensnzlkqxwxpy`)
+- `.env.local` ANON_KEY를 Legacy JWT 형식으로 교체 (기존 publishable 형식 → `eyJ...` 형식)
+
+**구현 파일:**
+- `docs/week10/schema.sql` — 6개 테이블 + RLS + 트리거
+- `backend/app/db/__init__.py`, `backend/app/db/checkpointer.py`
+- `frontend/.env.local` — Supabase URL/Key
+- `frontend/lib/supabase/client.ts`, `frontend/lib/supabase/server.ts`
+- `frontend/app/(auth)/login/page.tsx`, `frontend/app/(auth)/signup/page.tsx`
+- `frontend/app/(auth)/auth/callback/route.ts`
+- `frontend/middleware.ts`
+
 ---
 
 ## 주요 페인포인트 (인터뷰 기반)
@@ -191,6 +296,26 @@ accuracy_by_category = {
 - SEQUENCE, SYNONYM, ROLE, WITH ADMIN OPTION
 - ALTER TABLE 상세 (컬럼 추가/수정/삭제, 데이터타입 변경)
 - 참조 동작 (ON DELETE CASCADE / ON DELETE SET NULL)
+
+---
+
+## Phase 1-A 개선 과제 (9주차~, 기능 고도화)
+
+### RAG 개념 설명 고도화 — 문제별 특정 개념 추출 (전 카테고리 해당)
+
+**현재 문제:**  
+오답 발생 시 `last_category`(예: "조인", "윈도우 함수")를 RAG 검색 키로 사용하므로 카테고리 전체 개요가 설명됨.  
+예) SELF JOIN 문제를 틀려도 "조인 전체(INNER/OUTER/NATURAL JOIN)" 설명이 나옴.  
+예) ROW_NUMBER 문제를 틀려도 "윈도우 함수 전체" 설명이 나옴. 11개 카테고리 모두 동일한 문제.
+
+**개선 방향:**  
+`questions_v0.1.jsonl`의 `tags` 필드를 활용해 오답 문제의 핵심 태그(예: `["self_join"]`, `["row_number"]`)를  
+RAG 검색 키로 사용 → 해당 개념에 집중된 설명 제공.
+
+**구현 위치:**  
+- `drill_node.py` / `review_node.py`: 채점 시 `last_grade_result`에 `tags` 포함
+- `state_updater.py` 또는 `explain_node.py`: tags → concept 변환 로직 추가
+- `explain_tools.py`: concept을 카테고리명 대신 태그 기반 키워드로 RAG 검색
 
 ---
 

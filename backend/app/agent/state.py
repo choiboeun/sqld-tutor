@@ -33,3 +33,7 @@ class TutorState(TypedDict):
 
     # 노드 간 임시 전달
     last_grade_result: Optional[dict]  # drill/review → state_updater 채점 결과 전달 후 None으로 초기화
+
+    # 적응형 학습 신호
+    suggest_category_switch: bool      # streak >= 3 달성 시 True → drill_node가 다른 카테고리 선택
+    last_explained_category: Optional[str]  # 적응형 explain이 실행된 카테고리 — 정답 전까지 재실행 방지

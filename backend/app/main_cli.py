@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
@@ -6,7 +7,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
 from langchain_core.messages import HumanMessage
 from app.agent.graph import graph
 
-THREAD_ID = "test-session-1"
+# python3 -m app.main_cli [thread_id]  —  인자 없으면 기본값 사용
+THREAD_ID = sys.argv[1] if len(sys.argv) > 1 else "session-default"
 config = {"configurable": {"thread_id": THREAD_ID}}
 
 _INITIAL_STATE = {
@@ -38,6 +40,8 @@ _INITIAL_STATE = {
     "consecutive_wrong": 0,
     "retry_count": 0,
     "last_grade_result": None,
+    "suggest_category_switch": False,
+    "last_explained_category": None,
 }
 
 _initialized = False
@@ -57,16 +61,23 @@ def chat(user_input: str):
     if not _initialized:
         state_input = {**_INITIAL_STATE, "messages": [HumanMessage(content=user_input)]}
         _initialized = True
+        prev_count = 0
     else:
+        prev_count = len(graph.get_state(config).values.get("messages", []))
         state_input = {"messages": [HumanMessage(content=user_input)]}
 
     result = graph.invoke(state_input, config=config)
-    last_message = result["messages"][-1]
-    print(f"\nAI: {get_text(last_message.content)}\n")
+
+    # 이번 턴에 새로 추가된 AI 메시지를 순서대로 모두 출력
+    from langchain_core.messages import AIMessage
+    new_messages = result["messages"][prev_count + 1:]  # +1: 방금 입력한 HumanMessage 제외
+    ai_messages = [m for m in new_messages if isinstance(m, AIMessage) and get_text(m.content)]
+    for msg in ai_messages:
+        print(f"\nAI: {get_text(msg.content)}\n")
 
 
 if __name__ == "__main__":
-    print("SQLD AI 튜터 CLI (종료: 'quit')\n")
+    print(f"SQLD AI 튜터 CLI  |  세션: {THREAD_ID}  (종료: 'quit')\n")
     while True:
         user_input = input("나: ").strip()
         if user_input.lower() == "quit":
