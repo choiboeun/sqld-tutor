@@ -33,7 +33,6 @@ Thumbs.db
 
 # LangSmith / 로컬 캐시
 .langchain.db
-chroma_db/
 
 # 테스트 커버리지
 .coverage
