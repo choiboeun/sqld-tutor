@@ -68,15 +68,17 @@ async def _stream_response(message: str, thread_id: str):
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
 
-    # on_chain_end 에서 메시지를 실시간으로 캡처할 노드 목록 (LLM 미사용)
-    NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater"}
+    # on_chain_end 에서 post-processing된 메시지를 캡처할 노드 목록
+    # explain 포함: LLM 사용이지만 post-processing 적용 후 on_chain_end에서 전송
+    NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain"}
 
     try:
         async for event in graph.astream_events(input_data, config=config, version="v2"):
             kind = event["event"]
             name = event.get("name", "")
+            node = event.get("metadata", {}).get("langgraph_node", "")
 
-            # 비LLM 노드 완료 → 채점/문제/진단 메시지를 발생 순서대로 즉시 전송
+            # 지정 노드 완료 → 채점/문제/진단/설명 메시지를 즉시 전송 (post-processing 적용됨)
             if kind == "on_chain_end" and name in NON_LLM_NODES:
                 output = event["data"].get("output") or {}
                 if isinstance(output, dict):
@@ -86,8 +88,8 @@ async def _stream_response(message: str, thread_id: str):
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
 
-            # LLM 토큰 단위 스트리밍 (chatbot, explain)
-            elif kind == "on_chat_model_stream":
+            # LLM 토큰 단위 스트리밍 — chatbot만 적용 (explain은 on_chain_end로 처리)
+            elif kind == "on_chat_model_stream" and node not in {"explain"}:
                 chunk = event["data"]["chunk"]
                 token = _get_text(chunk.content) if hasattr(chunk, "content") else ""
                 if token:

@@ -41,8 +41,14 @@ def diagnose_node(state: TutorState) -> dict:
     if weak:
         lines += ["", "**취약 카테고리** (정답률 60% 미만)", ""]
         lines += ["| 카테고리 | 정답률 | 풀이 수 |", "|---|:---:|:---:|"]
+        low_sample = False
         for cat, acc, cnt in weak[:3]:
-            lines.append(f"| {cat} | **{acc:.0%}** | {cnt}문제 |")
+            note = " ⚠️" if cnt < 5 else ""
+            lines.append(f"| {cat} | **{acc:.0%}** | {cnt}문제{note} |")
+            if cnt < 5:
+                low_sample = True
+        if low_sample:
+            lines.append("\n> ⚠️ 5문제 미만은 데이터가 적어 신뢰도가 낮습니다. 더 풀어보세요!")
 
     if strong:
         lines += ["", "**잘 하고 있는 카테고리**", ""]

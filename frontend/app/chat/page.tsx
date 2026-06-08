@@ -77,6 +77,9 @@ const mdComponents = {
     <strong className="font-semibold">{children}</strong>
   ),
   hr: () => <hr className="my-2 border-gray-200" />,
+  h2: ({ children }: { children?: React.ReactNode }) => (
+    <h2 className="font-bold text-sm mt-4 mb-2 pb-1 border-b border-gray-200">{children}</h2>
+  ),
   h3: ({ children }: { children?: React.ReactNode }) => (
     <h3 className="font-semibold text-sm mt-3 mb-1">{children}</h3>
   ),
@@ -203,8 +206,17 @@ export default function ChatPage() {
       <Sidebar threadId={threadId} refresh={refreshSidebar} />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between">
           <h1 className="text-lg font-semibold text-gray-800">SQLD AI 튜터</h1>
+          <button
+            onClick={async () => {
+              await createClient().auth.signOut();
+              window.location.href = "/login";
+            }}
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            로그아웃
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">

@@ -221,7 +221,7 @@ accuracy_by_category = {
 
 **구현 파일:**
 - `backend/app/main.py` — FastAPI 진입점, CORS 설정
-- `backend/app/api/chat.py` — SSE 스트리밍 엔드포인트, on_chain_end / on_chat_model_stream 이벤트 처리
+- `backend/app/api/chat.py` — SSE 스트리밍 엔드포인트, drill/review/diagnose/sql/state_updater/explain은 on_chain_end, chatbot만 on_chat_model_stream 토큰 스트리밍
 - `backend/app/api/progress.py` — 학습 현황 API (전체 11개 카테고리 반환)
 - `backend/app/agent/nodes/diagnose_node.py` — 약점 분석 마크다운 테이블 포맷으로 개선
 - `frontend/app/chat/page.tsx` — 채팅 UI, SSE 스트리밍, 뱃지 렌더링
@@ -257,6 +257,54 @@ accuracy_by_category = {
 - `frontend/app/(auth)/login/page.tsx`, `frontend/app/(auth)/signup/page.tsx`
 - `frontend/app/(auth)/auth/callback/route.ts`
 - `frontend/middleware.ts`
+
+---
+
+### ✅ 10주차 → 11주차 전환 전 전체 디버깅 (완료)
+
+10주차 완료 후 11주차 진행 전 프로젝트 전체 범위 디버깅 실시 (2026-06-08).
+
+**디버깅 범위 및 결과:**
+
+| 항목 | 결과 |
+|------|------|
+| drill_node (문제 출제/채점/오류입력) | ✅ |
+| review_node (오답 복습 → 정답 시 목록 제거) | ✅ |
+| explain_node (RAG 개념 설명) | ✅ |
+| diagnose_node (약점 분석 마크다운 테이블) | ✅ |
+| state_updater (streak/total/accuracy) | ✅ |
+| intent_classifier (10가지 패턴 분류) | ✅ |
+| streak 3 연속 정답 → 카테고리 전환 메시지 | ✅ |
+| progress API (11개 카테고리 정답률) | ✅ |
+| 사이드바 실시간 업데이트 | ✅ |
+| 로그인/로그아웃/미들웨어 | ✅ |
+| 브라우저 UI 6단계 직접 테스트 | ✅ |
+
+**버그 수정 4건:**
+
+1. **보기 불릿 포인트 인라인 표시 문제** (근본 원인 수정)
+   - 원인: `explain_concept` 내 post-processing은 `llm.invoke()` 이후에 적용되지만, SSE는 raw 토큰을 스트리밍하여 post-processing이 무시됨
+   - 수정: `explain` 노드를 `NON_LLM_NODES`에 추가 → `on_chain_end`에서 post-processed 텍스트 전송
+   - 추가: `on_chat_model_stream` 이벤트에서 `explain` 노드 필터링 (중복 전송 방지)
+   - 불릿 regex 강화: `\n[ \t]*•` + `([^\n])\s*•\s*` 패턴으로 들여쓰기 서브불릿 및 인라인 불릿 모두 처리
+
+2. **SQL 샌드박스 컬럼명 불일치**
+   - 원인: 샌드박스 EMP 테이블이 `EMPNO/ENAME/SAL/DEPTNO` 사용, 문제 데이터 34개는 `EMP_ID/EMP_NAME/SALARY/DEPT_ID` 사용
+   - 수정: EMP/DEPT 테이블 컬럼명을 문제 데이터 기준으로 교체
+   - 추가: 클래식 Oracle 호환 뷰 `EMP_CLASSIC`, `DEPT_CLASSIC` 생성 (하위 호환)
+
+3. **자동 개념 설명 미트리거 원인 파악**
+   - `adaptive_difficulty_router`에 로깅 추가하여 라우팅 값 확인 가능
+
+4. **`** text **` 볼드 공백 처리 + 들여쓰기 서브불릿 regex 누락** (explain_tools.py)
+
+**수정 파일:**
+- `backend/app/api/chat.py` — explain을 NON_LLM_NODES에 추가, on_chat_model_stream 노드 필터링
+- `backend/app/agent/tools/explain_tools.py` — 불릿 regex 강화 (들여쓰기/인라인 모두 처리)
+- `backend/app/agent/tools/sql_tools.py` — EMP/DEPT 컬럼명 교체, 클래식 호환 뷰 추가
+- `backend/app/agent/graph.py` — adaptive_difficulty_router 로깅 추가
+- `backend/app/agent/nodes/drill_node.py` — `_try_result_table` (result_table 포맷, suffix 튜플 반환), `has_block` 플래그, 한국어 단일 쌍 패턴(1b) 추가
+- `frontend/app/chat/page.tsx` — h2/h3 마크다운 컴포넌트 추가
 
 ---
 

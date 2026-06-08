@@ -46,6 +46,6 @@ def sql_node(state: TutorState) -> dict:
         rows = cursor.fetchall()
         conn.close()
         result = _format_table(columns, rows)
-        return {"messages": [AIMessage(content=f"```\n{result}\n```")]}
+        return {"messages": [AIMessage(content=result)]}
     except Exception as e:
         return {"messages": [AIMessage(content=f"SQL 오류: {e}\n\n{_TABLES_INFO}")]}

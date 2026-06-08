@@ -23,17 +23,23 @@ def intent_classifier(state: TutorState) -> dict:
 
     # pending 중 숫자 입력은 항상 drill/review 유지 (7 같은 범위 밖 숫자도 drill이 처리)
     if pending and _ANY_NUMBER.match(text):
-        return {"current_mode": state.get("current_mode", "drill")}
+        mode = state.get("current_mode", "drill")
+        print(f"[intent] pending+숫자 → mode 유지: {mode!r}, text={text!r}")
+        return {"current_mode": mode}
 
-    if not pending and _SQL.search(text):
-        return {"current_mode": "sql"}
+    # DRILL을 SQL보다 먼저 체크 — "SQL 활용 문제 줘"처럼 카테고리명에 SQL이 포함된 경우 오분류 방지
     if _REVIEW.search(text):
-        return {"current_mode": "review"}
-    if _DRILL.search(text):
-        return {"current_mode": "drill"}
-    if _EXPLAIN.search(text):
-        return {"current_mode": "explain"}
-    if _DIAGNOSE.search(text):
-        return {"current_mode": "diagnose"}
+        mode = "review"
+    elif _DRILL.search(text):
+        mode = "drill"
+    elif not pending and _SQL.search(text):
+        mode = "sql"
+    elif _EXPLAIN.search(text):
+        mode = "explain"
+    elif _DIAGNOSE.search(text):
+        mode = "diagnose"
+    else:
+        mode = "chat"
 
-    return {"current_mode": "chat"}
+    print(f"[intent] text={text!r} → mode={mode!r}")
+    return {"current_mode": mode}

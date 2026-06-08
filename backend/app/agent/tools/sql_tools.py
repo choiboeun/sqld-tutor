@@ -9,15 +9,17 @@ _BLOCKED = re.compile(
 )
 
 _SETUP_SQL = """
+-- EMP: 문제 데이터와 호환되는 컬럼명 (EMP_ID/EMP_NAME/SALARY/DEPT_ID)
+-- 클래식 Oracle 별칭도 지원 (EMPNO/ENAME/SAL/DEPTNO → 뷰로 제공)
 CREATE TABLE EMP (
-    EMPNO   INTEGER PRIMARY KEY,
-    ENAME   TEXT,
-    JOB     TEXT,
-    MGR     INTEGER,
+    EMP_ID   INTEGER PRIMARY KEY,
+    EMP_NAME TEXT,
+    JOB      TEXT,
+    MGR_ID   INTEGER,
     HIREDATE TEXT,
-    SAL     REAL,
-    COMM    REAL,
-    DEPTNO  INTEGER
+    SALARY   REAL,
+    BONUS    REAL,
+    DEPT_ID  INTEGER
 );
 INSERT INTO EMP VALUES
 (7369,'SMITH','CLERK',   7902,'1980-12-17', 800, NULL,20),
@@ -33,16 +35,26 @@ INSERT INTO EMP VALUES
 (7902,'FORD', 'ANALYST', 7566,'1981-12-03',3000, NULL,20),
 (7934,'MILLER','CLERK',  7782,'1982-01-23',1300, NULL,10);
 
+-- 클래식 Oracle 컬럼명 호환 뷰 (EMPNO/ENAME/SAL/COMM/DEPTNO)
+CREATE VIEW EMP_CLASSIC AS
+SELECT EMP_ID AS EMPNO, EMP_NAME AS ENAME, JOB, MGR_ID AS MGR,
+       HIREDATE, SALARY AS SAL, BONUS AS COMM, DEPT_ID AS DEPTNO
+FROM EMP;
+
 CREATE TABLE DEPT (
-    DEPTNO INTEGER PRIMARY KEY,
-    DNAME  TEXT,
-    LOC    TEXT
+    DEPT_ID   INTEGER PRIMARY KEY,
+    DEPT_NAME TEXT,
+    LOC       TEXT
 );
 INSERT INTO DEPT VALUES
 (10,'ACCOUNTING','NEW YORK'),
 (20,'RESEARCH',  'DALLAS'),
 (30,'SALES',     'CHICAGO'),
 (40,'OPERATIONS','BOSTON');
+
+-- 클래식 Oracle 컬럼명 호환 뷰 (DEPTNO/DNAME)
+CREATE VIEW DEPT_CLASSIC AS
+SELECT DEPT_ID AS DEPTNO, DEPT_NAME AS DNAME, LOC FROM DEPT;
 
 CREATE TABLE SALGRADE (
     GRADE  INTEGER PRIMARY KEY,
@@ -68,14 +80,13 @@ def _get_conn() -> sqlite3.Connection:
 def _format_table(columns: list[str], rows: list[tuple]) -> str:
     if not rows:
         return "결과 없음 (0건)"
-    widths = [max(len(str(c)), max(len(str(r[i])) for r in rows)) for i, c in enumerate(columns)]
-    sep = "+-" + "-+-".join("-" * w for w in widths) + "-+"
-    header = "| " + " | ".join(str(c).ljust(widths[i]) for i, c in enumerate(columns)) + " |"
-    lines = [sep, header, sep]
+    header = "| " + " | ".join(columns) + " |"
+    separator = "|" + "|".join(["---"] * len(columns)) + "|"
+    lines = [header, separator]
     for row in rows:
-        lines.append("| " + " | ".join(str(v).ljust(widths[i]) if v is not None else "NULL".ljust(widths[i]) for i, v in enumerate(row)) + " |")
-    lines.append(sep)
-    lines.append(f"총 {len(rows)}건")
+        vals = [str(v) if v is not None else "NULL" for v in row]
+        lines.append("| " + " | ".join(vals) + " |")
+    lines.append(f"\n총 {len(rows)}건")
     return "\n".join(lines)
 
 
@@ -83,6 +94,9 @@ def _format_table(columns: list[str], rows: list[tuple]) -> str:
 def execute_sql(query: str) -> str:
     """SQLite 샌드박스에서 SQL을 실행하고 결과를 반환한다.
     SELECT만 허용. 사용 가능한 테이블: EMP, DEPT, SALGRADE.
+    EMP 컬럼: EMP_ID, EMP_NAME, JOB, MGR_ID, HIREDATE, SALARY, BONUS, DEPT_ID
+    DEPT 컬럼: DEPT_ID, DEPT_NAME, LOC
+    클래식 별칭 뷰: EMP_CLASSIC(EMPNO/ENAME/SAL/COMM/DEPTNO), DEPT_CLASSIC(DEPTNO/DNAME/LOC)
     """
     query = query.strip().rstrip(";")
 

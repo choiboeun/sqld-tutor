@@ -1,9 +1,95 @@
 import re
+import random
 from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
-from app.agent.tools.question_tools import get_random_question
+from app.agent.tools.question_tools import get_random_question, get_available_categories
 
 _ANSWER = re.compile(r"([1-4])번?")
+
+
+_PARTICLE = re.compile(r'[의은이가을를에서도]$')
+
+
+def _extract_select_cols(context: str) -> list[str]:
+    """SELECT 절에서 컬럼명(또는 AS 별칭)을 추출한다. 테이블 별칭(E.COL → COL) 처리."""
+    m = re.search(r'SELECT\s+(.*?)\s+FROM', context, re.IGNORECASE | re.DOTALL)
+    if not m:
+        return []
+    cols = []
+    for col in m.group(1).split(','):
+        col = col.strip()
+        alias = re.search(r'\bAS\s+(\w+)\s*$', col, re.IGNORECASE)
+        if alias:
+            cols.append(alias.group(1))
+        else:
+            cols.append(col.split()[-1].split('.')[-1])
+    return cols
+
+
+def _pick_diverse_category(state: TutorState, available: list[str]) -> str | None:
+    """시도 횟수가 적은 카테고리를 우선 선택한다."""
+    if not available:
+        return None
+    attempts = state.get("attempts_by_category") or {}
+    last_cat = state.get("last_category")
+
+    # 한 번도 안 푼 카테고리 우선 (직전 카테고리 제외)
+    not_tried = [c for c in available if attempts.get(c, 0) == 0 and c != last_cat]
+    if not_tried:
+        return random.choice(not_tried)
+
+    # 모두 시도했으면 시도 횟수 역비례 가중치로 선택
+    candidates = [c for c in available if c != last_cat] or available
+    weights = [1.0 / (attempts.get(c, 0) + 1) for c in candidates]
+    return random.choices(candidates, weights=weights, k=1)[0]
+
+
+_SQL_IN_OPTION = re.compile(r'\bSELECT\b', re.IGNORECASE)
+_MARKDOWN_TABLE_RE = re.compile(r'^\s*\|.+\|', re.MULTILINE)
+
+
+def _try_result_table(text: str, context: str = "") -> tuple | None:
+    """결과 패턴을 (테이블 문자열, suffix) 튜플로 변환한다. 변환 불가시 None."""
+    t = text.strip()
+
+    # Pattern 1a: 텍스트 앞부분에 2개 이상 "이름-값" 쌍 (기존 패턴)
+    m = re.match(r'^((?:[가-힣\w]+-[가-힣\w]+,\s*)+[가-힣\w]+-[가-힣\w]+)(.*)', t)
+    if m:
+        raw_items = re.findall(r'([가-힣\w]+)-([가-힣\w]+)', m.group(1))
+        items = [(n, _PARTICLE.sub('', v)) for n, v in raw_items]
+        suffix = m.group(2).strip()
+    else:
+        # Pattern 1b: 텍스트 어느 위치에나 한국어 이름-값 쌍 (1개 이상)
+        # 예: "관리자 정보가 있으므로 이과장-김부장 1건만 조회된다."
+        kor_pairs = re.findall(r'([가-힣][가-힣\w]*)-([가-힣][가-힣\w]*)', t)
+        if kor_pairs:
+            items = [(n, _PARTICLE.sub('', v)) for n, v in kor_pairs]
+            # 쌍 부분 제거 후 나머지 텍스트를 suffix로
+            suffix = re.sub(r'[가-힣][가-힣\w]*-[가-힣][가-힣\w]*,?\s*', '', t).strip()
+        else:
+            # Pattern 2: "단어 숫자, 단어 숫자..." (공백 구분, GROUP BY 결과 등)
+            m = re.match(
+                r'^((?:[A-Z가-힣][A-Z가-힣\w]*\s+\d+,\s*)+[A-Z가-힣][A-Z가-힣\w]*\s+\d+)(.*)',
+                t
+            )
+            if not m:
+                return None
+            items = re.findall(r'([A-Z가-힣][A-Z가-힣\w]*)\s+(\d+)', m.group(1))
+            suffix = m.group(2).strip()
+
+    if not items:
+        return None
+
+    headers = _extract_select_cols(context)
+    h1 = headers[0] if headers else "이름"
+    h2 = headers[1] if len(headers) > 1 else "값"
+
+    rows = [f"| {h1} | {h2} |", "|---|---|"]
+    for name, val in items:
+        rows.append(f"| {name} | {val} |")
+
+    table = "\n".join(rows)
+    return (table, suffix)  # (테이블 문자열, 뒤에 붙는 설명 텍스트)
 
 _CATEGORY_ALIASES = {
     "조인": "조인", "join": "조인",
@@ -43,19 +129,60 @@ def _parse_difficulty(text: str) -> str | None:
 
 
 def _format_question(q: dict) -> str:
-    parts = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
-    if q.get("context"):
-        parts.append(f"\n{q['context']}")
-    parts.append(f"\n{q['question']}\n")
+    context = q.get("context", "")
     options = q["options"]
+
     if isinstance(options, dict):
-        for key in sorted(options.keys(), key=int):
-            parts.append(f"{key}. {options[key]}")
+        opts_list = [(key, options[key]) for key in sorted(options.keys(), key=int)]
     else:
-        for i, opt in enumerate(options, 1):
-            parts.append(f"{i}. {opt}")
-    parts.append("\n번호로 답하세요.")
-    return "\n".join(parts)
+        opts_list = [(str(i), opt) for i, opt in enumerate(options, 1)]
+
+    # 1차: 각 옵션의 포맷 타입과 변환된 내용 결정
+    opt_data = []  # (fmt, key, content)
+    has_block = False
+    for key, opt_text in opts_list:
+        result = _try_result_table(opt_text, context)
+        if result is not None:
+            table_str, suffix_str = result
+            fmt, content = "result_table", (table_str, suffix_str)
+            has_block = True
+        elif _SQL_IN_OPTION.search(opt_text):
+            fmt, content = "sql_block", opt_text
+            has_block = True
+        elif _MARKDOWN_TABLE_RE.search(opt_text):
+            fmt, content = "md_table", opt_text
+            has_block = True
+        else:
+            fmt, content = "plain", opt_text
+        opt_data.append((fmt, key, content))
+        print(f"[drill] opt {key}: fmt={fmt}, text={repr(opt_text[:60])}")
+
+    # has_block이면 모든 옵션을 **N.** 형식으로 통일 (ordered list 번호 재배정 방지)
+    formatted_opts = []
+    for fmt, key, content in opt_data:
+        if not has_block:
+            formatted_opts.append(f"{key}. {content}")
+        elif fmt == "result_table":
+            table_str, suffix_str = content
+            # suffix를 번호 옆에 배치: "**2.** 2건만 조회된다.\n| table |"
+            label = f"**{key}.** {suffix_str}" if suffix_str else f"**{key}.**"
+            formatted_opts.append(f"{label}\n{table_str}")
+        elif fmt == "sql_block":
+            formatted_opts.append(f"**{key}.**\n```sql\n{content}\n```")
+        elif fmt == "md_table":
+            formatted_opts.append(f"**{key}.**\n{content}")
+        else:  # plain
+            formatted_opts.append(f"**{key}.** {content}")
+
+    opts_block = "\n\n".join(formatted_opts) if has_block else "\n".join(formatted_opts)
+
+    sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
+    if context:
+        sections.append(context)
+    sections.append(q['question'])
+    sections.append(opts_block)
+    sections.append("번호로 답하세요.")
+    return "\n\n".join(sections)
 
 
 def _format_feedback(q: dict, user_answer: int, correct: bool) -> str:
@@ -79,12 +206,30 @@ def drill_node(state: TutorState) -> dict:
         difficulty = _parse_difficulty(text)
 
         avoid = state.get("last_category") if state.get("suggest_category_switch") else None
-        question = get_random_question(
-            exclude_ids=history,
-            category=category,
-            difficulty=difficulty,
-            avoid_category=avoid,
-        )
+
+        if category:
+            question = get_random_question(
+                exclude_ids=history,
+                category=category,
+                difficulty=difficulty,
+                avoid_category=avoid,
+            )
+        else:
+            # 사용자가 카테고리 미지정: 덜 풀린 카테고리 우선 선택
+            avail_cats = get_available_categories(exclude_ids=history)
+            preferred = _pick_diverse_category(state, avail_cats)
+            question = get_random_question(
+                exclude_ids=history,
+                category=preferred,
+                difficulty=difficulty,
+            )
+            # 선택한 카테고리에 문제가 남아 있지 않으면 전체에서 선택
+            if not question:
+                question = get_random_question(
+                    exclude_ids=history,
+                    difficulty=difficulty,
+                    avoid_category=avoid,
+                )
         if not question:
             hint = ""
             if category:
@@ -111,7 +256,14 @@ def drill_node(state: TutorState) -> dict:
     match = _ANSWER.search(last_human.content) if last_human else None
 
     if not match:
-        return {"messages": [AIMessage(content="현재 출제된 문제를 먼저 풀어주세요! (1~4번 중 선택)")]}
+        last_text = (last_human.content or "").strip()
+        if last_text and last_text[0].isdigit():
+            # 범위 밖 숫자(예: 5, 6) → 안내 메세지 + 문제 재출력
+            prefix = "1~4 사이의 번호로 답해주세요.\n\n"
+        else:
+            # "문제 줘" 등 비숫자 요청 — 세션 재시작 대응
+            prefix = ""
+        return {"messages": [AIMessage(content=prefix + _format_question(pending))]}
 
     user_answer = int(match.group(1))
     correct = user_answer == pending["answer"]
@@ -125,5 +277,6 @@ def drill_node(state: TutorState) -> dict:
             "category": pending["category"],
             "correct": correct,
             "difficulty": pending["difficulty"],
+            "tags": pending.get("tags", []),
         },
     }

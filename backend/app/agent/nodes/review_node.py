@@ -57,7 +57,7 @@ def review_node(state: TutorState) -> dict:
     match = _ANSWER.search(last_human.content) if last_human else None
 
     if not match:
-        return {"messages": [AIMessage(content="현재 출제된 문제를 먼저 풀어주세요! (1~4번 중 선택)")]}
+        return {"messages": [AIMessage(content=_format_question(pending))]}
 
     user_answer = int(match.group(1))
     correct = user_answer == pending["answer"]

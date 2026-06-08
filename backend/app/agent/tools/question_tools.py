@@ -25,6 +25,7 @@ def _to_question_dict(q: dict) -> dict:
         "options": q["options"],
         "answer": q["answer"],
         "explanation": q.get("explanation", ""),
+        "tags": q.get("tags", []),
     }
 
 
@@ -50,6 +51,13 @@ def get_random_question(
     if not available:
         return None
     return _to_question_dict(random.choice(available))
+
+
+def get_available_categories(exclude_ids: list[str] | None = None) -> list[str]:
+    """아직 풀지 않은 문제가 남아 있는 카테고리 목록 반환."""
+    questions = _load_questions()
+    exclude = set(exclude_ids or [])
+    return list({q["category"] for q in questions if q["id"] not in exclude})
 
 
 def get_question_by_id(question_id: str) -> dict | None:
