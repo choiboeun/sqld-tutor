@@ -32,7 +32,7 @@ def intent_classifier(state: TutorState) -> dict:
     # 초기 진단 시작 — 다른 패턴보다 먼저 체크
     if _DIAGNOSTIC_START.search(text):
         print(f"[intent] text={text!r} → 초기 진단 시작")
-        return {"current_mode": "drill", "is_diagnostic": True}
+        return {"current_mode": "drill", "is_diagnostic": True, "session_question_count": 0}
 
     # DRILL을 SQL보다 먼저 체크 — "SQL 활용 문제 줘"처럼 카테고리명에 SQL이 포함된 경우 오분류 방지
     if _REVIEW.search(text):
