@@ -44,7 +44,8 @@ def _pick_diverse_category(state: TutorState, available: list[str]) -> str | Non
     return random.choices(candidates, weights=weights, k=1)[0]
 
 
-_SQL_IN_OPTION = re.compile(r'\bSELECT\b', re.IGNORECASE)
+# 보기가 SQL 구문으로 시작할 때만 코드 블록 처리 (한국어 문장 중 SQL 키워드 언급은 제외)
+_SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|WITH|MERGE)\b', re.IGNORECASE)
 _MARKDOWN_TABLE_RE = re.compile(r'^\s*\|.+\|', re.MULTILINE)
 
 
