@@ -333,6 +333,37 @@ accuracy_by_category = {
 
 ---
 
+### ✅ 12주차 (완료)
+- [x] 배포 검증 (Render + Vercel 정상 확인)
+- [x] 온보딩 페이지 `/onboarding` — 목표 점수 선택 (60/70/80/90점)
+- [x] 미들웨어 — 미인증→로그인, 온보딩 미완→온보딩, 완료→채팅 리다이렉트
+- [x] 진단 자동 시작 — `/chat?new=true` 진입 시 "진단 시작해줘" 자동 전송
+- [x] 진단 뱃지 — `N/8 진단 중` 표시 + 카테고리/난이도 배지 (1~8번 전체)
+- [x] 진단 재시작 버그 수정 — `diagnostic_start_count` 스냅샷 방식으로 교체 (session_question_count 리셋 LangGraph 이슈 우회)
+- [x] 개념 설명 `**` 렌더링 버그 수정 — 조사를 볼드 안에 포함 지시, 후처리 강화
+- [x] 개념 설명 불릿 가독성 개선 — 계층 구조 들여쓰기, `•` → `-` 마크다운 변환
+- [x] 초기 진단 리포트 "5문제 미만 신뢰도 낮음" 경고 제거
+- [ ] 도메인 연결 (sqld-tutor.com) — 교수님 확인 후 진행 예정
+
+**버그 수정 이력:**
+- `diagnostic_start_count`: LangGraph PostgresSaver가 정수 `0` 업데이트를 무시하는 이슈 → `total_answered` 스냅샷 방식으로 교체
+- 진단 1번 문제 뱃지 미표시: 도입 텍스트가 `**1/8**` 앞에 위치 → 백엔드 포맷 통일 + 프론트 파서 강화
+- `**ERD(Entity)**는` bold 미렌더링: `)` 뒤 `**` + 한국어 조사 → CommonMark 파서 인식 실패 → 프롬프트에 조사 포함 지시로 해결
+
+**구현 파일:**
+- `frontend/app/onboarding/page.tsx` — 온보딩 목표점수 선택 페이지
+- `frontend/middleware.ts` — 인증/온보딩 리다이렉트 미들웨어
+- `frontend/app/chat/page.tsx` — 진단 자동 시작, 뱃지 파싱, Suspense 래퍼
+- `backend/app/agent/state.py` — `is_diagnostic`, `diagnostic_start_count` 필드 추가
+- `backend/app/agent/nodes/intent_classifier.py` — 진단 시작 감지, diagnostic_start_count 스냅샷
+- `backend/app/agent/nodes/drill_node.py` — 진단 진행률 표시 (`N/8`)
+- `backend/app/agent/nodes/diagnose_node.py` — 초기 진단 완료 메시지, 경고 조건부 표시
+- `backend/app/agent/graph.py` — adaptive_difficulty_router 진단 카운터 로직
+- `backend/app/agent/tools/explain_tools.py` — 프롬프트 개선, 후처리 강화
+- `backend/app/api/chat.py` — is_diagnostic, diagnostic_start_count INITIAL_STATE 추가
+
+---
+
 ## 주요 페인포인트 (인터뷰 기반)
 
 1. **취약점 파악 어려움** — 어디가 약한지 모름 (4건)
