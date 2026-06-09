@@ -308,6 +308,31 @@ accuracy_by_category = {
 
 ---
 
+### ✅ 11주차 (완료)
+- [x] 백엔드 Render 배포 (FastAPI + chroma_db, requirements.txt 추가)
+- [x] 프론트엔드 Vercel 배포 (Next.js, 환경변수 설정)
+- [x] Supabase Auth 운영 URL 설정 (Site URL + Redirect URL)
+- [x] LangSmith 트레이스 운영 환경 동작 확인
+- [x] 분석 이벤트 로깅 구축 — `user_events` 테이블 + `analytics.py` 헬퍼
+  - `session_start`: 새 세션 시작 시
+  - `question_answered`: 문제 채점 완료 시 (정답 여부, 카테고리, 난이도)
+  - `feature_used`: explain/diagnose/sql/review 모드 진입 시
+- [x] 개인정보처리방침 페이지 (`/privacy`) 신규 생성
+- [x] 회원가입 동의 체크박스 추가 (미동의 시 버튼 비활성화)
+- [ ] 도메인 연결 (sqld-tutor.com, ~2만원/년) — 교수님 확인 후 진행 예정
+
+**구현 파일:**
+- `backend/app/analytics.py` — log_event() 헬퍼
+- `backend/app/agent/state.py` — user_id 필드 추가
+- `backend/app/agent/nodes/state_updater.py` — question_answered 로깅
+- `backend/app/agent/nodes/intent_classifier.py` — feature_used 로깅
+- `backend/app/api/chat.py` — session_start 로깅, user_id 주입
+- `frontend/app/chat/page.tsx` — user_id 전송
+- `frontend/app/privacy/page.tsx` — 개인정보처리방침 페이지
+- `frontend/app/(auth)/signup/page.tsx` — 동의 체크박스 추가
+
+---
+
 ## 주요 페인포인트 (인터뷰 기반)
 
 1. **취약점 파악 어려움** — 어디가 약한지 모름 (4건)
