@@ -70,8 +70,8 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     response = llm.invoke(messages)
     content = response.content
     print(f"[explain] concept={concept!r}, raw_len={len(content)}, preview={repr(content[:120])}")
-    # "** text **" → "**text**" (LLM이 ** 안쪽에 공백을 넣는 경우 수정)
-    content = re.sub(r'\*\*\s+(.+?)\s+\*\*', lambda m: f'**{m.group(1)}**', content)
+    # "** text **", "** text**", "**text **" → "**text**" (LLM이 ** 안쪽에 공백을 넣는 경우 수정)
+    content = re.sub(r'\*\*\s*([^*\n]+?)\s*\*\*', lambda m: f'**{m.group(1).strip()}**', content)
     # 줄 중간에 있는 모든 • 앞에 \n\n 추가 (비줄바꿈 문자 뒤에 오는 •)
     content = re.sub(r'([^\n])\s*•\s*', r'\1\n\n• ', content)
     # 들여쓰기 서브불릿(\n  •)과 단순 \n• 모두 \n\n• 으로 통일
