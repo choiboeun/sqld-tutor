@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -102,12 +101,27 @@ export default function SignupPage() {
             />
           </div>
 
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 accent-blue-600"
+            />
+            <span className="text-xs text-gray-500 leading-relaxed">
+              <Link href="/privacy" target="_blank" className="text-blue-600 font-medium hover:underline">
+                개인정보처리방침
+              </Link>
+              에 동의합니다. (이메일, 학습 기록, 채팅 내역이 저장됩니다.)
+            </span>
+          </label>
+
           {error && <p className="text-xs text-red-500">{error}</p>}
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-40 transition-colors"
+            disabled={loading || !agreed}
+            className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "처리 중..." : "회원가입"}
           </button>
