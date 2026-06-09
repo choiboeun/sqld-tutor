@@ -205,6 +205,14 @@ def drill_node(state: TutorState) -> dict:
         category = _parse_category(text)
         difficulty = _parse_difficulty(text)
 
+        is_diagnostic = state.get("is_diagnostic", False)
+        session_count = state.get("session_question_count") or 0
+        diagnostic_intro = ""
+        if is_diagnostic and session_count == 0:
+            diagnostic_intro = f"8문제로 현재 실력을 진단할게요. 편하게 답해보세요!\n\n**1/8**\n\n"
+        elif is_diagnostic:
+            diagnostic_intro = f"**{session_count + 1}/8**\n\n"
+
         avoid = state.get("last_category") if state.get("suggest_category_switch") else None
 
         if category:
@@ -242,7 +250,7 @@ def drill_node(state: TutorState) -> dict:
             }
 
         return {
-            "messages": [AIMessage(content=_format_question(question))],
+            "messages": [AIMessage(content=diagnostic_intro + _format_question(question))],
             "pending_question": question,
             "last_category": question["category"],
             "retry_count": 0,

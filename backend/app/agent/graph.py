@@ -28,9 +28,19 @@ def after_drill(state: TutorState) -> str:
 
 def adaptive_difficulty_router(state: TutorState) -> str:
     """state_updater 이후 적응형 라우팅.
+    - 초기 진단 모드: 8문제 완료 → diagnose 자동 실행, 미완료 → drill 자동 출제
     - 정답률 < 20% (2문제 이상 시도) → explain 강제
-    - streak >= 3 또는 그 외 → END
+    - 그 외 → END
     """
+    # 초기 진단 모드 (우선 처리)
+    if state.get("is_diagnostic"):
+        session_count = state.get("session_question_count") or 0
+        if session_count >= 8:
+            print(f"[router] 초기 진단 완료 ({session_count}문제) → diagnose")
+            return "diagnose"
+        print(f"[router] 초기 진단 진행 중 ({session_count}/8) → drill")
+        return "drill"
+
     last_category = state.get("last_category")
     accuracy = state.get("accuracy_by_category") or {}
     attempts = state.get("attempts_by_category") or {}
@@ -78,7 +88,9 @@ builder.add_conditional_edges("drill", after_drill, {"state_updater": "state_upd
 builder.add_conditional_edges("review", after_drill, {"state_updater": "state_updater", END: END})
 builder.add_conditional_edges("chatbot", after_chatbot, {"tools": "tools", END: END})
 builder.add_edge("tools", "chatbot")
-builder.add_conditional_edges("state_updater", adaptive_difficulty_router, {"explain": "explain", END: END})
+builder.add_conditional_edges("state_updater", adaptive_difficulty_router, {
+    "explain": "explain", "drill": "drill", "diagnose": "diagnose", END: END
+})
 builder.add_edge("explain", END)
 builder.add_edge("diagnose", END)
 builder.add_edge("sql", END)

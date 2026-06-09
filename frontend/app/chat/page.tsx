@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Sidebar from "@/components/Sidebar";
@@ -85,7 +86,8 @@ const mdComponents = {
   ),
 };
 
-export default function ChatPage() {
+function ChatContent() {
+  const searchParams = useSearchParams();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "ai",
@@ -97,13 +99,18 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const [threadId, setThreadId] = useState("demo-user-1");
+  const [targetScore, setTargetScore] = useState(70);
+  const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     createClient()
       .auth.getUser()
       .then(({ data }) => {
-        if (data.user) setThreadId(data.user.id);
+        if (data.user) {
+          setThreadId(data.user.id);
+          setTargetScore(data.user.user_metadata?.target_score ?? 70);
+        }
       });
   }, []);
 
@@ -111,22 +118,18 @@ export default function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
-    const text = input.trim();
-    if (!text || isLoading) return;
-
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+  const streamChat = useCallback(async (message: string, showUserMsg: boolean) => {
     setIsLoading(true);
-
-    // 빈 플레이스홀더 추가
+    if (showUserMsg) {
+      setMessages((prev) => [...prev, { role: "user", content: message }]);
+    }
     setMessages((prev) => [...prev, { role: "ai", content: "" }]);
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, thread_id: threadId, user_id: threadId }),
+        body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore }),
       });
 
       const reader = res.body!.getReader();
@@ -151,7 +154,6 @@ export default function ChatPage() {
             const event = JSON.parse(raw);
 
             if (event.type === "message") {
-              // Fix 3: 현재 플레이스홀더를 채우고 새 플레이스홀더 추가
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
@@ -159,7 +161,6 @@ export default function ChatPage() {
                 return next;
               });
               streamingContent = "";
-
             } else if (event.type === "token") {
               streamingContent += event.content;
               setMessages((prev) => {
@@ -167,9 +168,7 @@ export default function ChatPage() {
                 next[next.length - 1] = { role: "ai", content: streamingContent };
                 return next;
               });
-
             } else if (event.type === "done") {
-              // 마지막 빈 플레이스홀더 제거
               setMessages((prev) =>
                 prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
               );
@@ -183,15 +182,28 @@ export default function ChatPage() {
     } catch {
       setMessages((prev) => {
         const next = [...prev];
-        next[next.length - 1] = {
-          role: "ai",
-          content: "오류가 발생했습니다. 다시 시도해주세요.",
-        };
+        next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
         return next;
       });
     } finally {
       setIsLoading(false);
     }
+  }, [threadId, targetScore]);
+
+  // ?new=true 로 진입 시 진단 자동 시작
+  useEffect(() => {
+    if (searchParams.get("new") === "true" && threadId !== "demo-user-1" && !diagnosticFired.current) {
+      diagnosticFired.current = true;
+      streamChat("진단 시작해줘", false);
+    }
+  }, [searchParams, threadId, streamChat]);
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || isLoading) return;
+
+    setInput("");
+    await streamChat(text, true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -292,5 +304,13 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense>
+      <ChatContent />
+    </Suspense>
   );
 }

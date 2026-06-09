@@ -12,6 +12,7 @@ _CATEGORIES = [
 def diagnose_node(state: TutorState) -> dict:
     accuracy = state.get("accuracy_by_category") or {}
     attempts = state.get("attempts_by_category") or {}
+    is_initial = state.get("is_diagnostic", False)
 
     attempted = [
         (cat, accuracy.get(cat, 0.0), attempts.get(cat, 0))
@@ -21,7 +22,8 @@ def diagnose_node(state: TutorState) -> dict:
 
     if not attempted:
         return {
-            "messages": [AIMessage(content="아직 풀이 데이터가 없습니다. 먼저 문제를 몇 개 풀어주세요!")]
+            "messages": [AIMessage(content="아직 풀이 데이터가 없습니다. 먼저 문제를 몇 개 풀어주세요!")],
+            "is_diagnostic": False,
         }
 
     total = state.get("total_answered") or 0
@@ -32,8 +34,13 @@ def diagnose_node(state: TutorState) -> dict:
     weak = [(cat, acc, cnt) for cat, acc, cnt in sorted_cats if acc < 0.6]
     strong = [(cat, acc, cnt) for cat, acc, cnt in reversed(sorted_cats) if acc >= 0.6]
 
+    if is_initial:
+        header = f"**진단 완료!** 8문제로 현재 실력을 파악했어요. 아래 결과를 바탕으로 학습을 시작해봐요."
+    else:
+        header = f"**학습 현황** — 총 {total}문제 | 연속 정답 {streak}개 | {len(attempted)}/11 카테고리 학습"
+
     lines = [
-        f"**학습 현황** — 총 {total}문제 | 연속 정답 {streak}개 | {len(attempted)}/11 카테고리 학습",
+        header,
         "",
         "---",
     ]
@@ -64,4 +71,7 @@ def diagnose_node(state: TutorState) -> dict:
     if weak:
         lines += ["", "---", f"> '{weak[0][0]}' 관련 문제를 집중해서 풀어보세요."]
 
-    return {"messages": [AIMessage(content="\n".join(lines))]}
+    if is_initial:
+        lines += ["", "'문제 줘'라고 입력하면 약점 카테고리 위주로 학습을 시작합니다!"]
+
+    return {"messages": [AIMessage(content="\n".join(lines))], "is_diagnostic": False}

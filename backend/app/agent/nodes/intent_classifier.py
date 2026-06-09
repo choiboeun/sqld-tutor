@@ -10,6 +10,7 @@ _DRILL = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)?|풀어|시�
 _EXPLAIN = re.compile(r"설명|뭐야|뭐예요|무엇|개념|알려|이해[가하]")
 _DIAGNOSE = re.compile(r"약점|분석|취약|통계|결과|어디.*약")
 _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려|sql\b", re.IGNORECASE)
+_DIAGNOSTIC_START = re.compile(r"진단\s*시작|초기\s*진단")
 
 
 def intent_classifier(state: TutorState) -> dict:
@@ -27,6 +28,11 @@ def intent_classifier(state: TutorState) -> dict:
         mode = state.get("current_mode", "drill")
         print(f"[intent] pending+숫자 → mode 유지: {mode!r}, text={text!r}")
         return {"current_mode": mode}
+
+    # 초기 진단 시작 — 다른 패턴보다 먼저 체크
+    if _DIAGNOSTIC_START.search(text):
+        print(f"[intent] text={text!r} → 초기 진단 시작")
+        return {"current_mode": "drill", "is_diagnostic": True}
 
     # DRILL을 SQL보다 먼저 체크 — "SQL 활용 문제 줘"처럼 카테고리명에 SQL이 포함된 경우 오분류 방지
     if _REVIEW.search(text):

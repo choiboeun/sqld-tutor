@@ -41,3 +41,6 @@ class TutorState(TypedDict):
 
     # 분석용
     user_id: Optional[str]  # Supabase user.id — 이벤트 로깅에 사용
+
+    # 온보딩 초기 진단
+    is_diagnostic: bool  # True 동안 8문제 자동 출제 → 완료 시 약점 리포트 자동 실행

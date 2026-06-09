@@ -40,6 +40,7 @@ INITIAL_STATE = {
     "last_grade_result": None,
     "suggest_category_switch": False,
     "last_explained_category": None,
+    "is_diagnostic": False,
 }
 
 
@@ -47,6 +48,7 @@ class ChatRequest(BaseModel):
     message: str
     thread_id: str = "default"
     user_id: str = "anonymous"
+    target_score: int = 60
 
 
 def _get_text(content) -> str:
@@ -58,7 +60,7 @@ def _get_text(content) -> str:
     return str(content)
 
 
-async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous"):
+async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60):
     config = {"configurable": {"thread_id": thread_id}}
 
     existing = graph.get_state(config)
@@ -66,7 +68,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
     is_new = len(existing_msgs) == 0
 
     if is_new:
-        input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)], "user_id": user_id}
+        input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)], "user_id": user_id, "target_score": target_score}
         log_event(user_id, "session_start", {"thread_id": thread_id})
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
@@ -107,7 +109,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 @router.post("/chat")
 async def chat(req: ChatRequest):
     return StreamingResponse(
-        _stream_response(req.message, req.thread_id, req.user_id),
+        _stream_response(req.message, req.thread_id, req.user_id, req.target_score),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

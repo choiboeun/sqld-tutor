@@ -24,18 +24,35 @@ export async function middleware(request: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
+  const path = request.nextUrl.pathname;
 
-  if (!user && request.nextUrl.pathname.startsWith("/chat")) {
+  // 미인증: /chat, /onboarding → /login
+  if (!user && (path.startsWith("/chat") || path.startsWith("/onboarding"))) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/chat", request.url));
+  if (user) {
+    const onboardingDone = user.user_metadata?.onboarding_completed === true;
+
+    // 인증됨 + 온보딩 미완료: /chat → /onboarding
+    if (!onboardingDone && path.startsWith("/chat")) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
+
+    // 인증됨 + 온보딩 완료: /onboarding → /chat
+    if (onboardingDone && path.startsWith("/onboarding")) {
+      return NextResponse.redirect(new URL("/chat", request.url));
+    }
+
+    // 인증됨: /login, /signup → /chat
+    if (path === "/login" || path === "/signup") {
+      return NextResponse.redirect(new URL("/chat", request.url));
+    }
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/login", "/signup"],
+  matcher: ["/chat/:path*", "/onboarding", "/login", "/signup"],
 };
