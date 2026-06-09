@@ -13,11 +13,19 @@ interface Message {
 }
 
 const QUESTION_HDR_RE = /^\[(.+?) \/ 난이도:\s*(상|중|하)\]\n*/;
+const DIAGNOSTIC_PREFIX_RE = /^(\*\*(\d+)\/8\*\*)\n\n/;
 
 function parseQuestionHeader(content: string) {
-  const m = content.match(QUESTION_HDR_RE);
+  const diagMatch = content.match(DIAGNOSTIC_PREFIX_RE);
+  const stripped = diagMatch ? content.slice(diagMatch[0].length) : content;
+  const m = stripped.match(QUESTION_HDR_RE);
   if (!m) return null;
-  return { category: m[1], difficulty: m[2], body: content.replace(QUESTION_HDR_RE, "") };
+  return {
+    category: m[1],
+    difficulty: m[2],
+    body: stripped.replace(QUESTION_HDR_RE, ""),
+    progress: diagMatch ? diagMatch[2] : null,
+  };
 }
 
 const DIFF_STYLE: Record<string, string> = {
@@ -255,6 +263,9 @@ function ChatContent() {
                     const parsed = parseQuestionHeader(msg.content);
                     return parsed ? (
                       <>
+                        {parsed.progress && (
+                          <p className="text-xs text-gray-400 mb-2 font-medium">{parsed.progress}/8 진단 중</p>
+                        )}
                         <div className="flex gap-1.5 mb-3">
                           <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                             {parsed.category}
