@@ -18,17 +18,15 @@ _PROMPT = """당신은 SQLD 자격증 시험 전문 튜터입니다.
 한국어로 답변하세요.
 
 형식 규칙:
-- 제목은 ## 형식을 사용하세요. 절대로 1. 2. 3. 4. 숫자 번호로 섹션을 나누지 마세요.
-- 제목만 나열하지 말고 각 섹션의 실제 설명 내용을 반드시 작성하세요.
-- 세부 항목은 • 불릿 포인트를 사용하되, **반드시 각 항목을 별도 줄에 작성하세요**.
-  올바른 예시:
-  • 첫 번째 항목 설명
-
-  • 두 번째 항목 설명
-
-  • 세 번째 항목 설명
-  (여러 항목을 한 줄에 쓰지 마세요)
-- **중요 개념**은 굵게 표시하세요. ** 기호는 단어 바로 앞뒤에 공백 없이 붙여 쓰세요.
+- 제목은 ## 형식을 사용하세요. 숫자 번호(1. 2. 3.)로 섹션을 나누지 마세요.
+- 제목 아래에 반드시 실제 설명 내용을 작성하세요.
+- **굵게** 표시할 때는 뒤에 오는 조사(은/는/이/가/을/를/으로/에서 등)를 볼드 안에 포함하세요.
+  올바른 예: **ERD는**, **정규화를**, **JOIN이** / 틀린 예: **ERD**는, **정규화**를
+- 불릿(•)은 3개 이상 나열할 때만 사용하고, 단순 설명은 문장으로 작성하세요.
+  하위 항목은 2칸 들여쓰기로 계층을 표현하세요:
+  • 상위 항목 설명
+    • 하위 항목 1
+    • 하위 항목 2
 - 마지막에 "---\n> 다음 문제를 풀려면 **문제 줘**, 더 궁금한 개념은 직접 입력하세요." 를 추가하세요.
 
 [참고 자료]
@@ -70,11 +68,13 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     response = llm.invoke(messages)
     content = response.content
     print(f"[explain] concept={concept!r}, raw_len={len(content)}, preview={repr(content[:120])}")
-    # "** text **", "** text**", "**text **" → "**text**" (LLM이 ** 안쪽에 공백을 넣는 경우 수정)
+    # "** text **", "** text**", "**text **" → "**text**"
     content = re.sub(r'\*\*\s*([^*\n]+?)\s*\*\*', lambda m: f'**{m.group(1).strip()}**', content)
-    # 줄 중간에 있는 모든 • 앞에 \n\n 추가 (비줄바꿈 문자 뒤에 오는 •)
-    content = re.sub(r'([^\n])\s*•\s*', r'\1\n\n• ', content)
-    # 들여쓰기 서브불릿(\n  •)과 단순 \n• 모두 \n\n• 으로 통일
-    content = re.sub(r'\n[ \t]*•', '\n\n•', content)
+    # 인라인 불릿(줄 중간의 •) → 새 줄 불릿으로 분리
+    content = re.sub(r'([^\n])\s*•\s*', r'\1\n- ', content)
+    # 들여쓰기 있는 서브불릿(\n  • 또는 \n\t•) → \n  - (마크다운 중첩 리스트)
+    content = re.sub(r'\n([ \t]+)•\s*', lambda m: f'\n{"  " * (len(m.group(1).expandtabs(2)) // 2)}- ', content)
+    # 최상위 불릿 \n• → \n-
+    content = re.sub(r'\n•\s*', '\n- ', content)
     print(f"[explain] processed_len={len(content)}, preview={repr(content[:120])}")
     return content.strip()
