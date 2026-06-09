@@ -41,6 +41,7 @@ INITIAL_STATE = {
     "suggest_category_switch": False,
     "last_explained_category": None,
     "is_diagnostic": False,
+    "diagnostic_start_count": None,
 }
 
 
