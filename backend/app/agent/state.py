@@ -38,3 +38,6 @@ class TutorState(TypedDict):
     suggest_category_switch: bool      # streak >= 3 달성 시 True → drill_node가 다른 카테고리 선택
     last_explained_category: Optional[str]  # 적응형 explain이 실행된 카테고리 — 정답 전까지 재실행 방지
     last_wrong_tags: Optional[list[str]]    # 직전 오답 문제의 태그 — 정확한 개념 설명에 사용
+
+    # 분석용
+    user_id: Optional[str]  # Supabase user.id — 이벤트 로깅에 사용

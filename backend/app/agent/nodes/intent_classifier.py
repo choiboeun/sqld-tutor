@@ -1,6 +1,7 @@
 import re
 from langchain_core.messages import HumanMessage
 from app.agent.state import TutorState
+from app.analytics import log_event
 
 _ANSWER = re.compile(r"^[1-4]번?")
 _ANY_NUMBER = re.compile(r"^\d")  # 범위 밖 숫자(5, 7 등)도 drill이 처리하도록
@@ -42,4 +43,7 @@ def intent_classifier(state: TutorState) -> dict:
         mode = "chat"
 
     print(f"[intent] text={text!r} → mode={mode!r}")
+    if mode in ("explain", "diagnose", "sql", "review"):
+        user_id = state.get("user_id") or "anonymous"
+        log_event(user_id, "feature_used", {"feature": mode, "text": text[:100]})
     return {"current_mode": mode}

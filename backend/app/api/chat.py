@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage
 
 from app.agent.graph import graph
+from app.analytics import log_event
 
 router = APIRouter()
 
@@ -45,6 +46,7 @@ INITIAL_STATE = {
 class ChatRequest(BaseModel):
     message: str
     thread_id: str = "default"
+    user_id: str = "anonymous"
 
 
 def _get_text(content) -> str:
@@ -56,7 +58,7 @@ def _get_text(content) -> str:
     return str(content)
 
 
-async def _stream_response(message: str, thread_id: str):
+async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous"):
     config = {"configurable": {"thread_id": thread_id}}
 
     existing = graph.get_state(config)
@@ -64,7 +66,8 @@ async def _stream_response(message: str, thread_id: str):
     is_new = len(existing_msgs) == 0
 
     if is_new:
-        input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)]}
+        input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)], "user_id": user_id}
+        log_event(user_id, "session_start", {"thread_id": thread_id})
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
 
@@ -104,7 +107,7 @@ async def _stream_response(message: str, thread_id: str):
 @router.post("/chat")
 async def chat(req: ChatRequest):
     return StreamingResponse(
-        _stream_response(req.message, req.thread_id),
+        _stream_response(req.message, req.thread_id, req.user_id),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

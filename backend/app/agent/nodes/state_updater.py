@@ -1,5 +1,6 @@
 from langchain_core.messages import AIMessage
 from app.agent.state import TutorState
+from app.analytics import log_event
 
 _STREAK_THRESHOLD = 3
 
@@ -47,6 +48,14 @@ def state_updater(state: TutorState) -> dict:
         )
 
     print(f"[state] qid={qid}, cat={category!r}, correct={correct}, streak={streak}, total={state.get('total_answered',0)+1}")
+    user_id = state.get("user_id") or "anonymous"
+    log_event(user_id, "question_answered", {
+        "question_id": qid,
+        "category": category,
+        "correct": correct,
+        "difficulty": result.get("difficulty"),
+        "total_answered": (state.get("total_answered") or 0) + 1,
+    })
     return {
         "accuracy_by_category": accuracy,
         "attempts_by_category": attempts,
