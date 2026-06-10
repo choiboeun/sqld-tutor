@@ -274,8 +274,8 @@ def drill_node(state: TutorState) -> dict:
             # 범위 밖 숫자(예: 5, 6) → 안내 메세지 + 문제 재출력
             prefix = "1~4 사이의 번호로 답해주세요.\n\n"
         else:
-            # "문제 줘" 등 비숫자 요청 — 세션 재시작 대응
-            prefix = ""
+            # 카테고리 변경 요청 등 비숫자 입력 — 현재 문제 답변 유도
+            prefix = "현재 문제에 먼저 답해주세요 (1~4번).\n\n"
         return {"messages": [AIMessage(content=prefix + _format_question(pending))]}
 
     user_answer = int(match.group(1))
