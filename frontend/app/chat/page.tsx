@@ -119,6 +119,7 @@ function ChatContent() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [threadId, setThreadId] = useState("demo-user-1");
   const [targetScore, setTargetScore] = useState(70);
   const diagnosticFired = useRef(false);
@@ -236,11 +237,29 @@ function ChatContent() {
 
   return (
     <div className="flex h-screen">
-      <Sidebar threadId={threadId} refresh={refreshSidebar} />
+      <Sidebar
+        threadId={threadId}
+        refresh={refreshSidebar}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       <div className="flex flex-col flex-1 min-w-0">
         <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-800">SQLD AI 튜터</h1>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden p-1 text-gray-500 hover:text-gray-700 transition-colors"
+              aria-label="메뉴 열기"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <rect y="3" width="20" height="2" rx="1"/>
+                <rect y="9" width="20" height="2" rx="1"/>
+                <rect y="15" width="20" height="2" rx="1"/>
+              </svg>
+            </button>
+            <h1 className="text-lg font-semibold text-gray-800">SQLD AI 튜터</h1>
+          </div>
           <button
             onClick={async () => {
               await createClient().auth.signOut();
