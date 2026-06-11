@@ -74,12 +74,11 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
           onClick={onClose}
         />
       )}
-      <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col p-5 gap-5 overflow-y-auto
-        transition-transform duration-300 ease-in-out
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:static md:translate-x-0 md:shrink-0
-      `}>
+      <aside className={
+        isOpen
+          ? "fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-white border-r border-gray-200 p-5 gap-5 overflow-y-auto md:relative md:shrink-0"
+          : "hidden md:flex md:flex-col md:w-64 md:shrink-0 bg-white border-r border-gray-200 p-5 gap-5 overflow-y-auto"
+      }>
       <div>
         <h2 className="text-base font-semibold text-gray-700 mb-3">학습 현황</h2>
         <div className="grid grid-cols-2 gap-2 mb-3">

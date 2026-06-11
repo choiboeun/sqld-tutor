@@ -236,7 +236,7 @@ function ChatContent() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-[100dvh] overflow-hidden">
       <Sidebar
         threadId={threadId}
         refresh={refreshSidebar}
