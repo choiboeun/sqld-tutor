@@ -335,7 +335,7 @@ function ChatContent() {
             <textarea
               className="flex-1 resize-none border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
               rows={1}
-              placeholder="메시지를 입력하세요... (Enter로 전송)"
+              placeholder="메시지를 입력하세요(Enter로 전송)"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
