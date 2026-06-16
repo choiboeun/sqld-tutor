@@ -375,13 +375,23 @@ accuracy_by_category = {
 
 ---
 
-### 🔲 13주차 (진행 예정)
+### 🔄 13주차 (진행 중)
 
-**[사전 준비] 베타 시작 전 완료 필수**
-- [ ] 모바일 레이아웃 수정 (소형 스마트폰 화면 반응형 개선)
-- [ ] 문제 은행 보완 — 즉시 추가 필요 5개 + 추가 권고 5개, 총 약 11~13문제 추가
-  - 즉시: CASE WHEN/DECODE(2문제), 반정규화(1~2문제), ROWNUM 상세(1~2문제), MERGE(1문제), NTILE(1문제)
-  - 권고: VIEW(1문제), TRUNCATE vs DELETE vs DROP(1문제), 계층형 가상컬럼(1문제), FETCH FIRST N ROWS ONLY(1문제), 데이터 독립성(1문제)
+**[사전 준비] 완료**
+- [x] 모바일 레이아웃 수정
+  - 모바일 드로어 사이드바 추가 (commit `33a0c9c`)
+  - 가로/세로 스크롤바 제거 (commit `56fe409`)
+  - iOS 입력창 자동 줌인 제거 (commit `3e2d27f`)
+  - 입력창 placeholder 줄바꿈 수정 (commit `c432959`)
+- [x] 문제 은행 보완 — 110문제 → 220문제로 확장 완료
+  - 기출 기반 13문제 추가 (commit `33a0c9c`): CASE WHEN/DECODE, 반정규화, ROWNUM, MERGE, NTILE 등
+  - q136~q220 추가 생성 — 계층형 쿼리·WINDOW·GROUP BY·JOIN·NULL/CASE·서브쿼리·PIVOT·MERGE·VIEW·트랜잭션·인덱스·정규화·DDL·트랩형 (방법A+B 혼합, `docs/add_questions_batch1~4.py`)
+  - q032/q033 보기 마크다운 테이블 형식으로 수정 (commit `08dbb55`)
+  - q151 보기 4번 설계 오류 수정 (직접 모순 → 윈도우 함수 중첩 금지 지식형 문제로 교체)
+
+**산출물 위치:** `docs/week12/` (미커밋)
+- `gate3_checklist.md` — Gate 3 통과 기록 (2026-06-10 확정)
+- `usability_test_report.md` — 사용성 테스트 1·2차 결과
 
 **[본 일정] 비공개 베타 출시 + 첫 5명 모집 (핸드북 기준)**
 - [ ] 베타 사용자 5명 모집 — SQLD 응시 예정인 같은 학과/동아리/지인 (모집 연락은 사전 준비와 병렬 진행 가능)
@@ -401,26 +411,18 @@ accuracy_by_category = {
 
 ---
 
-## 문제 확장 시 보완 우선순위 (13주차 실행 예정)
+## 문제 확장 이력 및 향후 보완 우선순위
 
-> **배경:** `docs/reference/2024개정판_SQLD_개념정리.pdf` (103p) 전수 분석 결과 도출 (2026-05-25)  
-> 현재 110문제는 MVP 기능 개발에 충분. 문제 확장 시 아래 순서로 보완.
+> **현재 상태 (2026-06-16):** 총 220문제  
+> **배경:** `docs/reference/2024개정판_SQLD_개념정리.pdf` (103p) 전수 분석 결과 도출 (2026-05-25)
 
-### 즉시 추가 필요 (기출 빈출 + 완전 누락)
-1. **CASE WHEN / DECODE** — SELECT & WHERE 또는 함수 카테고리, 최소 2문제
-2. **반정규화** — 데이터 모델과 SQL, 1~2문제
-3. **ROWNUM 상세** (잘못된 사용 패턴 포함) — 서브쿼리 & Top N, 1~2문제
-4. **MERGE** — 관리 구문, 1문제 (60회차 기출 출제 확인)
-5. **NTILE** — 윈도우 함수, 1문제 (60회차 기출 출제 확인)
+### 확장 이력
+- **110문제** — 2주차 초기 생성 (11카테고리 × 10문제)
+- **+13문제** — 13주차 기출 기반 즉시 추가 (CASE WHEN/DECODE, 반정규화, ROWNUM, MERGE, NTILE 등)
+- **+97문제** — 13주차 Method A+B 혼합 확장 (계층형 쿼리, WINDOW, GROUP BY, JOIN, NULL/CASE, 서브쿼리, PIVOT, MERGE, VIEW, 트랜잭션, 인덱스, 정규화, DDL, 트랩형)
+- **현재 220문제** — 베타 피드백 후 350문제까지 단계적 확장 예정
 
-### 추가 권고 (PDF 내용 있음)
-6. **VIEW** (특징/장단점/생성) — 관리 구문, 1문제
-7. **TRUNCATE vs DELETE vs DROP 비교** — 관리 구문, 1문제
-8. **계층형 가상컬럼** (CONNECT_BY_ISLEAF / CONNECT_BY_ROOT / SYS_CONNECT_BY_PATH) — SQL 활용 기타, 1문제
-9. **FETCH FIRST N ROWS ONLY** (Oracle 12c+) — 서브쿼리 & Top N, 1문제
-10. **데이터 독립성** (논리적/물리적) — 데이터 모델링 기초, 1문제
-
-### 낮은 우선순위 (커버리지 보완)
+### 향후 추가 권고 (베타 피드백 기반, 350문제 목표)
 - 비율 윈도우 함수: RATIO_TO_REPORT, PERCENT_RANK, CUME_DIST
 - 정규표현식 심화: REGEXP_SUBSTR, REGEXP_INSTR, REGEXP_COUNT
 - 분산 데이터베이스 (투명성)
