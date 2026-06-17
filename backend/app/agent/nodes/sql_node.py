@@ -7,10 +7,15 @@ _SQL_PATTERN = re.compile(
     r"(SELECT\b[\s\S]+?)(?:;|$)", re.IGNORECASE
 )
 
-_TABLES_INFO = """사용 가능한 테이블:
-• EMP   (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
-• DEPT  (DEPTNO, DNAME, LOC)
-• SALGRADE (GRADE, LOSAL, HISAL)"""
+_TABLES_INFO = """**사용 가능한 테이블:**
+
+• **EMP** — EMP_ID, EMP_NAME, JOB, MGR_ID, HIREDATE, SALARY, BONUS, DEPT_ID
+
+• **DEPT** — DEPT_ID, DEPT_NAME, LOC
+
+• **SALGRADE** — GRADE, LOSAL, HISAL
+
+> Oracle 클래식 컬럼명(EMPNO/ENAME/SAL 등)을 쓰려면 **EMP_CLASSIC**, **DEPT_CLASSIC** 뷰를 사용하세요."""
 
 
 def sql_node(state: TutorState) -> dict:
@@ -26,7 +31,7 @@ def sql_node(state: TutorState) -> dict:
     match = _SQL_PATTERN.search(text)
     if not match:
         return {
-            "messages": [AIMessage(content=f"SQL 쿼리를 찾을 수 없습니다. SELECT 문을 입력해주세요.\n\n{_TABLES_INFO}")]
+            "messages": [AIMessage(content=f"SELECT 쿼리를 입력하시면 바로 실행해드릴게요!\n\n예시: `SELECT * FROM EMP`\n\n{_TABLES_INFO}")]
         }
 
     query = match.group(1).strip()
@@ -48,4 +53,4 @@ def sql_node(state: TutorState) -> dict:
         result = _format_table(columns, rows)
         return {"messages": [AIMessage(content=result)]}
     except Exception as e:
-        return {"messages": [AIMessage(content=f"SQL 오류: {e}\n\n{_TABLES_INFO}")]}
+        return {"messages": [AIMessage(content=f"SQL 오류가 발생했습니다: {e}\n\n{_TABLES_INFO}")]}
