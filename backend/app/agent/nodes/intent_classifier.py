@@ -23,10 +23,12 @@ def intent_classifier(state: TutorState) -> dict:
     text = last_human.content.strip()
     pending = state.get("pending_question") or {}
 
-    # pending 중 숫자 입력은 항상 drill/review 유지 (7 같은 범위 밖 숫자도 drill이 처리)
-    if pending and _ANY_NUMBER.match(text):
-        mode = state.get("current_mode", "drill")
-        print(f"[intent] pending+숫자 → mode 유지: {mode!r}, text={text!r}")
+    # pending 중에는 숫자/비숫자 모두 drill로 강제
+    # 비숫자 입력은 drill_node가 "현재 문제에 먼저 답해주세요" 안내 처리
+    if pending:
+        prior = state.get("current_mode", "drill")
+        mode = prior if prior in ("drill", "review") else "drill"
+        print(f"[intent] pending 있음 → mode={mode!r}, text={text!r}")
         return {"current_mode": mode}
 
     # 초기 진단 시작 — 다른 패턴보다 먼저 체크
