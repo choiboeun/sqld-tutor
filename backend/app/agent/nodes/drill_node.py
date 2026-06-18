@@ -113,6 +113,36 @@ _DIFFICULTY_MAP = {
     "어려운": "상", "어렵게": "상", "어려워": "상", "어려운걸로": "상", "어렵": "상", "고난도": "상",
 }
 
+# target_score → 난이도 가중치 (진단 중 or 해당 카테고리 데이터 없을 때 사용)
+_TARGET_DIFF_WEIGHTS: dict[int, tuple[list, list]] = {
+    60: (["하", "중"],       [0.5, 0.5]),
+    70: (["하", "중", "상"], [0.2, 0.6, 0.2]),
+    80: (["중", "상"],       [0.5, 0.5]),
+    90: (["중", "상"],       [0.2, 0.8]),
+}
+
+
+def _auto_difficulty(state: TutorState, category: str | None, is_diagnostic: bool) -> str:
+    """사용자가 난이도를 명시하지 않았을 때 자동 결정.
+    - 진단 중: target_score 가중치 랜덤
+    - 진단 후: 카테고리 정답률 기반 (데이터 없으면 target_score 폴백)
+    """
+    if not is_diagnostic and category:
+        attempts = (state.get("attempts_by_category") or {}).get(category, 0)
+        if attempts >= 1:
+            acc = (state.get("accuracy_by_category") or {}).get(category, 0.5)
+            if acc >= 0.7:
+                return "상"
+            elif acc >= 0.4:
+                return "중"
+            else:
+                return "하"
+
+    target = state.get("target_score") or 70
+    key = min(_TARGET_DIFF_WEIGHTS, key=lambda k: abs(k - target))
+    diffs, weights = _TARGET_DIFF_WEIGHTS[key]
+    return random.choices(diffs, weights=weights)[0]
+
 
 def _parse_category(text: str) -> str | None:
     lower = text.lower()
@@ -221,6 +251,8 @@ def drill_node(state: TutorState) -> dict:
         avoid = state.get("last_category") if state.get("suggest_category_switch") else None
 
         if category:
+            if not difficulty:
+                difficulty = _auto_difficulty(state, category, is_diagnostic)
             question = get_random_question(
                 exclude_ids=history,
                 category=category,
@@ -231,6 +263,8 @@ def drill_node(state: TutorState) -> dict:
             # 사용자가 카테고리 미지정: 덜 풀린 카테고리 우선 선택
             avail_cats = get_available_categories(exclude_ids=history)
             preferred = _pick_diverse_category(state, avail_cats)
+            if not difficulty:
+                difficulty = _auto_difficulty(state, preferred, is_diagnostic)
             question = get_random_question(
                 exclude_ids=history,
                 category=preferred,
@@ -238,6 +272,7 @@ def drill_node(state: TutorState) -> dict:
             )
             # 선택한 카테고리에 문제가 남아 있지 않으면 전체에서 선택
             if not question:
+                difficulty = _auto_difficulty(state, None, is_diagnostic)
                 question = get_random_question(
                     exclude_ids=history,
                     difficulty=difficulty,
