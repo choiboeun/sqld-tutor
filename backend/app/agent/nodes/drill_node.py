@@ -254,6 +254,8 @@ def drill_node(state: TutorState) -> dict:
                 "messages": [AIMessage(content=f"조건에 맞는 문제가 없습니다{hint}. 조건을 바꿔보세요.")],
             }
 
+        if is_diagnostic:
+            question["_diag_seq"] = diag_count + 1
         return {
             "messages": [AIMessage(content=diagnostic_intro + _format_question(question))],
             "pending_question": question,
@@ -276,7 +278,9 @@ def drill_node(state: TutorState) -> dict:
         else:
             # 카테고리 변경 요청 등 비숫자 입력 — 현재 문제 답변 유도
             prefix = "현재 문제에 먼저 답해주세요 (1~4번).\n\n"
-        return {"messages": [AIMessage(content=prefix + _format_question(pending))]}
+        diag_seq = pending.get("_diag_seq")
+        diag_prefix = f"**{diag_seq}/8**\n\n" if diag_seq else ""
+        return {"messages": [AIMessage(content=prefix + diag_prefix + _format_question(pending))]}
 
     user_answer = int(match.group(1))
     correct = user_answer == pending["answer"]
