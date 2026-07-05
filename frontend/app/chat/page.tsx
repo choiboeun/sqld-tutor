@@ -226,8 +226,8 @@ function ChatContent() {
     if (!text || isLoading) return;
 
     setInput("");
-    await streamChat(text, true);
     inputRef.current?.focus();
+    await streamChat(text, true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -336,13 +336,12 @@ function ChatContent() {
           <div className="flex gap-3 items-end">
             <textarea
               ref={inputRef}
-              className="flex-1 resize-none border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
+              className={`flex-1 resize-none border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32 transition-opacity ${isLoading ? "opacity-50" : ""}`}
               rows={1}
               placeholder="메시지를 입력하세요(Enter로 전송)"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={isLoading}
             />
             <button
               onClick={sendMessage}

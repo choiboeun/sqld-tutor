@@ -313,7 +313,8 @@ def drill_node(state: TutorState) -> dict:
         if len(all_digits) > 1:
             diag_seq = pending.get("_diag_seq")
             diag_prefix = f"**{diag_seq}/8**\n\n" if diag_seq else ""
-            return {"messages": [AIMessage(content="1~4 중 하나만 입력해주세요 (예: 2 또는 2번).\n\n" + diag_prefix + _format_question(pending))]}
+            note = "\n\n> 1~4 중 하나만 입력해주세요 (예: 2 또는 2번)."
+            return {"messages": [AIMessage(content=diag_prefix + _format_question(pending) + note)]}
 
     if not match:
         last_text = (last_human.content or "").strip()
@@ -322,25 +323,21 @@ def drill_node(state: TutorState) -> dict:
 
         if _GIVE_UP.search(last_text):
             if state.get("is_diagnostic"):
-                # 진단 중: 안내 메시지를 question body 아래에 붙여 프론트엔드 파싱 유지
-                encouragement = "\n\n> 💡 정확하지 않아도 괜찮아요! 현재 실력 파악이 목적이니 1~4번 중 하나 골라보세요 :)"
-                question_text = diag_prefix + _format_question(pending)
-                return {"messages": [AIMessage(content=question_text + encouragement)]}
+                note = "\n\n> 💡 정확하지 않아도 괜찮아요! 현재 실력 파악이 목적이니 1~4번 중 하나 골라보세요 :)"
+                return {"messages": [AIMessage(content=diag_prefix + _format_question(pending) + note)]}
             else:
-                # 일반 학습 중: 개념 설명 후 같은 문제 재출제
+                # 일반 학습 중: 문제 먼저, 개념 설명은 아래에
                 concept = (pending.get("tags") or [pending.get("category", "")])[0]
                 level = state.get("student_level", "beginner")
                 explanation = explain_concept.invoke({"concept": concept, "level": level})
-                recap = "\n\n---\n이해되셨나요? 이제 다시 문제를 풀어봐요!\n\n"
-                return {"messages": [AIMessage(content=explanation + recap + _format_question(pending))]}
+                recap = "\n\n이해되셨나요? 이제 다시 문제를 풀어봐요!"
+                return {"messages": [AIMessage(content=_format_question(pending) + "\n\n---\n" + explanation + recap)]}
 
         if last_text and last_text[0].isdigit():
-            # 범위 밖 숫자(예: 5, 6) → 안내 메세지 + 문제 재출력
-            prefix = "1~4 사이의 번호로 답해주세요.\n\n"
+            note = "\n\n> 1~4 사이의 번호로 답해주세요."
         else:
-            # 카테고리 변경 요청 등 비숫자 입력 — 현재 문제 답변 유도
-            prefix = "현재 문제에 먼저 답해주세요 (1~4번).\n\n"
-        return {"messages": [AIMessage(content=prefix + diag_prefix + _format_question(pending))]}
+            note = "\n\n> 현재 문제에 먼저 답해주세요 (1~4번)."
+        return {"messages": [AIMessage(content=diag_prefix + _format_question(pending) + note)]}
 
     user_answer = int(match.group(1))
     correct = user_answer == pending["answer"]
