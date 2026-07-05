@@ -3,8 +3,10 @@ import random
 from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
 from app.agent.tools.question_tools import get_random_question, get_available_categories
+from app.agent.tools.explain_tools import explain_concept
 
 _ANSWER = re.compile(r"([1-4])번?")
+_GIVE_UP = re.compile(r"모르겠|몰라|포기|모름")
 
 
 _PARTICLE = re.compile(r'[의은이가을를에서도]$')
@@ -305,16 +307,39 @@ def drill_node(state: TutorState) -> dict:
     )
     match = _ANSWER.search(last_human.content) if last_human else None
 
+    # 다중 번호 입력 감지 (예: "2 2 3 4", "1 3")
+    if match and last_human:
+        all_digits = re.findall(r"[1-4]", last_human.content)
+        if len(all_digits) > 1:
+            diag_seq = pending.get("_diag_seq")
+            diag_prefix = f"**{diag_seq}/8**\n\n" if diag_seq else ""
+            return {"messages": [AIMessage(content="1~4 중 하나만 입력해주세요 (예: 2 또는 2번).\n\n" + diag_prefix + _format_question(pending))]}
+
     if not match:
         last_text = (last_human.content or "").strip()
+        diag_seq = pending.get("_diag_seq")
+        diag_prefix = f"**{diag_seq}/8**\n\n" if diag_seq else ""
+
+        if _GIVE_UP.search(last_text):
+            if state.get("is_diagnostic"):
+                # 진단 중: 안내 메시지를 question body 아래에 붙여 프론트엔드 파싱 유지
+                encouragement = "\n\n> 💡 정확하지 않아도 괜찮아요! 현재 실력 파악이 목적이니 1~4번 중 하나 골라보세요 :)"
+                question_text = diag_prefix + _format_question(pending)
+                return {"messages": [AIMessage(content=question_text + encouragement)]}
+            else:
+                # 일반 학습 중: 개념 설명 후 같은 문제 재출제
+                concept = (pending.get("tags") or [pending.get("category", "")])[0]
+                level = state.get("student_level", "beginner")
+                explanation = explain_concept.invoke({"concept": concept, "level": level})
+                recap = "\n\n---\n이해되셨나요? 이제 다시 문제를 풀어봐요!\n\n"
+                return {"messages": [AIMessage(content=explanation + recap + _format_question(pending))]}
+
         if last_text and last_text[0].isdigit():
             # 범위 밖 숫자(예: 5, 6) → 안내 메세지 + 문제 재출력
             prefix = "1~4 사이의 번호로 답해주세요.\n\n"
         else:
             # 카테고리 변경 요청 등 비숫자 입력 — 현재 문제 답변 유도
             prefix = "현재 문제에 먼저 답해주세요 (1~4번).\n\n"
-        diag_seq = pending.get("_diag_seq")
-        diag_prefix = f"**{diag_seq}/8**\n\n" if diag_seq else ""
         return {"messages": [AIMessage(content=prefix + diag_prefix + _format_question(pending))]}
 
     user_answer = int(match.group(1))

@@ -32,6 +32,10 @@ def adaptive_difficulty_router(state: TutorState) -> str:
     - 정답률 < 20% (2문제 이상 시도) → explain 강제
     - 그 외 → END
     """
+    # 카테고리 전환 안내 후 자동으로 다음 문제 출제
+    if state.get("suggest_category_switch"):
+        return "drill"
+
     # 초기 진단 모드 (우선 처리)
     if state.get("is_diagnostic"):
         total = state.get("total_answered") or 0

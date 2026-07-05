@@ -124,6 +124,7 @@ function ChatContent() {
   const [targetScore, setTargetScore] = useState(70);
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     createClient()
@@ -226,6 +227,7 @@ function ChatContent() {
 
     setInput("");
     await streamChat(text, true);
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -333,6 +335,7 @@ function ChatContent() {
         <div className="px-6 py-4 border-t border-gray-200 bg-white">
           <div className="flex gap-3 items-end">
             <textarea
+              ref={inputRef}
               className="flex-1 resize-none border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32"
               rows={1}
               placeholder="메시지를 입력하세요(Enter로 전송)"
