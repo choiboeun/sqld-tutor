@@ -326,12 +326,17 @@ def drill_node(state: TutorState) -> dict:
                 note = "\n\n> 💡 정확하지 않아도 괜찮아요! 현재 실력 파악이 목적이니 1~4번 중 하나 골라보세요 :)"
                 return {"messages": [AIMessage(content=diag_prefix + _format_question(pending) + note)]}
             else:
-                # 일반 학습 중: 문제 먼저, 개념 설명은 아래에
+                # 일반 학습 중: 개념 설명 버블 → 문제 재출력 버블 (두 버블로 분리)
                 concept = (pending.get("tags") or [pending.get("category", "")])[0]
                 level = state.get("student_level", "beginner")
                 explanation = explain_concept.invoke({"concept": concept, "level": level})
-                recap = "\n\n이해되셨나요? 이제 다시 문제를 풀어봐요!"
-                return {"messages": [AIMessage(content=_format_question(pending) + "\n\n---\n" + explanation + recap)]}
+                # explain_concept 자체 trailing 안내 제거 ("다음 문제를 풀려면..." — 현재 문제가 pending 중이라 맥락 불일치)
+                explanation = re.sub(r'\n*---\n*>\s*다음 문제를 풀려면.*$', '', explanation, flags=re.DOTALL).strip()
+                recap = "\n\n이해되셨나요? 이제 다시 도전해봐요! 1~4번 중 하나를 골라보세요."
+                return {"messages": [
+                    AIMessage(content=explanation),
+                    AIMessage(content=_format_question(pending) + recap),
+                ]}
 
         if last_text and last_text[0].isdigit():
             note = "\n\n> 1~4 사이의 번호로 답해주세요."
