@@ -82,6 +82,7 @@ export default function WrongAnswersPage() {
   const sendMiniMessage = useCallback(async () => {
     if (!miniInput.trim() || miniLoading || !selected) return;
     const text = miniInput.trim();
+    const historySnapshot = miniMessages.filter((m) => m.content);
     setMiniInput("");
 
     setMiniMessages((prev) => [
@@ -91,13 +92,24 @@ export default function WrongAnswersPage() {
     ]);
     setMiniLoading(true);
 
-    const contextMsg = text;
+    const questionContext = {
+      category: selected.category,
+      difficulty: selected.difficulty,
+      question: selected.question,
+      options: selected.options,
+      correct_answer: selected.correct_answer,
+      explanation: selected.explanation,
+    };
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/mini-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: contextMsg, thread_id: threadId, user_id: threadId }),
+        body: JSON.stringify({
+          question_context: questionContext,
+          messages: historySnapshot,
+          user_message: text,
+        }),
       });
 
       const reader = res.body!.getReader();

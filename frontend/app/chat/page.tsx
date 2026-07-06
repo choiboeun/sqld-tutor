@@ -160,6 +160,10 @@ function ChatContent() {
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isRestoredRef = useRef(false);
+  const restoredScrollRef = useRef(0);
+  const threadIdRef = useRef("demo-user-1");
 
   useEffect(() => {
     createClient()
@@ -168,13 +172,18 @@ function ChatContent() {
         if (data.user) {
           const uid = data.user.id;
           setThreadId(uid);
+          threadIdRef.current = uid;
           setTargetScore(data.user.user_metadata?.target_score ?? 70);
-          // 세션 내 이전 채팅 복원
           try {
             const saved = sessionStorage.getItem(`chat_${uid}`);
             if (saved) {
               const parsed = JSON.parse(saved);
-              if (parsed.length > 0) setMessages(parsed);
+              if (parsed.length > 0) {
+                setMessages(parsed);
+                isRestoredRef.current = true;
+                const savedScroll = sessionStorage.getItem(`scroll_${uid}`);
+                restoredScrollRef.current = savedScroll ? parseInt(savedScroll, 10) : 999999;
+              }
             }
           } catch {}
         }
@@ -191,8 +200,28 @@ function ChatContent() {
   }, [messages, sessionReady, threadId]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isRestoredRef.current) {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = restoredScrollRef.current;
+      }
+      isRestoredRef.current = false;
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
+
+  // 페이지 떠날 때 스크롤 위치 저장
+  useEffect(() => {
+    return () => {
+      const tid = threadIdRef.current;
+      const container = scrollContainerRef.current;
+      if (container && tid !== "demo-user-1") {
+        try {
+          sessionStorage.setItem(`scroll_${tid}`, String(container.scrollTop));
+        } catch {}
+      }
+    };
+  }, []);
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean) => {
     setIsLoading(true);
@@ -333,7 +362,7 @@ function ChatContent() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {messages.map((msg, i) => (
             <div
               key={i}
