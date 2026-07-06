@@ -196,6 +196,12 @@ function ChatContent() {
                 prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
               );
               setRefreshSidebar((n) => n + 1);
+            } else if (event.type === "error") {
+              setMessages((prev) => {
+                const next = [...prev];
+                next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
+                return next;
+              });
             }
           } catch {
             // JSON 파싱 실패 무시
