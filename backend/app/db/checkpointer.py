@@ -16,5 +16,7 @@ def get_checkpointer():
         saver.setup()
         return saver
     except Exception as e:
+        import traceback
         print(f"[checkpointer] PostgresSaver 실패, MemorySaver로 fallback: {e}")
+        traceback.print_exc()
         return MemorySaver()
