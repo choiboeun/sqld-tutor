@@ -15,7 +15,7 @@
 | 4 | "2 2 3 4" 등 다중 번호 입력 시 정답 처리 | `_ANSWER` 정규식이 첫 번째 숫자만 추출 | `drill_node.py` | ✅ 완료 (2026-07-05) |
 | 5 | 메시지 전송 후 입력창 포커스 해제 | `sendMessage` 이후 포커스 복원 코드 없음 | `chat/page.tsx` | ✅ 완료 (2026-07-05) |
 | 6 | 같은 문제 정답 판정 불일치 | 미조사 | 미확인 | ⏳ 조사 필요 |
-| 7 | 로그아웃 후 재로그인 시 풀이 기록 사라짐 | 미조사 | 미확인 | ⏳ 조사 필요 |
+| 7 | 로그아웃 후 재로그인 시 풀이 기록 사라짐 | sync 단일 연결 유휴 끊김 → MemorySaver fallback | `checkpointer.py`, `requirements.txt` | ✅ 완료 (2026-07-06) |
 | UI-1 | 보기 일부만 코드 박스 (WITH 오감지) | `WITH GRANT OPTION` 등이 SQL 구문으로 오분류됨 | `drill_node.py` | ✅ 완료 (2026-07-06) |
 | UI-2 | 보기 번호가 context 번호목록과 혼동 | `1. 2. 3.` 형식이 업무규칙 번호와 동일 | `drill_node.py` | ✅ 완료 (2026-07-06) |
 
@@ -135,6 +135,18 @@ await streamChat(text, true);
 - **증상:** 같은 문제를 처음엔 오답, 재시도 시 정답으로 처리
 - **다음 단계:** LangSmith 트레이스에서 해당 세션 재현 후 `drill_node.py` 채점 로직 확인
 
-### Bug 7 — 로그아웃 후 기록 소실
-- **증상:** 재로그인 시 풀이 기록이 사라짐
-- **다음 단계:** PostgresSaver 체크포인트 조회 로직 및 `thread_id` 연속성 확인
+### Bug 7 — 로그아웃 후 기록 소실 (`checkpointer.py`)
+
+**원인:** `psycopg.connect()`로 단일 동기 연결을 서버 시작 시 1개만 생성. Render 등 유휴 연결을 끊는 환경에서 연결이 끊어지면 `MemorySaver` fallback 발생 → 서버 재시작 시 체크포인트 전체 소실.
+
+**수정 내용:**
+- `psycopg2-binary` → `psycopg[binary,pool]` (requirements.txt)
+- 단일 연결 → `ConnectionPool(min_size=1, max_size=5)` 사용
+
+```python
+from psycopg_pool import ConnectionPool
+pool = ConnectionPool(db_url, min_size=1, max_size=5, open=True)
+saver = PostgresSaver(pool)
+```
+
+**사용자 체감:** 재로그인 후 사이드바의 정답률·연속정답·약점 카테고리가 그대로 유지됨.
