@@ -10,11 +10,14 @@
 |---|------|------|------|------|
 | 1 | "문제주지마" 입력 시 문제 출제됨 | `_DRILL` 정규식이 부정 표현을 구분하지 못함 | `intent_classifier.py` | ✅ 완료 (2026-07-05) |
 | 2 | 카테고리 전환 안내 후 문제가 자동으로 나오지 않음 | `adaptive_difficulty_router`가 `suggest_category_switch` 상태를 확인하지 않음 | `graph.py` | ✅ 완료 (2026-07-05) |
-| 3 | "모르겠다" 입력 시 설명 중 갑자기 문제로 전환 | chatbot에 generate_sqld_question 도구가 바인딩되어 설명 후 자체 문제 출제 + 진단/일반 모드 미분기 | `drill_node.py` | ✅ 완료 (2026-07-05) |
+| 3 (진단) | "모르겠다" 진단 중 — 갑자기 문제 전환 | chatbot 도구 오발동 + 진단/일반 미분기 | `drill_node.py` | ✅ 완료 (2026-07-05) |
+| 3 (일반) | "모르겠다" 일반 모드 — 순서·안내 오류 | 질문→설명 순서, explain_concept trailing 안내 맥락 불일치 | `drill_node.py` | ✅ 완료 (2026-07-06) |
 | 4 | "2 2 3 4" 등 다중 번호 입력 시 정답 처리 | `_ANSWER` 정규식이 첫 번째 숫자만 추출 | `drill_node.py` | ✅ 완료 (2026-07-05) |
 | 5 | 메시지 전송 후 입력창 포커스 해제 | `sendMessage` 이후 포커스 복원 코드 없음 | `chat/page.tsx` | ✅ 완료 (2026-07-05) |
 | 6 | 같은 문제 정답 판정 불일치 | 미조사 | 미확인 | ⏳ 조사 필요 |
 | 7 | 로그아웃 후 재로그인 시 풀이 기록 사라짐 | 미조사 | 미확인 | ⏳ 조사 필요 |
+| UI-1 | 보기 일부만 코드 박스 (WITH 오감지) | `WITH GRANT OPTION` 등이 SQL 구문으로 오분류됨 | `drill_node.py` | ✅ 완료 (2026-07-06) |
+| UI-2 | 보기 번호가 context 번호목록과 혼동 | `1. 2. 3.` 형식이 업무규칙 번호와 동일 | `drill_node.py` | ✅ 완료 (2026-07-06) |
 
 ---
 
@@ -82,7 +85,7 @@ await streamChat(text, true);
 
 ---
 
-### Bug 3 — "모르겠다" 입력 시 진단/일반 모드 분기 처리 (`drill_node.py`)
+### Bug 3 (진단) — "모르겠다" 입력 시 진단/일반 모드 분기 처리 (`drill_node.py`)
 
 **원인:** `pending_question`이 있을 때 "모르겠어" 입력 시 chatbot 노드로 라우팅 → chatbot이 `generate_sqld_question` 도구로 설명 중 자체 문제 출제 + 진단/일반 모드 구분 없이 동일 처리
 
@@ -90,7 +93,39 @@ await streamChat(text, true);
 - `_GIVE_UP` 패턴 추가: `모르겠|몰라|포기|모름`
 - `drill_node` 내에서 포기 표현 감지 후 `is_diagnostic` 여부로 분기:
   - **진단 중:** "정확하지 않아도 괜찮으니 1~4번 중 골라보세요" 유도 메시지 + 같은 문제 재출력
-  - **일반 학습 중:** `explain_concept` 직접 호출 → 개념 설명 → "다시 문제 풀어봐요!" + 같은 문제 재출력
+
+---
+
+### Bug 3 (일반) — "모르겠어" 일반 모드 순서·안내 오류 (`drill_node.py`)
+
+**원인:**
+1. 응답이 하나의 버블에 "질문→설명→안내" 순서로 나와 질문이 두 번 표시됨
+2. `explain_concept` 프롬프트가 설명 끝에 "다음 문제를 풀려면 문제 줘" 를 자동 추가 → `pending` 상태에서 새 문제 요청 유도 (맥락 불일치)
+
+**수정 내용:**
+- 두 개의 `AIMessage`로 분리 반환:
+  - **버블 1:** `explain_concept` 설명 (trailing "다음 문제를 풀려면..." regex로 제거)
+  - **버블 2:** `_format_question(pending)` 재출력 (배지 정상 렌더) + "이해되셨나요? 다시 도전해봐요!"
+
+---
+
+### UI-1 — WITH 오감지로 보기 코드박스 불일치 (`drill_node.py`)
+
+**원인:** `_SQL_IN_OPTION`에 `WITH` 포함 → `WITH GRANT OPTION`, `WITH ADMIN OPTION` 등 DCL 절이 SQL 구문으로 오분류 → 일부 보기만 코드박스, 나머지는 일반 텍스트
+
+**수정:** `_SQL_IN_OPTION`에서 `WITH` 제거
+
+---
+
+### UI-2 — 보기 번호 ①②③④ 변경 (`drill_node.py`)
+
+**원인:** `1. 2. 3. 4.` 형식이 context의 업무규칙 번호목록과 동일해 시각적 구분 어려움
+
+**수정 내용:**
+- `_CIRCLE = {1:"①", 2:"②", 3:"③", 4:"④"}` 매핑 추가
+- `_format_question` 모든 보기 표시를 ①②③④로 변경
+- `_ANSWER` 정규식에 ①②③④ 추가 (원형 번호 직접 입력도 채점 처리)
+- `opts_block` 구분자 `\n\n`으로 통일
 
 ---
 
