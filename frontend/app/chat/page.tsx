@@ -237,9 +237,6 @@ function ChatContent() {
     }
   };
 
-  const lastAiMsg = [...messages].reverse().find(m => m.role === "ai" && m.content !== "");
-  const hasPendingQuestion = !isLoading && !!lastAiMsg && parseQuestionHeader(lastAiMsg.content) !== null;
-
   return (
     <div className="flex h-[100dvh] overflow-hidden">
       <Sidebar
@@ -336,25 +333,12 @@ function ChatContent() {
         </div>
 
         <div className="px-6 py-4 border-t border-gray-200 bg-white">
-          {hasPendingQuestion && (
-            <div className="flex gap-2 mb-3">
-              {["①", "②", "③", "④"].map((circle) => (
-                <button
-                  key={circle}
-                  onClick={() => streamChat(circle, true)}
-                  className="flex-1 py-2.5 text-sm font-semibold border border-blue-200 rounded-xl text-blue-700 hover:bg-blue-50 transition-colors"
-                >
-                  {circle}
-                </button>
-              ))}
-            </div>
-          )}
           <div className="flex gap-3 items-end">
             <textarea
               ref={inputRef}
               className={`flex-1 resize-none border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 max-h-32 transition-opacity ${isLoading ? "opacity-50" : ""}`}
               rows={1}
-              placeholder={hasPendingQuestion ? "모르겠어요, 개념 설명해줘 등..." : "메시지를 입력하세요(Enter로 전송)"}
+              placeholder="메시지를 입력하세요(Enter로 전송)"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}

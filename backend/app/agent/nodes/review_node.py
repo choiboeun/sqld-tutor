@@ -4,33 +4,31 @@ from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
 from app.agent.tools.question_tools import get_question_by_id
 
-_ANSWER = re.compile(r"([1-4①②③④])번?")
-_CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
-_CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
+_ANSWER = re.compile(r"([1-4])번?")
 
 
 def _format_question(q: dict) -> str:
-    header = f"[오답 복습 | {q['category']} / 난이도: {q['difficulty']}]"
-    body_parts = [header]
+    parts = [f"[오답 복습 | {q['category']} / 난이도: {q['difficulty']}]"]
     if q.get("context"):
-        body_parts.append(q["context"])
-
+        parts.append(f"\n{q['context']}")
+    parts.append(f"\n{q['question']}\n")
     options = q["options"]
     if isinstance(options, dict):
-        opts = [f"{_CIRCLE[int(k)]} {options[k]}" for k in sorted(options.keys(), key=int)]
+        for key in sorted(options.keys(), key=int):
+            parts.append(f"{key}. {options[key]}")
     else:
-        opts = [f"{_CIRCLE[i]} {opt}" for i, opt in enumerate(options, 1)]
-
-    body_parts.append(q["question"] + "\n\n" + "\n\n".join(opts))
-    body_parts.append("번호로 답하세요.")
-    return "\n\n".join(body_parts)
+        for i, opt in enumerate(options, 1):
+            parts.append(f"{i}. {opt}")
+    parts.append("\n번호로 답하세요.")
+    return "\n".join(parts)
 
 
 def _format_feedback(q: dict, user_answer: int, correct: bool) -> str:
-    correct_circle = _CIRCLE.get(q["answer"], str(q["answer"]))
     if correct:
-        return "정답입니다! 오답 목록에서 제거됩니다."
-    return f"아직 틀렸습니다. 정답은 {correct_circle}번입니다.\n\n해설: {q.get('explanation', '')}"
+        header = "정답입니다! 오답 목록에서 제거됩니다."
+    else:
+        header = f"아직 틀렸습니다. 정답은 {q['answer']}번입니다."
+    return f"{header}\n\n해설: {q.get('explanation', '')}"
 
 
 def review_node(state: TutorState) -> dict:
@@ -61,16 +59,10 @@ def review_node(state: TutorState) -> dict:
     if not match:
         return {"messages": [AIMessage(content=_format_question(pending))]}
 
-    # 다중 입력 방지
-    if last_human:
-        all_digits = re.findall(r"[1-4①②③④]", last_human.content)
-        if len(all_digits) > 1:
-            return {"messages": [AIMessage(content="1~4 중 하나만 입력해주세요.\n\n" + _format_question(pending))]}
-
-    ans_char = match.group(1)
-    user_answer = _CIRCLE_TO_INT.get(ans_char, int(ans_char))
+    user_answer = int(match.group(1))
     correct = user_answer == pending["answer"]
 
+    # 정답 시 recent_mistakes에서 제거
     mistakes = list(state.get("recent_mistakes") or [])
     if correct and pending["id"] in mistakes:
         mistakes.remove(pending["id"])
