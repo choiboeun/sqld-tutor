@@ -62,16 +62,20 @@ def review_node(state: TutorState) -> dict:
     user_answer = int(match.group(1))
     correct = user_answer == pending["answer"]
 
-    # 정답 시 recent_mistakes에서 제거
+    # 정답 시 recent_mistakes, wrong_answer_log에서 제거
     mistakes = list(state.get("recent_mistakes") or [])
-    if correct and pending["id"] in mistakes:
-        mistakes.remove(pending["id"])
+    wrong_log = dict(state.get("wrong_answer_log") or {})
+    if correct:
+        if pending["id"] in mistakes:
+            mistakes.remove(pending["id"])
+        wrong_log.pop(pending["id"], None)
 
     return {
         "messages": [AIMessage(content=_format_feedback(pending, user_answer, correct))],
         "pending_question": {},
         "question_history": (state.get("question_history") or []) + [pending["id"]],
         "recent_mistakes": mistakes,
+        "wrong_answer_log": wrong_log,
         "last_grade_result": {
             "question_id": pending["id"],
             "category": pending["category"],
