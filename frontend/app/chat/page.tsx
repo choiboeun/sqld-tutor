@@ -156,6 +156,7 @@ function ChatContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [threadId, setThreadId] = useState("demo-user-1");
   const [targetScore, setTargetScore] = useState(70);
+  const [sessionReady, setSessionReady] = useState(false);
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -165,11 +166,29 @@ function ChatContent() {
       .auth.getUser()
       .then(({ data }) => {
         if (data.user) {
-          setThreadId(data.user.id);
+          const uid = data.user.id;
+          setThreadId(uid);
           setTargetScore(data.user.user_metadata?.target_score ?? 70);
+          // 세션 내 이전 채팅 복원
+          try {
+            const saved = sessionStorage.getItem(`chat_${uid}`);
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (parsed.length > 0) setMessages(parsed);
+            }
+          } catch {}
         }
+        setSessionReady(true);
       });
   }, []);
+
+  // 메시지 변경 시 sessionStorage 저장 (로그아웃 전까지 유지)
+  useEffect(() => {
+    if (!sessionReady || threadId === "demo-user-1") return;
+    try {
+      sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(messages));
+    } catch {}
+  }, [messages, sessionReady, threadId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -304,6 +323,7 @@ function ChatContent() {
           </div>
           <button
             onClick={async () => {
+              sessionStorage.removeItem(`chat_${threadId}`);
               await createClient().auth.signOut();
               window.location.href = "/login";
             }}
