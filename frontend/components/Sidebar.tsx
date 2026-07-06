@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface CategoryStat {
   accuracy: number;
@@ -12,6 +13,7 @@ interface ProgressData {
   streak: number;
   accuracy_by_category: Record<string, CategoryStat>;
   weak_categories: { category: string; accuracy: number }[];
+  wrong_count: number;
 }
 
 interface Props {
@@ -160,6 +162,20 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
           </ul>
         </div>
       )}
+
+      {/* 오답 회고 버튼 */}
+      <Link
+        href="/wrong-answers"
+        className="flex items-center justify-between w-full px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 transition-colors text-red-600"
+        onClick={onClose}
+      >
+        <span className="text-sm font-medium">오답 회고</span>
+        {data?.wrong_count != null && data.wrong_count > 0 && (
+          <span className="text-xs bg-red-200 text-red-700 rounded-full px-2 py-0.5 font-semibold">
+            {data.wrong_count}개
+          </span>
+        )}
+      </Link>
 
       {totalAnswered === 0 && (
         <p className="text-xs text-gray-400 text-center mt-2">

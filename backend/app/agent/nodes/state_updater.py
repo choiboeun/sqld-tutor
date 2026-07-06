@@ -56,6 +56,11 @@ def state_updater(state: TutorState) -> dict:
         "difficulty": result.get("difficulty"),
         "total_answered": (state.get("total_answered") or 0) + 1,
     })
+    # 오답 시 wrong_answer_log에 기록 (영구 보관)
+    wrong_log = dict(state.get("wrong_answer_log") or {})
+    if not correct:
+        wrong_log[qid] = result.get("student_answer")
+
     return {
         "accuracy_by_category": accuracy,
         "attempts_by_category": attempts,
@@ -68,6 +73,7 @@ def state_updater(state: TutorState) -> dict:
         "pending_question": {},
         "suggest_category_switch": suggest_switch,
         "messages": extra_messages,
+        "wrong_answer_log": wrong_log,
         # 오답 시 해당 문제 태그 저장 → explain_node에서 정확한 개념 검색에 사용
         "last_wrong_tags": result.get("tags", []) if not correct else None,
         # 정답 시 explain 반복 방지 플래그 리셋

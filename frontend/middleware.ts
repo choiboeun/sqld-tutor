@@ -26,8 +26,8 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
-  // 미인증: /chat, /onboarding → /login
-  if (!user && (path.startsWith("/chat") || path.startsWith("/onboarding"))) {
+  // 미인증: /chat, /onboarding, /wrong-answers → /login
+  if (!user && (path.startsWith("/chat") || path.startsWith("/onboarding") || path.startsWith("/wrong-answers"))) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -54,5 +54,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/onboarding", "/login", "/signup"],
+  matcher: ["/chat/:path*", "/onboarding", "/wrong-answers", "/login", "/signup"],
 };

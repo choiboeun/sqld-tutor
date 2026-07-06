@@ -37,6 +37,8 @@ def get_progress(thread_id: str):
     ]
     weak.sort(key=lambda x: x["accuracy"])
 
+    wrong_log = v.get("wrong_answer_log") or {}
+
     return {
         "total_answered": v.get("total_answered", 0),
         "streak": v.get("streak", 0),
@@ -45,4 +47,5 @@ def get_progress(thread_id: str):
             for cat in _CATEGORIES
         },
         "weak_categories": weak[:3],
+        "wrong_count": len(wrong_log),
     }
