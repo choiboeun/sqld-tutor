@@ -47,6 +47,40 @@ const DIFF_STYLE: Record<string, string> = {
   상: "bg-red-100 text-red-700",
 };
 
+const CIRCLE_TO_NUM: Record<string, number> = { "①": 1, "②": 2, "③": 3, "④": 4 };
+
+function parseOptions(body: string): {
+  stem: string;
+  options: { circle: string; num: number; content: string }[];
+} | null {
+  const cleaned = body.replace(/\n+번호로 답하세요\.\s*$/, "").trim();
+  const paras = cleaned.split(/\n\n/);
+  const circleRE = /^(\*\*)?[①②③④]/;
+
+  const optStarts: number[] = [];
+  for (let i = 0; i < paras.length; i++) {
+    if (circleRE.test(paras[i].trim())) optStarts.push(i);
+  }
+  if (optStarts.length < 4) return null;
+
+  const stem = paras.slice(0, optStarts[0]).join("\n\n").trim();
+  const options: { circle: string; num: number; content: string }[] = [];
+
+  for (let i = 0; i < 4; i++) {
+    const start = optStarts[i];
+    const end = i < 3 ? optStarts[i + 1] : paras.length;
+    const optParas = paras.slice(start, end);
+    const m = optParas[0].trim().match(/^(?:\*\*)?([①②③④])(?:\*\*)?\s*([\s\S]*)/);
+    if (!m) return null;
+    const restOfFirst = m[2].trim();
+    const remaining = optParas.slice(1).join("\n\n");
+    const content = [restOfFirst, remaining].filter(Boolean).join("\n\n");
+    options.push({ circle: m[1], num: CIRCLE_TO_NUM[m[1]], content });
+  }
+
+  return { stem, options };
+}
+
 // Fix 2+4+5: 마크다운 렌더러 — 표/번호목록/줄간격/빈 점 처리
 const mdComponents = {
   // 단락 간격
@@ -301,7 +335,15 @@ function ChatContent() {
                     </span>
                   ) : (() => {
                     const parsed = parseQuestionHeader(msg.content);
-                    return parsed ? (
+                    if (!parsed) {
+                      return (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                          {msg.content}
+                        </ReactMarkdown>
+                      );
+                    }
+                    const optData = parseOptions(parsed.body);
+                    return (
                       <>
                         {parsed.progress && (
                           <div className="mb-2">
@@ -320,13 +362,30 @@ function ChatContent() {
                           </span>
                         </div>
                         <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
-                          {parsed.body}
+                          {optData ? optData.stem : parsed.body}
                         </ReactMarkdown>
+                        {optData && (
+                          <div className="mt-3 space-y-1">
+                            {optData.options.map((opt) => (
+                              <button
+                                key={opt.circle}
+                                onClick={() => !isLoading && streamChat(`${opt.num}번`, true)}
+                                disabled={isLoading}
+                                className="w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed"
+                              >
+                                <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-gray-500 transition-colors mt-0.5">
+                                  {opt.num}
+                                </span>
+                                <div className="flex-1 text-sm leading-relaxed text-gray-800">
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                                    {opt.content}
+                                  </ReactMarkdown>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </>
-                    ) : (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
-                        {msg.content}
-                      </ReactMarkdown>
                     );
                   })()
                 ) : (
