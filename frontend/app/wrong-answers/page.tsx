@@ -91,7 +91,7 @@ export default function WrongAnswersPage() {
     ]);
     setMiniLoading(true);
 
-    const contextMsg = `[오답 회고] ${selected.category} 문제: "${selected.question}" — ${text}`;
+    const contextMsg = text;
 
     try {
       const res = await fetch("/api/chat", {
