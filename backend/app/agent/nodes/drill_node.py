@@ -5,8 +5,10 @@ from app.agent.state import TutorState
 from app.agent.tools.question_tools import get_random_question, get_available_categories
 from app.agent.tools.explain_tools import explain_concept
 
-_ANSWER = re.compile(r"([1-4])번?")
+_ANSWER = re.compile(r"([1-4①②③④])번?")
 _GIVE_UP = re.compile(r"모르겠|몰라|포기|모름")
+_CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
+_CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
 
 
 _PARTICLE = re.compile(r'[의은이가을를에서도]$')
@@ -47,7 +49,7 @@ def _pick_diverse_category(state: TutorState, available: list[str]) -> str | Non
 
 
 # 보기가 SQL 구문으로 시작할 때만 코드 블록 처리 (한국어 문장 중 SQL 키워드 언급은 제외)
-_SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|WITH|MERGE)\b', re.IGNORECASE)
+_SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b', re.IGNORECASE)
 _MARKDOWN_TABLE_RE = re.compile(r'^\s*\|.+\|', re.MULTILINE)
 
 
@@ -190,24 +192,24 @@ def _format_question(q: dict) -> str:
         opt_data.append((fmt, key, content))
         print(f"[drill] opt {key}: fmt={fmt}, text={repr(opt_text[:60])}")
 
-    # has_block이면 모든 옵션을 **N.** 형식으로 통일 (ordered list 번호 재배정 방지)
+    # 모든 보기를 ①②③④ 원형 번호로 통일 (context 번호목록과 시각적 구분)
     formatted_opts = []
     for fmt, key, content in opt_data:
+        circle = _CIRCLE[int(key)]
         if not has_block:
-            formatted_opts.append(f"{key}. {content}")
+            formatted_opts.append(f"{circle} {content}")
         elif fmt == "result_table":
             table_str, suffix_str = content
-            # suffix를 번호 옆에 배치: "**2.** 2건만 조회된다.\n| table |"
-            label = f"**{key}.** {suffix_str}" if suffix_str else f"**{key}.**"
+            label = f"**{circle}** {suffix_str}" if suffix_str else f"**{circle}**"
             formatted_opts.append(f"{label}\n{table_str}")
         elif fmt == "sql_block":
-            formatted_opts.append(f"**{key}.**\n```sql\n{content}\n```")
+            formatted_opts.append(f"**{circle}**\n```sql\n{content}\n```")
         elif fmt == "md_table":
-            formatted_opts.append(f"**{key}.**\n{content}")
+            formatted_opts.append(f"**{circle}**\n{content}")
         else:  # plain
-            formatted_opts.append(f"**{key}.** {content}")
+            formatted_opts.append(f"**{circle}** {content}")
 
-    opts_block = "\n\n".join(formatted_opts) if has_block else "\n".join(formatted_opts)
+    opts_block = "\n\n".join(formatted_opts)
 
     sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
     if context:
@@ -309,7 +311,7 @@ def drill_node(state: TutorState) -> dict:
 
     # 다중 번호 입력 감지 (예: "2 2 3 4", "1 3")
     if match and last_human:
-        all_digits = re.findall(r"[1-4]", last_human.content)
+        all_digits = re.findall(r"[1-4①②③④]", last_human.content)
         if len(all_digits) > 1:
             diag_seq = pending.get("_diag_seq")
             diag_prefix = f"**{diag_seq}/8**\n\n" if diag_seq else ""
@@ -344,7 +346,8 @@ def drill_node(state: TutorState) -> dict:
             note = "\n\n> 현재 문제에 먼저 답해주세요 (1~4번)."
         return {"messages": [AIMessage(content=diag_prefix + _format_question(pending) + note)]}
 
-    user_answer = int(match.group(1))
+    ans_char = match.group(1)
+    user_answer = _CIRCLE_TO_INT.get(ans_char, int(ans_char))
     correct = user_answer == pending["answer"]
 
     return {
