@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
@@ -6,8 +7,16 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import chat, progress, wrong_answers, mini_chat
+from app.db.checkpointer import open_checkpointer_pool
 
-app = FastAPI(title="SQLD AI Tutor API")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await open_checkpointer_pool()
+    yield
+
+
+app = FastAPI(title="SQLD AI Tutor API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
