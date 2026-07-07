@@ -64,7 +64,7 @@ def _get_text(content) -> str:
 async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60):
     config = {"configurable": {"thread_id": thread_id}}
 
-    existing = graph.get_state(config)
+    existing = await graph.aget_state(config)
     existing_msgs = existing.values.get("messages", []) if existing.values else []
     is_new = len(existing_msgs) == 0
 
