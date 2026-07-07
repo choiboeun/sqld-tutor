@@ -264,6 +264,7 @@ function ChatContent() {
 
             if (event.type === "message") {
               setAiHasResponded(true);
+              setIsLoading(false);
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
