@@ -6,9 +6,9 @@ router = APIRouter()
 
 
 @router.get("/wrong-answers/{thread_id}")
-def get_wrong_answers(thread_id: str):
+async def get_wrong_answers(thread_id: str):
     config = {"configurable": {"thread_id": thread_id}}
-    state = graph.get_state(config)
+    state = await graph.aget_state(config)
 
     if not state.values:
         return {"wrong_answers": []}
