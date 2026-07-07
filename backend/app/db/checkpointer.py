@@ -7,50 +7,68 @@ _async_saver = None
 
 def get_checkpointer():
     """
-    그래프는 async(astream_events)로 실행되므로 AsyncPostgresSaver 필요.
-    AsyncConnectionPool은 open=False로 생성 후 FastAPI lifespan에서 open().
+    AsyncPostgresSaver.__init__() 는 asyncio.get_running_loop() 을 호출하므로
+    모듈 임포트 시점(이벤트 루프 없음)에 생성하면 RuntimeError 로 MemorySaver fallback 됨.
+    → pool 만 미리 생성하고, AsyncPostgresSaver 는 open_checkpointer_pool() 에서 생성.
+    graph 는 일단 MemorySaver 로 컴파일되며, lifespan 완료 후 graph.checkpointer 교체.
     """
-    global _async_pool, _async_saver
+    global _async_pool
 
     db_url = os.getenv("DATABASE_URL", "")
     if not db_url:
+        print("[checkpointer] DATABASE_URL 없음, MemorySaver 사용", flush=True)
         return MemorySaver()
 
     try:
-        from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
         from psycopg_pool import AsyncConnectionPool
 
         _async_pool = AsyncConnectionPool(
             db_url,
             min_size=1,
             max_size=5,
-            open=False,  # FastAPI lifespan에서 await pool.open()
-            kwargs={"prepare_threshold": 0},
+            open=False,
+            kwargs={"prepare_threshold": None},
         )
-        _async_saver = AsyncPostgresSaver(_async_pool)
-        return _async_saver
+        print("[checkpointer] AsyncConnectionPool 생성 완료 (미오픈)", flush=True)
+        return MemorySaver()  # lifespan 에서 AsyncPostgresSaver 로 교체 예정
     except Exception as e:
         import traceback
-        print(f"[checkpointer] AsyncPostgresSaver 생성 실패, MemorySaver로 fallback: {e}")
+        print(f"[checkpointer] AsyncConnectionPool 생성 실패, MemorySaver fallback: {e}", flush=True)
         traceback.print_exc()
         return MemorySaver()
 
 
 async def open_checkpointer_pool():
-    """FastAPI lifespan startup에서 호출 — async pool을 열고 테이블 확인."""
+    """
+    FastAPI lifespan startup 에서 호출.
+    async 컨텍스트에서 AsyncPostgresSaver 를 생성하고 pool 을 열어
+    graph.checkpointer 를 교체한다.
+    """
     global _async_pool, _async_saver
+
     if _async_pool is None:
-        print("[checkpointer] DB 없음, MemorySaver 사용 중")
+        print("[checkpointer] pool 없음, MemorySaver 유지", flush=True)
         return
+
     try:
+        from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+
+        _async_saver = AsyncPostgresSaver(_async_pool)  # async 컨텍스트에서 생성
+
         await _async_pool.open()
-        print("[checkpointer] AsyncConnectionPool 오픈 완료")
+        print("[checkpointer] AsyncConnectionPool 오픈 완료", flush=True)
+
         try:
             await _async_saver.setup()
-            print("[checkpointer] AsyncPostgresSaver setup 완료")
+            print("[checkpointer] AsyncPostgresSaver setup 완료", flush=True)
         except Exception as e:
-            print(f"[checkpointer] setup() 스킵 (테이블 이미 존재): {e}")
+            print(f"[checkpointer] setup() 스킵 (테이블 이미 존재): {e}", flush=True)
+
+        from app.agent.graph import graph
+        graph.checkpointer = _async_saver
+        print("[checkpointer] graph.checkpointer → AsyncPostgresSaver 교체 완료", flush=True)
+
     except Exception as e:
         import traceback
-        print(f"[checkpointer] pool.open() 실패: {e}")
+        print(f"[checkpointer] pool.open() 실패: {e}", flush=True)
         traceback.print_exc()
