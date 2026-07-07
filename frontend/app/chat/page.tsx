@@ -143,11 +143,13 @@ const mdComponents = {
 
 function ChatContent() {
   const searchParams = useSearchParams();
+  const isNewUser = searchParams.get("new") === "true";
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "ai",
-      content:
-        "안녕하세요! SQLD AI 튜터입니다.\n'문제 줘', '약점 분석해줘' 등으로 시작해보세요.",
+      content: isNewUser
+        ? "안녕하세요! SQLD AI 튜터입니다.\n먼저 8문제로 현재 실력을 파악해볼게요. 편하게 답해보세요!"
+        : "안녕하세요! SQLD AI 튜터입니다.\n'문제 줘', '약점 분석해줘' 등으로 시작해보세요.",
     },
   ]);
   const [input, setInput] = useState("");
