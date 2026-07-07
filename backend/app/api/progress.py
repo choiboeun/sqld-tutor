@@ -12,9 +12,9 @@ _CATEGORIES = [
 
 
 @router.get("/progress/{thread_id}")
-def get_progress(thread_id: str):
+async def get_progress(thread_id: str):
     config = {"configurable": {"thread_id": thread_id}}
-    state = graph.get_state(config)
+    state = await graph.aget_state(config)
 
     if not state.values:
         return {
