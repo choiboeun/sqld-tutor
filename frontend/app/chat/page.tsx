@@ -154,6 +154,7 @@ function ChatContent() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [aiHasResponded, setAiHasResponded] = useState(false);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [threadId, setThreadId] = useState("demo-user-1");
@@ -227,6 +228,7 @@ function ChatContent() {
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean) => {
     setIsLoading(true);
+    setAiHasResponded(false);
     if (showUserMsg) {
       setMessages((prev) => [...prev, { role: "user", content: message }]);
     }
@@ -261,6 +263,7 @@ function ChatContent() {
             const event = JSON.parse(raw);
 
             if (event.type === "message") {
+              setAiHasResponded(true);
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
@@ -279,6 +282,7 @@ function ChatContent() {
               setMessages((prev) =>
                 prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
               );
+              setIsLoading(false);
               setRefreshSidebar((n) => n + 1);
             } else if (event.type === "error") {
               setMessages((prev) => {
@@ -365,7 +369,8 @@ function ChatContent() {
         </div>
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-          {messages.map((msg, i) => (
+          {messages.map((msg, i) =>
+            msg.role === "ai" && msg.content === "" && aiHasResponded ? null : (
             <div
               key={i}
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
