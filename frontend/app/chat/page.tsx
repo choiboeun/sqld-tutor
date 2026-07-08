@@ -418,6 +418,7 @@ function ChatContent() {
                         </ReactMarkdown>
                       );
                     }
+                    const isAnswered = messages.slice(i + 1).some((m) => m.role === "user");
                     const optData = parseOptions(parsed.body);
                     return (
                       <>
@@ -445,8 +446,8 @@ function ChatContent() {
                             {optData.options.map((opt) => (
                               <button
                                 key={opt.circle}
-                                onClick={() => !isLoading && streamChat(`${opt.num}번`, true)}
-                                disabled={isLoading}
+                                onClick={() => !isLoading && !isAnswered && streamChat(`${opt.num}번`, true)}
+                                disabled={isLoading || isAnswered}
                                 className="w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed"
                               >
                                 <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-gray-500 transition-colors mt-0.5">
