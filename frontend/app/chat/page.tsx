@@ -264,6 +264,7 @@ function ChatContent() {
 
             if (event.type === "message") {
               setAiHasResponded(true);
+              setIsLoading(false);
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
@@ -307,13 +308,15 @@ function ChatContent() {
     }
   }, [threadId, targetScore]);
 
-  // ?new=true 로 진입 시 진단 자동 시작
+  // ?new=true 로 진입 시 진단 자동 시작 (세션 복원 완료 후에만, 대화 이력이 없을 때만)
   useEffect(() => {
-    if (searchParams.get("new") === "true" && threadId !== "demo-user-1" && !diagnosticFired.current) {
+    if (searchParams.get("new") === "true" && threadId !== "demo-user-1" && !diagnosticFired.current && sessionReady) {
       diagnosticFired.current = true;
-      streamChat("진단 시작해줘", false);
+      if (messages.length <= 1) {
+        streamChat("진단 시작해줘", false);
+      }
     }
-  }, [searchParams, threadId, streamChat]);
+  }, [searchParams, threadId, streamChat, sessionReady]);
 
   const sendMessage = async () => {
     const text = input.trim();
