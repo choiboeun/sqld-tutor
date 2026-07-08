@@ -213,7 +213,7 @@ def _format_question(q: dict) -> str:
 
     sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
     if context:
-        sections.append(context)
+        sections.append(context.replace("\n", "\n\n"))
     sections.append(q['question'])
     sections.append(opts_block)
     sections.append("번호로 답하세요.")
