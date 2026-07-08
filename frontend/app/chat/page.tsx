@@ -194,11 +194,12 @@ function ChatContent() {
       });
   }, []);
 
-  // 메시지 변경 시 sessionStorage 저장 (로그아웃 전까지 유지)
+  // 메시지 변경 시 sessionStorage 저장 (스트리밍 중 빈 슬롯은 제외)
   useEffect(() => {
     if (!sessionReady || threadId === "demo-user-1") return;
     try {
-      sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(messages));
+      const toSave = messages.filter(m => !(m.role === "ai" && m.content === ""));
+      sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave));
     } catch {}
   }, [messages, sessionReady, threadId]);
 
@@ -375,8 +376,10 @@ function ChatContent() {
         </div>
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-          {messages.map((msg, i) =>
-            msg.role === "ai" && msg.content === "" && aiHasResponded ? null : (
+          {messages.map((msg, i) => {
+            const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
+            if (msg.role === "ai" && msg.content === "" && aiHasResponded) return null;
+            return (
             <div
               key={i}
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
@@ -431,8 +434,8 @@ function ChatContent() {
                             {optData.options.map((opt) => (
                               <button
                                 key={opt.circle}
-                                onClick={() => !isLoading && streamChat(`${opt.num}번`, true)}
-                                disabled={isLoading}
+                                onClick={() => !isLoading && !isAnswered && streamChat(`${opt.num}번`, true)}
+                                disabled={isLoading || isAnswered}
                                 className="w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed"
                               >
                                 <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-gray-500 transition-colors mt-0.5">
@@ -455,7 +458,8 @@ function ChatContent() {
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
           <div ref={bottomRef} />
         </div>
 

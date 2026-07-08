@@ -5,13 +5,19 @@ from langchain_core.tools import tool
 
 QUESTIONS_PATH = Path(__file__).parent.parent.parent / "data" / "questions" / "questions_v0.1.jsonl"
 
+_QUESTIONS_CACHE: list[dict] | None = None
+
 
 def _load_questions() -> list[dict]:
+    global _QUESTIONS_CACHE
+    if _QUESTIONS_CACHE is not None:
+        return _QUESTIONS_CACHE
     questions = []
     with open(QUESTIONS_PATH, encoding="utf-8") as f:
         for line in f:
             if line.strip():
                 questions.append(json.loads(line))
+    _QUESTIONS_CACHE = questions
     return questions
 
 

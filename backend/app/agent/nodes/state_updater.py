@@ -42,7 +42,7 @@ def state_updater(state: TutorState) -> dict:
     # 적응형 신호: streak >= 3 → 카테고리 전환 권장
     suggest_switch = streak >= _STREAK_THRESHOLD
     extra_messages = []
-    if suggest_switch:
+    if suggest_switch and not state.get("is_diagnostic", False):
         extra_messages.append(
             AIMessage(content=f"연속 {streak}개 정답! 다른 카테고리로 넘어갈게요.")
         )

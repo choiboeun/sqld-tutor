@@ -24,6 +24,7 @@ async def get_progress(thread_id: str):
                 cat: {"accuracy": 0.0, "attempts": 0} for cat in _CATEGORIES
             },
             "weak_categories": [],
+            "wrong_count": 0,
         }
 
     v = state.values
