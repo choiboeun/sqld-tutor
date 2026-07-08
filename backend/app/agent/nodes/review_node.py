@@ -10,6 +10,23 @@ _CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
 _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
 
 
+def _normalize_context(ctx: str) -> str:
+    """단일 \n을 \n\n으로 변환하되, 마크다운 테이블 행 사이와 코드 블록 내부는 유지."""
+    lines = ctx.split('\n')
+    out = []
+    in_code = False
+    for i, line in enumerate(lines):
+        out.append(line)
+        if line.strip().startswith('```'):
+            in_code = not in_code
+        if i < len(lines) - 1 and not in_code:
+            is_table = line.strip().startswith('|')
+            next_is_table = lines[i + 1].strip().startswith('|')
+            if not (is_table and next_is_table):
+                out.append('')
+    return '\n'.join(out)
+
+
 def _format_question(q: dict) -> str:
     """drill_node와 동일한 ①②③④ 형식으로 포맷 (버튼 렌더링 호환)."""
     context = q.get("context", "")
@@ -37,7 +54,7 @@ def _format_question(q: dict) -> str:
     sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
     sections.append("> 오답 복습 중인 문제입니다.")
     if context:
-        sections.append(context.replace("\n", "\n\n"))
+        sections.append(_normalize_context(context))
     sections.append(q['question'])
     sections.append(opts_block)
     sections.append("번호로 답하세요.")

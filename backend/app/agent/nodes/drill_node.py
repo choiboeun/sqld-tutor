@@ -53,6 +53,23 @@ _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DR
 _MARKDOWN_TABLE_RE = re.compile(r'^\s*\|.+\|', re.MULTILINE)
 
 
+def _normalize_context(ctx: str) -> str:
+    """단일 \n을 \n\n으로 변환하되, 마크다운 테이블 행 사이와 코드 블록 내부는 유지."""
+    lines = ctx.split('\n')
+    out = []
+    in_code = False
+    for i, line in enumerate(lines):
+        out.append(line)
+        if line.strip().startswith('```'):
+            in_code = not in_code
+        if i < len(lines) - 1 and not in_code:
+            is_table = line.strip().startswith('|')
+            next_is_table = lines[i + 1].strip().startswith('|')
+            if not (is_table and next_is_table):
+                out.append('')
+    return '\n'.join(out)
+
+
 def _try_result_table(text: str, context: str = "") -> tuple | None:
     """결과 패턴을 (테이블 문자열, suffix) 튜플로 변환한다. 변환 불가시 None."""
     t = text.strip()
@@ -213,7 +230,7 @@ def _format_question(q: dict) -> str:
 
     sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
     if context:
-        sections.append(context.replace("\n", "\n\n"))
+        sections.append(_normalize_context(context))
     sections.append(q['question'])
     sections.append(opts_block)
     sections.append("번호로 답하세요.")
