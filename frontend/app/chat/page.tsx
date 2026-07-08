@@ -373,9 +373,12 @@ function ChatContent() {
         </div>
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-          {messages.map((msg, i) => {
+          {(() => {
+            const lastAiContent = [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? "";
+            const lastMsgIsQuestion = !!parseQuestionHeader(lastAiContent);
+            return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
-            if (msg.role === "ai" && msg.content === "" && aiHasResponded && !isLoading) return null;
+            if (msg.role === "ai" && msg.content === "" && aiHasResponded && (!isLoading || lastMsgIsQuestion)) return null;
             return (
             <div
               key={i}
@@ -433,7 +436,7 @@ function ChatContent() {
                                 key={opt.circle}
                                 onClick={() => !isLoading && !isAnswered && streamChat(`${opt.num}번`, true)}
                                 disabled={isLoading || isAnswered}
-                                className="w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed"
+                                className={`w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed ${isLoading && !isAnswered ? "animate-pulse" : ""}`}
                               >
                                 <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-gray-500 transition-colors mt-0.5">
                                   {opt.num}
@@ -456,7 +459,8 @@ function ChatContent() {
               </div>
             </div>
             );
-          })}
+          });
+          })()}
           <div ref={bottomRef} />
         </div>
 
