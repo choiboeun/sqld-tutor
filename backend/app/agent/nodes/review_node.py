@@ -122,5 +122,6 @@ def review_node(state: TutorState) -> dict:
             "correct": correct,
             "difficulty": pending["difficulty"],
             "tags": pending.get("tags", []),
+            "student_answer": user_answer,
         },
     }
