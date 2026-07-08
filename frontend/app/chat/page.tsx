@@ -265,10 +265,7 @@ function ChatContent() {
 
             if (event.type === "message") {
               setAiHasResponded(true);
-              // 질문 메시지는 done 이벤트까지 잠금 유지 (체크포인트 저장 전 클릭 방지)
-              if (!parseQuestionHeader(event.content)) {
-                setIsLoading(false);
-              }
+              // done 이벤트까지 잠금 유지 — feedback 후 explain 노드가 아직 실행 중일 수 있음
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
@@ -378,7 +375,7 @@ function ChatContent() {
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
-            if (msg.role === "ai" && msg.content === "" && aiHasResponded) return null;
+            if (msg.role === "ai" && msg.content === "" && aiHasResponded && !isLoading) return null;
             return (
             <div
               key={i}
