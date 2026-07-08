@@ -10,7 +10,6 @@ import { createClient } from "@/lib/supabase/client";
 interface Message {
   role: "user" | "ai";
   content: string;
-  isError?: boolean;
 }
 
 const QUESTION_HDR_RE = /^\[(.+?) \/ 난이도:\s*(상|중|하)\]\n*/;
@@ -161,7 +160,6 @@ function ChatContent() {
   const [threadId, setThreadId] = useState("demo-user-1");
   const [targetScore, setTargetScore] = useState(70);
   const [sessionReady, setSessionReady] = useState(false);
-  const [lastUserMessage, setLastUserMessage] = useState("");
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -231,7 +229,6 @@ function ChatContent() {
   const streamChat = useCallback(async (message: string, showUserMsg: boolean) => {
     setIsLoading(true);
     setAiHasResponded(false);
-    setLastUserMessage(message);
     if (showUserMsg) {
       setMessages((prev) => [...prev, { role: "user", content: message }]);
     }
@@ -267,7 +264,6 @@ function ChatContent() {
 
             if (event.type === "message") {
               setAiHasResponded(true);
-              setIsLoading(false);
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
@@ -291,7 +287,7 @@ function ChatContent() {
             } else if (event.type === "error") {
               setMessages((prev) => {
                 const next = [...prev];
-                next[next.length - 1] = { role: "ai", content: "연결 오류가 발생했습니다.", isError: true };
+                next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
                 return next;
               });
             }
@@ -303,7 +299,7 @@ function ChatContent() {
     } catch {
       setMessages((prev) => {
         const next = [...prev];
-        next[next.length - 1] = { role: "ai", content: "연결 오류가 발생했습니다.", isError: true };
+        next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
         return next;
       });
     } finally {
@@ -311,15 +307,13 @@ function ChatContent() {
     }
   }, [threadId, targetScore]);
 
-  // ?new=true 로 진입 시 진단 자동 시작 (세션 복원 완료 후에만, 대화 이력이 없을 때만)
+  // ?new=true 로 진입 시 진단 자동 시작
   useEffect(() => {
-    if (searchParams.get("new") === "true" && threadId !== "demo-user-1" && !diagnosticFired.current && sessionReady) {
+    if (searchParams.get("new") === "true" && threadId !== "demo-user-1" && !diagnosticFired.current) {
       diagnosticFired.current = true;
-      if (messages.length <= 1) {
-        streamChat("진단 시작해줘", false);
-      }
+      streamChat("진단 시작해줘", false);
     }
-  }, [searchParams, threadId, streamChat, sessionReady]);
+  }, [searchParams, threadId, streamChat]);
 
   const sendMessage = async () => {
     const text = input.trim();
@@ -395,20 +389,6 @@ function ChatContent() {
                       <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                       <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                     </span>
-                  ) : msg.isError ? (
-                    <div>
-                      <p className="text-gray-500 text-sm">{msg.content}</p>
-                      <button
-                        onClick={() => {
-                          setMessages((prev) => prev.filter((_, idx) => idx !== i));
-                          streamChat(lastUserMessage, false);
-                        }}
-                        disabled={isLoading}
-                        className="mt-2 flex items-center gap-1 text-xs text-blue-500 hover:text-blue-700 font-medium disabled:opacity-40 transition-colors"
-                      >
-                        ↺ 다시 시도
-                      </button>
-                    </div>
                   ) : (() => {
                     const parsed = parseQuestionHeader(msg.content);
                     if (!parsed) {
