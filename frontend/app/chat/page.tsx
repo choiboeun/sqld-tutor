@@ -264,7 +264,10 @@ function ChatContent() {
 
             if (event.type === "message") {
               setAiHasResponded(true);
-              setIsLoading(false);
+              // 질문 메시지는 done 이벤트까지 잠금 유지 (체크포인트 저장 전 클릭 방지)
+              if (!parseQuestionHeader(event.content)) {
+                setIsLoading(false);
+              }
               setMessages((prev) => {
                 const next = [...prev];
                 next[next.length - 1] = { role: "ai", content: event.content };
