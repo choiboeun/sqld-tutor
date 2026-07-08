@@ -7,7 +7,7 @@ from app.agent.tools.question_tools import get_question_by_id
 _ANSWER = re.compile(r"([1-4①②③④])번?")
 _CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
 _CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
-_SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b', re.IGNORECASE)
+_SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
 
 
 def _format_question(q: dict) -> str:
