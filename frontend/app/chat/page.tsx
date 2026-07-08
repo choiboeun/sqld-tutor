@@ -32,6 +32,12 @@ function parseQuestionHeader(content: string) {
     }
   }
 
+  // 인트로 텍스트("알겠습니다..." 등)가 앞에 붙은 경우 [카테고리 / 난이도: X] 위치부터 파싱
+  if (!stripped.match(/^\[/)) {
+    const idx = stripped.search(/\[.+? \/ 난이도:\s*(?:상|중|하)\]/);
+    if (idx !== -1) stripped = stripped.slice(idx);
+  }
+
   const m = stripped.match(QUESTION_HDR_RE);
   if (!m) return null;
   return {
