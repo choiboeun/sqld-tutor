@@ -15,14 +15,22 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [targetScore, setTargetScore] = useState(70);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleStart = async () => {
     setLoading(true);
-    const supabase = createClient();
-    await supabase.auth.updateUser({
-      data: { onboarding_completed: true, target_score: targetScore },
-    });
-    router.push("/chat?new=true");
+    setError(null);
+    try {
+      const supabase = createClient();
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { onboarding_completed: true, target_score: targetScore },
+      });
+      if (updateError) throw updateError;
+      router.push("/chat?new=true");
+    } catch {
+      setError("설정 저장에 실패했습니다. 다시 시도해주세요.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,6 +61,9 @@ export default function OnboardingPage() {
           ))}
         </div>
 
+        {error && (
+          <p className="text-xs text-red-500 text-center mb-3">{error}</p>
+        )}
         <button
           onClick={handleStart}
           disabled={loading}
