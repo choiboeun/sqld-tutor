@@ -22,6 +22,7 @@
 | UX-2 | 오답 회고 기능 부재 | 풀이 기록 조회 UI 없음 | `chat/page.tsx`, `api/wrong_answers.py` | ✅ 완료 (2026-07-06) |
 | UX-3 | 예상 점수 표시 없음 | 카테고리별 정답률만 있고 종합 점수 없음 | `components/Sidebar.tsx`, `api/progress.py` | ✅ 완료 (2026-07-08) |
 | UX-4 | 네트워크 오류 시 재시도 불가 | 오류 메시지가 채팅 버블로 삽입되어 재전송 방법 없음 | `chat/page.tsx` | ✅ 완료 (2026-07-09) |
+| UX-5 | 채점 후 추가 질의 시 새 문제 출제됨 | `intent_classifier`가 "이 문제에 대해서"의 "문제" 키워드를 새 문제 요청으로 오분류, explain_node는 last_category 기준으로 엉뚱한 개념 설명 | `intent_classifier.py`, `drill_node.py`, `review_node.py`, `state.py` | ✅ 완료 (2026-07-09) |
 
 ---
 
@@ -160,6 +161,28 @@ await streamChat(text, true);
 ### UX-1 — 보기 버튼 클릭으로 답 선택 (`chat/page.tsx`) ✅
 
 3명 공통 요청 핵심 기능. `parseQuestionHeader`로 문제 감지 후 ①②③④ 보기를 클릭 가능한 버튼으로 렌더링. 이미 답한 문제는 버튼 비활성화. 로딩 중 pulse 애니메이션(bg-gray-100) 으로 활성화 대기 시각화. `bb02c39` `d0a00da`
+
+---
+
+### UX-5 — 채점 후 추가 질의 라우팅 (`intent_classifier.py`, `drill_node.py`, `review_node.py`, `state.py`) ✅
+
+**증상:**
+- "이 문제에 대해서 자세하게 설명해줄 수 있어?" → 새 문제 출제
+- "이해하기 쉽게 설명해줘" → 엉뚱한 카테고리 개념 설명
+
+**원인 (두 가지):**
+1. `_DRILL` 패턴이 `문제\s*(줘|내줘|...)?` 형태라 suffix가 optional → "이 **문제**에 대해서"에서도 drill로 오분류
+2. drill을 피해도 `explain_node`가 `last_category` 값 기준으로 방금 틀린 문제와 무관한 개념을 설명
+
+**수정 내용:**
+- `state.py`: `follow_up_mode: bool` 필드 추가
+- `drill_node.py` / `review_node.py`: 채점 완료 시 `"follow_up_mode": True` 반환
+- `intent_classifier.py`:
+  - `_DRILL_EXPLICIT` 패턴 추가 (suffix 필수 — bare "문제" 제외): `문제\s*(줘|내줘|풀게|풀어|주세요)|다음\s*문제|새\s*문제`
+  - `follow_up_mode` 활성 시 `_DRILL_EXPLICIT` 감지되면 drill + 모드 리셋, 그 외 모든 메시지는 chatbot 라우팅
+  - chatbot은 대화 히스토리 전체를 보므로 방금 틀린 문제 맥락으로 답변 가능
+- `chat.py`: INITIAL_STATE에 `"follow_up_mode": False` 추가
+- `408ac93` (2026-07-09)
 
 ---
 
