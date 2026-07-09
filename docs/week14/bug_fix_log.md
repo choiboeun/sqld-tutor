@@ -14,10 +14,13 @@
 | 3 (일반) | "모르겠다" 일반 모드 — 순서·안내 오류 | 질문→설명 순서, explain_concept trailing 안내 맥락 불일치 | `drill_node.py` | ✅ 완료 (2026-07-06) |
 | 4 | "2 2 3 4" 등 다중 번호 입력 시 정답 처리 | `_ANSWER` 정규식이 첫 번째 숫자만 추출 | `drill_node.py` | ✅ 완료 (2026-07-05) |
 | 5 | 메시지 전송 후 입력창 포커스 해제 | `sendMessage` 이후 포커스 복원 코드 없음 | `chat/page.tsx` | ✅ 완료 (2026-07-05) |
-| 6 | 같은 문제 정답 판정 불일치 | 미조사 | 미확인 | ⏳ 조사 필요 |
-| 7 | 로그아웃 후 재로그인 시 풀이 기록 사라짐 | sync 단일 연결 유휴 끊김 → MemorySaver fallback | `checkpointer.py`, `requirements.txt` | ✅ 완료 (2026-07-06) |
+| 6 | 같은 문제 정답 판정 불일치 | 두 번째 astream_events가 stale 체크포인트 읽어 채점 오류 | `chat/page.tsx` | ✅ 완료 (2026-07-08) |
+| 7 | 로그아웃 후 재로그인 시 풀이 기록 사라짐 | sync 단일 연결 유휴 끊김 → MemorySaver fallback → AsyncPostgresSaver 컨텍스트 오류 | `checkpointer.py`, `api/chat.py` | ✅ 완료 (2026-07-07) |
 | UI-1 | 보기 일부만 코드 박스 (WITH 오감지) | `WITH GRANT OPTION` 등이 SQL 구문으로 오분류됨 | `drill_node.py` | ✅ 완료 (2026-07-06) |
 | UI-2 | 보기 번호가 context 번호목록과 혼동 | `1. 2. 3.` 형식이 업무규칙 번호와 동일 | `drill_node.py` | ✅ 완료 (2026-07-06) |
+| UX-1 | 보기 버튼 클릭으로 답 선택 | 텍스트 입력만 지원 (3명 공통 요청) | `chat/page.tsx` | ✅ 완료 (2026-07-06) |
+| UX-2 | 오답 회고 기능 부재 | 풀이 기록 조회 UI 없음 | `chat/page.tsx`, `api/wrong_answers.py` | ✅ 완료 (2026-07-06) |
+| UX-3 | 예상 점수 표시 없음 | 카테고리별 정답률만 있고 종합 점수 없음 | `components/Sidebar.tsx`, `api/progress.py` | ✅ 완료 (2026-07-08) |
 
 ---
 
@@ -129,24 +132,69 @@ await streamChat(text, true);
 
 ---
 
-## 미해결 버그 (조사 필요)
+---
 
-### Bug 6 — 정답 판정 불일치
-- **증상:** 같은 문제를 처음엔 오답, 재시도 시 정답으로 처리
-- **다음 단계:** LangSmith 트레이스에서 해당 세션 재현 후 `drill_node.py` 채점 로직 확인
+## 추가 수정 (2026-07-06 후반 ~ 2026-07-08)
 
-### Bug 7 — 로그아웃 후 기록 소실 (`checkpointer.py`)
+### Bug 6 — 정답 판정 불일치 (`chat/page.tsx`) ✅
 
-**원인:** `psycopg.connect()`로 단일 동기 연결을 서버 시작 시 1개만 생성. Render 등 유휴 연결을 끊는 환경에서 연결이 끊어지면 `MemorySaver` fallback 발생 → 서버 재시작 시 체크포인트 전체 소실.
+**원인:** 문제 버튼을 `message` 이벤트 직후 활성화 → 사용자가 빠르게 클릭하면 두 번째 `astream_events`가 체크포인트 저장 전 상태를 읽어 채점 오류 발생 (체크포인트 경쟁 조건).
 
-**수정 내용:**
-- `psycopg2-binary` → `psycopg[binary,pool]` (requirements.txt)
-- 단일 연결 → `ConnectionPool(min_size=1, max_size=5)` 사용
+**수정:** `done` 이벤트(그래프 실행 + 체크포인트 저장 완료) 이후에만 버튼 활성화. `isLoading` 게이트를 `message`가 아닌 `done`에서 해제. `f2df0ea`
 
-```python
-from psycopg_pool import ConnectionPool
-pool = ConnectionPool(db_url, min_size=1, max_size=5, open=True)
-saver = PostgresSaver(pool)
-```
+---
 
-**사용자 체감:** 재로그인 후 사이드바의 정답률·연속정답·약점 카테고리가 그대로 유지됨.
+### Bug 7 — 재로그인 기록 소실 전체 수정 여정 (`checkpointer.py`)
+
+**1차 수정 (2026-07-06):** `ConnectionPool(min_size=1, max_size=5)` 교체로 유휴 끊김 문제 해결 시도.
+
+**문제 지속:** Supabase Session pooler 환경에서 `AsyncPostgresSaver`가 동기 컨텍스트에서 생성되어 `NotImplementedError` 발생 → MemorySaver fallback 반복.
+
+**최종 수정 (2026-07-07):** `AsyncPostgresSaver`를 FastAPI `lifespan` async 컨텍스트 안에서 생성, `setup()` 호출에만 autocommit 연결 사용, pool은 일반 트랜잭션 모드 유지. `ee649fa`
+
+추가로 `progress`, `wrong_answers` API의 동기 `get_state` → 비동기 `aget_state`로 교체. `3eddae0` `a29dd9f`
+
+---
+
+### UX-1 — 보기 버튼 클릭으로 답 선택 (`chat/page.tsx`) ✅
+
+3명 공통 요청 핵심 기능. `parseQuestionHeader`로 문제 감지 후 ①②③④ 보기를 클릭 가능한 버튼으로 렌더링. 이미 답한 문제는 버튼 비활성화. 로딩 중 pulse 애니메이션(bg-gray-100) 으로 활성화 대기 시각화. `bb02c39` `d0a00da`
+
+---
+
+### UX-3 — 예상 점수 표시 (`components/Sidebar.tsx`, `api/progress.py`) ✅
+
+SQLD 시험 과목 비율(1과목 40% / 2과목 60%)을 고정 가중치로 사용.
+각 과목 내 카테고리는 균등 분배 (1과목 2개 → 각 20%, 2과목 9개 → 각 6.67%).
+`accuracy_by_category` 정답률에 가중치를 곱해 합산 후 × 100 = 예상 점수.
+목표 점수(온보딩 선택값)와 차이(+N / -N점)도 함께 표시. `ad88ede` `357eeda`
+
+---
+
+### UX-2 — 오답 회고 기능 (`chat/page.tsx`, `api/wrong_answers.py`) ✅
+
+사이드바 하단 "오답 회고" 버튼 → 슬라이드업 패널로 오답 목록 표시. 각 문제 클릭 시 미니채팅 모달로 AI 해설 재질의 가능. `wrong_answers` 전용 엔드포인트 분리, 채팅 스크롤 위치 복원 포함. `f2f8484` `6349332`
+
+---
+
+### 추가 UX·안정성 수정 (2026-07-07~08)
+
+| 커밋 | 내용 |
+|------|------|
+| `ec1251c` | 신규 회원 진단 시작 전 전용 안내 메시지 (채팅 첫 화면 안내 개선) |
+| `9bf0d07` | 새로고침 시 진단 문제 중복 출제 방지 |
+| `183de13` | 문제 `message` 이벤트 도착 즉시 버튼 잠금 해제 (done 전 미리 표시) |
+| `c5cc4b8` | 문제 출제 후 불필요한 로딩 버블 제거 |
+| `f71b631` | 채팅 메시지 sessionStorage 유지 (새로고침 시 복원) |
+| `476a176` | 오답 복습 정답 시 `wrong_answer_log`에서도 제거 |
+| `7b22c6d` | SSE `error` 이벤트 처리 추가 + 오답 피드백 형식 통일 |
+| `893af68` | analytics 이벤트 루프 블로킹 → daemon thread 분리, 온보딩 에러 처리 추가 |
+| `25d8c1b` | context 단일 줄바꿈이 마크다운 공백으로 처리되는 문제 수정 |
+| `7b1d8b0` | SQL 키워드 뒤 한글이 오는 보기 코드 블록 오감지 수정 |
+| `e65879d` | context 정규화 시 마크다운 테이블·코드 블록 깨짐 수정 |
+| `c1144f9` | `review_node` `last_grade_result`에 `student_answer` 누락 수정 |
+| `61d5f6d` | 메시지 딜레이 중 dots 로딩 말풍선 표시 |
+| `e9dc9a6` | 문제 말풍선 후 dots 숨김 (사용자 혼동 방지) |
+| `d0a00da` | 버튼 pulse 가시성 개선 (opacity 충돌 → bg-gray-100 방식) |
+| `fb73d09` | tsconfig `es5` → `ES2017` (TypeScript 6.0 deprecation 해소) |
+| `02b9498` | 버그 A–H 일괄 수정 (세션 중 발견) |
