@@ -21,6 +21,7 @@
 | UX-1 | 보기 버튼 클릭으로 답 선택 | 텍스트 입력만 지원 (3명 공통 요청) | `chat/page.tsx` | ✅ 완료 (2026-07-06) |
 | UX-2 | 오답 회고 기능 부재 | 풀이 기록 조회 UI 없음 | `chat/page.tsx`, `api/wrong_answers.py` | ✅ 완료 (2026-07-06) |
 | UX-3 | 예상 점수 표시 없음 | 카테고리별 정답률만 있고 종합 점수 없음 | `components/Sidebar.tsx`, `api/progress.py` | ✅ 완료 (2026-07-08) |
+| UX-4 | 네트워크 오류 시 재시도 불가 | 오류 메시지가 채팅 버블로 삽입되어 재전송 방법 없음 | `chat/page.tsx` | ✅ 완료 (2026-07-09) |
 
 ---
 
@@ -159,6 +160,22 @@ await streamChat(text, true);
 ### UX-1 — 보기 버튼 클릭으로 답 선택 (`chat/page.tsx`) ✅
 
 3명 공통 요청 핵심 기능. `parseQuestionHeader`로 문제 감지 후 ①②③④ 보기를 클릭 가능한 버튼으로 렌더링. 이미 답한 문제는 버튼 비활성화. 로딩 중 pulse 애니메이션(bg-gray-100) 으로 활성화 대기 시각화. `bb02c39` `d0a00da`
+
+---
+
+### UX-4 — 네트워크 오류 재시도 배너 (`chat/page.tsx`) ✅
+
+**기존 동작:** SSE 오류 이벤트 발생 시 "오류가 발생했습니다." 텍스트를 AI 채팅 버블로 삽입 → 스크롤 위로 올라가면 배너가 보이지 않아 재전송 방법 없음.
+
+**수정 내용:**
+- `networkError` state + `lastUserMessageRef` ref 추가
+- `streamChat` 시작 시 `setNetworkError(false)`, `lastUserMessageRef.current = message` 저장
+- SSE `error` 이벤트 및 `catch` 블록: 빈 AI 플레이스홀더만 제거하고 `setNetworkError(true)` 호출 (부분 스트리밍된 내용은 유지)
+- 채팅 영역과 입력창 사이에 고정 배너 UI 표시:
+  - 빨간 배경 + "연결 오류가 발생했습니다." 텍스트
+  - "↺ 다시 시도" 버튼 → `streamChat(lastUserMessageRef.current, false)` 호출
+  - 새 메시지 전송 시 자동으로 배너 사라짐
+- `ea29943` (2026-07-09)
 
 ---
 
