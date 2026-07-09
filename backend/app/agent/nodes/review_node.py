@@ -124,4 +124,5 @@ def review_node(state: TutorState) -> dict:
             "tags": pending.get("tags", []),
             "student_answer": user_answer,
         },
+        "follow_up_mode": True,
     }

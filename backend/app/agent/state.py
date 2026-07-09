@@ -48,3 +48,6 @@ class TutorState(TypedDict):
 
     # 오답 회고
     wrong_answer_log: Optional[dict]  # { question_id: student_answer(int) } — 오답 기록 영구 보관
+
+    # 채점 후 추가 질의 모드 — True 동안 intent_classifier가 chatbot으로 라우팅
+    follow_up_mode: bool

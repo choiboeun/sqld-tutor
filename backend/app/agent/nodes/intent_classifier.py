@@ -12,6 +12,8 @@ _EXPLAIN = re.compile(r"설명|뭐야|뭐예요|무엇|개념|알려|이해[가�
 _DIAGNOSE = re.compile(r"약점|분석|취약|통계|결과|어디.*약")
 _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려|sql\b", re.IGNORECASE)
 _DIAGNOSTIC_START = re.compile(r"진단\s*시작|초기\s*진단")
+# follow_up_mode 종료 조건 — "문제 줘" 등 명시적 새 문제 요청만 (bare "문제" 제외)
+_DRILL_EXPLICIT = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)|다음\s*문제|새\s*문제")
 
 
 def intent_classifier(state: TutorState) -> dict:
@@ -37,6 +39,16 @@ def intent_classifier(state: TutorState) -> dict:
         total = state.get("total_answered") or 0
         print(f"[intent] text={text!r} → 진단 시작, total_answered={total}")
         return {"current_mode": "drill", "is_diagnostic": True, "diagnostic_start_count": total}
+
+    # 채점 직후 follow_up_mode 활성 → 질문은 chatbot으로 라우팅
+    if state.get("follow_up_mode", False):
+        # "문제 줘" / "다음 문제" 등 명시적 새 문제 요청만 follow_up 종료
+        # bare "문제" ("이 문제에 대해서...")는 종료 조건에서 제외
+        if _DRILL_EXPLICIT.search(text):
+            print(f"[intent] follow_up_mode 종료 (drill 요청) → drill")
+            return {"current_mode": "drill", "follow_up_mode": False}
+        print(f"[intent] follow_up_mode 활성 → chat, text={text!r}")
+        return {"current_mode": "chat"}
 
     # DRILL을 SQL보다 먼저 체크 — "SQL 활용 문제 줘"처럼 카테고리명에 SQL이 포함된 경우 오분류 방지
     if _REVIEW.search(text):
