@@ -157,6 +157,8 @@ function ChatContent() {
   const [aiHasResponded, setAiHasResponded] = useState(false);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
+  const lastUserMessageRef = useRef("");
   const [threadId, setThreadId] = useState("demo-user-1");
   const [targetScore, setTargetScore] = useState(70);
   const [sessionReady, setSessionReady] = useState(false);
@@ -230,6 +232,8 @@ function ChatContent() {
   const streamChat = useCallback(async (message: string, showUserMsg: boolean) => {
     setIsLoading(true);
     setAiHasResponded(false);
+    setNetworkError(false);
+    lastUserMessageRef.current = message;
     if (showUserMsg) {
       setMessages((prev) => [...prev, { role: "user", content: message }]);
     }
@@ -288,10 +292,11 @@ function ChatContent() {
               setRefreshSidebar((n) => n + 1);
             } else if (event.type === "error") {
               setMessages((prev) => {
-                const next = [...prev];
-                next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
-                return next;
+                const last = prev[prev.length - 1];
+                if (last?.role === "ai" && last.content === "") return prev.slice(0, -1);
+                return prev;
               });
+              setNetworkError(true);
             }
           } catch {
             // JSON 파싱 실패 무시
@@ -300,10 +305,11 @@ function ChatContent() {
       }
     } catch {
       setMessages((prev) => {
-        const next = [...prev];
-        next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
-        return next;
+        const last = prev[prev.length - 1];
+        if (last?.role === "ai" && last.content === "") return prev.slice(0, -1);
+        return prev;
       });
+      setNetworkError(true);
     } finally {
       setIsLoading(false);
     }
@@ -468,6 +474,20 @@ function ChatContent() {
           <div ref={bottomRef} />
         </div>
 
+        {networkError && (
+          <div className="px-6 pt-3 bg-white">
+            <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+              <span className="text-sm text-red-600">연결 오류가 발생했습니다.</span>
+              <button
+                onClick={() => streamChat(lastUserMessageRef.current, false)}
+                disabled={isLoading}
+                className="text-sm font-medium text-red-600 hover:text-red-800 disabled:opacity-40 transition-colors flex items-center gap-1"
+              >
+                ↺ 다시 시도
+              </button>
+            </div>
+          </div>
+        )}
         <div className="px-6 py-4 border-t border-gray-200 bg-white">
           <div className="flex gap-3 items-end">
             <textarea
