@@ -25,6 +25,7 @@ async def get_progress(thread_id: str):
             },
             "weak_categories": [],
             "wrong_count": 0,
+            "target_score": 70,
         }
 
     v = state.values
