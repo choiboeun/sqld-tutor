@@ -14,6 +14,7 @@ interface ProgressData {
   accuracy_by_category: Record<string, CategoryStat>;
   weak_categories: { category: string; accuracy: number }[];
   wrong_count: number;
+  target_score: number;
 }
 
 interface Props {
@@ -29,6 +30,22 @@ const ALL_CATEGORIES = [
   "서브쿼리 & Top N", "집합 연산자 & 그룹 함수",
   "윈도우 함수", "SQL 활용 기타", "관리 구문",
 ];
+
+// 1과목(데이터 모델링) 40% → 2개 카테고리 균등 분배
+// 2과목(SQL 기본 및 활용) 60% → 9개 카테고리 균등 분배
+const CATEGORY_WEIGHTS: Record<string, number> = {
+  "데이터 모델링 기초": 0.40 / 2,
+  "데이터 모델과 SQL":  0.40 / 2,
+  "SELECT & WHERE":         0.60 / 9,
+  "함수":                   0.60 / 9,
+  "GROUP BY & ORDER BY":    0.60 / 9,
+  "조인":                   0.60 / 9,
+  "서브쿼리 & Top N":       0.60 / 9,
+  "집합 연산자 & 그룹 함수": 0.60 / 9,
+  "윈도우 함수":            0.60 / 9,
+  "SQL 활용 기타":          0.60 / 9,
+  "관리 구문":              0.60 / 9,
+};
 
 // 긴 이름 축약 표시용
 const SHORT_NAMES: Record<string, string> = {
@@ -58,6 +75,15 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
   const attemptedCount = ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) > 0).length;
   const totalAnswered = data?.total_answered ?? 0;
   const streak = data?.streak ?? 0;
+  const targetScore = data?.target_score ?? 70;
+
+  const predictedScore = Math.round(
+    ALL_CATEGORIES.reduce((sum, cat) => {
+      const acc = catMap[cat]?.accuracy ?? 0;
+      return sum + acc * (CATEGORY_WEIGHTS[cat] ?? 0);
+    }, 0) * 100
+  );
+  const scoreDiff = predictedScore - targetScore;
 
   // 시도한 카테고리는 정답률 낮은 순, 미시도는 뒤로
   const sortedCats = [
@@ -83,6 +109,30 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
       }>
       <div>
         <h2 className="text-base font-semibold text-gray-700 mb-3">학습 현황</h2>
+
+        {/* 예상 점수 */}
+        <div className="bg-blue-50 rounded-xl px-4 py-3 mb-3">
+          <div className="flex items-baseline justify-between mb-1.5">
+            <span className="text-xs text-blue-600 font-medium">예상 점수</span>
+            <span className={`text-xs font-medium ${scoreDiff >= 0 ? "text-green-600" : "text-red-500"}`}>
+              목표 {targetScore}점 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
+            </span>
+          </div>
+          <div className="flex items-end gap-1.5">
+            <span className="text-3xl font-bold text-blue-700 leading-none">{predictedScore}</span>
+            <span className="text-sm text-blue-400 mb-0.5">/ 100점</span>
+          </div>
+          <div className="mt-2 h-1.5 bg-blue-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-400 rounded-full transition-all"
+              style={{ width: `${Math.min(predictedScore, 100)}%` }}
+            />
+          </div>
+          {totalAnswered === 0 && (
+            <p className="text-xs text-blue-400 mt-1.5">문제를 풀면 점수가 계산됩니다</p>
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-2 mb-3">
           <StatCard label="풀이 수" value={`${totalAnswered}문제`} />
           <StatCard

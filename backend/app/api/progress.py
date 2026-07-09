@@ -49,4 +49,5 @@ async def get_progress(thread_id: str):
         },
         "weak_categories": weak[:3],
         "wrong_count": len(wrong_log),
+        "target_score": v.get("target_score", 70),
     }
