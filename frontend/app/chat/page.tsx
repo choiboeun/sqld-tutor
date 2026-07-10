@@ -52,8 +52,11 @@ const CIRCLE_TO_NUM: Record<string, number> = { "①": 1, "②": 2, "③": 3, "�
 function parseOptions(body: string): {
   stem: string;
   options: { circle: string; num: number; content: string }[];
+  suffix?: string;
 } | null {
-  const cleaned = body.replace(/\n+번호로 답하세요\.\s*$/, "").trim();
+  const suffixMatch = body.match(/\n+번호로 답하세요\.\s*\n+([\s\S]+)$/);
+  const suffix = suffixMatch ? suffixMatch[1].trim() : undefined;
+  const cleaned = body.replace(/\n+번호로 답하세요\.[\s\S]*$/, "").trim();
   const paras = cleaned.split(/\n\n/);
   const circleRE = /^(\*\*)?[①②③④]/;
 
@@ -78,7 +81,7 @@ function parseOptions(body: string): {
     options.push({ circle: m[1], num: CIRCLE_TO_NUM[m[1]], content });
   }
 
-  return { stem, options };
+  return { stem, options, suffix };
 }
 
 // Fix 2+4+5: 마크다운 렌더러 — 표/번호목록/줄간격/빈 점 처리
@@ -131,6 +134,11 @@ const mdComponents = {
   ),
   strong: ({ children }: { children?: React.ReactNode }) => (
     <strong className="font-semibold">{children}</strong>
+  ),
+  blockquote: ({ children }: { children?: React.ReactNode }) => (
+    <div className="my-2 px-3 py-2.5 rounded-lg bg-blue-50 border-l-4 border-blue-400 text-sm text-blue-800">
+      {children}
+    </div>
   ),
   hr: () => <hr className="my-2 border-gray-200" />,
   h2: ({ children }: { children?: React.ReactNode }) => (
@@ -436,29 +444,38 @@ function ChatContent() {
                           {optData ? optData.stem : parsed.body}
                         </ReactMarkdown>
                         {optData && (
-                          <div className="mt-3 space-y-1">
-                            {optData.options.map((opt) => (
-                              <button
-                                key={opt.circle}
-                                onClick={() => !isLoading && !isAnswered && streamChat(`${opt.num}번`, true)}
-                                disabled={isLoading || isAnswered}
-                                className={`w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg transition-colors group ${
-                                  isLoading && !isAnswered
-                                    ? "bg-gray-100 animate-pulse cursor-not-allowed"
-                                    : "hover:bg-blue-50 active:bg-blue-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                                }`}
-                              >
-                                <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-gray-500 transition-colors mt-0.5">
-                                  {opt.num}
-                                </span>
-                                <div className="flex-1 text-sm leading-relaxed text-gray-800">
-                                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
-                                    {opt.content}
-                                  </ReactMarkdown>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
+                          <>
+                            <div className="mt-3 space-y-1">
+                              {optData.options.map((opt) => (
+                                <button
+                                  key={opt.circle}
+                                  onClick={() => !isLoading && !isAnswered && streamChat(`${opt.num}번`, true)}
+                                  disabled={isLoading || isAnswered}
+                                  className={`w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg transition-colors group ${
+                                    isLoading && !isAnswered
+                                      ? "bg-gray-100 animate-pulse cursor-not-allowed"
+                                      : "hover:bg-blue-50 active:bg-blue-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                                  }`}
+                                >
+                                  <span className="shrink-0 w-5 h-5 rounded-full bg-gray-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-gray-500 transition-colors mt-0.5">
+                                    {opt.num}
+                                  </span>
+                                  <div className="flex-1 text-sm leading-relaxed text-gray-800">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                                      {opt.content}
+                                    </ReactMarkdown>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                            {optData.suffix && (
+                              <div className="mt-2">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                                  {optData.suffix}
+                                </ReactMarkdown>
+                              </div>
+                            )}
+                          </>
                         )}
                       </>
                     );
