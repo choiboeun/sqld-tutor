@@ -95,8 +95,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
 
-            # LLM 토큰 단위 스트리밍 — chatbot만 적용 (explain은 on_chain_end로 처리)
-            elif kind == "on_chat_model_stream" and node not in {"explain"}:
+            # LLM 토큰 단위 스트리밍 — chatbot만 적용 (explain 포함 나머지는 on_chain_end로 처리)
+            elif kind == "on_chat_model_stream" and node == "chatbot":
                 chunk = event["data"]["chunk"]
                 token = _get_text(chunk.content) if hasattr(chunk, "content") else ""
                 if token:
