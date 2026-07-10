@@ -32,6 +32,7 @@
 | QA-4d | "SQL Server" 개념 질문이 SQL 실행 모드로 라우팅됨 | `_SQL` 패턴의 `sql\b`가 "LAG 함수 **SQL** Server에서 쓸 수 있어?" 속 SQL도 감지 → sql 실행 모드 진입 → "방금 실행해봤는데…" hallucination 응답 | `backend/app/agent/nodes/intent_classifier.py` | ✅ 완료 (2026-07-10) |
 | QA-10a | 회원가입 후 자동 로그인 미지원 | `signUp()` 반환값 `data`를 무시해 세션이 즉시 발급돼도 "이메일 확인" 화면만 표시 | `frontend/app/(auth)/signup/page.tsx` | ✅ 완료 (2026-07-10) |
 | QA-10b | 인증 이메일 Supabase 기본 영문 템플릿 | Supabase 기본 이메일 — 영문, Supabase 브랜딩, "Confirm your email address" 제목 | Supabase Dashboard > Email Templates | ✅ 완료 (2026-07-10) |
+| QA-12 | 계정 관리 화면 없음 — 비밀번호 변경·회원탈퇴 불가 | 로그인 후 계정 관련 기능 진입점 없음 | `frontend/app/chat/page.tsx` + Supabase SQL `delete_user()` | ✅ 완료 (2026-07-11) |
 
 ---
 
@@ -304,6 +305,21 @@ _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려|sql\b", re.IGNORECASE)
 _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려", re.IGNORECASE)
 ```
 `SELECT`, `실행`, `쿼리`, `돌려`로 실제 실행 의도 충분히 커버. `a99f32b`
+
+---
+
+### QA-12 — 계정 관리 모달 (`chat/page.tsx`) ✅
+
+**원인:** 로그인 후 비밀번호 변경·회원탈퇴 기능 진입점 없음. 기존 헤더에 로그아웃 텍스트 버튼만 존재.
+
+**수정 내용:**
+- 헤더 오른쪽 로그아웃 버튼 → 이메일 첫 글자 **원형 아바타 버튼**으로 교체
+- 클릭 시 드롭다운: 이메일 표시 / 계정 설정 / 로그아웃
+- 계정 설정 클릭 시 모달: 비밀번호 변경 + 회원 탈퇴(2단계 확인)
+- Supabase SQL Editor에서 `delete_user()` 함수 생성 (`security definer`)
+- 비밀번호 변경: `supabase.auth.updateUser({ password })`
+- 회원 탈퇴: `supabase.rpc("delete_user")` → signOut → `/login` 이동
+- `560052b`
 
 ---
 
