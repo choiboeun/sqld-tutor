@@ -170,6 +170,16 @@ function ChatContent() {
   const [threadId, setThreadId] = useState("demo-user-1");
   const [targetScore, setTargetScore] = useState(70);
   const [sessionReady, setSessionReady] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwMsg, setPwMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -187,6 +197,7 @@ function ChatContent() {
           setThreadId(uid);
           threadIdRef.current = uid;
           setTargetScore(data.user.user_metadata?.target_score ?? 70);
+          setUserEmail(data.user.email ?? "");
           try {
             const saved = sessionStorage.getItem(`chat_${uid}`);
             if (saved) {
@@ -223,6 +234,52 @@ function ChatContent() {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setPwMsg({ type: "error", text: "비밀번호가 일치하지 않습니다." });
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPwMsg({ type: "error", text: "6자 이상 입력해주세요." });
+      return;
+    }
+    setPwLoading(true);
+    setPwMsg(null);
+    const { error } = await createClient().auth.updateUser({ password: newPassword });
+    setPwLoading(false);
+    if (error) {
+      setPwMsg({ type: "error", text: error.message });
+    } else {
+      setPwMsg({ type: "success", text: "비밀번호가 변경됐습니다." });
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase.rpc("delete_user");
+    if (error) {
+      setDeleteLoading(false);
+      alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
 
   // 페이지 떠날 때 스크롤 위치 저장
   useEffect(() => {
@@ -374,17 +431,109 @@ function ChatContent() {
             </button>
             <h1 className="text-lg font-semibold text-gray-800">SQLD AI 튜터</h1>
           </div>
-          <button
-            onClick={async () => {
-              sessionStorage.removeItem(`chat_${threadId}`);
-              await createClient().auth.signOut();
-              window.location.href = "/login";
-            }}
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            로그아웃
-          </button>
+          {/* 아바타 + 드롭다운 */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setShowDropdown((v) => !v)}
+              className="w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-semibold flex items-center justify-center hover:bg-blue-700 transition-colors"
+              aria-label="계정 메뉴"
+            >
+              {userEmail ? userEmail[0].toUpperCase() : "?"}
+            </button>
+
+            {showDropdown && (
+              <div className="absolute right-0 top-10 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-xs text-gray-400 truncate">{userEmail}</p>
+                </div>
+                <button
+                  onClick={() => { setShowDropdown(false); setShowAccountModal(true); }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  계정 설정
+                </button>
+                <button
+                  onClick={async () => {
+                    setShowDropdown(false);
+                    sessionStorage.removeItem(`chat_${threadId}`);
+                    await createClient().auth.signOut();
+                    window.location.href = "/login";
+                  }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-gray-500 hover:bg-gray-50 transition-colors flex items-center gap-2 border-t border-gray-100"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  로그아웃
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* 계정 설정 모달 */}
+        {showAccountModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 className="text-base font-semibold text-gray-800">계정 설정</h2>
+                <button onClick={() => { setShowAccountModal(false); setPwMsg(null); setDeleteConfirm(false); setNewPassword(""); setConfirmPassword(""); }} className="text-gray-400 hover:text-gray-600">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+
+              <div className="px-6 py-4 space-y-3">
+                <p className="text-xs text-gray-400">{userEmail}</p>
+                <p className="text-sm font-medium text-gray-700">비밀번호 변경</p>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="새 비밀번호 (6자 이상)"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="비밀번호 확인"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {pwMsg && (
+                  <p className={`text-xs ${pwMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>{pwMsg.text}</p>
+                )}
+                <button
+                  onClick={handlePasswordChange}
+                  disabled={pwLoading}
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 transition-colors"
+                >
+                  {pwLoading ? "변경 중..." : "비밀번호 변경"}
+                </button>
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-100">
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">위험 구역</p>
+                {!deleteConfirm ? (
+                  <button
+                    onClick={() => setDeleteConfirm(true)}
+                    className="w-full border border-red-200 text-red-500 py-2 rounded-lg text-sm hover:bg-red-50 transition-colors"
+                  >
+                    회원 탈퇴
+                  </button>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-xs text-red-500">모든 학습 기록이 삭제됩니다. 정말 탈퇴하시겠습니까?</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-gray-200 text-gray-500 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">취소</button>
+                      <button onClick={handleDeleteAccount} disabled={deleteLoading} className="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm hover:bg-red-600 disabled:opacity-40 transition-colors">
+                        {deleteLoading ? "처리 중..." : "탈퇴 확인"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {(() => {
