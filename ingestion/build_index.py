@@ -147,6 +147,11 @@ def build_index():
     )
 
     # 4. Chroma 저장 (배치 처리로 rate limit 회피)
+    # 기존 컬렉션 초기화 (재실행 시 중복 방지)
+    import shutil
+    if CHROMA_DIR.exists():
+        shutil.rmtree(CHROMA_DIR)
+        print("기존 Chroma DB 삭제 완료")
     CHROMA_DIR.mkdir(parents=True, exist_ok=True)
     print(f"Chroma 저장 경로: {CHROMA_DIR}")
 
