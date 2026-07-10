@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -12,6 +13,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ export default function SignupPage() {
 
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: `${location.origin}/auth/callback` },
@@ -36,9 +38,18 @@ export default function SignupPage() {
 
     if (error) {
       setError(error.message);
-    } else {
-      setDone(true);
+      setLoading(false);
+      return;
     }
+
+    // 이메일 확인 없이 즉시 세션 발급된 경우 → 온보딩으로 바로 이동
+    if (data.session) {
+      router.push("/onboarding");
+      return;
+    }
+
+    // 이메일 확인이 필요한 경우 → 안내 화면 표시
+    setDone(true);
     setLoading(false);
   };
 
