@@ -361,7 +361,7 @@ def drill_node(state: TutorState) -> dict:
         if last_text and last_text[0].isdigit():
             note = "\n\n> 1~4 사이의 번호로 답해주세요."
         else:
-            note = "\n\n> 현재 문제에 먼저 답해주세요 (1~4번)."
+            note = "\n\n> 모르겠다면 일단 1~4번 중 하나를 찍어보세요! 틀려도 괜찮아요, 풀고 나서 해설로 배울 수 있어요."
         return {"messages": [AIMessage(content=diag_prefix + _format_question(pending) + note)]}
 
     ans_char = match.group(1)
