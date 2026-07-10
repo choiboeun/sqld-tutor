@@ -113,18 +113,93 @@ def _try_result_table(text: str, context: str = "") -> tuple | None:
     return (table, suffix)  # (테이블 문자열, 뒤에 붙는 설명 텍스트)
 
 _CATEGORY_ALIASES = {
-    "조인": "조인", "join": "조인",
-    "서브쿼리": "서브쿼리 & Top N", "subquery": "서브쿼리 & Top N", "top n": "서브쿼리 & Top N",
-    "윈도우": "윈도우 함수", "window": "윈도우 함수",
-    "group by": "GROUP BY & ORDER BY", "order by": "GROUP BY & ORDER BY",
-    "그룹": "GROUP BY & ORDER BY", "having": "GROUP BY & ORDER BY",
-    "집합 연산자": "집합 연산자 & 그룹 함수", "그룹 함수": "집합 연산자 & 그룹 함수",
-    "rollup": "집합 연산자 & 그룹 함수", "cube": "집합 연산자 & 그룹 함수",
-    "함수": "함수", "nvl": "함수", "decode": "함수",
-    "select": "SELECT & WHERE", "where": "SELECT & WHERE",
-    "관리": "관리 구문", "dcl": "관리 구문", "ddl": "관리 구문", "grant": "관리 구문",
-    "모델링": "데이터 모델링 기초", "데이터 모델": "데이터 모델과 SQL",
+    # ── 데이터 모델링 기초 (반정규화는 정규화보다 먼저 검사) ─────────────
+    "반정규화": "데이터 모델과 SQL",
+    "모델링": "데이터 모델링 기초",
+    "정규화": "데이터 모델링 기초",
+    "erd": "데이터 모델링 기초",
+    "엔티티": "데이터 모델링 기초",
+    "식별자": "데이터 모델링 기초",
+    # ── 데이터 모델과 SQL ─────────────────────────────────────────────
+    "데이터 모델": "데이터 모델과 SQL",
+    # ── SELECT & WHERE ────────────────────────────────────────────────
+    "select": "SELECT & WHERE",
+    "where": "SELECT & WHERE",
+    "distinct": "SELECT & WHERE",
+    "between": "SELECT & WHERE",
+    "like": "SELECT & WHERE",
+    # ── 함수 ─────────────────────────────────────────────────────────
+    "함수": "함수",
+    "nvl": "함수",
+    "decode": "함수",
+    "round": "함수",
+    "trunc": "함수",
+    "to_char": "함수",
+    "to_date": "함수",
+    "substr": "함수",
+    "instr": "함수",
+    "sysdate": "함수",
+    # ── GROUP BY & ORDER BY ───────────────────────────────────────────
+    "group by": "GROUP BY & ORDER BY",
+    "order by": "GROUP BY & ORDER BY",
+    "그룹": "GROUP BY & ORDER BY",
+    "having": "GROUP BY & ORDER BY",
+    "정렬": "GROUP BY & ORDER BY",
+    # ── 조인 ─────────────────────────────────────────────────────────
+    "조인": "조인",
+    "join": "조인",
+    # ── 서브쿼리 & Top N (인라인 뷰는 뷰보다 먼저 검사) ────────────────
+    "인라인 뷰": "서브쿼리 & Top N",
+    "inline view": "서브쿼리 & Top N",
+    "서브쿼리": "서브쿼리 & Top N",
+    "subquery": "서브쿼리 & Top N",
+    "top n": "서브쿼리 & Top N",
+    "rownum": "서브쿼리 & Top N",
+    "스칼라": "서브쿼리 & Top N",
+    # ── 집합 연산자 & 그룹 함수 ──────────────────────────────────────
+    "집합 연산자": "집합 연산자 & 그룹 함수",
+    "그룹 함수": "집합 연산자 & 그룹 함수",
+    "rollup": "집합 연산자 & 그룹 함수",
+    "cube": "집합 연산자 & 그룹 함수",
+    "grouping sets": "집합 연산자 & 그룹 함수",
+    "union": "집합 연산자 & 그룹 함수",
+    "intersect": "집합 연산자 & 그룹 함수",
+    "minus": "집합 연산자 & 그룹 함수",
+    # ── 윈도우 함수 (dense_rank는 rank보다 먼저 검사) ──────────────────
+    "윈도우": "윈도우 함수",
+    "window": "윈도우 함수",
+    "partition by": "윈도우 함수",
+    "row_number": "윈도우 함수",
+    "dense_rank": "윈도우 함수",
+    "rank": "윈도우 함수",
+    "ntile": "윈도우 함수",
+    "lag": "윈도우 함수",
+    "lead": "윈도우 함수",
+    # ── SQL 활용 기타 ─────────────────────────────────────────────────
     "sql 활용": "SQL 활용 기타",
+    "계층형 질의": "SQL 활용 기타",
+    "계층형": "SQL 활용 기타",
+    "connect by": "SQL 활용 기타",
+    "pivot": "SQL 활용 기타",
+    "merge": "SQL 활용 기타",
+    "정규표현식": "SQL 활용 기타",
+    "regexp": "SQL 활용 기타",
+    # ── 관리 구문 (view는 인라인 뷰보다 늦게 검사) ─────────────────────
+    "관리": "관리 구문",
+    "ddl": "관리 구문",
+    "dcl": "관리 구문",
+    "dml": "관리 구문",
+    "tcl": "관리 구문",
+    "grant": "관리 구문",
+    "트랜잭션": "관리 구문",
+    "commit": "관리 구문",
+    "rollback": "관리 구문",
+    "인덱스": "관리 구문",
+    "index": "관리 구문",
+    "시퀀스": "관리 구문",
+    "sequence": "관리 구문",
+    "뷰": "관리 구문",
+    "view": "관리 구문",
 }
 
 _DIFFICULTY_MAP = {
@@ -255,7 +330,8 @@ def drill_node(state: TutorState) -> dict:
         )
         text = last_human.content if last_human else ""
         category = _parse_category(text)
-        difficulty = _parse_difficulty(text)
+        user_difficulty = _parse_difficulty(text)  # 사용자가 명시한 난이도 (없으면 None)
+        difficulty = user_difficulty
 
         is_diagnostic = state.get("is_diagnostic", False)
         diag_count = 0
@@ -280,6 +356,13 @@ def drill_node(state: TutorState) -> dict:
                 difficulty=difficulty,
                 avoid_category=avoid,
             )
+            # 난이도를 자동 선택했는데 해당 카테고리에 해당 난이도 문제가 없으면 난이도 제거 후 재시도
+            if not question and not user_difficulty:
+                question = get_random_question(
+                    exclude_ids=history,
+                    category=category,
+                    avoid_category=avoid,
+                )
         else:
             # 사용자가 카테고리 미지정: 덜 풀린 카테고리 우선 선택
             avail_cats = get_available_categories(exclude_ids=history)
