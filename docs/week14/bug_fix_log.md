@@ -27,6 +27,9 @@
 | UX-7 | 안내 메시지가 4번 보기 안에 섞여 표시됨 | `parseOptions`의 `\s*$` 정규식이 note 있으면 "번호로 답하세요." 제거 실패 → ④ 끝이 `paras.length`라서 note 전체가 ④ 버튼 내용에 포함됨 | `chat/page.tsx` | ✅ 완료 (2026-07-10) |
 | QA-2 | 요청한 카테고리 대신 랜덤 문제가 출제됨 | `_CATEGORY_ALIASES`에 자연어 키워드 14개만 있어 대부분의 입력이 None 반환 → 랜덤 카테고리 선택. 카테고리 지정 시 자동 난이도 문제 없으면 폴백 없이 오류 메시지 반환 | `drill_node.py` | ✅ 완료 (2026-07-10) |
 | QA-4 | RAG 개념 설명이 문제 정답과 어긋남 | RAG 학습 데이터(docs/week7) 6개 파일에 팩트 오류 14건 — 스칼라 서브쿼리 사용 위치 단정, NULL 비교 FALSE/UNKNOWN 혼용, Oracle (+) 위치, PRIOR 방향 레이블 뒤바뀜, SQL Server 지원 여부 오기 등 | `docs/week7/*.md` + Chroma DB | ✅ 완료 (2026-07-10) |
+| QA-4b | Chroma DB 중복 적재 — 구버전 청크가 검색에 노출됨 | `build_index.py` 재실행 시 기존 컬렉션을 삭제하지 않고 추가만 해 678개(226×3) 중복 적재. 구버전 팩트 오류 청크가 신버전과 혼재하여 RAG 수정이 반영되지 않는 경우 발생 | `ingestion/build_index.py` | ✅ 완료 (2026-07-10) |
+| QA-4c | 개념 설명(explain) 답변이 두 번 출력됨 | `on_chat_model_stream` 필터가 `node not in {"explain"}`이라 explain 내부 LLM 호출의 `langgraph_node` 메타데이터가 `""`로 넘어올 경우 토큰 스트리밍이 통과 → 토큰 버블 + on_chain_end 버블 이중 출력 | `backend/app/api/chat.py` | ✅ 완료 (2026-07-10) |
+| QA-4d | "SQL Server" 개념 질문이 SQL 실행 모드로 라우팅됨 | `_SQL` 패턴의 `sql\b`가 "LAG 함수 **SQL** Server에서 쓸 수 있어?" 속 SQL도 감지 → sql 실행 모드 진입 → "방금 실행해봤는데…" hallucination 응답 | `backend/app/agent/nodes/intent_classifier.py` | ✅ 완료 (2026-07-10) |
 
 ---
 
@@ -255,6 +258,50 @@ SQLD 시험 과목 비율(1과목 40% / 2과목 60%)을 고정 가중치로 사�
 | `d0a00da` | 버튼 pulse 가시성 개선 (opacity 충돌 → bg-gray-100 방식) |
 | `fb73d09` | tsconfig `es5` → `ES2017` (TypeScript 6.0 deprecation 해소) |
 | `02b9498` | 버그 A–H 일괄 수정 (세션 중 발견) |
+
+---
+
+### QA-4b — Chroma DB 클린 재빌드 (`ingestion/build_index.py`) ✅
+
+**원인:** `build_index.py`가 `Chroma.from_documents()` 실행 시 기존 컬렉션을 삭제하지 않고 문서를 추가만 함. 3회 실행으로 678개(226×3) 중복 적재 → 구버전 팩트 오류 청크가 검색에 혼재.
+
+**수정 내용:**
+```python
+import shutil
+if CHROMA_DIR.exists():
+    shutil.rmtree(CHROMA_DIR)
+```
+실행마다 기존 디렉터리 삭제 후 재빌드. 226개 단일 버전으로 정리. `fa7b34f`
+
+---
+
+### QA-4c — explain 이중 출력 버그 (`backend/app/api/chat.py`) ✅
+
+**원인:** `on_chat_model_stream` 필터가 `node not in {"explain"}`이었으나, explain_node 내부 `@tool`에서 호출된 LLM의 이벤트는 `metadata["langgraph_node"]`가 `""`(빈 값)로 넘어와 필터를 통과 → 토큰 스트리밍(버블 1) + `on_chain_end` 메시지(버블 2) 이중 출력.
+
+**수정 내용:**
+```python
+# 수정 전
+elif kind == "on_chat_model_stream" and node not in {"explain"}:
+# 수정 후
+elif kind == "on_chat_model_stream" and node == "chatbot":
+```
+chatbot 노드 토큰만 명시적으로 허용. `b56a88c`
+
+---
+
+### QA-4d — SQL 라우팅 오분류 (`intent_classifier.py`) ✅
+
+**원인:** `_SQL = re.compile(r"SELECT\b|실행|쿼리|돌려|sql\b", re.IGNORECASE)`의 `sql\b`가 "LAG 함수 **SQL** Server에서 쓸 수 있어?" 속 "SQL"도 감지 → sql 실행 모드 라우팅 → "방금 EMP 테이블에서 실행해봤는데…" hallucination 응답.
+
+**수정 내용:**
+```python
+# 수정 전
+_SQL = re.compile(r"SELECT\b|실행|쿼리|돌려|sql\b", re.IGNORECASE)
+# 수정 후
+_SQL = re.compile(r"SELECT\b|실행|쿼리|돌려", re.IGNORECASE)
+```
+`SELECT`, `실행`, `쿼리`, `돌려`로 실제 실행 의도 충분히 커버. `a99f32b`
 
 ---
 
