@@ -139,7 +139,7 @@ SELECT RANK(값) WITHIN GROUP(ORDER BY 컬럼);
 
 ## 6. 행 순서 관련 함수
 
-### ① LAG와 LEAD (SQL Server는 지원X)
+### ① LAG와 LEAD (SQL Server 2012 이상 지원)
 - **LAG**: 이전 행의 값 가져오기
 - **LEAD**: 이후 행의 값 가져오기
 - ORDER BY 절 필수
@@ -160,7 +160,7 @@ FROM EMP;
 - 그룹별 바로 직전상사의 급여를 가져오는 쿼리였다면 각 그룹별 첫 시작행은 NULL
 - NULL 값을 없애고 싶다면 `LAG(SAL, N, NULL 대체값)`에서 3번째 인수로 대체값을 써주면 됨
 
-### ② FIRST_VALUE, LAST_VALUE (SQL Server는 지원X)
+### ② FIRST_VALUE, LAST_VALUE (SQL Server 2012 이상 지원)
 - **정해진 범위에서 정렬 순서대로 처음 값, 마지막 값 출력**
 - 순서와 범위 정의에 따라 최솟값 / 최댓값 반환 가능
 - PARTITION BY, ORDER BY 절 생략 가능
@@ -179,7 +179,7 @@ FROM EMP;
 
 ---
 
-## 7. NTILE(N) (SQL Server는 지원X)
+## 7. NTILE(N) (SQL Server 2005 이상 지원)
 
 - **행을 특정 컬럼 순서에 따라 정해진 수(N)만큼의 그룹으로 나누기 위한 함수**
 - ORDER BY 필수
@@ -194,9 +194,9 @@ FROM 테이블명;
 
 ---
 
-## 8. 비율 관련 함수 (SQL Server는 지원X) ★★
+## 8. 비율 관련 함수 ★★
 
-### ① RATIO_TO_REPORT
+### ① RATIO_TO_REPORT (Oracle 전용, SQL Server 미지원)
 
 - **파티션 내 전체 SUM(컬럼)값에 한 행별 컬럼 값의 비율**
 - 각 컬럼값(결괏값): 0 < 결과 <= 1
@@ -209,7 +209,7 @@ SELECT 컬럼,
 FROM 테이블명;
 ```
 
-### ② PERCENT_RANK
+### ② PERCENT_RANK (SQL Server 2012 이상 지원)
 
 - 파티션별 윈도우에서 제일 먼저 나오는 것을 0(상위0%), 제일 늦게 나오는 것을 1로 하여, **값이 아닌 행의 순서별 백분율을 구한다.**
 - 즉 PERCENTILE(분수위)를 출력한다는 것
@@ -223,7 +223,7 @@ SELECT 컬럼,
 FROM 테이블명;
 ```
 
-### ③ CUME_DIST - '각 행의 수에 대한 누적비율'
+### ③ CUME_DIST - '각 행의 수에 대한 누적비율' (SQL Server 2012 이상 지원)
 
 - **파티션별 윈도우의 전체건수에서 현재 행보다 작거나 같은 건수에 대한 누적백분율을 구함**
 - ORDER BY 필수

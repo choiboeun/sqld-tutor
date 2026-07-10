@@ -55,7 +55,7 @@
 | TRIM([leading\|both\|trailing] FROM s) | 특정 문자열을 왼/양/오른쪽에서 삭제 | TRIM(BOTH '#' FROM '#A#B#C#') | A#B#C (삭제할 문자열 생략 시 공백 삭제) |
 | RTRIM(s, remove_s) | 특정 문자열을 오른쪽에서 삭제 | RTRIM('#A#B#C#', '#') | #A#B#C |
 | LPAD(s, n, pad_s) | 왼쪽에 특정 문자열을 추가하여 총 n길이의 문자열 리턴 | LPAD('abc', 5, '0') | 00abc |
-| RPAD(s, n, pad_s) | 오른쪽에 특정 문자열을 추가하여 총 n길이의 문자열 리턴 | RPAD('abc', 5, '0') | Abc00 |
+| RPAD(s, n, pad_s) | 오른쪽에 특정 문자열을 추가하여 총 n길이의 문자열 리턴 | RPAD('abc', 5, '0') | abc00 |
 | REPLACE(s, old_s, new_s) | 문자열 s에서 old_s를 new_s로 대체 | REPLACE('ABBAC', 'AB', 'ab') | abBAC (3번째 인수 생략 or 빈문자열 전달 시 old_s 삭제) |
 | TRANSLATE(s, old_s, new_s) | 글자를 1대1로 치환 | TRANSLATE('ABBAC', 'AB', 'ab') | abbaC (3번째 인수가 필수며 빈문자열 전달 시 NULL 반환, A는 a로 B는 b로 매칭되는 글자끼리 각각 치환됨) |
 
@@ -77,7 +77,7 @@
 | ADD_MONTHS(d, n) | 날짜 d에서 n개월 후 날짜 반환 (n < 0이면 n개월 전) | ADD_MONTHS(SYSDATE, 2) | 2025/01/11 |
 | TO_NUMBER(TO_CHAR(d, 'YYYY')) | 날짜 d에서 년/월/일 추출 | TO_NUMBER(TO_CHAR(SYSDATE, 'YYYY')) | 2024 |
 | MONTHS_BETWEEN(d1, d2) | d1과 d2의 개월 차이 반환 | MONTHS_BETWEEN(SYSDATE, HIREDATE) | 17.9 |
-| LAST_DAY(d) | 주어진 월의 마지막 날 반환 | LAST_DAY(SYSDATE) | 2024/11/31 |
+| LAST_DAY(d) | 주어진 월의 마지막 날 반환 | LAST_DAY(SYSDATE) | 2024/11/30 |
 | NEXT_DAY(d, n) | 날짜 d 이후 지정된 요일의 첫 날짜 반환 (n: 1(일), 2(월), …, 7(토)) | NEXT_DAY(SYSDATE, 1) | 2024/11/17 |
 
 > ※ DBMS마다 날짜 출력 형식은 다르다.
@@ -85,7 +85,7 @@
 **SQL SERVER 대응:**
 - SYSDATE → GETDATE()
 - EXTRACT(year\|month\|day from d) → DATEPART(year\|month\|day, d) 또는 YEAR(d) / MONTH(d) / DAY(d) 단축 함수 사용 가능
-- ADD_MONTHS(d, n) → DATEADD(year\|month\|day, d, n) 월 분만이 아니라 모든 날짜 단위 연산이 가능하다
+- ADD_MONTHS(d, n) → DATEADD(year\|month\|day, n, d) 월 분만이 아니라 모든 날짜 단위 연산이 가능하다 (파라미터 순서: datepart, 증가량, 날짜)
 - MONTHS_BETWEEN(d1, d2) → DATEDIFF(year\|month\|day, d1, d2)
 
 ---

@@ -223,8 +223,8 @@ FROM BOOK_LIST b
 RIGHT JOIN PUBLISHER p
 ON b.Publisher_id = p.Publisher_id;
 
--- ORACLE: (+)를 왼쪽에 붙임
-WHERE (+)b.Publisher_id = p.Publisher_id;
+-- ORACLE: (+)를 선택적 테이블(결과에 없어도 되는 쪽) 컬럼 뒤에 붙임
+WHERE b.Publisher_id(+) = p.Publisher_id;
 ```
 
 ### 3) FULL OUTER JOIN

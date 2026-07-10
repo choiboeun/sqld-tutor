@@ -93,12 +93,13 @@ WHERE (DEPTNO, SAL) IN (SELECT DEPTNO, MAX(SAL) FROM EMP GROUP BY DEPTNO);
 
 | 종류 | 설명 |
 |------|------|
-| 스칼라 서브쿼리 (Scalar Subquery) | SELECT 절에 위치하며 메인쿼리의 각 행당 정확히 하나의 값을 반환 (단일 행, 단일 열 반환) |
+| 스칼라 서브쿼리 (Scalar Subquery) | 단일 행·단일 열(하나의 값)을 반환하며, SELECT·WHERE·HAVING·ORDER BY 절 등 값이 오는 자리 어디에나 사용 가능 |
 | 인라인 뷰 (Inline View) | FROM 절에 위치하며 하나의 테이블처럼 사용된다. 뷰(View)처럼, 쿼리 내에서 일시적으로 생성된 결과를 테이블처럼 사용할 수 있게 해준다. 즉, 쿼리를 실행할 때만 존재하며 데이터베이스에 저장되지 않는다. |
 | 중첩 서브쿼리 (Nested Subquery) | WHERE 절이나 HAVING 절과 같은 조건절에서 쓰이는 서브쿼리 |
 
 ### 스칼라 서브쿼리 (Scalar Subquery)
-- SELECT 절에 사용하는 서브쿼리
+- 단일 행, 단일 열(하나의 값)을 반환하는 서브쿼리
+- SELECT 절에서 가장 많이 사용하지만 WHERE, HAVING, ORDER BY 절 등 값이 오는 자리 어디에나 사용 가능
 - 서브쿼리가 단일행, 단일열을 반환
 - **서브쿼리의 결과를 하나의 열처럼 사용**하기 위해 사용
 - **메인 쿼리의 각 행에 대해 하나의 단일값(예술가 이름)을 반환**했다.
@@ -185,7 +186,7 @@ WHERE (DEPTNO, SAL) IN (SELECT DEPTNO, MAX(SAL) FROM EMP GROUP BY DEPTNO);
   - 원인: 쿼리가 FROM 절에서 데이터를 읽어오면 (아직 ROWNUM 부여X), 그 후 ROWNUM은 각 행이 하나씩 조회될 때마다 부여된다. 첫 번째 행이 조회될 때 ROWNUM=1이 되는데, ROWNUM > 1 조건을 만족하지 않으므로 제외된다. 그 다음 행(두번째 행)이 또 ROWNUM=1로 시작해서 다시 ROWNUM > 1 조건을 만족하지 않는다. 결국 모든 행이 조건을 통과하지 못하게 되어 아무 결과도 반환 안함.
   - **ROWNUM은 각 행을 하나씩 읽어오면서 부여되기 때문에 WHERE절에서 ROWNUM에 대한 조건을 걸 때 ROWNUM = 1 값이 무조건 포함이 되어야만 한다.**
   - **ROWNUM >= 1은 전체 데이터를 반환하는 것과 동일한 결과를 준다.**
-  - **`ROWNUM = 3`: 항상 불변하는 절대적 번호가 아니라 '=' 연산자 단독 전달 불가**
+  - **`ROWNUM = N (N > 1)`: '=' 연산자 단독 사용 불가** (`ROWNUM = 1`은 유효하며 첫 번째 행 한 개만 반환)
 
 **올바른 사용법 (상위 3명 조회):**
 ```sql
@@ -211,7 +212,7 @@ ORDER BY SAL DESC;
 ```sql
 -- RANK를 이용해 원하는 순위 급여자 뽑기
 SELECT ENAME, SAL
-FROM (SELECT ENAME, SAL, RANK() OVER(ORDER BY SAL DESC) AS RN FROM EMP) AS A
+FROM (SELECT ENAME, SAL, RANK() OVER(ORDER BY SAL DESC) AS RN FROM EMP) A
 WHERE RN BETWEEN 4 AND 6
 ORDER BY SAL DESC;
 ```
