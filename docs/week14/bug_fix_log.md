@@ -30,6 +30,8 @@
 | QA-4b | Chroma DB 중복 적재 — 구버전 청크가 검색에 노출됨 | `build_index.py` 재실행 시 기존 컬렉션을 삭제하지 않고 추가만 해 678개(226×3) 중복 적재. 구버전 팩트 오류 청크가 신버전과 혼재하여 RAG 수정이 반영되지 않는 경우 발생 | `ingestion/build_index.py` | ✅ 완료 (2026-07-10) |
 | QA-4c | 개념 설명(explain) 답변이 두 번 출력됨 | `on_chat_model_stream` 필터가 `node not in {"explain"}`이라 explain 내부 LLM 호출의 `langgraph_node` 메타데이터가 `""`로 넘어올 경우 토큰 스트리밍이 통과 → 토큰 버블 + on_chain_end 버블 이중 출력 | `backend/app/api/chat.py` | ✅ 완료 (2026-07-10) |
 | QA-4d | "SQL Server" 개념 질문이 SQL 실행 모드로 라우팅됨 | `_SQL` 패턴의 `sql\b`가 "LAG 함수 **SQL** Server에서 쓸 수 있어?" 속 SQL도 감지 → sql 실행 모드 진입 → "방금 실행해봤는데…" hallucination 응답 | `backend/app/agent/nodes/intent_classifier.py` | ✅ 완료 (2026-07-10) |
+| QA-10a | 회원가입 후 자동 로그인 미지원 | `signUp()` 반환값 `data`를 무시해 세션이 즉시 발급돼도 "이메일 확인" 화면만 표시 | `frontend/app/(auth)/signup/page.tsx` | ✅ 완료 (2026-07-10) |
+| QA-10b | 인증 이메일 Supabase 기본 영문 템플릿 | Supabase 기본 이메일 — 영문, Supabase 브랜딩, "Confirm your email address" 제목 | Supabase Dashboard > Email Templates | ✅ 완료 (2026-07-10) |
 
 ---
 
@@ -302,6 +304,38 @@ _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려|sql\b", re.IGNORECASE)
 _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려", re.IGNORECASE)
 ```
 `SELECT`, `실행`, `쿼리`, `돌려`로 실제 실행 의도 충분히 커버. `a99f32b`
+
+---
+
+### QA-10a — 회원가입 후 자동 로그인 (`signup/page.tsx`) ✅
+
+**원인:** `supabase.auth.signUp()` 반환값에서 `data`를 무시하고 `error`만 확인. Supabase에서 이메일 확인 없이 세션이 즉시 발급되는 경우에도 `setDone(true)`로 "이메일 확인" 화면만 표시.
+
+**수정 내용:**
+```typescript
+// 수정 전
+const { error } = await supabase.auth.signUp({ ... })
+if (!error) setDone(true);
+
+// 수정 후
+const { data, error } = await supabase.auth.signUp({ ... })
+if (data.session) {
+  router.push("/onboarding");  // 즉시 세션 발급 → 자동 로그인
+} else {
+  setDone(true);  // 이메일 확인 필요 → 안내 화면
+}
+```
+`3cce983`
+
+---
+
+### QA-10b — 인증 이메일 한국어 브랜딩 (Supabase Dashboard) ✅
+
+**원인:** Supabase 기본 이메일 템플릿 사용 — 영문 제목("Confirm your email address"), Supabase 기본 HTML.
+
+**수정 내용:** Supabase Dashboard > Authentication > Emails > Confirm sign up 템플릿 교체
+- Subject: `[SQLD 튜터] 이메일 인증을 완료해주세요`
+- Body: SQLD 튜터 브랜딩 + 한국어 안내 + 버튼 스타일 적용
 
 ---
 
