@@ -24,6 +24,8 @@
 | UX-4 | 네트워크 오류 시 재시도 불가 | 오류 메시지가 채팅 버블로 삽입되어 재전송 방법 없음 | `chat/page.tsx` | ✅ 완료 (2026-07-09) |
 | UX-5 | 채점 후 추가 질의 시 새 문제 출제됨 | `intent_classifier`가 "이 문제에 대해서"의 "문제" 키워드를 새 문제 요청으로 오분류, explain_node는 last_category 기준으로 엉뚱한 개념 설명 | `intent_classifier.py`, `drill_node.py`, `review_node.py`, `state.py` | ✅ 완료 (2026-07-09) |
 | UX-6 | 문제 대기 중 막혔다는 느낌 — 사용자 이탈 유발 | "현재 문제에 먼저 답해주세요" 안내가 출구 없는 느낌을 줘 다른 AI로 이탈 | `drill_node.py` | ✅ 완료 (2026-07-10) |
+| UX-7 | 안내 메시지가 4번 보기 안에 섞여 표시됨 | `parseOptions`의 `\s*$` 정규식이 note 있으면 "번호로 답하세요." 제거 실패 → ④ 끝이 `paras.length`라서 note 전체가 ④ 버튼 내용에 포함됨 | `chat/page.tsx` | ✅ 완료 (2026-07-10) |
+| QA-2 | 요청한 카테고리 대신 랜덤 문제가 출제됨 | `_CATEGORY_ALIASES`에 자연어 키워드 14개만 있어 대부분의 입력이 None 반환 → 랜덤 카테고리 선택. 카테고리 지정 시 자동 난이도 문제 없으면 폴백 없이 오류 메시지 반환 | `drill_node.py` | ✅ 완료 (2026-07-10) |
 
 ---
 
@@ -252,3 +254,49 @@ SQLD 시험 과목 비율(1과목 40% / 2과목 60%)을 고정 가중치로 사�
 | `d0a00da` | 버튼 pulse 가시성 개선 (opacity 충돌 → bg-gray-100 방식) |
 | `fb73d09` | tsconfig `es5` → `ES2017` (TypeScript 6.0 deprecation 해소) |
 | `02b9498` | 버그 A–H 일괄 수정 (세션 중 발견) |
+
+---
+
+### QA-2 — 카테고리 alias 전면 보강 + 난이도 폴백 (`drill_node.py`) ✅
+
+**증상:**
+- "계층형 질의 문제 줘" → "데이터 모델과 SQL" 정규화 문제 출제 (alias 없어 랜덤)
+- "윈도우 함수 문제 줘" → "조건에 맞는 문제가 없습니다" (난이도 자동 선택 후 폴백 없음)
+
+**원인 A (alias 누락):** `_CATEGORY_ALIASES`에 14개 키워드만 있어 "계층형 질의", "union", "트랜잭션" 등 대부분의 자연어 입력이 `_parse_category()` → None → 랜덤 카테고리 선택.
+
+**원인 B (난이도 폴백 없음):** 카테고리 지정 분기에서 자동 선택 난이도로 문제가 없으면 재시도 없이 바로 오류 메시지 반환. (카테고리 미지정 분기에는 폴백 로직 존재)
+
+**수정 내용:**
+- `_CATEGORY_ALIASES` 14개 → 75개로 확장 (11개 카테고리 전부 보강)
+  - 서브스트링 충돌 방지 — 반정규화→정규화, 인라인 뷰→뷰, dense_rank→rank 순으로 배치
+- 카테고리 지정 + 자동 난이도 → 문제 없으면 난이도 제거 후 재시도:
+  ```python
+  user_difficulty = _parse_difficulty(text)
+  difficulty = user_difficulty
+  ...
+  if not question and not user_difficulty:
+      question = get_random_question(exclude_ids=history, category=category, ...)
+  ```
+- `ac13c69` (2026-07-10)
+
+---
+
+### UX-7 — 안내 메시지가 4번 보기 안에 섞여 표시됨 (`chat/page.tsx`) ✅
+
+**증상:** "모르겠어" 입력 시 문제가 재출력되고 "모르겠다면 일단 1~4번 중 하나를 찍어보세요!" 메시지가 ④번 버튼 내부에 포함되어 표시됨.
+
+**원인:** `parseOptions` line 56의 정규식 `replace(/\n+번호로 답하세요\.\s*$/, "")` 에서 `$`가 문자열 끝을 가리키는데, "번호로 답하세요." 뒤에 note(`> 텍스트`)가 있으면 `$`가 매칭되지 않아 제거 실패. 결과적으로 `cleaned`에 note가 남고, ④의 끝 범위가 `paras.length`라서 "번호로 답하세요." + note 전부가 ④ 버튼 내용에 포함됨.
+
+**수정 내용:**
+- `parseOptions`에서 "번호로 답하세요." 이후 텍스트를 `suffix`로 분리해 반환:
+  ```typescript
+  const suffixMatch = body.match(/\n+번호로 답하세요\.\s*\n+([\s\S]+)$/);
+  const suffix = suffixMatch ? suffixMatch[1].trim() : undefined;
+  const cleaned = body.replace(/\n+번호로 답하세요\.[\s\S]*$/, "").trim();
+  return { stem, options, suffix };
+  ```
+- 버튼 목록 아래에 `optData.suffix`를 `ReactMarkdown`으로 별도 렌더링
+- `mdComponents`에 `blockquote` 커스텀 컴포넌트 추가 → 파란 배경 + 왼쪽 테두리 callout 박스 스타일
+- 백엔드 변경 없음 — 기존 `"> 텍스트"` blockquote 형식 그대로 동작
+- `af9a314` (2026-07-10)
