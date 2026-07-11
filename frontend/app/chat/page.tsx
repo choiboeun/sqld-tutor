@@ -435,10 +435,11 @@ function ChatContent() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowDropdown((v) => !v)}
-              className="w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-semibold flex items-center justify-center hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors"
               aria-label="계정 메뉴"
             >
-              {userEmail ? userEmail[0].toUpperCase() : "?"}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              내 계정
             </button>
 
             {showDropdown && (
