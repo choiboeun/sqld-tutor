@@ -34,6 +34,7 @@
 | QA-10b | 인증 이메일 Supabase 기본 영문 템플릿 | Supabase 기본 이메일 — 영문, Supabase 브랜딩, "Confirm your email address" 제목 | Supabase Dashboard > Email Templates | ✅ 완료 (2026-07-10) |
 | QA-12 | 계정 관리 화면 없음 — 비밀번호 변경·회원탈퇴 불가 | 로그인 후 계정 관련 기능 진입점 없음 | `frontend/app/chat/page.tsx` + Supabase SQL `delete_user()` | ✅ 완료 (2026-07-11) |
 | QA-13 | ~합니다체/~해요체 문법 혼용 | 노드 문자열 리터럴 + LLM 프롬프트 모두 ~합니다체 섞임 | 노드 4개 + 프롬프트 2개 | ✅ 완료 (2026-07-12) |
+| QA-14 | `demo-user-1` 하드코딩 보안 이슈 | `threadId` 초기값이 고정 문자열이라 getUser() 실패 시 여러 유저가 같은 체크포인트를 공유할 수 있음 | `chat/page.tsx`, `wrong-answers/page.tsx`, `Sidebar.tsx` | ✅ 완료 (2026-07-12) |
 
 ---
 
@@ -321,6 +322,24 @@ _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려", re.IGNORECASE)
 - 비밀번호 변경: `supabase.auth.updateUser({ password })`
 - 회원 탈퇴: `supabase.rpc("delete_user")` → signOut → `/login` 이동
 - `560052b`
+
+---
+
+### QA-14 — `demo-user-1` 하드코딩 보안 이슈 ✅
+
+**원인:** `threadId`의 초기값이 `"demo-user-1"`로 하드코딩되어 있어, `getUser()` 응답 실패 시 실제 유저 ID 대신 `"demo-user-1"`로 LangGraph 체크포인트가 저장됨. 여러 유저가 같은 `thread_id`를 공유하면 타인의 대화 기록이 노출될 수 있음.
+
+**수정 내용:**
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `chat/page.tsx` | `threadId` 초기값 `"demo-user-1"` → `null` (`string \| null`) |
+| `chat/page.tsx` | `getUser()` 유저 없을 시 `setSessionReady(true)` 제거 + `/login` 리다이렉트 추가 |
+| `chat/page.tsx` | `threadId === "demo-user-1"` 조건 3곳 → `!threadId` 로 교체 |
+| `wrong-answers/page.tsx` | 동일하게 `null` 초기화 + 조건 교체 |
+| `Sidebar.tsx` | `threadId` prop 타입 `string \| null` 허용, `!threadId` 시 fetch 스킵 |
+
+`f8c4c9a`
 
 ---
 
