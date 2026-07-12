@@ -618,12 +618,10 @@ function ChatContent() {
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {(() => {
-            const lastAiContent = [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? "";
-            const lastMsgIsQuestion = !!parseQuestionHeader(lastAiContent);
             const hasPendingQuestion = !!pendingQuestionCache.id;
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
-            if (msg.role === "ai" && msg.content === "" && (isAnswered || (aiHasResponded && (!isLoading || lastMsgIsQuestion)))) return null;
+            if (msg.role === "ai" && msg.content === "" && (isAnswered || aiHasResponded)) return null;
             return (
             <div
               key={i}
