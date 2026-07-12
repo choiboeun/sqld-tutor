@@ -210,7 +210,7 @@ export default function WrongAnswersPage() {
                   <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700">
                     {wa.category}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-gray-100 text-gray-600"}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
                     난이도 {wa.difficulty}
                   </span>
                   {wa.still_wrong && (
@@ -229,16 +229,16 @@ export default function WrongAnswersPage() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-0 sm:px-4">
           <div className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl flex flex-col max-h-[90dvh]">
             {/* 모달 헤더 */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 shrink-0">
               <div className="flex gap-2">
                 <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700">
                   {selected.category}
                 </span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-gray-100 text-gray-600"}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
                   난이도 {selected.difficulty}
                 </span>
               </div>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <button onClick={closeModal} className="text-stone-400 hover:text-stone-600 transition-colors">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
@@ -250,11 +250,11 @@ export default function WrongAnswersPage() {
               {/* 문제 */}
               <div>
                 {selected.context && (
-                  <div className="text-sm text-gray-600 mb-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-stone-600 mb-3 p-3 bg-stone-50 rounded-lg border border-stone-100">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.context}</ReactMarkdown>
                   </div>
                 )}
-                <p className="text-sm font-medium text-gray-800 mb-3">{selected.question}</p>
+                <p className="text-sm font-medium text-stone-800 mb-3">{selected.question}</p>
                 <div className="space-y-1.5">
                   {selected.options.map((opt) => {
                     const isStudentAnswer = opt.num === selected.student_answer;
@@ -267,7 +267,7 @@ export default function WrongAnswersPage() {
                             ? "bg-green-50 text-green-800"
                             : isStudentAnswer
                             ? "bg-red-50 text-red-700"
-                            : "text-gray-600"
+                            : "text-stone-600"
                         }`}
                       >
                         <span className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold mt-0.5 ${
@@ -275,7 +275,7 @@ export default function WrongAnswersPage() {
                             ? "bg-green-200 text-green-700"
                             : isStudentAnswer
                             ? "bg-red-200 text-red-600"
-                            : "bg-gray-100 text-gray-500"
+                            : "bg-stone-100 text-stone-500"
                         }`}>
                           {opt.num}
                         </span>
@@ -295,7 +295,7 @@ export default function WrongAnswersPage() {
               </div>
 
               {/* 미니 채팅 */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden">
+              <div className="border border-stone-200 rounded-xl overflow-hidden">
                 <div className="px-3 py-2 bg-stone-50 border-b border-stone-200">
                   <p className="text-xs font-medium text-stone-500">더 궁금한 게 있으신가요?</p>
                 </div>
