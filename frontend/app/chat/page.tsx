@@ -181,6 +181,10 @@ function ChatContent() {
   const [pwMsg, setPwMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [sqlPanelOpen, setSqlPanelOpen] = useState(false);
+  const [sqlQuery, setSqlQuery] = useState("SELECT * FROM EMP;");
+  const [sqlResult, setSqlResult] = useState<{ columns: string[]; rows: string[][]; error: string | null } | null>(null);
+  const [sqlLoading, setSqlLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -423,6 +427,26 @@ function ChatContent() {
     }
   }, [threadId, streamChat]);
 
+  const runSql = useCallback(async () => {
+    if (!sqlQuery.trim() || sqlLoading) return;
+    setSqlLoading(true);
+    setSqlResult(null);
+    try {
+      const authHeaders = await getAuthHeaders();
+      const res = await fetch("/api/sql-execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders },
+        body: JSON.stringify({ query: sqlQuery }),
+      });
+      const data = await res.json();
+      setSqlResult(data);
+    } catch {
+      setSqlResult({ columns: [], rows: [], error: "서버 오류가 발생했어요." });
+    } finally {
+      setSqlLoading(false);
+    }
+  }, [sqlQuery, sqlLoading]);
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -455,6 +479,21 @@ function ChatContent() {
             </button>
             <h1 className="text-lg font-semibold text-gray-800">SQLD AI 튜터</h1>
           </div>
+          {/* SQL 패널 토글 버튼 — PC만 표시 */}
+          <button
+            onClick={() => setSqlPanelOpen((v) => !v)}
+            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+              sqlPanelOpen
+                ? "bg-blue-50 border-blue-200 text-blue-600"
+                : "border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            }`}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            SQL 실행
+          </button>
+
           {/* 아바타 + 드롭다운 */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -731,6 +770,97 @@ function ChatContent() {
           </div>
         </div>
       </div>
+
+      {/* SQL 패널 — PC에서만 표시 */}
+      {sqlPanelOpen && (
+        <div className="hidden md:flex flex-col w-[420px] shrink-0 border-l border-gray-200 bg-white">
+          {/* 패널 헤더 */}
+          <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+              <span className="text-sm font-semibold text-gray-700">SQL 플레이그라운드</span>
+            </div>
+            <button onClick={() => setSqlPanelOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* 테이블 안내 */}
+          <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 text-xs text-gray-500 flex gap-3 flex-wrap">
+            <span>📋 <strong>EMP</strong>(EMP_ID, EMP_NAME, JOB, SALARY, DEPT_ID)</span>
+            <span>📋 <strong>DEPT</strong>(DEPT_ID, DEPT_NAME, LOC)</span>
+            <span>📋 <strong>SALGRADE</strong>(GRADE, LOSAL, HISAL)</span>
+          </div>
+
+          {/* 에디터 + 실행 */}
+          <div className="px-4 pt-3 pb-2 flex flex-col gap-2">
+            <textarea
+              value={sqlQuery}
+              onChange={(e) => setSqlQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runSql(); } }}
+              className="w-full h-32 resize-none border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="SELECT * FROM EMP;"
+              spellCheck={false}
+            />
+            <button
+              onClick={runSql}
+              disabled={sqlLoading || !sqlQuery.trim()}
+              className="self-end flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {sqlLoading ? "실행 중..." : "▶ 실행"}
+            </button>
+            <p className="text-xs text-gray-400 text-right -mt-1">Ctrl+Enter로도 실행 가능</p>
+          </div>
+
+          {/* 결과 영역 */}
+          <div className="flex-1 overflow-auto px-4 pb-4">
+            {sqlResult === null && (
+              <p className="text-xs text-gray-400 text-center mt-8">쿼리를 실행하면 결과가 여기 표시돼요.</p>
+            )}
+            {sqlResult?.error && (
+              <div className="bg-red-50 border border-red-100 rounded-lg px-3 py-2 text-sm text-red-600">
+                {sqlResult.error}
+              </div>
+            )}
+            {sqlResult && !sqlResult.error && sqlResult.columns.length > 0 && (
+              <div>
+                <p className="text-xs text-gray-400 mb-2">{sqlResult.rows.length}건</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        {sqlResult.columns.map((col) => (
+                          <th key={col} className="border border-gray-200 px-2 py-1.5 text-left font-semibold text-gray-600 whitespace-nowrap">
+                            {col}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sqlResult.rows.map((row, i) => (
+                        <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                          {row.map((cell, j) => (
+                            <td key={j} className="border border-gray-200 px-2 py-1.5 text-gray-700 whitespace-nowrap">
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {sqlResult && !sqlResult.error && sqlResult.columns.length === 0 && (
+              <p className="text-xs text-gray-400 text-center mt-8">결과가 없어요. (0건)</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
