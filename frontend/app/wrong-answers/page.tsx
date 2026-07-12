@@ -5,6 +5,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthHeaders } from "@/lib/api";
 
 interface Option {
   num: number;
@@ -57,11 +58,16 @@ export default function WrongAnswersPage() {
 
   useEffect(() => {
     if (!threadId) return;
-    fetch(`/api/wrong-answers/${threadId}`)
-      .then((r) => r.json())
-      .then((d) => setWrongAnswers(d.wrong_answers ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    (async () => {
+      try {
+        const res = await fetch(`/api/wrong-answers/${threadId}`, { headers: await getAuthHeaders() });
+        const d = await res.json();
+        setWrongAnswers(d.wrong_answers ?? []);
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, [threadId]);
 
   useEffect(() => {

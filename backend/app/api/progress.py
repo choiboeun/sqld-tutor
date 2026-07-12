@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 from app.agent.graph import graph
+from app.auth import get_current_user_id
 
 router = APIRouter()
 
@@ -12,7 +13,9 @@ _CATEGORIES = [
 
 
 @router.get("/progress/{thread_id}")
-async def get_progress(thread_id: str):
+async def get_progress(thread_id: str, user_id: str = Depends(get_current_user_id)):
+    if thread_id != user_id:
+        raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
     config = {"configurable": {"thread_id": thread_id}}
     state = await graph.aget_state(config)
 

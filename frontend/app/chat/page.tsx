@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Sidebar from "@/components/Sidebar";
 import { createClient } from "@/lib/supabase/client";
+import { getAuthHeaders } from "@/lib/api";
 
 interface Message {
   role: "user" | "ai";
@@ -309,9 +310,10 @@ function ChatContent() {
     setMessages((prev) => [...prev, { role: "ai", content: "" }]);
 
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending }),
       });
 
@@ -406,7 +408,7 @@ function ChatContent() {
   const handleWeakConceptChip = useCallback(async () => {
     if (!threadId) return;
     try {
-      const res = await fetch(`/api/progress/${threadId}`);
+      const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
       const data = await res.json();
       const cats = data.accuracy_by_category as Record<string, { accuracy: number; attempts: number }>;
       const entries = Object.entries(cats).filter(([, v]) => v.attempts > 0);

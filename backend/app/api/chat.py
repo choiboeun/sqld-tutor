@@ -1,11 +1,12 @@
 import json
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage
 
 from app.agent.graph import graph
 from app.analytics import log_event
+from app.auth import get_current_user_id
 
 router = APIRouter()
 
@@ -112,7 +113,9 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 
 
 @router.post("/chat")
-async def chat(req: ChatRequest):
+async def chat(req: ChatRequest, user_id: str = Depends(get_current_user_id)):
+    if req.thread_id != user_id:
+        raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
     return StreamingResponse(
         _stream_response(req.message, req.thread_id, req.user_id, req.target_score, req.clear_pending),
         media_type="text/event-stream",

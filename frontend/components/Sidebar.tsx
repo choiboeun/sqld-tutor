@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getAuthHeaders } from "@/lib/api";
 
 interface CategoryStat {
   accuracy: number;
@@ -66,10 +67,13 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
 
   useEffect(() => {
     if (!threadId) return;
-    fetch(`/api/progress/${threadId}`)
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {});
+    (async () => {
+      try {
+        const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
+        const d = await res.json();
+        setData(d);
+      } catch {}
+    })();
   }, [threadId, refresh]);
 
   const catMap = data?.accuracy_by_category ?? {};
