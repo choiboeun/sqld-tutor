@@ -35,6 +35,7 @@
 | QA-12 | 계정 관리 화면 없음 — 비밀번호 변경·회원탈퇴 불가 | 로그인 후 계정 관련 기능 진입점 없음 | `frontend/app/chat/page.tsx` + Supabase SQL `delete_user()` | ✅ 완료 (2026-07-11) |
 | QA-13 | ~합니다체/~해요체 문법 혼용 | 노드 문자열 리터럴 + LLM 프롬프트 모두 ~합니다체 섞임 | 노드 4개 + 프롬프트 2개 | ✅ 완료 (2026-07-12) |
 | QA-14 | `demo-user-1` 하드코딩 보안 이슈 | `threadId` 초기값이 고정 문자열이라 getUser() 실패 시 여러 유저가 같은 체크포인트를 공유할 수 있음 | `chat/page.tsx`, `wrong-answers/page.tsx`, `Sidebar.tsx` | ✅ 완료 (2026-07-12) |
+| 보고서 #13 | 문항별 Oracle/SQL Server 문법 혼용 | — | — | N/A — SQLD 시험은 Oracle 단일 기준. 220개 문제 검토 결과 실제 혼용 없음. q070의 TOP은 오답 보기로 의도적 사용 |
 
 ---
 
