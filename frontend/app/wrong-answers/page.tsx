@@ -36,7 +36,7 @@ const DIFF_STYLE: Record<string, string> = {
 };
 
 export default function WrongAnswersPage() {
-  const [threadId, setThreadId] = useState("demo-user-1");
+  const [threadId, setThreadId] = useState<string | null>(null);
   const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<WrongAnswer | null>(null);
@@ -56,7 +56,7 @@ export default function WrongAnswersPage() {
   }, []);
 
   useEffect(() => {
-    if (threadId === "demo-user-1") return;
+    if (!threadId) return;
     fetch(`/api/wrong-answers/${threadId}`)
       .then((r) => r.json())
       .then((d) => setWrongAnswers(d.wrong_answers ?? []))

@@ -18,7 +18,7 @@ interface ProgressData {
 }
 
 interface Props {
-  threadId: string;
+  threadId: string | null;
   refresh: number;
   isOpen?: boolean;
   onClose?: () => void;
@@ -65,6 +65,7 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
   const [data, setData] = useState<ProgressData | null>(null);
 
   useEffect(() => {
+    if (!threadId) return;
     fetch(`/api/progress/${threadId}`)
       .then((r) => r.json())
       .then(setData)

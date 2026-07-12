@@ -167,7 +167,7 @@ function ChatContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [networkError, setNetworkError] = useState(false);
   const lastUserMessageRef = useRef("");
-  const [threadId, setThreadId] = useState("demo-user-1");
+  const [threadId, setThreadId] = useState<string | null>(null);
   const [targetScore, setTargetScore] = useState(70);
   const [sessionReady, setSessionReady] = useState(false);
   const [userEmail, setUserEmail] = useState("");
@@ -186,7 +186,7 @@ function ChatContent() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isRestoredRef = useRef(false);
   const restoredScrollRef = useRef(0);
-  const threadIdRef = useRef("demo-user-1");
+  const threadIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     createClient()
@@ -210,14 +210,16 @@ function ChatContent() {
               }
             }
           } catch {}
+          setSessionReady(true);
+        } else {
+          window.location.href = "/login";
         }
-        setSessionReady(true);
       });
   }, []);
 
   // 메시지 변경 시 sessionStorage 저장 (스트리밍 중 빈 슬롯은 제외)
   useEffect(() => {
-    if (!sessionReady || threadId === "demo-user-1") return;
+    if (!sessionReady || !threadId) return;
     try {
       const toSave = messages.filter(m => !(m.role === "ai" && m.content === ""));
       sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave));
@@ -286,7 +288,7 @@ function ChatContent() {
     return () => {
       const tid = threadIdRef.current;
       const container = scrollContainerRef.current;
-      if (container && tid !== "demo-user-1") {
+      if (container && tid) {
         try {
           sessionStorage.setItem(`scroll_${tid}`, String(container.scrollTop));
         } catch {}
@@ -382,7 +384,7 @@ function ChatContent() {
 
   // ?new=true 로 진입 시 진단 자동 시작 (세션 복원 완료 후에만, 대화 이력이 없을 때만)
   useEffect(() => {
-    if (searchParams.get("new") === "true" && threadId !== "demo-user-1" && !diagnosticFired.current && sessionReady) {
+    if (searchParams.get("new") === "true" && threadId && !diagnosticFired.current && sessionReady) {
       diagnosticFired.current = true;
       if (messages.length <= 1) {
         streamChat("진단 시작해줘", false);
