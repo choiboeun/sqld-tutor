@@ -41,6 +41,7 @@
 | 보고서 #9 (버그) | 제안 칩 클릭 시 개념 설명 대신 문제가 출제됨 | LangGraph 체크포인트에 `pending_question`이 남아있으면 `intent_classifier`가 모든 입력을 drill 강제 라우팅 — 4개 칩 전부 해당 | `backend/app/api/chat.py`, `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-12) — 칩 클릭 시 `clear_pending=true` 전달, 백엔드에서 `pending_question: {}` 초기화 후 정상 라우팅 |
 | 보고서 #8 | 지난 대화 기록 화면 없음 | — | — | 보류 — 오답 회고(UX-2)로 대체. 개념 설명은 재질의로 동일 답변 가능. 합격 목적 앱에서 전체 대화 기록 필요성 낮음 |
 | 보고서 #13 | 문항별 Oracle/SQL Server 문법 혼용 | — | — | N/A — SQLD 시험은 Oracle 단일 기준. 220개 문제 검토 결과 실제 혼용 없음. q070의 TOP은 오답 보기로 의도적 사용 |
+| 보고서 #14 | 백엔드 API 서버 단 권한 검증 없음 | thread_id(= user_id)만 알면 누구나 타인의 학습 데이터 읽기·쓰기 가능 | `backend/app/auth.py`, `api/chat.py`, `api/progress.py`, `api/wrong_answers.py`, `frontend/lib/api.ts`, `chat/page.tsx`, `wrong-answers/page.tsx`, `Sidebar.tsx` | ✅ 완료 (2026-07-12) — Supabase JWT 검증 의존성 추가, 프론트 Authorization 헤더 포함 |
 
 ---
 
