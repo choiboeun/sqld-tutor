@@ -33,6 +33,7 @@
 | QA-10a | 회원가입 후 자동 로그인 미지원 | `signUp()` 반환값 `data`를 무시해 세션이 즉시 발급돼도 "이메일 확인" 화면만 표시 | `frontend/app/(auth)/signup/page.tsx` | ✅ 완료 (2026-07-10) |
 | QA-10b | 인증 이메일 Supabase 기본 영문 템플릿 | Supabase 기본 이메일 — 영문, Supabase 브랜딩, "Confirm your email address" 제목 | Supabase Dashboard > Email Templates | ✅ 완료 (2026-07-10) |
 | QA-12 | 계정 관리 화면 없음 — 비밀번호 변경·회원탈퇴 불가 | 로그인 후 계정 관련 기능 진입점 없음 | `frontend/app/chat/page.tsx` + Supabase SQL `delete_user()` | ✅ 완료 (2026-07-11) |
+| QA-13 | ~합니다체/~해요체 문법 혼용 | 노드 문자열 리터럴 + LLM 프롬프트 모두 ~합니다체 섞임 | 노드 4개 + 프롬프트 2개 | ✅ 완료 (2026-07-12) |
 
 ---
 
@@ -320,6 +321,25 @@ _SQL = re.compile(r"SELECT\b|실행|쿼리|돌려", re.IGNORECASE)
 - 비밀번호 변경: `supabase.auth.updateUser({ password })`
 - 회원 탈퇴: `supabase.rpc("delete_user")` → signOut → `/login` 이동
 - `560052b`
+
+---
+
+### QA-13 — ~합니다체/~해요체 문법 혼용 수정 ✅
+
+**원인:** 노드 문자열 리터럴에 ~합니다체("없습니다", "오류가 발생했습니다" 등)가 산재해 있었고, LLM 지시문(`prompts.py`, `explain_tools.py`)에도 체계 지정이 없어 LLM이 ~합니다체를 자유롭게 사용.
+
+**수정 범위:**
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `sql_node.py` | "SELECT 문만 실행할 수 있습니다." → "…있어요." 외 2건 |
+| `review_node.py` | "정답입니다!" → "정답이에요!" 외 3건 |
+| `diagnose_node.py` | "풀이 데이터가 없습니다." → "…없어요." 외 2건 |
+| `drill_node.py` | "조건에 맞는 문제가 없습니다." → "…없어요." |
+| `prompts.py` | "한국어로 친절하게 답변하세요." → "~해요체로 일관되게 답변하세요. ~습니다체는 사용하지 마세요." |
+| `explain_tools.py` | "한국어로 답변하세요." → "한국어로 ~해요체로 일관되게 답변하세요. ~습니다체는 사용하지 마세요." |
+
+`1c70574`
 
 ---
 
