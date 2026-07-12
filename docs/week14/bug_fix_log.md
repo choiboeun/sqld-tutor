@@ -42,6 +42,10 @@
 | 보고서 #8 | 지난 대화 기록 화면 없음 | — | — | 보류 — 오답 회고(UX-2)로 대체. 개념 설명은 재질의로 동일 답변 가능. 합격 목적 앱에서 전체 대화 기록 필요성 낮음 |
 | 보고서 #13 | 문항별 Oracle/SQL Server 문법 혼용 | — | — | N/A — SQLD 시험은 Oracle 단일 기준. 220개 문제 검토 결과 실제 혼용 없음. q070의 TOP은 오답 보기로 의도적 사용 |
 | 보고서 #14 | 백엔드 API 서버 단 권한 검증 없음 | thread_id(= user_id)만 알면 누구나 타인의 학습 데이터 읽기·쓰기 가능 | `backend/app/auth.py`, `api/chat.py`, `api/progress.py`, `api/wrong_answers.py`, `frontend/lib/api.ts`, `chat/page.tsx`, `wrong-answers/page.tsx`, `Sidebar.tsx` | ✅ 완료 (2026-07-12) — Supabase JWT 검증 의존성 추가, 프론트 Authorization 헤더 포함 |
+| UI-전체 | 앱 전체 디자인 바이브코딩 느낌 — 모든 버튼 blue-600, gray 배경 단조로움 | 색상 체계 없이 Tailwind 기본값 사용 | 프론트 전체 (`layout.tsx`, `login`, `signup`, `onboarding`, `Sidebar`, `chat/page`, `wrong-answers/page`) | ✅ 완료 (2026-07-12) — stone(중립)/amber(강조) 디자인 시스템 도입 |
+| UX-딜레이 | 보기 버튼 클릭 딜레이 — done 이벤트까지 기다려야 클릭 가능 | PostgresSaver 체크포인트 저장 완료 후 done 이벤트 → Bug 6 방어용 설계이나 UX 저해 | `backend/app/api/chat.py`, `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-12) — pending_question SSE 이벤트 추가, 클라이언트 캐시 후 request body로 전달해 checkpoint 경쟁 조건 우회 |
+| UX-로딩점1 | 답 선택 후 문제~2번 사이 불필요한 `...` 표시 | message 핸들러가 항상 빈 슬롯 추가 → done 전 버튼 클릭 시 두 슬롯이 동시에 `...`로 렌더 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-12) — isAnswered 조건으로 답변된 메시지 뒤 빈 슬롯 즉시 숨김 + 스트림 버전 관리로 구 스트림 done 간섭 방지 |
+| UX-로딩점2 | 오답 해설 후 개념 설명 없을 때 불필요한 `...` 표시 | 채점 메시지 뒤 빈 슬롯이 done 올 때까지 남아 있음 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-12) — aiHasResponded=true이면 빈 슬롯 즉시 숨김 |
 
 ---
 
@@ -444,3 +448,93 @@ if (data.session) {
 - `mdComponents`에 `blockquote` 커스텀 컴포넌트 추가 → 파란 배경 + 왼쪽 테두리 callout 박스 스타일
 - 백엔드 변경 없음 — 기존 `"> 텍스트"` blockquote 형식 그대로 동작
 - `af9a314` (2026-07-10)
+
+---
+
+### UI-전체 — stone/amber 디자인 시스템 도입 ✅
+
+**원인:** 모든 버튼 `bg-blue-600`, 배경 `bg-gray-50`, 카드 `rounded-xl` 패턴 반복 → 의도 없이 생성된 느낌(바이브코딩) 지적.
+
+**디자인 방향:** 따뜻한 오프화이트 + 앰버 — stone(중립 warm gray) + amber(강조) 두 축으로 정리.
+
+**수정 범위:**
+
+| 파일 | 주요 변경 |
+|------|-----------|
+| `layout.tsx` | `bg-gray-50` → `bg-stone-50`, `text-gray-900` → `text-stone-900` |
+| `login/page.tsx` | 입력창 `focus:ring-amber-400`, 버튼 `bg-amber-600`, 링크 `text-amber-700` |
+| `signup/page.tsx` | 동일 패턴, 체크박스 `accent-amber-600` |
+| `onboarding/page.tsx` | 선택 상태 `border-amber-500 bg-amber-50`, 버튼 `bg-amber-600` |
+| `Sidebar.tsx` | 예상 점수 카드 `bg-amber-50 border-amber-100`, 진행 바 `bg-amber-500` |
+| `chat/page.tsx` | 사용자 버블 `bg-stone-800`, 전송 버튼 `bg-amber-600`, SQL 실행 버튼 `bg-amber-600` |
+| `wrong-answers/page.tsx` | 안내 배너 `bg-amber-50 border-amber-100`, 카드 hover `border-amber-300` |
+
+`c894818` (2026-07-12)
+
+---
+
+### UX-딜레이 — 보기 버튼 클릭 딜레이 제거 (`chat.py`, `chat/page.tsx`) ✅
+
+**원인:** Bug 6 수정(commit `f2df0ea`) 이후 `done` 이벤트(= 체크포인트 저장 완료)까지 버튼 비활성화 → PostgresSaver 저장에 수백ms~수초 소요 → 사용자 이탈 유발.
+
+**해결 원리:** `on_chain_end`에서 `pending_question`을 SSE로 즉시 전송. 클라이언트가 캐시해두었다가 답변 요청 시 `client_pending_question`으로 request body에 포함. 백엔드가 체크포인트 대신 request body의 값을 사용해 채점 → checkpoint 경쟁 조건 완전 우회.
+
+**수정 내용:**
+```python
+# backend/app/api/chat.py
+class ChatRequest(BaseModel):
+    client_pending_question: dict = {}
+
+# on_chain_end 핸들러에 추가
+pq = output.get("pending_question")
+if pq and isinstance(pq, dict) and pq.get("id"):
+    yield f"data: {json.dumps({'type': 'pending_question', 'content': pq})}\n\n"
+
+# input_data 구성 시
+elif client_pending_question and client_pending_question.get("id"):
+    input_data["pending_question"] = client_pending_question
+```
+```typescript
+// frontend/app/chat/page.tsx
+const [pendingQuestionCache, setPendingQuestionCache] = useState<Record<string, unknown>>({});
+const pendingQuestionCacheRef = useRef<Record<string, unknown>>({});
+
+// SSE 핸들러
+} else if (event.type === "pending_question") {
+  setPendingQuestionCache(event.content);
+  pendingQuestionCacheRef.current = event.content;
+}
+
+// 버튼 disabled
+disabled={(isLoading && !hasPendingQuestion) || isAnswered}
+```
+
+`4bec150` (2026-07-12)
+
+---
+
+### UX-로딩점1·2 — 불필요한 `...` 로딩 표시 제거 (`chat/page.tsx`) ✅
+
+**증상 1 (로딩점1):** 답 선택 직후 문제 버블과 사용자 답 버블 사이에 `...` 두 개 표시.
+
+**원인 1:** `message` SSE 핸들러가 메시지마다 빈 슬롯 추가 → `done` 전 버튼 클릭 시 구 슬롯 + 신 슬롯 동시 표시.
+
+**증상 2 (로딩점2):** 오답 해설 후 개념 설명 없을 때 `done` 올 때까지 `...` 잔류.
+
+**원인 2:** 빈 슬롯 숨김 조건이 `!isLoading` 또는 `lastMsgIsQuestion`에만 의존.
+
+**수정 내용:**
+```typescript
+// 수정 전 (복잡한 조건)
+if (msg.content === "" && (isAnswered || (aiHasResponded && (!isLoading || lastMsgIsQuestion)))) return null;
+
+// 수정 후 (단순화)
+if (msg.content === "" && (isAnswered || aiHasResponded)) return null;
+```
+- `isAnswered`: 이미 답한 메시지 뒤 빈 슬롯 즉시 숨김 (로딩점1 해결)
+- `aiHasResponded`: AI 응답이 한 번이라도 오면 빈 슬롯 숨김 (로딩점2 해결)
+- 다음 메시지가 실제로 오면 해당 슬롯이 자동 교체되어 정상 표시됨
+
+추가로 `streamIdRef` 스트림 버전 관리 추가 — 구 스트림의 `done`이 신 스트림의 `isLoading`·빈 슬롯을 잘못 수정하는 간섭 버그 방지.
+
+`f1ee7c2`, `728f08c` (2026-07-12)
