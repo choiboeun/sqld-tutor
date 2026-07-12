@@ -186,6 +186,8 @@ function ChatContent() {
   const [sqlResult, setSqlResult] = useState<{ columns: string[]; rows: string[][]; error: string | null } | null>(null);
   const [sqlLoading, setSqlLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [pendingQuestionCache, setPendingQuestionCache] = useState<Record<string, unknown>>({});
+  const pendingQuestionCacheRef = useRef<Record<string, unknown>>({});
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -303,6 +305,11 @@ function ChatContent() {
   }, []);
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
+    // pending_question을 클라이언트 캐시에서 먼저 캡처한 뒤 즉시 초기화
+    const capturedPQ = pendingQuestionCacheRef.current;
+    setPendingQuestionCache({});
+    pendingQuestionCacheRef.current = {};
+
     setChipsVisible(false);
     setIsLoading(true);
     setAiHasResponded(false);
@@ -318,7 +325,7 @@ function ChatContent() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders },
-        body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending }),
+        body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending, client_pending_question: clearPending ? {} : capturedPQ }),
       });
 
       const reader = res.body!.getReader();
@@ -365,6 +372,10 @@ function ChatContent() {
               );
               setIsLoading(false);
               setRefreshSidebar((n) => n + 1);
+            } else if (event.type === "pending_question") {
+              const pq = event.content as Record<string, unknown>;
+              setPendingQuestionCache(pq);
+              pendingQuestionCacheRef.current = pq;
             } else if (event.type === "error") {
               setMessages((prev) => {
                 const last = prev[prev.length - 1];
@@ -603,6 +614,7 @@ function ChatContent() {
           {(() => {
             const lastAiContent = [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? "";
             const lastMsgIsQuestion = !!parseQuestionHeader(lastAiContent);
+            const hasPendingQuestion = !!pendingQuestionCache.id;
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
             if (msg.role === "ai" && msg.content === "" && aiHasResponded && (!isLoading || lastMsgIsQuestion)) return null;
@@ -662,10 +674,10 @@ function ChatContent() {
                               {optData.options.map((opt) => (
                                 <button
                                   key={opt.circle}
-                                  onClick={() => !isLoading && !isAnswered && streamChat(`${opt.num}번`, true)}
-                                  disabled={isLoading || isAnswered}
+                                  onClick={() => streamChat(`${opt.num}번`, true)}
+                                  disabled={(isLoading && !hasPendingQuestion) || isAnswered}
                                   className={`w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg transition-colors group ${
-                                    isLoading && !isAnswered
+                                    isLoading && !hasPendingQuestion && !isAnswered
                                       ? "bg-stone-100 animate-pulse cursor-not-allowed"
                                       : "hover:bg-amber-50 active:bg-amber-100 disabled:opacity-60 disabled:cursor-not-allowed"
                                   }`}

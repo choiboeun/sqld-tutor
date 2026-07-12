@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -53,6 +54,7 @@ class ChatRequest(BaseModel):
     user_id: str = "anonymous"
     target_score: int = 60
     clear_pending: bool = False
+    client_pending_question: dict = {}
 
 
 def _get_text(content) -> str:
@@ -64,7 +66,7 @@ def _get_text(content) -> str:
     return str(content)
 
 
-async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60, clear_pending: bool = False):
+async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60, clear_pending: bool = False, client_pending_question: Optional[dict] = None):
     config = {"configurable": {"thread_id": thread_id}}
 
     existing = await graph.aget_state(config)
@@ -78,6 +80,9 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
         input_data = {"messages": [HumanMessage(content=message)]}
         if clear_pending:
             input_data["pending_question"] = {}
+        elif client_pending_question and isinstance(client_pending_question, dict) and client_pending_question.get("id"):
+            # 클라이언트가 캐시한 pending_question 사용 → checkpoint 저장 완료 전에도 즉시 채점 가능
+            input_data["pending_question"] = client_pending_question
 
     # on_chain_end 에서 post-processing된 메시지를 캡처할 노드 목록
     # explain 포함: LLM 사용이지만 post-processing 적용 후 on_chain_end에서 전송
@@ -98,6 +103,10 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             content = _get_text(msg.content)
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
+                    # pending_question을 클라이언트에 전송 — 버튼 클릭 딜레이 제거
+                    pq = output.get("pending_question")
+                    if pq and isinstance(pq, dict) and pq.get("id"):
+                        yield f"data: {json.dumps({'type': 'pending_question', 'content': pq})}\n\n"
 
             # LLM 토큰 단위 스트리밍 — chatbot만 적용 (explain 포함 나머지는 on_chain_end로 처리)
             elif kind == "on_chat_model_stream" and node == "chatbot":
@@ -117,7 +126,7 @@ async def chat(req: ChatRequest, user_id: str = Depends(get_current_user_id)):
     if req.thread_id != user_id:
         raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
     return StreamingResponse(
-        _stream_response(req.message, req.thread_id, req.user_id, req.target_score, req.clear_pending),
+        _stream_response(req.message, req.thread_id, req.user_id, req.target_score, req.clear_pending, req.client_pending_question or None),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
