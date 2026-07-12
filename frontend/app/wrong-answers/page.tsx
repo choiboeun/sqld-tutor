@@ -176,48 +176,48 @@ export default function WrongAnswersPage() {
   }, [miniInput, miniLoading, selected, threadId]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-stone-50">
       {/* 헤더 */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
-        <Link href="/chat" className="text-gray-400 hover:text-gray-600 transition-colors">
+      <div className="bg-white border-b border-stone-200 px-6 py-4 flex items-center gap-3">
+        <Link href="/chat" className="text-stone-400 hover:text-stone-600 transition-colors">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
         </Link>
-        <h1 className="text-lg font-semibold text-gray-800">오답 회고</h1>
+        <h1 className="text-lg font-semibold text-stone-800">오답 회고</h1>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* 안내 배너 */}
-        <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-6 text-sm text-blue-700">
+        <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-6 text-sm text-amber-800">
           오답을 다시 풀고 싶다면 홈 채팅에서 <strong>"오답 복습해줘"</strong>를 입력해보세요.
         </div>
 
         {/* 카드 목록 */}
         {loading ? (
-          <p className="text-center text-gray-400 py-12">불러오는 중...</p>
+          <p className="text-center text-stone-400 py-12">불러오는 중...</p>
         ) : wrongAnswers.length === 0 ? (
-          <p className="text-center text-gray-400 py-12">아직 오답 기록이 없습니다.</p>
+          <p className="text-center text-stone-400 py-12">아직 오답 기록이 없습니다.</p>
         ) : (
           <div className="space-y-3">
             {wrongAnswers.map((wa) => (
               <button
                 key={wa.question_id}
                 onClick={() => openModal(wa)}
-                className="w-full text-left bg-white rounded-xl border border-gray-200 px-4 py-3.5 hover:border-blue-300 hover:shadow-sm transition-all"
+                className="w-full text-left bg-white rounded-xl border border-stone-200 px-4 py-3.5 hover:border-amber-300 hover:shadow-sm transition-all"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700">
                     {wa.category}
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-gray-100 text-gray-600"}`}>
                     난이도 {wa.difficulty}
                   </span>
                   {wa.still_wrong && (
-                    <span className="ml-auto text-xs text-red-500 font-medium">복습 필요</span>
+                    <span className="ml-auto text-xs text-red-500 font-semibold">복습 필요</span>
                   )}
                 </div>
-                <p className="text-sm text-gray-700 line-clamp-2">{wa.question}</p>
+                <p className="text-sm text-stone-700 line-clamp-2">{wa.question}</p>
               </button>
             ))}
           </div>
@@ -231,7 +231,7 @@ export default function WrongAnswersPage() {
             {/* 모달 헤더 */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
               <div className="flex gap-2">
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700">
                   {selected.category}
                 </span>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-gray-100 text-gray-600"}`}>
@@ -296,8 +296,8 @@ export default function WrongAnswersPage() {
 
               {/* 미니 채팅 */}
               <div className="border border-gray-200 rounded-xl overflow-hidden">
-                <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-                  <p className="text-xs font-medium text-gray-500">더 궁금한 게 있으신가요?</p>
+                <div className="px-3 py-2 bg-stone-50 border-b border-stone-200">
+                  <p className="text-xs font-medium text-stone-500">더 궁금한 게 있으신가요?</p>
                 </div>
                 {miniMessages.length > 0 && (
                   <div className="px-3 py-3 space-y-2 max-h-48 overflow-y-auto">
@@ -305,14 +305,14 @@ export default function WrongAnswersPage() {
                       <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={`rounded-xl px-3 py-2 text-xs max-w-[85%] leading-relaxed ${
                           m.role === "user"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-800"
+                            ? "bg-stone-800 text-white"
+                            : "bg-stone-100 text-stone-800"
                         }`}>
                           {m.role === "ai" && m.content === "" && miniLoading ? (
                             <span className="inline-flex gap-1">
-                              <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                              <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                              <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                              <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                              <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                              <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                             </span>
                           ) : (
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
@@ -323,7 +323,7 @@ export default function WrongAnswersPage() {
                     <div ref={miniBottomRef} />
                   </div>
                 )}
-                <div className="flex gap-2 px-3 py-2.5 border-t border-gray-100">
+                <div className="flex gap-2 px-3 py-2.5 border-t border-stone-100">
                   <input
                     type="text"
                     value={miniInput}
@@ -331,12 +331,12 @@ export default function WrongAnswersPage() {
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMiniMessage(); } }}
                     placeholder="이 문제에 대해 질문하세요"
                     disabled={miniLoading}
-                    className="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                    className="flex-1 text-xs border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 placeholder:text-stone-400"
                   />
                   <button
                     onClick={sendMiniMessage}
                     disabled={miniLoading || !miniInput.trim()}
-                    className="px-3 py-2 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-2 bg-amber-600 text-white text-xs font-semibold rounded-lg hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     전송
                   </button>

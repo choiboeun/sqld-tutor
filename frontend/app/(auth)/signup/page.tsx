@@ -42,28 +42,26 @@ export default function SignupPage() {
       return;
     }
 
-    // 이메일 확인 없이 즉시 세션 발급된 경우 → 온보딩으로 바로 이동
     if (data.session) {
       router.push("/onboarding");
       return;
     }
 
-    // 이메일 확인이 필요한 경우 → 안내 화면 표시
     setDone(true);
     setLoading(false);
   };
 
   if (done) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+        <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-stone-200 p-8 text-center">
           <div className="text-4xl mb-4">✉️</div>
-          <h2 className="text-lg font-bold text-gray-800 mb-2">이메일을 확인해주세요</h2>
-          <p className="text-sm text-gray-500">
-            {email}로 인증 메일을 발송했습니다.<br />
-            메일의 링크를 클릭하면 로그인할 수 있습니다.
+          <h2 className="text-lg font-bold text-stone-800 mb-2">이메일을 확인해주세요</h2>
+          <p className="text-sm text-stone-500">
+            {email}로 인증 메일을 발송했어요.<br />
+            메일의 링크를 클릭하면 로그인할 수 있어요.
           </p>
-          <Link href="/login" className="block mt-6 text-sm text-blue-600 hover:underline">
+          <Link href="/login" className="block mt-6 text-sm text-amber-700 font-semibold hover:underline">
             로그인 페이지로 이동
           </Link>
         </div>
@@ -72,42 +70,45 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-xl font-bold text-gray-800 mb-1">회원가입</h1>
-        <p className="text-sm text-gray-400 mb-6">SQLD 합격을 향한 첫 걸음</p>
+    <div className="min-h-screen flex items-center justify-center bg-stone-50">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-stone-200 p-8">
+        <div className="mb-7">
+          <p className="text-xs font-semibold tracking-widest text-amber-600 uppercase mb-2">SQLD AI 튜터</p>
+          <h1 className="text-2xl font-bold text-stone-900 mb-1">회원가입</h1>
+          <p className="text-sm text-stone-500">SQLD 합격을 향한 첫 걸음</p>
+        </div>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">이메일</label>
+            <label className="block text-xs font-medium text-stone-600 mb-1.5">이메일</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white text-stone-900 placeholder:text-stone-400"
               placeholder="example@email.com"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">비밀번호</label>
+            <label className="block text-xs font-medium text-stone-600 mb-1.5">비밀번호</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white text-stone-900 placeholder:text-stone-400"
               placeholder="6자 이상"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">비밀번호 확인</label>
+            <label className="block text-xs font-medium text-stone-600 mb-1.5">비밀번호 확인</label>
             <input
               type="password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white text-stone-900 placeholder:text-stone-400"
               placeholder="••••••••"
             />
           </div>
@@ -117,10 +118,10 @@ export default function SignupPage() {
               type="checkbox"
               checked={agreed}
               onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-0.5 accent-blue-600"
+              className="mt-0.5 accent-amber-600"
             />
-            <span className="text-xs text-gray-500 leading-relaxed">
-              <Link href="/privacy" target="_blank" className="text-blue-600 font-medium hover:underline">
+            <span className="text-xs text-stone-500 leading-relaxed">
+              <Link href="/privacy" target="_blank" className="text-amber-700 font-semibold hover:underline">
                 개인정보처리방침
               </Link>
               에 동의합니다. (이메일, 학습 기록, 채팅 내역이 저장됩니다.)
@@ -132,15 +133,15 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading || !agreed}
-            className="w-full bg-blue-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-amber-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "처리 중..." : "회원가입"}
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-stone-400 mt-6">
           이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="text-blue-600 font-medium hover:underline">
+          <Link href="/login" className="text-amber-700 font-semibold hover:underline">
             로그인
           </Link>
         </p>
