@@ -188,6 +188,7 @@ function ChatContent() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [pendingQuestionCache, setPendingQuestionCache] = useState<Record<string, unknown>>({});
   const pendingQuestionCacheRef = useRef<Record<string, unknown>>({});
+  const streamIdRef = useRef(0);
   const diagnosticFired = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -305,6 +306,8 @@ function ChatContent() {
   }, []);
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
+    // 스트림 버전 — 구 스트림의 done 이벤트가 신 스트림에 간섭하지 못하도록 방지
+    const myStreamId = ++streamIdRef.current;
     // pending_question을 클라이언트 캐시에서 먼저 캡처한 뒤 즉시 초기화
     const capturedPQ = pendingQuestionCacheRef.current;
     setPendingQuestionCache({});
@@ -367,6 +370,7 @@ function ChatContent() {
                 return next;
               });
             } else if (event.type === "done") {
+              if (myStreamId !== streamIdRef.current) break;
               setMessages((prev) =>
                 prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
               );
@@ -397,7 +401,9 @@ function ChatContent() {
       });
       setNetworkError(true);
     } finally {
-      setIsLoading(false);
+      if (myStreamId === streamIdRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [threadId, targetScore]);
 
@@ -617,7 +623,7 @@ function ChatContent() {
             const hasPendingQuestion = !!pendingQuestionCache.id;
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
-            if (msg.role === "ai" && msg.content === "" && aiHasResponded && (!isLoading || lastMsgIsQuestion)) return null;
+            if (msg.role === "ai" && msg.content === "" && (isAnswered || (aiHasResponded && (!isLoading || lastMsgIsQuestion)))) return null;
             return (
             <div
               key={i}
