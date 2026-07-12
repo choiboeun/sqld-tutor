@@ -22,7 +22,7 @@ def diagnose_node(state: TutorState) -> dict:
 
     if not attempted:
         return {
-            "messages": [AIMessage(content="아직 풀이 데이터가 없습니다. 먼저 문제를 몇 개 풀어주세요!")],
+            "messages": [AIMessage(content="아직 풀이 데이터가 없어요. 먼저 문제를 몇 개 풀어보세요!")],
             "is_diagnostic": False,
         }
 
@@ -55,7 +55,7 @@ def diagnose_node(state: TutorState) -> dict:
             if cnt < 5:
                 low_sample = True
         if low_sample and not is_initial:
-            lines.append("\n> ⚠️ 5문제 미만은 데이터가 적어 신뢰도가 낮습니다. 더 풀어보세요!")
+            lines.append("\n> ⚠️ 5문제 미만은 데이터가 적어 신뢰도가 낮아요. 더 풀어보세요!")
 
     if strong:
         lines += ["", "**잘 하고 있는 카테고리**", ""]
@@ -72,6 +72,6 @@ def diagnose_node(state: TutorState) -> dict:
         lines += ["", "---", f"> '{weak[0][0]}' 관련 문제를 집중해서 풀어보세요."]
 
     if is_initial:
-        lines += ["", "'문제 줘'라고 입력하면 약점 카테고리 위주로 학습을 시작합니다!"]
+        lines += ["", "'문제 줘'라고 입력하면 약점 카테고리 위주로 학습을 시작할 수 있어요!"]
 
     return {"messages": [AIMessage(content="\n".join(lines))], "is_diagnostic": False}

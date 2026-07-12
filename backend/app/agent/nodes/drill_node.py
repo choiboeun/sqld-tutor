@@ -390,7 +390,7 @@ def drill_node(state: TutorState) -> dict:
                     hint += f", 난이도 '{difficulty}'"
                 hint += ")"
             return {
-                "messages": [AIMessage(content=f"조건에 맞는 문제가 없습니다{hint}. 조건을 바꿔보세요.")],
+                "messages": [AIMessage(content=f"조건에 맞는 문제가 없어요{hint}. 조건을 바꿔보세요.")],
             }
 
         if is_diagnostic:

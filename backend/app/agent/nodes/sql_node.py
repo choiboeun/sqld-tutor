@@ -39,9 +39,9 @@ def sql_node(state: TutorState) -> dict:
     query = re.sub(r'\s+[가-힣][가-힣\s]*$', '', query).strip()
 
     if not _ALLOWED.match(query):
-        return {"messages": [AIMessage(content="SELECT 문만 실행할 수 있습니다.")]}
+        return {"messages": [AIMessage(content="SELECT 문만 실행할 수 있어요.")]}
     if _BLOCKED.search(query):
-        return {"messages": [AIMessage(content="허용되지 않는 구문이 포함되어 있습니다.")]}
+        return {"messages": [AIMessage(content="허용되지 않는 구문이 포함되어 있어요.")]}
 
     try:
         import sqlite3
@@ -53,4 +53,4 @@ def sql_node(state: TutorState) -> dict:
         result = _format_table(columns, rows)
         return {"messages": [AIMessage(content=result)]}
     except Exception as e:
-        return {"messages": [AIMessage(content=f"SQL 오류가 발생했습니다: {e}\n\n{_TABLES_INFO}")]}
+        return {"messages": [AIMessage(content=f"SQL 오류가 발생했어요: {e}\n\n{_TABLES_INFO}")]}

@@ -63,10 +63,10 @@ def _format_question(q: dict) -> str:
 
 def _format_feedback(q: dict, user_answer: int, correct: bool) -> str:
     if correct:
-        header = "정답입니다! 오답 목록에서 제거됩니다."
+        header = "정답이에요! 오답 목록에서 제거돼요."
     else:
         correct_circle = _CIRCLE.get(q['answer'], str(q['answer']))
-        header = f"아직 틀렸습니다. 정답은 {correct_circle}번입니다."
+        header = f"아직 틀렸어요. 정답은 {correct_circle}번이에요."
     return f"{header}\n\n해설: {q.get('explanation', '')}"
 
 
@@ -77,11 +77,11 @@ def review_node(state: TutorState) -> dict:
         mistakes = state.get("recent_mistakes") or []
         if not mistakes:
             return {
-                "messages": [AIMessage(content="아직 오답 기록이 없습니다. 먼저 문제를 풀어보세요!")],
+                "messages": [AIMessage(content="아직 오답 기록이 없어요. 먼저 문제를 풀어보세요!")],
             }
         question = get_question_by_id(random.choice(mistakes))
         if not question:
-            return {"messages": [AIMessage(content="문제를 불러오는 중 오류가 발생했습니다.")]}
+            return {"messages": [AIMessage(content="문제를 불러오는 중 오류가 발생했어요.")]}
 
         return {
             "messages": [AIMessage(content=_format_question(question))],

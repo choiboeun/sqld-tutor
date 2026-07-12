@@ -41,7 +41,7 @@ def build_system_prompt(state: "TutorState") -> str:
         "- grade_answer: 답안 채점",
         "- execute_sql: SQL 실행 (EMP, DEPT, SALGRADE 테이블 사용 가능)",
         "- explain_concept: 개념 설명",
-        "한국어로 친절하게 답변하세요.",
+        "한국어로 ~해요체(친근한 존댓말)로 일관되게 답변하세요. ~습니다체는 사용하지 마세요.",
     ]
 
     return "\n".join(lines)
