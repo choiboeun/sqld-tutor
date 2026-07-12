@@ -166,6 +166,7 @@ function ChatContent() {
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [networkError, setNetworkError] = useState(false);
+  const [chipsVisible, setChipsVisible] = useState(!isNewUser);
   const lastUserMessageRef = useRef("");
   const [threadId, setThreadId] = useState<string | null>(null);
   const [targetScore, setTargetScore] = useState(70);
@@ -297,6 +298,7 @@ function ChatContent() {
   }, []);
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean) => {
+    setChipsVisible(false);
     setIsLoading(true);
     setAiHasResponded(false);
     setNetworkError(false);
@@ -400,6 +402,24 @@ function ChatContent() {
     inputRef.current?.focus();
     await streamChat(text, true);
   };
+
+  const handleWeakConceptChip = useCallback(async () => {
+    if (!threadId) return;
+    try {
+      const res = await fetch(`/api/progress/${threadId}`);
+      const data = await res.json();
+      const cats = data.accuracy_by_category as Record<string, { accuracy: number; attempts: number }>;
+      const entries = Object.entries(cats).filter(([, v]) => v.attempts > 0);
+      if (entries.length === 0) {
+        await streamChat("문제 줘", true);
+        return;
+      }
+      const weakest = entries.sort((a, b) => a[1].accuracy - b[1].accuracy)[0];
+      await streamChat(`${weakest[0]} 개념 설명해줘`, true);
+    } catch {
+      await streamChat("문제 줘", true);
+    }
+  }, [threadId, streamChat]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -657,6 +677,35 @@ function ChatContent() {
             </div>
           </div>
         )}
+        {chipsVisible && sessionReady && !isLoading && (
+          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-gray-100 bg-white">
+            <button
+              onClick={() => streamChat("문제 줘", true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              📝 문제 풀기
+            </button>
+            <button
+              onClick={() => streamChat("약점 분석해줘", true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              📊 약점 분석
+            </button>
+            <button
+              onClick={() => streamChat("오답 복습해줘", true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              🔁 오답 복습
+            </button>
+            <button
+              onClick={handleWeakConceptChip}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              💡 틀린 개념 복습
+            </button>
+          </div>
+        )}
+
         <div className="px-6 py-4 border-t border-gray-200 bg-white">
           <div className="flex gap-3 items-end">
             <textarea
