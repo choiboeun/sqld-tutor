@@ -51,6 +51,7 @@ class ChatRequest(BaseModel):
     thread_id: str = "default"
     user_id: str = "anonymous"
     target_score: int = 60
+    clear_pending: bool = False
 
 
 def _get_text(content) -> str:
@@ -62,7 +63,7 @@ def _get_text(content) -> str:
     return str(content)
 
 
-async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60):
+async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60, clear_pending: bool = False):
     config = {"configurable": {"thread_id": thread_id}}
 
     existing = await graph.aget_state(config)
@@ -74,6 +75,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
         log_event(user_id, "session_start", {"thread_id": thread_id})
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
+        if clear_pending:
+            input_data["pending_question"] = {}
 
     # on_chain_end 에서 post-processing된 메시지를 캡처할 노드 목록
     # explain 포함: LLM 사용이지만 post-processing 적용 후 on_chain_end에서 전송
@@ -111,7 +114,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 @router.post("/chat")
 async def chat(req: ChatRequest):
     return StreamingResponse(
-        _stream_response(req.message, req.thread_id, req.user_id, req.target_score),
+        _stream_response(req.message, req.thread_id, req.user_id, req.target_score, req.clear_pending),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
