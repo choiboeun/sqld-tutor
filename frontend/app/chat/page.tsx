@@ -677,7 +677,9 @@ function ChatContent() {
             </div>
           </div>
         )}
-        {chipsVisible && sessionReady && !isLoading && (
+        {chipsVisible && sessionReady && !isLoading && !parseQuestionHeader(
+          [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? ""
+        ) && (
           <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-gray-100 bg-white">
             <button
               onClick={() => streamChat("문제 줘", true)}
