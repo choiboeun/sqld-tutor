@@ -96,7 +96,8 @@ def review_node(state: TutorState) -> dict:
     match = _ANSWER.search(last_human.content) if last_human else None
 
     if not match:
-        return {"messages": [AIMessage(content=_format_question(pending))]}
+        note = "\n\n> 1~4번 중 하나를 선택해주세요."
+        return {"messages": [AIMessage(content=_format_question(pending) + note)]}
 
     ans_char = match.group(1)
     user_answer = _CIRCLE_TO_INT.get(ans_char, int(ans_char))
