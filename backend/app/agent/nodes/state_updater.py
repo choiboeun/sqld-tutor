@@ -40,8 +40,8 @@ def state_updater(state: TutorState) -> dict:
     if not correct and qid not in mistakes and not state.get("is_diagnostic", False):
         mistakes.append(qid)
 
-    # 적응형 신호: streak >= 3 → 카테고리 전환 권장
-    suggest_switch = streak >= _STREAK_THRESHOLD
+    # 적응형 신호: streak >= 3 → 카테고리 전환 권장 (review 모드에선 비활성)
+    suggest_switch = streak >= _STREAK_THRESHOLD and state.get("current_mode") != "review"
     extra_messages = []
     if suggest_switch and not state.get("is_diagnostic", False):
         extra_messages.append(
