@@ -35,8 +35,9 @@ def state_updater(state: TutorState) -> dict:
         consecutive_wrong = (state.get("consecutive_wrong") or 0) + 1
 
     # recent_mistakes — drill_node는 추가만, review_node는 이미 제거 처리
+    # 초기 진단 중 오답은 추가하지 않음 — 복습 대상에 진단 문제가 섞이는 것 방지
     mistakes = list(state.get("recent_mistakes") or [])
-    if not correct and qid not in mistakes:
+    if not correct and qid not in mistakes and not state.get("is_diagnostic", False):
         mistakes.append(qid)
 
     # 적응형 신호: streak >= 3 → 카테고리 전환 권장

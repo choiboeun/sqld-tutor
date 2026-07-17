@@ -47,6 +47,13 @@ def intent_classifier(state: TutorState) -> dict:
         if _DRILL_EXPLICIT.search(text):
             print(f"[intent] follow_up_mode 종료 (drill 요청) → drill")
             return {"current_mode": "drill", "follow_up_mode": False}
+        # 오답 복습 / 약점 분석은 follow_up_mode에서도 즉시 허용
+        if _REVIEW.search(text):
+            print(f"[intent] follow_up_mode 종료 (review 요청) → review")
+            return {"current_mode": "review", "follow_up_mode": False}
+        if _DIAGNOSE.search(text):
+            print(f"[intent] follow_up_mode 종료 (diagnose 요청) → diagnose")
+            return {"current_mode": "diagnose", "follow_up_mode": False}
         print(f"[intent] follow_up_mode 활성 → chat, text={text!r}")
         return {"current_mode": "chat"}
 
