@@ -163,7 +163,6 @@ function ChatContent() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [aiHasResponded, setAiHasResponded] = useState(false);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [networkError, setNetworkError] = useState(false);
@@ -315,7 +314,6 @@ function ChatContent() {
 
     setChipsVisible(false);
     setIsLoading(true);
-    setAiHasResponded(false);
     setNetworkError(false);
     lastUserMessageRef.current = message;
     if (showUserMsg) {
@@ -353,7 +351,6 @@ function ChatContent() {
             const event = JSON.parse(raw);
 
             if (event.type === "message") {
-              setAiHasResponded(true);
               // done 이벤트까지 잠금 유지 — feedback 후 explain 노드가 아직 실행 중일 수 있음
               setMessages((prev) => {
                 const next = [...prev];
@@ -621,7 +618,7 @@ function ChatContent() {
             const hasPendingQuestion = !!pendingQuestionCache.id;
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
-            if (msg.role === "ai" && msg.content === "" && (isAnswered || aiHasResponded)) return null;
+            if (msg.role === "ai" && msg.content === "" && isAnswered) return null;
             return (
             <div
               key={i}
