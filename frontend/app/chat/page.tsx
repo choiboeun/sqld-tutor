@@ -280,28 +280,13 @@ function ChatContent() {
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
-    const supabase = createClient();
-    let { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      const { data } = await supabase.auth.refreshSession();
-      session = data.session;
-    }
-    const token = session?.access_token;
-    if (!token) {
-      setDeleteLoading(false);
-      alert("로그인 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
-      return;
-    }
-    const resp = await fetch("/api/user", {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const resp = await fetch("/account/delete", { method: "DELETE" });
     if (!resp.ok) {
       setDeleteLoading(false);
       alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
       return;
     }
-    await supabase.auth.signOut();
+    await createClient().auth.signOut();
     window.location.href = "/login";
   };
 
