@@ -360,7 +360,11 @@ function ChatContent() {
                   next.push({ role: "ai", content: "" });
                 }
                 next[next.length - 1] = { role: "ai", content: event.content };
-                // trailing push 제거 — loading 이벤트가 필요할 때만 빈 슬롯 추가
+                // 채점 결과 직후 ...버블 슬롯을 같은 setState 안에서 추가
+                // (loading 이벤트가 별도 tick에 오면 React 배칭으로 적용 안 될 수 있음)
+                if (/^(정답|오답)입니다/.test(event.content)) {
+                  next.push({ role: "ai", content: "" });
+                }
                 return next;
               });
               streamingContent = "";
