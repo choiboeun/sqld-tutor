@@ -18,6 +18,7 @@
 | R2-QA10b | 오답 복습 중 비숫자 입력 시 안내 없이 문제만 재출력 | 안내 메시지 누락 | `backend/app/agent/nodes/review_node.py` | ✅ 완료 (2026-07-17) |
 | R2-QA16 | 보기 텍스트 중 `0~1 사이` 등 범위 표현에 취소선 오표시 | remark-gfm 기본값 `singleTilde: true` → `~text~` 패턴 취소선 처리 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
 | R2-자동개념설명 | 오답 후 자동 개념 설명이 트리거되지 않음 | `client_pending_question` race condition — drill_node 출제 체크포인트 저장 전 채점 요청 도착 시 `last_category`가 직전 진단 문제 카테고리로 남음 | `backend/app/agent/nodes/state_updater.py` | ✅ 완료 (2026-07-19) |
+| R2-QA4 | 채점 후 다음 문제로 가려면 매번 "문제 줘" 직접 타이핑해야 함 | 채점·개념설명 버블 하단에 "다음 문제 →" 버튼 미존재 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
 
 ---
 
