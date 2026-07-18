@@ -44,6 +44,14 @@ async def get_progress(thread_id: str, user_id: str = Depends(get_current_user_i
 
     wrong_log = v.get("wrong_answer_log") or {}
 
+    is_diagnostic = v.get("is_diagnostic", False)
+    is_diagnostic_done = v.get("is_diagnostic_done", False)
+    diag_progress = 0
+    if is_diagnostic:
+        total = v.get("total_answered", 0)
+        start = v.get("diagnostic_start_count")
+        diag_progress = (total - start) if start is not None else 0
+
     return {
         "total_answered": v.get("total_answered", 0),
         "streak": v.get("streak", 0),
@@ -54,4 +62,6 @@ async def get_progress(thread_id: str, user_id: str = Depends(get_current_user_i
         "weak_categories": weak[:3],
         "wrong_count": len(wrong_log),
         "target_score": v.get("target_score", 70),
+        "is_diagnostic_in_progress": is_diagnostic and not is_diagnostic_done,
+        "diagnostic_progress": diag_progress,
     }

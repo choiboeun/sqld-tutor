@@ -10,9 +10,15 @@ from app.agent.nodes.explain_node import explain_node
 from app.agent.nodes.diagnose_node import diagnose_node
 from app.agent.nodes.state_updater import state_updater
 from app.agent.nodes.sql_node import sql_node
+from langchain_core.messages import AIMessage as _AIMessage
 
 
 tool_node = ToolNode(ALL_TOOLS)
+
+
+def diagnostic_block_node(state: TutorState) -> dict:
+    return {"messages": [_AIMessage(content="초기 진단은 이미 완료했어요. 약점이 궁금하면 '약점 분석해줘'라고 해보세요.")]}
+
 
 
 def route_by_intent(state: TutorState) -> str:
@@ -84,13 +90,15 @@ builder.add_node("sql", sql_node)
 builder.add_node("chatbot", chatbot_node)
 builder.add_node("tools", tool_node)
 builder.add_node("state_updater", state_updater)
+builder.add_node("diagnostic_block", diagnostic_block_node)
 
 builder.add_edge(START, "intent_classifier")
 builder.add_conditional_edges(
     "intent_classifier",
     route_by_intent,
     {"drill": "drill", "review": "review", "explain": "explain",
-     "diagnose": "diagnose", "sql": "sql", "chat": "chatbot"},
+     "diagnose": "diagnose", "sql": "sql", "chat": "chatbot",
+     "diagnostic_block": "diagnostic_block"},
 )
 builder.add_conditional_edges("drill", after_drill, {"state_updater": "state_updater", END: END})
 builder.add_conditional_edges("review", after_drill, {"state_updater": "state_updater", END: END})
@@ -102,6 +110,7 @@ builder.add_conditional_edges("state_updater", adaptive_difficulty_router, {
 builder.add_edge("explain", END)
 builder.add_edge("diagnose", END)
 builder.add_edge("sql", END)
+builder.add_edge("diagnostic_block", END)
 
 from app.db.checkpointer import get_checkpointer
 graph = builder.compile(checkpointer=get_checkpointer())

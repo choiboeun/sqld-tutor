@@ -51,3 +51,6 @@ class TutorState(TypedDict):
 
     # 채점 후 추가 질의 모드 — True 동안 intent_classifier가 chatbot으로 라우팅
     follow_up_mode: bool
+
+    # 초기 진단 완료 여부 — True이면 진단 재시작 요청을 차단
+    is_diagnostic_done: bool

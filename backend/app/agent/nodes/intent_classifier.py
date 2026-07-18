@@ -36,6 +36,14 @@ def intent_classifier(state: TutorState) -> dict:
 
     # 초기 진단 시작 — 다른 패턴보다 먼저 체크
     if _DIAGNOSTIC_START.search(text):
+        # 이미 진단 완료 → 차단
+        if state.get("is_diagnostic_done", False):
+            print(f"[intent] 진단 완료 상태에서 재요청 차단")
+            return {"current_mode": "diagnostic_block"}
+        # 이미 진단 진행 중 → 카운터 유지하며 이어서
+        if state.get("is_diagnostic", False):
+            print(f"[intent] 진단 진행 중 재요청 → 이어서 진행")
+            return {"current_mode": "drill"}
         total = state.get("total_answered") or 0
         print(f"[intent] text={text!r} → 진단 시작, total_answered={total}")
         return {"current_mode": "drill", "is_diagnostic": True, "diagnostic_start_count": total}

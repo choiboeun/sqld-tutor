@@ -45,6 +45,7 @@ INITIAL_STATE = {
     "is_diagnostic": False,
     "diagnostic_start_count": None,
     "follow_up_mode": False,
+    "is_diagnostic_done": False,
 }
 
 

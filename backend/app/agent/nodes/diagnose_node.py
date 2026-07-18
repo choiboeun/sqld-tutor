@@ -74,4 +74,5 @@ def diagnose_node(state: TutorState) -> dict:
     if is_initial:
         lines += ["", "'문제 줘'라고 입력하면 약점 카테고리 위주로 학습을 시작할 수 있어요!"]
 
-    return {"messages": [AIMessage(content="\n".join(lines))], "is_diagnostic": False}
+    extra = {"is_diagnostic_done": True} if is_initial else {}
+    return {"messages": [AIMessage(content="\n".join(lines))], "is_diagnostic": False, **extra}

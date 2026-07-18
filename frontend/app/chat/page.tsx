@@ -189,6 +189,8 @@ function ChatContent() {
   const pendingQuestionCacheRef = useRef<Record<string, unknown>>({});
   const streamIdRef = useRef(0);
   const diagnosticFired = useRef(false);
+  const resumeDiagnosticFired = useRef(false);
+  const [diagnosticResume, setDiagnosticResume] = useState<{ progress: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -427,6 +429,22 @@ function ChatContent() {
     }
   }, [searchParams, threadId, streamChat, sessionReady]);
 
+  // 재접속 시 진단 미완료 감지 → 배너 표시
+  useEffect(() => {
+    if (!sessionReady || !threadId || resumeDiagnosticFired.current) return;
+    if (searchParams.get("new") === "true") return;
+    if (messages.length > 1) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
+        const data = await res.json();
+        if (data.is_diagnostic_in_progress) {
+          setDiagnosticResume({ progress: data.diagnostic_progress });
+        }
+      } catch {}
+    })();
+  }, [sessionReady, threadId, searchParams]);
+
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || isLoading) return;
@@ -627,6 +645,18 @@ function ChatContent() {
         )}
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+          {diagnosticResume && (
+            <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
+              <span className="text-amber-800">이전 진단을 <strong>{diagnosticResume.progress}/8</strong> 문제까지 풀었어요. 이어서 마저 풀까요?</span>
+              <div className="flex gap-2 ml-4 shrink-0">
+                <button
+                  onClick={async () => { setDiagnosticResume(null); resumeDiagnosticFired.current = true; await streamChat("진단 이어서 해줘", false); }}
+                  className="bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-amber-600"
+                >이어서 풀기</button>
+                <button onClick={() => setDiagnosticResume(null)} className="text-amber-600 text-xs px-2 py-1.5 hover:underline">닫기</button>
+              </div>
+            </div>
+          )}
           {(() => {
             const hasPendingQuestion = !!pendingQuestionCache.id;
             return messages.map((msg, i) => {
