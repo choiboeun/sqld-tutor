@@ -50,6 +50,17 @@ def _pick_diverse_category(state: TutorState, available: list[str]) -> str | Non
 # 보기가 SQL 구문으로 시작할 때만 코드 블록 처리 (한국어 문장 중 SQL 키워드 언급은 제외)
 _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
 _MARKDOWN_TABLE_RE = re.compile(r'^\s*\|.+\|', re.MULTILINE)
+# [SQL1] SELECT...\n[SQL2] SELECT... 패턴 감지
+_SQL_LABEL_RE = re.compile(r'^\[SQL(\d+)\]\s+(.+)$', re.MULTILINE)
+
+
+def _format_sql_labels(ctx: str) -> str:
+    """[SQL1] SELECT... 패턴을 **[SQL1]** + 코드 블록으로 변환."""
+    def replace(m: re.Match) -> str:
+        label = m.group(1)
+        sql = m.group(2).strip()
+        return f'**[SQL{label}]**\n```sql\n{sql}\n```'
+    return _SQL_LABEL_RE.sub(replace, ctx)
 
 
 def _normalize_context(ctx: str) -> str:
@@ -304,7 +315,7 @@ def _format_question(q: dict) -> str:
 
     sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
     if context:
-        sections.append(_normalize_context(context))
+        sections.append(_normalize_context(_format_sql_labels(context)))
     sections.append(q['question'])
     sections.append(opts_block)
     sections.append("번호로 답하세요.")
