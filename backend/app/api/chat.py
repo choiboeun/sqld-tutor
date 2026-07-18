@@ -103,6 +103,10 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             content = _get_text(msg.content)
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
+                    # 채점 결과 직후에만 loading 이벤트 전송 — 자동으로 다음 노드 실행될 때 ...버블 표시
+                    # pending_question이 {}(빈 dict)이면 채점이 일어난 것
+                    if name in ("drill", "review") and output.get("last_grade_result"):
+                        yield f"data: {json.dumps({'type': 'loading'})}\n\n"
                     # pending_question을 클라이언트에 전송 — 버튼 클릭 딜레이 제거
                     pq = output.get("pending_question")
                     if pq and isinstance(pq, dict) and pq.get("id"):
