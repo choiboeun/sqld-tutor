@@ -281,8 +281,18 @@ function ChatContent() {
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.rpc("delete_user");
-    if (error) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) {
+      setDeleteLoading(false);
+      alert("로그인 정보를 찾을 수 없습니다. 다시 로그인해주세요.");
+      return;
+    }
+    const resp = await fetch("/api/user", {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!resp.ok) {
       setDeleteLoading(false);
       alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
       return;
