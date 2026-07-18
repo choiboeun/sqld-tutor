@@ -97,15 +97,21 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             # 지정 노드 완료 → 채점/문제/진단/설명 메시지를 즉시 전송 (post-processing 적용됨)
             if kind == "on_chain_end" and name in NON_LLM_NODES:
                 output = event["data"].get("output") or {}
+                input_state = event["data"].get("input") or {}
                 if isinstance(output, dict):
                     for msg in output.get("messages", []):
                         if isinstance(msg, AIMessage) and not getattr(msg, "tool_calls", None):
                             content = _get_text(msg.content)
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
-                    # 채점 결과 직후에만 loading 이벤트 전송 — 자동으로 다음 노드 실행될 때 ...버블 표시
-                    # pending_question이 {}(빈 dict)이면 채점이 일어난 것
+                    # loading 이벤트: 자동으로 다음 노드가 실행되는 경우에만 ...버블 표시
+                    # 1. 진단 모드 채점 후 → 다음 문제 자동 출제
                     if name in ("drill", "review") and output.get("last_grade_result"):
+                        is_diag = isinstance(input_state, dict) and input_state.get("is_diagnostic", False)
+                        if is_diag:
+                            yield f"data: {json.dumps({'type': 'loading'})}\n\n"
+                    # 2. streak ≥ 3 → 카테고리 전환 안내 후 drill 자동 실행
+                    if name == "state_updater" and output.get("suggest_category_switch"):
                         yield f"data: {json.dumps({'type': 'loading'})}\n\n"
                     # pending_question을 클라이언트에 전송 — 버튼 클릭 딜레이 제거
                     pq = output.get("pending_question")
