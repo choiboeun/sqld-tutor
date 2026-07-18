@@ -684,10 +684,28 @@ function ChatContent() {
                   ) : (() => {
                     const parsed = parseQuestionHeader(msg.content);
                     if (!parsed) {
+                      const isNextQuestionEligible =
+                        /^(정답|오답)입니다/.test(msg.content) ||
+                        msg.content.includes("다음 문제를 풀려면");
                       return (
-                        <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                          {msg.content}
-                        </ReactMarkdown>
+                        <>
+                          <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
+                            {msg.content}
+                          </ReactMarkdown>
+                          {isNextQuestionEligible && !isAnswered && !isLoading && (
+                            <div className="mt-3 flex justify-end">
+                              <button
+                                onClick={() => streamChat("문제 줘", true)}
+                                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                              >
+                                다음 문제
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
+                        </>
                       );
                     }
                     const optData = parseOptions(parsed.body);
