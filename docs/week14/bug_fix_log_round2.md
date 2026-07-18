@@ -19,6 +19,8 @@
 | R2-QA16 | 보기 텍스트 중 `0~1 사이` 등 범위 표현에 취소선 오표시 | remark-gfm 기본값 `singleTilde: true` → `~text~` 패턴 취소선 처리 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
 | R2-자동개념설명 | 오답 후 자동 개념 설명이 트리거되지 않음 | `client_pending_question` race condition — drill_node 출제 체크포인트 저장 전 채점 요청 도착 시 `last_category`가 직전 진단 문제 카테고리로 남음 | `backend/app/agent/nodes/state_updater.py` | ✅ 완료 (2026-07-19) |
 | R2-QA4 | 채점 후 다음 문제로 가려면 매번 "문제 줘" 직접 타이핑해야 함 | 채점·개념설명 버블 하단에 "다음 문제 →" 버튼 미존재 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
+| R2-로딩버블a | 일반 모드 채점 후 ...버블 미표시 | `loading` 이벤트를 진단 모드에서만 발송 — 일반 오답 후 개념 설명 대기 중 빈 슬롯 없음 | `backend/app/api/chat.py` | ✅ 완료 (2026-07-19) |
+| R2-로딩버블b | 채점 직후 ...버블이 여전히 미표시 | React 18 자동 배칭 — `loading` 이벤트가 `message` 이벤트와 같은 tick에 처리되어 `setMessages`가 이전 state 참조 → 빈 슬롯 추가 안 됨. `message` 핸들러 내에서 동일 setState로 빈 슬롯 함께 추가해 해결 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
 
 ---
 
