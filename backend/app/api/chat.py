@@ -87,7 +87,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 
     # on_chain_end 에서 post-processing된 메시지를 캡처할 노드 목록
     # explain 포함: LLM 사용이지만 post-processing 적용 후 on_chain_end에서 전송
-    NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain"}
+    NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain", "diagnostic_block"}
 
     try:
         async for event in graph.astream_events(input_data, config=config, version="v2"):

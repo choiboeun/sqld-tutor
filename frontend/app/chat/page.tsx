@@ -685,7 +685,7 @@ function ChatContent() {
                     const parsed = parseQuestionHeader(msg.content);
                     if (!parsed) {
                       return (
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                        <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                           {msg.content}
                         </ReactMarkdown>
                       );
@@ -709,7 +709,7 @@ function ChatContent() {
                             난이도 {parsed.difficulty}
                           </span>
                         </div>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                        <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                           {optData ? optData.stem : parsed.body}
                         </ReactMarkdown>
                         {optData && (
@@ -730,7 +730,7 @@ function ChatContent() {
                                     {opt.num}
                                   </span>
                                   <div className="flex-1 text-sm leading-relaxed text-stone-800">
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                                    <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                                       {opt.content}
                                     </ReactMarkdown>
                                   </div>
@@ -739,7 +739,7 @@ function ChatContent() {
                             </div>
                             {optData.suffix && (
                               <div className="mt-2">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                                <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                                   {optData.suffix}
                                 </ReactMarkdown>
                               </div>
