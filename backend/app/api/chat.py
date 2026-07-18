@@ -106,11 +106,9 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
                     # loading 이벤트: 자동으로 다음 노드가 실행되는 경우에만 ...버블 표시
-                    # 1. 진단 모드 채점 후 → 다음 문제 자동 출제
+                    # 채점 후 → 진단/일반 모드 무관하게 다음 노드(drill/diagnose/explain) 자동 실행 가능
                     if name in ("drill", "review") and output.get("last_grade_result"):
-                        is_diag = isinstance(input_state, dict) and input_state.get("is_diagnostic", False)
-                        if is_diag:
-                            yield f"data: {json.dumps({'type': 'loading'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'loading'})}\n\n"
                     # 2. streak ≥ 3 → 카테고리 전환 안내 후 drill 자동 실행
                     if name == "state_updater" and output.get("suggest_category_switch"):
                         yield f"data: {json.dumps({'type': 'loading'})}\n\n"
