@@ -354,6 +354,11 @@ function ChatContent() {
               // done 이벤트까지 잠금 유지 — feedback 후 explain 노드가 아직 실행 중일 수 있음
               setMessages((prev) => {
                 const next = [...prev];
+                const last = next[next.length - 1];
+                // 마지막 슬롯이 빈 AI 슬롯이 아니면 새 슬롯 추가 (배칭으로 슬롯이 없는 경우 방어)
+                if (!last || last.role !== "ai" || last.content !== "") {
+                  next.push({ role: "ai", content: "" });
+                }
                 next[next.length - 1] = { role: "ai", content: event.content };
                 next.push({ role: "ai", content: "" });
                 return next;
