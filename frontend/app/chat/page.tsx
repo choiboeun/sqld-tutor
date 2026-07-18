@@ -281,7 +281,11 @@ function ChatContent() {
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
     const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
+    let { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      const { data } = await supabase.auth.refreshSession();
+      session = data.session;
+    }
     const token = session?.access_token;
     if (!token) {
       setDeleteLoading(false);
