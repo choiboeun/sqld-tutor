@@ -16,7 +16,8 @@
 | R2-QA7 | 채점 직후 "오답 복습해줘" 입력 시 분석 텍스트만 나옴 | `follow_up_mode` 블록에서 review/diagnose 탈출 조건 없어 chatbot으로 라우팅 | `backend/app/agent/nodes/intent_classifier.py` | ✅ 완료 (2026-07-17) |
 | R2-QA10 | 오답 복습 선택지 버튼 미표시 | `review_node._format_question`이 `[카테고리 / 난이도: X]` + ①②③④ 형식을 사용하지 않음 | `backend/app/agent/nodes/review_node.py` | ✅ 완료 (round1 UX-1과 함께) |
 | R2-QA10b | 오답 복습 중 비숫자 입력 시 안내 없이 문제만 재출력 | 안내 메시지 누락 | `backend/app/agent/nodes/review_node.py` | ✅ 완료 (2026-07-17) |
-| R2-QA16 | 보기 텍스트 중 `0~1 사이` 등 범위 표현에 취소선 오표시 | remark-gfm 기본값 `singleTilde: true` → `~text~` 패턴 취소선 처리 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
+| R2-QA16a | 보기 텍스트 중 `0~1 사이` 등 범위 표현에 취소선 오표시 | remark-gfm 기본값 `singleTilde: true` → `~text~` 패턴 취소선 처리 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
+| R2-QA16b | 개념 설명에 볼드 기준 없음 — 일반 단어에 볼드 남발, 이탤릭 무분별 사용, `**단어를**` 파싱 실패로 별표 노출 | LLM 프롬프트에 볼드/이탤릭 사용 기준 없음, ReactMarkdown에 `em` 커스텀 렌더러 없음 | `backend/app/agent/tools/explain_tools.py`, `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
 | R2-자동개념설명 | 오답 후 자동 개념 설명이 트리거되지 않음 | `client_pending_question` race condition — drill_node 출제 체크포인트 저장 전 채점 요청 도착 시 `last_category`가 직전 진단 문제 카테고리로 남음 | `backend/app/agent/nodes/state_updater.py` | ✅ 완료 (2026-07-19) |
 | R2-QA4 | 채점 후 다음 문제로 가려면 매번 "문제 줘" 직접 타이핑해야 함 | 채점·개념설명 버블 하단에 "다음 문제 →" 버튼 미존재 | `frontend/app/chat/page.tsx` | ✅ 완료 (2026-07-19) |
 | R2-로딩버블a | 일반 모드 채점 후 ...버블 미표시 | `loading` 이벤트를 진단 모드에서만 발송 — 일반 오답 후 개념 설명 대기 중 빈 슬롯 없음 | `backend/app/api/chat.py` | ✅ 완료 (2026-07-19) |

@@ -148,6 +148,9 @@ const mdComponents = {
   h3: ({ children }: { children?: React.ReactNode }) => (
     <h3 className="font-semibold text-sm mt-3 mb-1">{children}</h3>
   ),
+  em: ({ children }: { children?: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
 };
 
 function ChatContent() {
