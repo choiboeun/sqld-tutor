@@ -704,10 +704,12 @@ function ChatContent() {
                       // 채점 버블 뒤에 개념 설명이 있으면 채점 버블 버튼 숨김
                       const hasConceptAfter = isGradingResult &&
                         messages.slice(i + 1).some(m => m.role === "ai" && m.content.includes("다음 문제를 풀려면"));
+                      // CommonMark 한계: %·.·,** 뒤 한글 결합 시 볼드 미처리 → ** 리터럴 노출 방지
+                      const safeContent = msg.content.replace(/\*\*([^*\n]+)\*\*/g, "$1");
                       return (
                         <>
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                            {msg.content}
+                            {safeContent}
                           </ReactMarkdown>
                           {isNextQuestionEligible && !isAnswered && !isLoading && !hasConceptAfter && (
                             <div className="mt-3 flex justify-end">
