@@ -327,7 +327,8 @@ function ChatContent() {
 
     try {
       const authHeaders = await getAuthHeaders();
-      const res = await fetch("/api/chat", {
+      const chatUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"}/api/chat`;
+      const res = await fetch(chatUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending, client_pending_question: clearPending ? {} : capturedPQ }),
