@@ -131,8 +131,13 @@ _CATEGORY_ALIASES = {
     "erd": "데이터 모델링 기초",
     "엔티티": "데이터 모델링 기초",
     "식별자": "데이터 모델링 기초",
+    # ── 데이터 모델링 기초 추가 alias (데이터 모델보다 길어야 먼저 매칭됨)
+    "데이터 모델링": "데이터 모델링 기초",
     # ── 데이터 모델과 SQL ─────────────────────────────────────────────
+    "데이터 모델과 sql": "데이터 모델과 SQL",
     "데이터 모델": "데이터 모델과 SQL",
+    "모델과 sql": "데이터 모델과 SQL",
+    "모델": "데이터 모델과 SQL",
     # ── SELECT & WHERE ────────────────────────────────────────────────
     "select": "SELECT & WHERE",
     "where": "SELECT & WHERE",
@@ -252,7 +257,9 @@ def _auto_difficulty(state: TutorState, category: str | None, is_diagnostic: boo
 
 def _parse_category(text: str) -> str | None:
     lower = text.lower()
-    for alias, category in _CATEGORY_ALIASES.items():
+    # 긴 alias부터 체크 — 짧은 alias가 긴 개념명에 오매칭 되는 걸 방지
+    # 예) "윈도우 함수 문제 줘"에서 "함수"(2) 대신 "윈도우"(3)가 먼저 매칭
+    for alias, category in sorted(_CATEGORY_ALIASES.items(), key=lambda x: len(x[0]), reverse=True):
         if alias in lower:
             return category
     return None
