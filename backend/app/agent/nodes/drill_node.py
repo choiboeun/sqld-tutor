@@ -94,7 +94,7 @@ def _try_result_table(text: str, context: str = "") -> tuple | None:
         # Pattern 1b: 텍스트 어느 위치에나 한국어 이름-값 쌍 (1개 이상)
         # 예: "관리자 정보가 있으므로 이과장-김부장 1건만 조회된다."
         kor_pairs = re.findall(r'([가-힣][가-힣\w]*)-([가-힣][가-힣\w]*)', t)
-        if kor_pairs:
+        if len(kor_pairs) >= 2:
             items = [(n, _PARTICLE.sub('', v)) for n, v in kor_pairs]
             # 쌍 부분 제거 후 나머지 텍스트를 suffix로
             suffix = re.sub(r'[가-힣][가-힣\w]*-[가-힣][가-힣\w]*,?\s*', '', t).strip()

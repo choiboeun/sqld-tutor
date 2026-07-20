@@ -401,7 +401,6 @@ function ChatContent() {
               setPendingQuestionCache(pq);
               pendingQuestionCacheRef.current = pq;
             } else if (event.type === "error") {
-              console.error("[SSE error event]", event.content);
               setMessages((prev) => {
                 const last = prev[prev.length - 1];
                 if (last?.role === "ai" && last.content === "") return prev.slice(0, -1);

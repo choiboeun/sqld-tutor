@@ -27,7 +27,10 @@ async def get_wrong_answers(thread_id: str, user_id: str = Depends(get_current_u
 
         options = q["options"]
         if isinstance(options, dict):
-            opts_list = [{"num": int(k), "text": options[k]} for k in sorted(options.keys(), key=int)]
+            try:
+                opts_list = [{"num": int(k), "text": options[k]} for k in sorted(options.keys(), key=int)]
+            except ValueError:
+                opts_list = [{"num": i + 1, "text": options[k]} for i, k in enumerate(options.keys())]
         else:
             opts_list = [{"num": i + 1, "text": opt} for i, opt in enumerate(options)]
 

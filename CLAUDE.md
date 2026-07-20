@@ -375,7 +375,7 @@ accuracy_by_category = {
 
 ---
 
-### 🔄 13주차 (진행 중)
+### ✅ 13주차 (완료)
 
 **[사전 준비] 완료**
 - [x] 모바일 레이아웃 수정
@@ -427,6 +427,80 @@ accuracy_by_category = {
 
 **산출물 위치:** `docs/week13/`
 - `beta_feedback_round1.md` — 베타 피드백 1차 (2026-07-03, 2명)
+
+---
+
+### 🔄 14주차 (진행 중)
+
+**1차 피드백 대응 (2026-07-05~12)**
+- [x] `_DRILL` 부정 표현 오분류 수정 — "문제주지마" 입력 시 문제 출제 버그
+- [x] 카테고리 전환 후 문제 자동 출제 — `adaptive_difficulty_router` suggest_category_switch 미확인 버그
+- [x] "모르겠다" 입력 시 갑자기 문제 전환 버그 (진단·일반 모드 각각 수정)
+- [x] "2 2 3 4" 다중 번호 입력 → 첫 숫자만 추출해 정답 처리 버그
+- [x] 메시지 전송 후 입력창 포커스 해제 버그
+- [x] 재로그인 시 동일 문제 정답 판정 불일치 — stale 체크포인트 race condition 수정
+- [x] 로그아웃 후 재로그인 시 풀이 기록 소실 — PostgresSaver 연결 복구
+- [x] 보기 버튼 클릭으로 답 선택 (UX, 3명 공통 요청)
+- [x] 오답 회고 기능 — 풀이 기록 조회 UI (`wrong-answers/page.tsx`)
+- [x] 예상 점수 표시 — 카테고리 정답률 기반 SQLD 점수 추산 (사이드바)
+- [x] 네트워크 오류 시 재시도 버튼
+- [x] 채점 후 추가 질의 시 새 문제 출제 오분류 — `follow_up_mode` 도입
+- [x] `_CATEGORY_ALIASES` 14개 → 75개 확장, 카테고리 지정 시 난이도 폴백 추가
+- [x] RAG 학습 데이터 팩트 오류 14건 수정 + Chroma DB 클린 재빌드
+- [x] 개념 설명 이중 출력 버그 (`on_chat_model_stream` chatbot 노드만 필터링)
+- [x] "SQL Server" 개념 질문 → SQL 실행 모드 오라우팅 수정
+- [x] 회원가입 후 자동 로그인 미지원 수정
+- [x] 계정 관리 화면 추가 — 비밀번호 변경·회원탈퇴
+- [x] ~합니다체/~해요체 문법 혼용 수정 (노드 4개 + 프롬프트 2개)
+- [x] `demo-user-1` 하드코딩 보안 이슈 수정
+- [x] Supabase JWT 기반 API 인증 도입 (thread_id ≠ user_id 403 차단)
+- [x] UI 디자인 시스템 도입 — stone/amber 팔레트, 전체 컴포넌트 통일
+- [x] 입력창 위 제안 칩 4개 추가 (문제 풀기 / 약점 분석 / 오답 복습 / 틀린 개념 복습)
+- [x] pending_question SSE 이벤트 추가 — 클라이언트 캐시로 체크포인트 경쟁 조건 우회 (보기 버튼 클릭 딜레이 제거)
+- [x] 로딩 dots 버블 제어 — React 18 배칭 이슈 수정, 불필요한 dots 제거
+
+**2차 피드백 (2026-07-16) + 대응 (2026-07-17~19)**
+- [x] 진단 8문제 도중 이탈 후 재접속 → amber 배너 + "이어서 풀기" 버튼 (QA-1 시나리오1)
+- [x] 진단 완료 후 재시작 차단 — `is_diagnostic_done` + `diagnostic_block_node` (QA-1 시나리오2)
+- [x] 오답 복습 시 진단 중 문항 재출제 — `state_updater`에서 진단 구간 오답 `recent_mistakes` 제외 (QA-2)
+- [x] 채점 후 "다음 문제 →" 버튼 추가 (QA-4)
+- [x] `follow_up_mode`에서 오답 복습/약점 분석 즉시 허용 (QA-7)
+- [x] 오답 복습 선택지 버튼 미표시 + 비숫자 입력 안내 (QA-10)
+- [x] 진단 완료 재요청 시 빈 버블 — `diagnostic_block`을 `NON_LLM_NODES`에 추가 (QA-9)
+- [x] 보기 `0~1 사이` 범위 표현 취소선 오표시 — `singleTilde: false` (QA-16a)
+- [x] 개념 설명 볼드 남발·이탤릭 무분별 사용 → SQLD 키워드 화이트리스트 후처리 (QA-16b)
+- [x] 오답 후 자동 개념 설명 미트리거 — `client_pending_question` race condition 수정
+- [x] 회원 탈퇴 400 오류 — Next.js Server Route + Admin API 방식으로 재구현
+
+**내부 디버깅 (2026-07-20)**
+- [x] BUG-02: `chat.py` 분석 이벤트에 `req.user_id` 대신 JWT `user_id` 사용
+- [x] BUG-03: `mini_chat.py` 인증 미적용 → `Depends(get_current_user_id)` 추가
+- [x] BUG-04: `_DRILL` 정규식 오매칭 — "풀어"/"시작" 독립 매칭 제거
+- [x] BUG-05: `_ANSWER_RE` 과잉 매칭 — `^[1-4]번?\s*$`로 전체 매칭 강제
+- [x] BUG-06: `_try_result_table` Pattern 1b 한국어 단일 쌍도 테이블 변환 — `>= 2` 조건으로 수정
+- [x] BUG-07: `checkpointer.py` MemorySaver fallback 시 `logging.error`로 격상
+- [x] BUG-08: `wrong_answers.py` `int(k)` `ValueError` 미처리 → try/except 추가
+- [x] BUG-09: `progress.py` `total - start` 음수 가능 → `max(0, ...)` 적용
+- [x] BUG-10: `INITIAL_STATE`에 `wrong_answer_log`, `last_wrong_tags` 누락 필드 추가
+- [x] debug 로그 제거 — `traceback.print_exc()` (chat.py), `console.error` (page.tsx)
+
+**미해결 항목 (QA 보고서 기준)**
+- QA-3: AI 튜터가 누적 정답률·예상 점수에 접근 불가 — 개인화 피드백 미작동
+- QA-5: 오답 해설이 길 때 스크롤 중 입력창·버튼 잠김
+- QA-6: 문항별 추가 질의 경로 미직관적 (mini-chat 모달 있으나 발견율 낮음)
+- QA-8: SQL 직접 실행 기능 미동작 (일부 환경)
+- QA-11: 문제 풀이 중 세션 중단·전환 방법 없음
+- QA-12: SQL 실행 환경이 문항과 분리됨
+- QA-13: 사이드바 정답률 채점 직후 지연 갱신
+- QA-14: 긴 해설 스트리밍 중 간헐적 끊김
+- QA-15: 문제 풀이 중 입력창이 선택지 가독성 저하
+- QA-17: AI 튜터가 풀이 문항 수 잘못 말하는 할루시네이션
+
+**산출물 위치:** `docs/week14/`
+- `beta_feedback_round2.md` — 베타 피드백 2차 (2026-07-16, 3명 + QA 전문가)
+- `bug_fix_log_round1.md` — 1차 피드백 대응 수정 이력 (25건)
+- `bug_fix_log_round2.md` — 2차 피드백 대응 수정 이력 (14건)
+- `14주차_개선보고서.docx` — 개선 보고서
 
 ---
 

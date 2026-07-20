@@ -4,7 +4,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
 from app.agent.tools.explain_tools import explain_concept
 
-_ANSWER_RE = re.compile(r"^[1-4]번?")
+_ANSWER_RE = re.compile(r"^[1-4]번?\s*$")
 
 
 async def explain_node(state: TutorState) -> dict:

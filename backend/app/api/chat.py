@@ -47,6 +47,8 @@ INITIAL_STATE = {
     "diagnostic_start_count": None,
     "follow_up_mode": False,
     "is_diagnostic_done": False,
+    "wrong_answer_log": None,
+    "last_wrong_tags": None,
 }
 
 
@@ -77,7 +79,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 
     if is_new:
         input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)], "user_id": user_id, "target_score": target_score}
-        log_event(user_id, "session_start", {"thread_id": thread_id})
+        log_event(user_id, "session_start", {"thread_id": thread_id})  # JWT 검증된 user_id 사용
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
         if clear_pending:
@@ -97,9 +99,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             async for event in graph.astream_events(input_data, config=config, version="v2"):
                 await queue.put(("event", event))
         except Exception as e:
-            import traceback
             print(f"[stream_error] {type(e).__name__}: {e}")
-            traceback.print_exc()
             await queue.put(("error", e))
         finally:
             await queue.put(("done", None))
@@ -165,7 +165,7 @@ async def chat(req: ChatRequest, user_id: str = Depends(get_current_user_id)):
     if req.thread_id != user_id:
         raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
     return StreamingResponse(
-        _stream_response(req.message, req.thread_id, req.user_id, req.target_score, req.clear_pending, req.client_pending_question or None),
+        _stream_response(req.message, req.thread_id, user_id, req.target_score, req.clear_pending, req.client_pending_question or None),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

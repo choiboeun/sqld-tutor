@@ -1,10 +1,11 @@
 import json
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 from app.agent.llm import llm
+from app.auth import get_current_user_id
 
 router = APIRouter()
 
@@ -43,7 +44,7 @@ def _build_system_prompt(ctx: dict) -> str:
 
 
 @router.post("/mini-chat")
-async def mini_chat(request: MiniChatRequest):
+async def mini_chat(request: MiniChatRequest, _: str = Depends(get_current_user_id)):
     async def event_stream():
         try:
             system_prompt = _build_system_prompt(request.question_context)

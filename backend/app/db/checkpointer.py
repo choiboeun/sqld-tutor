@@ -33,7 +33,8 @@ def get_checkpointer():
         return MemorySaver()  # lifespan 에서 AsyncPostgresSaver 로 교체 예정
     except Exception as e:
         import traceback
-        print(f"[checkpointer] AsyncConnectionPool 생성 실패, MemorySaver fallback: {e}", flush=True)
+        import logging
+        logging.error("[checkpointer] AsyncConnectionPool 생성 실패 → MemorySaver fallback (대화 기록이 재시작 시 초기화됩니다): %s", e)
         traceback.print_exc()
         return MemorySaver()
 
@@ -70,5 +71,6 @@ async def open_checkpointer_pool():
 
     except Exception as e:
         import traceback
-        print(f"[checkpointer] pool.open() 실패: {e}", flush=True)
+        import logging
+        logging.error("[checkpointer] pool.open() 실패 → MemorySaver 유지 (대화 기록이 재시작 시 초기화됩니다): %s", e)
         traceback.print_exc()
