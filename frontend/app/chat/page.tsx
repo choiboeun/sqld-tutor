@@ -693,15 +693,19 @@ function ChatContent() {
                   ) : (() => {
                     const parsed = parseQuestionHeader(msg.content);
                     if (!parsed) {
+                      const isGradingResult = /^(정답|오답)입니다/.test(msg.content);
                       const isNextQuestionEligible =
-                        /^(정답|오답)입니다/.test(msg.content) ||
+                        isGradingResult ||
                         msg.content.includes("다음 문제를 풀려면");
+                      // 채점 버블 뒤에 개념 설명이 있으면 채점 버블 버튼 숨김
+                      const hasConceptAfter = isGradingResult &&
+                        messages.slice(i + 1).some(m => m.role === "ai" && m.content.includes("다음 문제를 풀려면"));
                       return (
                         <>
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                             {msg.content}
                           </ReactMarkdown>
-                          {isNextQuestionEligible && !isAnswered && !isLoading && (
+                          {isNextQuestionEligible && !isAnswered && !isLoading && !hasConceptAfter && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
