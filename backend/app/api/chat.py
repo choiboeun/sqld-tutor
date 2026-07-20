@@ -137,8 +137,10 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
                     if name in ("drill", "review") and output.get("last_grade_result"):
                         yield f"data: {json.dumps({'type': 'loading'})}\n\n"
-                    if name == "state_updater" and output.get("suggest_category_switch"):
-                        yield f"data: {json.dumps({'type': 'loading'})}\n\n"
+                    if name == "state_updater":
+                        yield f"data: {json.dumps({'type': 'stats_updated'})}\n\n"
+                        if output.get("suggest_category_switch"):
+                            yield f"data: {json.dumps({'type': 'loading'})}\n\n"
                     pq = output.get("pending_question")
                     if pq and isinstance(pq, dict) and pq.get("id"):
                         yield f"data: {json.dumps({'type': 'pending_question', 'content': pq})}\n\n"

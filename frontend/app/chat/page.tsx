@@ -389,6 +389,8 @@ function ChatContent() {
                 next[next.length - 1] = { role: "ai", content: streamingContent };
                 return next;
               });
+            } else if (event.type === "stats_updated") {
+              setRefreshSidebar((n) => n + 1);
             } else if (event.type === "done") {
               if (myStreamId !== streamIdRef.current) break;
               setMessages((prev) =>
