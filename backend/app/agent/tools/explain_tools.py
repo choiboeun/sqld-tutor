@@ -65,13 +65,16 @@ def _apply_keyword_bold(content: str) -> str:
 
     # Step 2: 키워드 목록 순서대로 볼드 추가
     # alternation trick: \*\*...\*\* 구간은 건드리지 않고 통과
+    # (?i) 인라인 플래그는 Python 3.12에서 패턴 중간 사용 불가 → re.IGNORECASE 플래그 사용
     for kw in _SQLD_KEYWORDS:
         escaped = re.escape(kw)
         if re.search(r'[a-zA-Z0-9]', kw):
-            kw_pat = r'(?i)\b' + escaped + r'\b'
+            kw_pat = r'\b' + escaped + r'\b'
+            flags = re.IGNORECASE
         else:
             kw_pat = escaped
-        pattern = re.compile(r'\*\*[^*\n]+\*\*|' + kw_pat)
+            flags = 0
+        pattern = re.compile(r'\*\*[^*\n]+\*\*|' + kw_pat, flags)
         content = pattern.sub(
             lambda m: m.group() if m.group().startswith('**') else f'**{m.group()}**',
             content,
