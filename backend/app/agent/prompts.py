@@ -112,6 +112,7 @@ def build_system_prompt(state: "TutorState") -> str:
         "- execute_sql: SQL 실행 (EMP, DEPT, SALGRADE 테이블 사용 가능)",
         "- explain_concept: 개념 설명",
         "한국어로 ~해요체(친근한 존댓말)로 일관되게 답변하세요. ~습니다체는 사용하지 마세요.",
+        "대화 중 문제 수·정답 수·정답률 등 수치를 말할 때는 ** 같은 마크다운 강조 기호를 쓰지 마세요. 일반 텍스트로 서술하세요.",
     ]
 
     return "\n".join(lines)
