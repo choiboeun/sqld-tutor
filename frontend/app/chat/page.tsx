@@ -721,7 +721,7 @@ function ChatContent() {
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                             {safeContent}
                           </ReactMarkdown>
-                          {isGradingResult && isLoading && liveStats !== null && !isAnswered && (
+                          {/^오답입니다/.test(msg.content) && isLoading && liveStats !== null && !isAnswered && (
                             <div className="mt-2 flex justify-end">
                               <button
                                 onClick={() => abortStreamRef.current?.()}
