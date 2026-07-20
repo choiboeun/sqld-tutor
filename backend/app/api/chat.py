@@ -87,7 +87,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             input_data["pending_question"] = client_pending_question
 
     NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain", "diagnostic_block"}
-    KEEPALIVE_INTERVAL = 20  # 초 — LLM 무응답 구간에 중간 서버 연결 유지
+    KEEPALIVE_INTERVAL = 10  # 초 — LLM 무응답 구간에 중간 서버 연결 유지
 
     # LangGraph 이벤트를 별도 태스크로 수집 → 메인 루프에서 타임아웃마다 keepalive 전송
     queue: asyncio.Queue = asyncio.Queue()
