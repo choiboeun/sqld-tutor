@@ -790,11 +790,10 @@ function ChatContent() {
             <div className="flex items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
               <span className="text-sm text-red-600">연결 오류가 발생했습니다.</span>
               <button
-                onClick={() => streamChat(lastUserMessageRef.current, false)}
-                disabled={isLoading}
-                className="text-sm font-medium text-red-600 hover:text-red-800 disabled:opacity-40 transition-colors flex items-center gap-1"
+                onClick={() => window.location.reload()}
+                className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors flex items-center gap-1"
               >
-                ↺ 다시 시도
+                ↺ 새로고침
               </button>
             </div>
           </div>
