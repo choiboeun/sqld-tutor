@@ -54,17 +54,28 @@ def build_system_prompt(state: "TutorState") -> str:
     )
     strong = [cat for cat in accuracy if attempts.get(cat, 0) >= 2 and accuracy[cat] >= 0.8]
 
+    # 카테고리별 풀이 수 문자열 (AI hallucination 방지용)
+    cat_detail = " / ".join(
+        f"{cat}: {int((accuracy.get(cat, 0.0)) * 100)}% ({attempts.get(cat, 0)}문제)"
+        for cat in _CATEGORY_WEIGHTS
+        if attempts.get(cat, 0) > 0
+    )
+
     lines = [
         "당신은 SQLD 자격증 합격을 돕는 AI 튜터입니다.",
         (
+            f"[학습 현황 — 아래 수치는 실시간 데이터입니다. 직접 계산하지 말고 이 값을 그대로 사용하세요]\n"
             f"학생 수준: {level_label} | 누적 풀이: {total}문제 | 연속 정답: {streak}개 | "
             f"목표 점수: {target_score}점 | 예상 점수: 약 {predicted}점 "
-            f"(데이터 보유 카테고리: {covered}/11개, 미보유는 50% 추정)"
+            f"(데이터 보유: {covered}/11개 카테고리, 미보유는 50% 추정)"
         ),
     ]
 
+    if cat_detail:
+        lines.append(f"카테고리별 현황 (정답률 / 풀이 수): {cat_detail}")
+
     if weak:
-        weak_str = ", ".join(f"{cat} {int(acc * 100)}%" for cat, acc in weak)
+        weak_str = ", ".join(f"{cat} {int(acc * 100)}% ({attempts.get(cat,0)}문제)" for cat, acc in weak)
         lines.append(f"취약 카테고리 (정답률 50% 미만, 낮은 순): {weak_str}")
         lines.append("→ 취약 카테고리 관련 질문에는 더 자세히, 쉽게 설명하세요.")
 
