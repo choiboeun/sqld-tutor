@@ -192,6 +192,7 @@ function ChatContent() {
   const [pendingQuestionCache, setPendingQuestionCache] = useState<Record<string, unknown>>({});
   const pendingQuestionCacheRef = useRef<Record<string, unknown>>({});
   const streamIdRef = useRef(0);
+  const abortStreamRef = useRef<(() => void) | null>(null);
   const diagnosticFired = useRef(false);
   const resumeDiagnosticFired = useRef(false);
   const [diagnosticResume, setDiagnosticResume] = useState<{ progress: number } | null>(null);
@@ -312,6 +313,8 @@ function ChatContent() {
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
     // 스트림 버전 — 구 스트림의 done 이벤트가 신 스트림에 간섭하지 못하도록 방지
     const myStreamId = ++streamIdRef.current;
+    const controller = new AbortController();
+    abortStreamRef.current = () => controller.abort();
     // pending_question을 클라이언트 캐시에서 먼저 캡처한 뒤 즉시 초기화
     const capturedPQ = pendingQuestionCacheRef.current;
     setPendingQuestionCache({});
@@ -333,6 +336,7 @@ function ChatContent() {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending, client_pending_question: clearPending ? {} : capturedPQ }),
+        signal: controller.signal,
       });
 
       const reader = res.body!.getReader();
@@ -416,16 +420,22 @@ function ChatContent() {
           }
         }
       }
-    } catch {
+    } catch (err) {
+      const isAbort = err instanceof DOMException && err.name === "AbortError";
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last?.role === "ai" && last.content === "") return prev.slice(0, -1);
         return prev;
       });
-      setNetworkError(true);
+      if (isAbort) {
+        setRefreshSidebar((n) => n + 1);
+      } else {
+        setNetworkError(true);
+      }
     } finally {
       if (myStreamId === streamIdRef.current) {
         setIsLoading(false);
+        abortStreamRef.current = null;
       }
     }
   }, [threadId, targetScore]);
@@ -711,6 +721,19 @@ function ChatContent() {
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                             {safeContent}
                           </ReactMarkdown>
+                          {isGradingResult && isLoading && liveStats !== null && !isAnswered && (
+                            <div className="mt-2 flex justify-end">
+                              <button
+                                onClick={() => abortStreamRef.current?.()}
+                                className="text-xs text-stone-400 hover:text-stone-600 transition-colors flex items-center gap-1"
+                              >
+                                해설 건너뛰기
+                                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
                           {isNextQuestionEligible && !isAnswered && !isLoading && !hasConceptAfter && (
                             <div className="mt-3 flex justify-end">
                               <button
