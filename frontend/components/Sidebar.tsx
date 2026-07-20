@@ -18,9 +18,18 @@ interface ProgressData {
   target_score: number;
 }
 
+export interface LiveStats {
+  accuracy_by_category: Record<string, number>;
+  attempts_by_category: Record<string, number>;
+  total_answered: number;
+  streak: number;
+}
+
 interface Props {
   threadId: string | null;
   refresh: number;
+  liveStats?: LiveStats | null;
+  onStatsRefreshed?: () => void;
   isOpen?: boolean;
   onClose?: () => void;
 }
@@ -60,7 +69,7 @@ function shortName(cat: string): string {
   return SHORT_NAMES[cat] ?? cat;
 }
 
-export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: Props) {
+export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose }: Props) {
   const [data, setData] = useState<ProgressData | null>(null);
 
   useEffect(() => {
@@ -70,14 +79,25 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
         const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
         const d = await res.json();
         setData(d);
+        onStatsRefreshed?.();
       } catch {}
     })();
   }, [threadId, refresh]);
 
-  const catMap = data?.accuracy_by_category ?? {};
+  const catMap: Record<string, CategoryStat> = liveStats
+    ? Object.fromEntries(
+        ALL_CATEGORIES.map((cat) => [
+          cat,
+          {
+            accuracy: liveStats.accuracy_by_category[cat] ?? 0,
+            attempts: liveStats.attempts_by_category[cat] ?? 0,
+          },
+        ])
+      )
+    : (data?.accuracy_by_category ?? {});
   const attemptedCount = ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) > 0).length;
-  const totalAnswered = data?.total_answered ?? 0;
-  const streak = data?.streak ?? 0;
+  const totalAnswered = liveStats?.total_answered ?? data?.total_answered ?? 0;
+  const streak = liveStats?.streak ?? data?.streak ?? 0;
   const targetScore = data?.target_score ?? 70;
 
   const predictedScore = Math.round(
@@ -94,6 +114,14 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
       .sort((a, b) => (catMap[a]?.accuracy ?? 0) - (catMap[b]?.accuracy ?? 0)),
     ...ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) === 0),
   ];
+
+  const weakCategories = liveStats
+    ? ALL_CATEGORIES
+        .filter((cat) => (liveStats.attempts_by_category[cat] ?? 0) >= 1 && (liveStats.accuracy_by_category[cat] ?? 1) < 0.6)
+        .map((cat) => ({ category: cat, accuracy: liveStats.accuracy_by_category[cat] ?? 0 }))
+        .sort((a, b) => a.accuracy - b.accuracy)
+        .slice(0, 3)
+    : (data?.weak_categories ?? []);
 
   return (
     <>
@@ -198,13 +226,13 @@ export default function Sidebar({ threadId, refresh, isOpen = false, onClose }: 
       </div>
 
       {/* 취약 카테고리 */}
-      {data && data.weak_categories.length > 0 && (
+      {weakCategories.length > 0 && (
         <div>
           <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">
             집중 복습 필요
           </h3>
           <ul className="space-y-1.5">
-            {data.weak_categories.map(({ category, accuracy }) => (
+            {weakCategories.map(({ category, accuracy }) => (
               <li key={category} className="flex items-center gap-2 text-xs text-red-600">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
                 <span className="truncate" title={category}>{shortName(category)}</span>

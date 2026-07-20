@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { LiveStats } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 
@@ -167,6 +167,7 @@ function ChatContent() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [refreshSidebar, setRefreshSidebar] = useState(0);
+  const [liveStats, setLiveStats] = useState<LiveStats | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [networkError, setNetworkError] = useState(false);
   const [chipsVisible, setChipsVisible] = useState(!isNewUser);
@@ -390,7 +391,7 @@ function ChatContent() {
                 return next;
               });
             } else if (event.type === "stats_updated") {
-              setRefreshSidebar((n) => n + 1);
+              setLiveStats(event.content as LiveStats);
             } else if (event.type === "done") {
               if (myStreamId !== streamIdRef.current) break;
               setMessages((prev) =>
@@ -514,6 +515,8 @@ function ChatContent() {
       <Sidebar
         threadId={threadId}
         refresh={refreshSidebar}
+        liveStats={liveStats}
+        onStatsRefreshed={() => setLiveStats(null)}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
