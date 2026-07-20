@@ -118,7 +118,7 @@ def _get_vectorstore() -> Chroma:
 
 
 @tool
-async def explain_concept(concept: str, level: str = "beginner") -> str:
+def explain_concept(concept: str, level: str = "beginner") -> str:
     """SQLD 개념을 학습 자료 기반(RAG)으로 학생 수준에 맞게 설명한다.
     concept: 설명할 개념 (예: 'JOIN', 'HAVING', 'ROLLUP')
     level: 학생 수준 ('beginner', 'intermediate', 'advanced')
@@ -129,14 +129,14 @@ async def explain_concept(concept: str, level: str = "beginner") -> str:
         concept = "SQLD 개념"
 
     vectorstore = _get_vectorstore()
-    docs = await vectorstore.asimilarity_search(concept, k=5)
+    docs = vectorstore.similarity_search(concept, k=5)
     context = "\n\n---\n\n".join(doc.page_content for doc in docs)
 
     messages = [
         SystemMessage(content=_PROMPT.format(level=level, context=context)),
         HumanMessage(content=f"{concept}에 대해 설명해주세요."),
     ]
-    response = await llm.ainvoke(messages)
+    response = llm.invoke(messages)
     content = response.content
     print(f"[explain] concept={concept!r}, raw_len={len(content)}, preview={repr(content[:120])}")
     # LLM 볼드 전부 제거 후 SQLD 키워드만 재적용

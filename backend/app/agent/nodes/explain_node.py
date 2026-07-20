@@ -1,3 +1,4 @@
+import asyncio
 import re
 from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
@@ -25,7 +26,10 @@ async def explain_node(state: TutorState) -> dict:
     else:
         concept = raw or "SQLD 개념"
 
-    result = await explain_concept.ainvoke({"concept": concept, "level": student_level})
+    # explain_concept은 sync이므로 to_thread로 이벤트 루프 블로킹 방지
+    result = await asyncio.to_thread(
+        explain_concept.invoke, {"concept": concept, "level": student_level}
+    )
 
     updates: dict = {"messages": [AIMessage(content=result)]}
     if is_adaptive:
