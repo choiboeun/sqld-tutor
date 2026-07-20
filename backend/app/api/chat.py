@@ -97,6 +97,9 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             async for event in graph.astream_events(input_data, config=config, version="v2"):
                 await queue.put(("event", event))
         except Exception as e:
+            import traceback
+            print(f"[stream_error] {type(e).__name__}: {e}")
+            traceback.print_exc()
             await queue.put(("error", e))
         finally:
             await queue.put(("done", None))
