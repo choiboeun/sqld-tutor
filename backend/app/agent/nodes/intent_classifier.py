@@ -62,6 +62,9 @@ def intent_classifier(state: TutorState) -> dict:
         if _DIAGNOSE.search(text):
             print(f"[intent] follow_up_mode 종료 (diagnose 요청) → diagnose")
             return {"current_mode": "diagnose", "follow_up_mode": False}
+        if _SQL.search(text):
+            print(f"[intent] follow_up_mode 종료 (SQL 요청) → sql")
+            return {"current_mode": "sql", "follow_up_mode": False}
         print(f"[intent] follow_up_mode 활성 → chat, text={text!r}")
         return {"current_mode": "chat"}
 
