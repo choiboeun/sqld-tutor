@@ -81,4 +81,6 @@ def state_updater(state: TutorState) -> dict:
         "last_wrong_tags": result.get("tags", []) if not correct else None,
         # 정답 시 explain 반복 방지 플래그 리셋
         "last_explained_category": None if correct else state.get("last_explained_category"),
+        # 직전 채점 결과 정답 여부 — adaptive_difficulty_router 정답 시 explain 차단에 사용
+        "last_was_correct": correct,
     }

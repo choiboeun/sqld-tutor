@@ -49,6 +49,7 @@ INITIAL_STATE = {
     "is_diagnostic_done": False,
     "wrong_answer_log": None,
     "last_wrong_tags": None,
+    "last_was_correct": None,
 }
 
 

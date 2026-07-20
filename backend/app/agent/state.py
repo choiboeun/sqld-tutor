@@ -54,3 +54,6 @@ class TutorState(TypedDict):
 
     # 초기 진단 완료 여부 — True이면 진단 재시작 요청을 차단
     is_diagnostic_done: bool
+
+    # 직전 채점 결과 정답 여부 — adaptive_difficulty_router에서 오답 시에만 explain 트리거하는 데 사용
+    last_was_correct: Optional[bool]
