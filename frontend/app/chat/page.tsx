@@ -520,6 +520,15 @@ function ChatContent() {
     }
   };
 
+  const hasPendingQ = !!pendingQuestionCache.id;
+  const lastAiContent = [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? "";
+  const isAfterGrading = /^(정답입니다|오답입니다)/.test(lastAiContent);
+  const inputPlaceholder = hasPendingQ
+    ? "1~4번으로 답하거나 질문하세요"
+    : isAfterGrading
+      ? "해설이 더 궁금하면 여기에 질문하세요"
+      : "궁금한 것이 있다면 여기에 질문하세요";
+
   return (
     <div className="flex h-[100dvh] overflow-hidden">
       <Sidebar
@@ -870,7 +879,7 @@ function ChatContent() {
               ref={inputRef}
               className={`flex-1 resize-none border border-stone-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-amber-400 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
               rows={1}
-              placeholder="메시지를 입력하세요(Enter로 전송)"
+              placeholder={inputPlaceholder}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
