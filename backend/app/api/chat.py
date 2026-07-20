@@ -1,3 +1,4 @@
+import asyncio
 import json
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
@@ -85,12 +86,39 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             # 클라이언트가 캐시한 pending_question 사용 → checkpoint 저장 완료 전에도 즉시 채점 가능
             input_data["pending_question"] = client_pending_question
 
-    # on_chain_end 에서 post-processing된 메시지를 캡처할 노드 목록
-    # explain 포함: LLM 사용이지만 post-processing 적용 후 on_chain_end에서 전송
     NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain", "diagnostic_block"}
+    KEEPALIVE_INTERVAL = 20  # 초 — LLM 무응답 구간에 중간 서버 연결 유지
+
+    # LangGraph 이벤트를 별도 태스크로 수집 → 메인 루프에서 타임아웃마다 keepalive 전송
+    queue: asyncio.Queue = asyncio.Queue()
+
+    async def _collect():
+        try:
+            async for event in graph.astream_events(input_data, config=config, version="v2"):
+                await queue.put(("event", event))
+        except Exception as e:
+            await queue.put(("error", e))
+        finally:
+            await queue.put(("done", None))
+
+    collector = asyncio.create_task(_collect())
 
     try:
-        async for event in graph.astream_events(input_data, config=config, version="v2"):
+        while True:
+            try:
+                kind_tag, payload = await asyncio.wait_for(queue.get(), timeout=KEEPALIVE_INTERVAL)
+            except asyncio.TimeoutError:
+                # 이벤트 없는 구간 — SSE 코멘트로 연결 유지 (브라우저/프록시 timeout 방지)
+                yield ": keepalive\n\n"
+                continue
+
+            if kind_tag == "done":
+                break
+            if kind_tag == "error":
+                yield f"data: {json.dumps({'type': 'error', 'content': str(payload)})}\n\n"
+                break
+
+            event = payload
             kind = event["event"]
             name = event.get("name", "")
             node = event.get("metadata", {}).get("langgraph_node", "")
@@ -98,34 +126,33 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             # 지정 노드 완료 → 채점/문제/진단/설명 메시지를 즉시 전송 (post-processing 적용됨)
             if kind == "on_chain_end" and name in NON_LLM_NODES:
                 output = event["data"].get("output") or {}
-                input_state = event["data"].get("input") or {}
                 if isinstance(output, dict):
                     for msg in output.get("messages", []):
                         if isinstance(msg, AIMessage) and not getattr(msg, "tool_calls", None):
                             content = _get_text(msg.content)
                             if content:
                                 yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
-                    # loading 이벤트: 자동으로 다음 노드가 실행되는 경우에만 ...버블 표시
-                    # 채점 후 → 진단/일반 모드 무관하게 다음 노드(drill/diagnose/explain) 자동 실행 가능
                     if name in ("drill", "review") and output.get("last_grade_result"):
                         yield f"data: {json.dumps({'type': 'loading'})}\n\n"
-                    # 2. streak ≥ 3 → 카테고리 전환 안내 후 drill 자동 실행
                     if name == "state_updater" and output.get("suggest_category_switch"):
                         yield f"data: {json.dumps({'type': 'loading'})}\n\n"
-                    # pending_question을 클라이언트에 전송 — 버튼 클릭 딜레이 제거
                     pq = output.get("pending_question")
                     if pq and isinstance(pq, dict) and pq.get("id"):
                         yield f"data: {json.dumps({'type': 'pending_question', 'content': pq})}\n\n"
 
-            # LLM 토큰 단위 스트리밍 — chatbot만 적용 (explain 포함 나머지는 on_chain_end로 처리)
+            # LLM 토큰 단위 스트리밍 — chatbot만 적용
             elif kind == "on_chat_model_stream" and node == "chatbot":
                 chunk = event["data"]["chunk"]
                 token = _get_text(chunk.content) if hasattr(chunk, "content") else ""
                 if token:
                     yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
 
-    except Exception as e:
-        yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+    finally:
+        collector.cancel()
+        try:
+            await collector
+        except asyncio.CancelledError:
+            pass
 
     yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
