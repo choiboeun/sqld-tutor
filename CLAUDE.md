@@ -484,8 +484,13 @@ accuracy_by_category = {
 - [x] BUG-10: `INITIAL_STATE`에 `wrong_answer_log`, `last_wrong_tags` 누락 필드 추가
 - [x] debug 로그 제거 — `traceback.print_exc()` (chat.py), `console.error` (page.tsx)
 
+**QA-3 해결 (2026-07-20)**
+- [x] QA-3: AI 튜터 개인화 피드백 미작동 → 3단계로 해결
+  - `prompts.py` — `_CATEGORY_WEIGHTS` 추가, `_calc_predicted_score()` 구현, chatbot 시스템 프롬프트에 `target_score`·`예상 점수`·`카테고리별 정답률+풀이 수`·`누적 정답 수` 주입 (commit `4cc0792`, `0b9cf3e`)
+  - `Sidebar.tsx` — 1과목 가중치 오류 수정: `0.40/2` → `0.20/2` (SQLD 실제 1과목 20%, 2과목 80%), 사이드바 예상 점수 32점 → 27점으로 정정 (commit `059d772`)
+  - AI hallucination 방지 — `attempts_by_category`·`total_correct` 프롬프트 명시 + "직접 계산하지 말 것" 지시 → 총 풀이 수 32→44, 정답 수 6→8로 정정
+
 **미해결 항목 (QA 보고서 기준)**
-- QA-3: AI 튜터가 누적 정답률·예상 점수에 접근 불가 — 개인화 피드백 미작동
 - QA-5: 오답 해설이 길 때 스크롤 중 입력창·버튼 잠김
 - QA-6: 문항별 추가 질의 경로 미직관적 (mini-chat 모달 있으나 발견율 낮음)
 - QA-8: SQL 직접 실행 기능 미동작 (일부 환경)
