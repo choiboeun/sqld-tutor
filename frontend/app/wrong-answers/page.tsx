@@ -108,9 +108,10 @@ export default function WrongAnswersPage() {
     };
 
     try {
-      const res = await fetch("/api/mini-chat", {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+      const res = await fetch(`${backendUrl}/api/mini-chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(await getAuthHeaders()) },
         body: JSON.stringify({
           question_context: questionContext,
           messages: historySnapshot,
