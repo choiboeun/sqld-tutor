@@ -4,7 +4,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
 from app.agent.tools.question_tools import get_random_question, get_available_categories
 
-_ANSWER = re.compile(r"([1-4①②③④])번?")
+_ANSWER = re.compile(r"^\s*([1-4①②③④])번?[\s.,]*$")
 _GIVE_UP = re.compile(r"모르겠|몰라|포기|모름")
 _CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
 _CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
@@ -299,7 +299,6 @@ def _format_question(q: dict) -> str:
         else:
             fmt, content = "plain", opt_text
         opt_data.append((fmt, key, content))
-        print(f"[drill] opt {key}: fmt={fmt}, text={repr(opt_text[:60])}")
 
     # 모든 보기를 ①②③④ 원형 번호로 통일 (context 번호목록과 시각적 구분)
     formatted_opts = []
@@ -420,7 +419,7 @@ def drill_node(state: TutorState) -> dict:
     last_human = next(
         (m for m in reversed(state["messages"]) if isinstance(m, HumanMessage)), None
     )
-    match = _ANSWER.search(last_human.content) if last_human else None
+    match = _ANSWER.match(last_human.content) if last_human else None
 
     # 다중 번호 입력 감지 (예: "2 2 3 4", "1 3")
     if match and last_human:

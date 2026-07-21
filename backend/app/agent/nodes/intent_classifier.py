@@ -3,7 +3,6 @@ from langchain_core.messages import HumanMessage
 from app.agent.state import TutorState
 from app.analytics import log_event
 
-_ANSWER = re.compile(r"^[1-4]번?")
 _ANY_NUMBER = re.compile(r"^\d")  # 범위 밖 숫자(5, 7 등)도 drill이 처리하도록
 _REVIEW = re.compile(r"오답|복습|틀린\s*문제")
 _NEGATE_DRILL = re.compile(r"문제.{0,5}(주지마|하지마|싫|안\s*줘|필요\s*없)")

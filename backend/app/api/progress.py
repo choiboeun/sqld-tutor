@@ -46,11 +46,7 @@ async def get_progress(thread_id: str, user_id: str = Depends(get_current_user_i
 
     is_diagnostic = v.get("is_diagnostic", False)
     is_diagnostic_done = v.get("is_diagnostic_done", False)
-    diag_progress = 0
-    if is_diagnostic:
-        total = v.get("total_answered", 0)
-        start = v.get("diagnostic_start_count")
-        diag_progress = max(0, total - start) if start is not None else 0
+    diag_progress = v.get("diagnostic_question_count") or 0 if is_diagnostic else 0
 
     return {
         "total_answered": v.get("total_answered", 0),

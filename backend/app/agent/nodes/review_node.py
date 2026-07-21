@@ -4,7 +4,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
 from app.agent.tools.question_tools import get_question_by_id
 
-_ANSWER = re.compile(r"([1-4①②③④])번?")
+_ANSWER = re.compile(r"^\s*([1-4①②③④])번?[\s.,]*$")
 _CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
 _CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
 _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
@@ -93,7 +93,7 @@ def review_node(state: TutorState) -> dict:
     last_human = next(
         (m for m in reversed(state["messages"]) if isinstance(m, HumanMessage)), None
     )
-    match = _ANSWER.search(last_human.content) if last_human else None
+    match = _ANSWER.match(last_human.content) if last_human else None
 
     if not match:
         note = "\n\n> 1~4번 중 하나를 선택해주세요."
