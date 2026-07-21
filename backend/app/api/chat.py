@@ -45,6 +45,7 @@ INITIAL_STATE = {
     "last_explained_category": None,
     "is_diagnostic": False,
     "diagnostic_start_count": None,
+    "diagnostic_question_count": 0,
     "follow_up_mode": False,
     "is_diagnostic_done": False,
     "wrong_answer_log": None,

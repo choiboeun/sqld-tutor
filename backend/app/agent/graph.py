@@ -44,13 +44,8 @@ def adaptive_difficulty_router(state: TutorState) -> str:
 
     # 초기 진단 모드 (우선 처리)
     if state.get("is_diagnostic"):
-        total = state.get("total_answered") or 0
-        start = state.get("diagnostic_start_count")
-        if start is not None:
-            diag_count = total - start
-        else:
-            diag_count = state.get("session_question_count") or 0
-        print(f"[router] 진단 진행 중 ({diag_count}/8), total={total}, start={start}")
+        diag_count = state.get("diagnostic_question_count") or 0
+        print(f"[router] 진단 진행 중 ({diag_count}/8)")
         if diag_count >= 8:
             return "diagnose"
         return "drill"

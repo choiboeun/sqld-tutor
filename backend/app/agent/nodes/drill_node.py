@@ -354,13 +354,8 @@ def drill_node(state: TutorState) -> dict:
         is_diagnostic = state.get("is_diagnostic", False)
         diag_count = 0
         if is_diagnostic:
-            total = state.get("total_answered") or 0
-            start = state.get("diagnostic_start_count")
-            if start is not None:
-                diag_count = total - start
-            else:
-                diag_count = state.get("session_question_count") or 0
-            print(f"[drill] 진단 진행 중, total={total}, start={start}, diag_count={diag_count}")
+            diag_count = state.get("diagnostic_question_count") or 0
+            print(f"[drill] 진단 진행 중, diag_count={diag_count}")
         diagnostic_intro = f"**{diag_count + 1}/8**\n\n" if is_diagnostic else ""
 
         avoid = state.get("last_category") if state.get("suggest_category_switch") else None

@@ -64,6 +64,10 @@ def state_updater(state: TutorState) -> dict:
     elif qid in wrong_log:
         del wrong_log[qid]
 
+    diag_q_count = (state.get("diagnostic_question_count") or 0)
+    if state.get("is_diagnostic"):
+        diag_q_count += 1
+
     return {
         "accuracy_by_category": accuracy,
         "attempts_by_category": attempts,
@@ -72,6 +76,7 @@ def state_updater(state: TutorState) -> dict:
         "recent_mistakes": mistakes,
         "total_answered": (state.get("total_answered") or 0) + 1,
         "session_question_count": (state.get("session_question_count") or 0) + 1,
+        "diagnostic_question_count": diag_q_count,
         "last_grade_result": None,
         "pending_question": {},
         "suggest_category_switch": suggest_switch,

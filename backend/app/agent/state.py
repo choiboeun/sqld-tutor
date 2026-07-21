@@ -44,7 +44,8 @@ class TutorState(TypedDict):
 
     # 온보딩 초기 진단
     is_diagnostic: bool  # True 동안 8문제 자동 출제 → 완료 시 약점 리포트 자동 실행
-    diagnostic_start_count: Optional[int]  # 진단 시작 시 total_answered 스냅샷 — 진행률 계산용
+    diagnostic_start_count: Optional[int]  # (deprecated) 진단 시작 시 total_answered 스냅샷
+    diagnostic_question_count: Optional[int]  # 진단 중 채점 완료 횟수 — N/8 카운터 전용
 
     # 오답 회고
     wrong_answer_log: Optional[dict]  # { question_id: student_answer(int) } — 오답 기록 영구 보관
