@@ -57,10 +57,12 @@ def state_updater(state: TutorState) -> dict:
         "difficulty": result.get("difficulty"),
         "total_answered": (state.get("total_answered") or 0) + 1,
     })
-    # 오답 시 wrong_answer_log에 기록 (영구 보관)
+    # 오답 시 wrong_answer_log에 기록, 정답 시 제거 (오답 회고에서 마스터한 문제는 삭제)
     wrong_log = dict(state.get("wrong_answer_log") or {})
     if not correct:
         wrong_log[qid] = result.get("student_answer")
+    elif qid in wrong_log:
+        del wrong_log[qid]
 
     return {
         "accuracy_by_category": accuracy,
