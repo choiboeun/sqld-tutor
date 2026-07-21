@@ -723,6 +723,9 @@ function ChatContent() {
                       // 채점 버블 뒤에 개념 설명이 있으면 채점 버블 버튼 숨김
                       const hasConceptAfter = isGradingResult &&
                         messages.slice(i + 1).some(m => m.role === "ai" && m.content.includes("다음 문제를 풀려면"));
+                      // 진단 모드 채점인지 확인 — 직전 AI 메시지가 진단 문제이면 true
+                      const prevAiMsg = messages.slice(0, i).reverse().find(m => m.role === "ai" && m.content !== "");
+                      const isDiagnosticContext = !!(prevAiMsg && parseQuestionHeader(prevAiMsg.content)?.progress);
                       // CommonMark 한계: %·.·,** 뒤 한글 결합 시 볼드 미처리 → ** 리터럴 노출 방지
                       const safeContent = msg.content.replace(/\*\*([^*\n]+)\*\*/g, "$1");
                       return (
@@ -730,7 +733,7 @@ function ChatContent() {
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                             {safeContent}
                           </ReactMarkdown>
-                          {/^오답입니다/.test(msg.content) && isLoading && liveStats !== null && !isAnswered && (
+                          {/^오답입니다/.test(msg.content) && isLoading && liveStats !== null && !isAnswered && !isDiagnosticContext && (
                             <div className="mt-2 flex justify-end">
                               <button
                                 onClick={() => abortStreamRef.current?.()}
@@ -743,7 +746,7 @@ function ChatContent() {
                               </button>
                             </div>
                           )}
-                          {isNextQuestionEligible && !isAnswered && !isLoading && !hasConceptAfter && (
+                          {isNextQuestionEligible && !isAnswered && !isLoading && !hasConceptAfter && !hasPendingQuestion && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
