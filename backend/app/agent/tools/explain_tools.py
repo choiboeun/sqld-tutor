@@ -101,7 +101,8 @@ _PROMPT = """당신은 SQLD 자격증 시험 전문 튜터입니다.
   • 상위 항목 설명
     • 하위 항목 1
     • 하위 항목 2
-- 마지막에 "---\n> 다음 문제를 풀려면 **문제 줘**, 더 궁금한 개념은 직접 입력하세요." 를 추가하세요.
+- "안녕하세요", "안녕" 같은 인사말로 시작하지 마세요. 바로 개념 설명으로 시작하세요.
+- 마지막에 "---\n> 더 궁금한 개념은 직접 입력하세요." 를 추가하세요.
 
 [참고 자료]
 {context}"""
@@ -150,5 +151,7 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     content = re.sub(r'\n([ \t]+)•\s*', lambda m: f'\n{"  " * (len(m.group(1).expandtabs(2)) // 2)}- ', content)
     # 최상위 불릿 \n• → \n-
     content = re.sub(r'\n•\s*', '\n- ', content)
+    # "다음 문제를 풀려면 문제 줘" 안내 문장 제거 (UI 버튼으로 대체)
+    content = re.sub(r'\n*-{0,3}\n*>\s*다음 문제를 풀려면.*$', '', content, flags=re.MULTILINE)
     print(f"[explain] processed_len={len(content)}, preview={repr(content[:120])}")
     return content.strip()
