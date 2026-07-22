@@ -74,12 +74,12 @@ def review_node(state: TutorState) -> dict:
     pending = state.get("pending_question") or {}
 
     if not pending:
-        mistakes = state.get("recent_mistakes") or []
-        if not mistakes:
+        wrong_log = state.get("wrong_answer_log") or {}
+        if not wrong_log:
             return {
                 "messages": [AIMessage(content="아직 오답 기록이 없어요. 먼저 문제를 풀어보세요!")],
             }
-        question = get_question_by_id(random.choice(mistakes))
+        question = get_question_by_id(random.choice(list(wrong_log.keys())))
         if not question:
             return {"messages": [AIMessage(content="문제를 불러오는 중 오류가 발생했어요.")]}
 
