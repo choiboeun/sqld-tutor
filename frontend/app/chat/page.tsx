@@ -759,7 +759,7 @@ function ChatContent() {
                                 <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-b from-transparent to-white pointer-events-none" />
                               )}
                             </div>
-                            {!isAnswered && (
+                            {(isLong || (!isAnswered && !isLoading && !hasPendingQuestion)) && (
                               <div className="flex items-center justify-end gap-2 mt-2">
                                 {isLong && (
                                   <button
@@ -769,7 +769,7 @@ function ChatContent() {
                                     {msg.conceptExpanded ? "접기 ▲" : "더 보기 ▼"}
                                   </button>
                                 )}
-                                {!isLoading && !hasPendingQuestion && (
+                                {!isAnswered && !isLoading && !hasPendingQuestion && (
                                   <button
                                     onClick={() => streamChat("문제 줘", true)}
                                     className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
