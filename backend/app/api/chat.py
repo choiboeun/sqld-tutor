@@ -153,7 +153,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                         if isinstance(msg, AIMessage) and not getattr(msg, "tool_calls", None):
                             content = _get_text(msg.content)
                             if content:
-                                yield f"data: {json.dumps({'type': 'message', 'content': content})}\n\n"
+                                msg_type = "concept" if name == "explain" else "message"
+                                yield f"data: {json.dumps({'type': msg_type, 'content': content})}\n\n"
                     if name in ("drill", "review") and output.get("last_grade_result"):
                         yield f"data: {json.dumps({'type': 'loading'})}\n\n"
                     if name == "state_updater":

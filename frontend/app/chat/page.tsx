@@ -11,6 +11,8 @@ import { getAuthHeaders } from "@/lib/api";
 interface Message {
   role: "user" | "ai";
   content: string;
+  isConcept?: boolean;
+  conceptExpanded?: boolean;
 }
 
 const QUESTION_HDR_RE = /^\[(.+?) \/ 난이도:\s*(상|중|하)\]\n*/;
@@ -394,6 +396,17 @@ function ChatContent() {
                 next[next.length - 1] = { role: "ai", content: streamingContent };
                 return next;
               });
+            } else if (event.type === "concept") {
+              setMessages((prev) => {
+                const next = [...prev];
+                const last = next[next.length - 1];
+                if (!last || last.role !== "ai" || last.content !== "") {
+                  next.push({ role: "ai", content: "" });
+                }
+                next[next.length - 1] = { role: "ai", content: event.content, isConcept: true, conceptExpanded: false };
+                return next;
+              });
+              streamingContent = "";
             } else if (event.type === "stats_updated") {
               setLiveStats(event.content as LiveStats);
             } else if (event.type === "done") {
@@ -474,6 +487,12 @@ function ChatContent() {
     inputRef.current?.focus();
     await streamChat(text, true);
   };
+
+  const toggleConcept = useCallback((idx: number) => {
+    setMessages(prev => prev.map((m, i) =>
+      i === idx ? { ...m, conceptExpanded: !m.conceptExpanded } : m
+    ));
+  }, []);
 
   const handleWeakConceptChip = useCallback(async () => {
     if (!threadId) return;
@@ -716,13 +735,64 @@ function ChatContent() {
                   ) : (() => {
                     const parsed = parseQuestionHeader(msg.content);
                     if (!parsed) {
+                      // 개념 설명 버블 — 접기/펼치기 UI
+                      if (msg.isConcept) {
+                        const isLong = msg.content.length > 300;
+                        return (
+                          <>
+                            <div className="mb-2">
+                              <span className="text-xs font-bold text-amber-700">💡 개념 보충</span>
+                            </div>
+                            <div className="relative">
+                              <div
+                                style={{
+                                  maxHeight: msg.conceptExpanded ? "2000px" : "112px",
+                                  overflow: "hidden",
+                                  transition: "max-height 0.38s cubic-bezier(0.4,0,0.2,1)",
+                                }}
+                              >
+                                <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
+                                  {msg.content.replace(/\*\*([^*\n]+)\*\*/g, "$1")}
+                                </ReactMarkdown>
+                              </div>
+                              {isLong && !msg.conceptExpanded && (
+                                <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-b from-transparent to-white pointer-events-none" />
+                              )}
+                            </div>
+                            {!isAnswered && (
+                              <div className="flex items-center justify-end gap-2 mt-2">
+                                {isLong && (
+                                  <button
+                                    onClick={() => toggleConcept(i)}
+                                    className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1 hover:bg-amber-100 transition-colors"
+                                  >
+                                    {msg.conceptExpanded ? "접기 ▲" : "더 보기 ▼"}
+                                  </button>
+                                )}
+                                {!isLoading && !hasPendingQuestion && (
+                                  <button
+                                    onClick={() => streamChat("문제 줘", true)}
+                                    className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                                  >
+                                    다음 문제
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M5 12h14M12 5l7 7-7 7" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      }
+
                       const isGradingResult = /^(정답|오답)입니다/.test(msg.content);
                       const isNextQuestionEligible =
                         isGradingResult ||
                         msg.content.includes("다음 문제를 풀려면");
                       // 채점 버블 뒤에 개념 설명이 있으면 채점 버블 버튼 숨김
                       const hasConceptAfter = isGradingResult &&
-                        messages.slice(i + 1).some(m => m.role === "ai" && m.content.includes("다음 문제를 풀려면"));
+                        messages.slice(i + 1).some(m => m.role === "ai" && m.isConcept && m.content !== "");
                       // 진단 모드 채점인지 확인 — 직전 AI 메시지가 진단 문제이면 true
                       const prevAiMsg = messages.slice(0, i).reverse().find(m => m.role === "ai" && m.content !== "");
                       const isDiagnosticContext = !!(prevAiMsg && parseQuestionHeader(prevAiMsg.content)?.progress);
