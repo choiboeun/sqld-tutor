@@ -90,10 +90,19 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             # 클라이언트가 캐시한 pending_question 사용 → checkpoint 저장 완료 전에도 즉시 채점 가능
             input_data["pending_question"] = client_pending_question
             # 스테일 체크포인트 우회 — pending_question에 포함된 state_updater 최신 값 주입
-            if client_pending_question.get("_diag_count") is not None:
-                input_data["diagnostic_question_count"] = client_pending_question["_diag_count"]
-            if client_pending_question.get("_total_answered") is not None:
-                input_data["total_answered"] = client_pending_question["_total_answered"]
+            _pq = client_pending_question
+            if _pq.get("_diag_count") is not None:
+                input_data["diagnostic_question_count"] = _pq["_diag_count"]
+            if _pq.get("_total_answered") is not None:
+                input_data["total_answered"] = _pq["_total_answered"]
+            if _pq.get("_attempts_by_cat") is not None:
+                input_data["attempts_by_category"] = _pq["_attempts_by_cat"]
+            if _pq.get("_accuracy_by_cat") is not None:
+                input_data["accuracy_by_category"] = _pq["_accuracy_by_cat"]
+            if _pq.get("_wrong_log") is not None:
+                input_data["wrong_answer_log"] = _pq["_wrong_log"]
+            if _pq.get("_streak") is not None:
+                input_data["streak"] = _pq["_streak"]
 
     NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain", "diagnostic_block"}
     KEEPALIVE_INTERVAL = 10  # 초 — LLM 무응답 구간에 중간 서버 연결 유지
@@ -151,6 +160,10 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                         # state_updater 출력 캐시 — 이후 pending_question SSE에 첨부
                         _su_cache["diagnostic_question_count"] = output.get("diagnostic_question_count")
                         _su_cache["total_answered"] = output.get("total_answered")
+                        _su_cache["attempts_by_category"] = output.get("attempts_by_category")
+                        _su_cache["accuracy_by_category"] = output.get("accuracy_by_category")
+                        _su_cache["wrong_answer_log"] = output.get("wrong_answer_log")
+                        _su_cache["streak"] = output.get("streak")
                         stats_payload = {
                             "accuracy_by_category": output.get("accuracy_by_category", {}),
                             "attempts_by_category": output.get("attempts_by_category", {}),
@@ -162,12 +175,20 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             yield f"data: {json.dumps({'type': 'loading'})}\n\n"
                     pq = output.get("pending_question")
                     if pq and isinstance(pq, dict) and pq.get("id"):
-                        # state_updater 값을 포함 → 스테일 체크포인트 읽어도 카운터 정확
+                        # state_updater 값을 포함 → 스테일 체크포인트 읽어도 누적 데이터 정확
                         pq_payload = dict(pq)
                         if _su_cache.get("diagnostic_question_count") is not None:
                             pq_payload["_diag_count"] = _su_cache["diagnostic_question_count"]
                         if _su_cache.get("total_answered") is not None:
                             pq_payload["_total_answered"] = _su_cache["total_answered"]
+                        if _su_cache.get("attempts_by_category") is not None:
+                            pq_payload["_attempts_by_cat"] = _su_cache["attempts_by_category"]
+                        if _su_cache.get("accuracy_by_category") is not None:
+                            pq_payload["_accuracy_by_cat"] = _su_cache["accuracy_by_category"]
+                        if _su_cache.get("wrong_answer_log") is not None:
+                            pq_payload["_wrong_log"] = _su_cache["wrong_answer_log"]
+                        if _su_cache.get("streak") is not None:
+                            pq_payload["_streak"] = _su_cache["streak"]
                         yield f"data: {json.dumps({'type': 'pending_question', 'content': pq_payload})}\n\n"
 
             # LLM 토큰 단위 스트리밍 — chatbot만 적용
