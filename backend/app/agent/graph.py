@@ -1,3 +1,4 @@
+import os
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 
@@ -12,6 +13,8 @@ from app.agent.nodes.state_updater import state_updater
 from app.agent.nodes.sql_node import sql_node
 from langchain_core.messages import AIMessage as _AIMessage
 
+# A/B 테스트용: Render 환경변수 AUTO_EXPLAIN=false 로 설정하면 오답 후 자동 개념 설명 비활성화
+_AUTO_EXPLAIN = os.getenv("AUTO_EXPLAIN", "true").lower() != "false"
 
 tool_node = ToolNode(ALL_TOOLS)
 
@@ -60,7 +63,7 @@ def adaptive_difficulty_router(state: TutorState) -> str:
         already_explained = state.get("last_explained_category") == last_category
         last_was_correct = state.get("last_was_correct")
         print(f"[router] cat={last_category!r} attempts={cat_attempts} acc={cat_accuracy:.2f} already={already_explained} correct={last_was_correct}")
-        if not last_was_correct and cat_attempts >= 1 and cat_accuracy < 0.4 and not already_explained:
+        if _AUTO_EXPLAIN and not last_was_correct and cat_attempts >= 1 and cat_accuracy < 0.4 and not already_explained:
             return "explain"
 
     return END
