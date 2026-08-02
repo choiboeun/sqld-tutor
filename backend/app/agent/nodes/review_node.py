@@ -79,7 +79,10 @@ def review_node(state: TutorState) -> dict:
             return {
                 "messages": [AIMessage(content="아직 오답 기록이 없어요. 먼저 문제를 풀어보세요!")],
             }
-        question = get_question_by_id(random.choice(list(wrong_log.keys())))
+        history = state.get("question_history") or []
+        recent = set(history[-3:])
+        candidates = [q for q in wrong_log.keys() if q not in recent] or list(wrong_log.keys())
+        question = get_question_by_id(random.choice(candidates))
         if not question:
             return {"messages": [AIMessage(content="문제를 불러오는 중 오류가 발생했어요.")]}
 
