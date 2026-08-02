@@ -105,6 +105,23 @@ def build_system_prompt(state: "TutorState") -> str:
                 "더 높은 목표를 제안하거나 남은 취약점 마무리를 권장하세요."
             )
 
+    # follow_up_mode: 채점 직후 사용자가 방금 푼 문제에 대해 질문하는 상태
+    # last_answered_question 컨텍스트를 주입해 엉뚱한 개념 설명 방지
+    if state.get("follow_up_mode") and state.get("last_answered_question"):
+        laq = state["last_answered_question"]
+        q_text = laq.get("question", "")
+        q_cat = laq.get("category", "")
+        q_diff = laq.get("difficulty", "")
+        q_ans = laq.get("answer", "")
+        q_exp = laq.get("explanation", "")
+        lines.append(
+            f"[직전 채점된 문제 — 사용자가 이 문제에 대해 질문하고 있을 수 있습니다]\n"
+            f"카테고리: {q_cat} | 난이도: {q_diff} | 정답: {q_ans}번\n"
+            f"문제: {q_text}\n"
+            f"해설: {q_exp}\n"
+            "→ 사용자가 '이 문제', '방금 문제', '꼭 알아야 할 것' 등을 언급하면 위 문제를 기준으로 답하세요."
+        )
+
     lines += [
         "필요에 따라 다음 도구를 사용할 수 있습니다:",
         "- generate_sqld_question: 문제 출제 (category, difficulty 지정 가능)",

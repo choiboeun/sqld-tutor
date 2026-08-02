@@ -59,3 +59,6 @@ class TutorState(TypedDict):
 
     # 직전 채점 결과 정답 여부 — adaptive_difficulty_router에서 오답 시에만 explain 트리거하는 데 사용
     last_was_correct: Optional[bool]
+
+    # 직전 채점된 문제 전체 dict — follow_up_mode 중 챗봇 컨텍스트 주입에 사용
+    last_answered_question: Optional[dict]

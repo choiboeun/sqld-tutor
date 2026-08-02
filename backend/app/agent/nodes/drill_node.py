@@ -466,5 +466,6 @@ def drill_node(state: TutorState) -> dict:
             "tags": pending.get("tags", []),
             "student_answer": user_answer,
         },
+        "last_answered_question": pending,
         "follow_up_mode": True,
     }

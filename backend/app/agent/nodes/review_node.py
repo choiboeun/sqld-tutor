@@ -8,6 +8,16 @@ _ANSWER = re.compile(r"^\s*([1-4①②③④])번?[\s.,]*$")
 _CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
 _CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
 _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
+_SQL_LABEL_RE = re.compile(r'^\[SQL(\d+)\]\s+(.+)$', re.MULTILINE)
+
+
+def _format_sql_labels(ctx: str) -> str:
+    """[SQL1] SELECT... 패턴을 **[SQL1]** + 코드 블록으로 변환 (drill_node와 동일)."""
+    def replace(m: re.Match) -> str:
+        label = m.group(1)
+        sql = m.group(2).strip()
+        return f'**[SQL{label}]**\n```sql\n{sql}\n```'
+    return _SQL_LABEL_RE.sub(replace, ctx)
 
 
 def _normalize_context(ctx: str) -> str:
@@ -54,7 +64,7 @@ def _format_question(q: dict) -> str:
     sections = [f"[{q['category']} / 난이도: {q['difficulty']}]"]
     sections.append("> 오답 복습 중인 문제입니다.")
     if context:
-        sections.append(_normalize_context(context))
+        sections.append(_normalize_context(_format_sql_labels(context)))
     sections.append(q['question'])
     sections.append(opts_block)
     sections.append("번호로 답하세요.")
@@ -128,5 +138,6 @@ def review_node(state: TutorState) -> dict:
             "tags": pending.get("tags", []),
             "student_answer": user_answer,
         },
+        "last_answered_question": pending,
         "follow_up_mode": True,
     }

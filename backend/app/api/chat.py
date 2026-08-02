@@ -52,6 +52,7 @@ INITIAL_STATE = {
     "wrong_answer_log": None,
     "last_wrong_tags": None,
     "last_was_correct": None,
+    "last_answered_question": None,
 }
 
 
