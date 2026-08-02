@@ -20,10 +20,11 @@ def state_updater(state: TutorState) -> dict:
     new_attempts = old_attempts + 1
     attempts[category] = new_attempts
 
-    # accuracy_by_category 갱신 (이전 정답 수 역산 후 재계산)
+    # accuracy_by_category 갱신 (correct_count로 직접 추적 — 부동소수점 역산 오차 방지)
     accuracy = dict(state.get("accuracy_by_category") or {})
-    old_correct = round(accuracy.get(category, 0.0) * old_attempts)
-    new_correct = old_correct + (1 if correct else 0)
+    correct_counts = dict(state.get("correct_count_by_category") or {})
+    new_correct = correct_counts.get(category, 0) + (1 if correct else 0)
+    correct_counts[category] = new_correct
     accuracy[category] = new_correct / new_attempts
 
     # streak / consecutive_wrong
@@ -71,6 +72,7 @@ def state_updater(state: TutorState) -> dict:
     return {
         "accuracy_by_category": accuracy,
         "attempts_by_category": attempts,
+        "correct_count_by_category": correct_counts,
         "streak": streak,
         "consecutive_wrong": consecutive_wrong,
         "recent_mistakes": mistakes,

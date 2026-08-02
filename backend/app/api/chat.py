@@ -34,6 +34,7 @@ INITIAL_STATE = {
         "관리 구문": 0.0,
     },
     "attempts_by_category": {},
+    "correct_count_by_category": {},
     "recent_mistakes": [],
     "total_answered": 0,
     "session_question_count": 0,

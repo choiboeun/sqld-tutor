@@ -22,6 +22,7 @@ class TutorState(TypedDict):
     # 성과 추적
     accuracy_by_category: dict[str, float]  # 11개 카테고리별 정답률 (0.0~1.0)
     attempts_by_category: dict[str, int]    # 카테고리별 시도 횟수 — accuracy 갱신에 필요
+    correct_count_by_category: dict[str, int]  # 카테고리별 정답 수 — 부동소수점 역산 오차 방지
     recent_mistakes: list[str]              # 최근 오답 문제 id 목록
     total_answered: int                     # 누적 총 풀이 수
     session_question_count: int             # 세션 내 풀이 수
