@@ -710,8 +710,11 @@ function ChatContent() {
           )}
           {(() => {
             const hasPendingQuestion = !!pendingQuestionCache.id;
+            const lastAiIndex = messages.map((m, idx) => m.role === "ai" ? idx : -1).filter(idx => idx !== -1).at(-1) ?? -1;
+            const hasEverGraded = messages.some(m => m.role === "ai" && /^(정답|오답)입니다/.test(m.content));
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
+            const isLastAiMessage = i === lastAiIndex;
             if (msg.role === "ai" && msg.content === "" && isAnswered) return null;
             return (
             <div
@@ -759,7 +762,7 @@ function ChatContent() {
                                 <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-b from-transparent to-white pointer-events-none" />
                               )}
                             </div>
-                            {(isLong || (!isAnswered && !isLoading && !hasPendingQuestion)) && (
+                            {(isLong || ((!isAnswered || isLastAiMessage) && !isLoading && !hasPendingQuestion)) && (
                               <div className="flex items-center justify-end gap-2 mt-2">
                                 {isLong && (
                                   <button
@@ -769,7 +772,7 @@ function ChatContent() {
                                     {msg.conceptExpanded ? "접기 ▲" : "더 보기 ▼"}
                                   </button>
                                 )}
-                                {!isAnswered && !isLoading && !hasPendingQuestion && (
+                                {(!isAnswered || isLastAiMessage) && !isLoading && !hasPendingQuestion && (
                                   <button
                                     onClick={() => streamChat("문제 줘", true)}
                                     className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
@@ -816,7 +819,20 @@ function ChatContent() {
                               </button>
                             </div>
                           )}
-                          {isNextQuestionEligible && !isAnswered && !isLoading && !hasConceptAfter && !hasPendingQuestion && (
+                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !isLoading && !hasConceptAfter && !hasPendingQuestion && (
+                            <div className="mt-3 flex justify-end">
+                              <button
+                                onClick={() => streamChat("문제 줘", true)}
+                                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                              >
+                                다음 문제
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
+                          {isLastAiMessage && hasEverGraded && !isLoading && !hasPendingQuestion && !isNextQuestionEligible && !isDiagnosticContext && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
