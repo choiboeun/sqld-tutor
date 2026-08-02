@@ -56,6 +56,19 @@ GROUP BY POSITION
 - GROUP BY 절에 의한 소그룹별로 만들어진 집계 데이터 중, HAVING절에서 제한조건을 두어 조건을 만족하는 내용만 출력한다.
 - HAVING 절은 일반적으로 GROUP BY 뒤에 위치한다.
 
+### GROUP BY 없이 HAVING만 사용
+
+- GROUP BY 없이 HAVING만 쓰면 **전체 테이블을 하나의 그룹**으로 처리
+- SELECT 절에 집계 함수를 쓰면 전체 집계 결과 1행만 반환 (조건 만족 시), 아니면 0행(공집합)
+
+```sql
+-- GROUP BY 없는 HAVING: 전체 테이블이 하나의 그룹
+SELECT COUNT(*) AS 전체건수
+FROM EMP
+HAVING COUNT(*) > 5;
+-- EMP 전체 행 수가 5 초과이면 1행 반환, 아니면 0행(공집합)
+```
+
 ### 예시
 
 ```sql

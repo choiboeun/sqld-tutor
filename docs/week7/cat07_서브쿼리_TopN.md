@@ -136,6 +136,36 @@ WHERE (DEPTNO, SAL) IN (SELECT DEPTNO, MAX(SAL) FROM EMP GROUP BY DEPTNO);
 - WHERE문에 NOT EXISTS는 서브쿼리 테이블의 결과물을 제외한 나머지를 메인쿼리에 출력
 - 메인쿼리에서 서브쿼리의 결과물이랑 겹치는 애들은 제외 (차집합)
 
+### ⚠️ 시험 포인트: NOT IN vs NOT EXISTS — NULL 처리 차이
+
+**NOT IN + NULL → 공집합(0건) 반환 (함정!)**
+- `NOT IN`은 내부적으로 `COL <> val1 AND COL <> val2 AND ...`로 평가
+- 서브쿼리 결과에 **NULL이 하나라도 포함**되면 `COL <> NULL`은 `UNKNOWN`
+- 모든 AND 조건이 UNKNOWN → 최종 조건이 항상 FALSE/UNKNOWN → **결과 0건(공집합)**
+
+```sql
+-- 예시: DEPT 테이블에 DEPT_ID가 NULL인 행이 존재하는 경우
+SELECT EMP_NAME FROM EMP
+WHERE DEPT_ID NOT IN (SELECT DEPT_ID FROM DEPT);
+-- → NULL이 포함되어 있으면 결과가 0건 (예상과 다른 함정)
+```
+
+**NOT EXISTS + NULL → 정상 동작 (NULL 안전)**
+- `NOT EXISTS`는 서브쿼리가 행을 반환하는지 **존재 여부**만 확인
+- NULL 값이 있어도 행의 존재 여부로 판단하므로 NULL의 영향을 받지 않음
+
+```sql
+-- NOT EXISTS는 NULL에 안전하게 동작
+SELECT EMP_NAME FROM EMP e
+WHERE NOT EXISTS (SELECT 1 FROM DEPT d WHERE d.DEPT_ID = e.DEPT_ID);
+```
+
+| 구분 | NOT IN | NOT EXISTS |
+|------|--------|------------|
+| 서브쿼리에 NULL 포함 시 | 공집합(0건) 반환 | 정상 동작 |
+| NULL 안전성 | ❌ 위험 | ✅ 안전 |
+| 권장 상황 | 서브쿼리 결과에 NULL 없음이 보장될 때 | NULL 가능성이 있을 때 |
+
 ---
 
 ## 6. 상호연관 서브쿼리 (반환종류: 상호연관 서브쿼리)

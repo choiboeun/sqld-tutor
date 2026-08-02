@@ -59,6 +59,9 @@
 | REPLACE(s, old_s, new_s) | 문자열 s에서 old_s를 new_s로 대체 | REPLACE('ABBAC', 'AB', 'ab') | abBAC (3번째 인수 생략 or 빈문자열 전달 시 old_s 삭제) |
 | TRANSLATE(s, old_s, new_s) | 글자를 1대1로 치환 | TRANSLATE('ABBAC', 'AB', 'ab') | abbaC (3번째 인수가 필수며 빈문자열 전달 시 NULL 반환, A는 a로 B는 b로 매칭되는 글자끼리 각각 치환됨) |
 
+> ⚠️ **시험 포인트: CONCAT + NULL**
+> `CONCAT('A', NULL)` → **NULL 반환** (문자열이 아님). 문자열 연산에서 NULL이 하나라도 포함되면 결과 전체가 NULL이 된다.
+
 **SQL SERVER 대응:**
 - SUBSTR → SUBSTRING
 - LENGTH → LEN
@@ -143,6 +146,11 @@
 | ISNULL(a, b) (#SQL SERVER 함수임) | a가 NULL이면 b 반환, NULL이 아니면 a 반환 |
 | COALESCE(a, b, c, ……) | 인수들 중 가장 처음으로 NULL이 아닌 값 반환, 인수들이 모두 NULL이면 NULL반환 |
 | DECODE(대상, 값1, 리턴1, 값2, 리턴2, …, ELSE 값) | 대상 = 값1이면 리턴1 반환, 대상 = 값2이면 리턴2 반환, …, 그 외에는 ELSE 값 반환 (ELSE 값 생략 시 NULL 반환) |
+
+> ⚠️ **시험 포인트: DECODE vs CASE WHEN — NULL 비교 차이**
+> - `DECODE(col, NULL, 'Y', 'N')` → col이 NULL이면 **'Y' 반환** (DECODE는 NULL=NULL을 TRUE로 처리)
+> - `CASE WHEN col = NULL THEN 'Y' ELSE 'N' END` → **항상 'N' 반환** (= 연산자에서 NULL=NULL은 UNKNOWN)
+> - CASE WHEN에서 NULL 비교는 반드시 `IS NULL`을 사용해야 한다: `CASE WHEN col IS NULL THEN 'Y' ELSE 'N' END`
 
 ---
 

@@ -247,3 +247,29 @@ SELECT ... FROM BOOK_LIST b, PUBLISHER p WHERE b.Publisher_id = p.Publisher_id(+
 UNION
 SELECT ... FROM BOOK_LIST b, PUBLISHER p WHERE b.Publisher_id(+) = p.Publisher_id;
 ```
+
+### 4) ⚠️ 시험 포인트: OUTER JOIN — ON 조건 vs WHERE 조건 차이
+
+LEFT JOIN 사용 시 **조건을 ON 절에 쓰느냐, WHERE 절에 쓰느냐**에 따라 결과가 달라진다.
+
+| 조건 위치 | 동작 |
+|-----------|------|
+| ON 절 | 기준(왼쪽) 테이블 행은 모두 보존, 조건 불일치 시 오른쪽 컬럼만 NULL |
+| WHERE 절 | NULL 행이 제거되어 사실상 INNER JOIN처럼 동작 |
+
+```sql
+-- ON 절 조건: LEFT JOIN 특성 유지 (기준 테이블 행 모두 보존)
+SELECT b.Book_id, b.Book_name, p.Publisher_name
+FROM BOOK_LIST b
+LEFT JOIN PUBLISHER p
+ON b.Publisher_id = p.Publisher_id AND p.Publisher_name = 'ABC';
+-- → BOOK_LIST의 모든 행 반환, 'ABC' 출판사와 일치하지 않으면 Publisher_name = NULL
+
+-- WHERE 절 조건: NULL 행 제거 → INNER JOIN처럼 동작
+SELECT b.Book_id, b.Book_name, p.Publisher_name
+FROM BOOK_LIST b
+LEFT JOIN PUBLISHER p
+ON b.Publisher_id = p.Publisher_id
+WHERE p.Publisher_name = 'ABC';
+-- → Publisher_name이 NULL인 행은 WHERE 조건에서 제거 → INNER JOIN 결과와 동일
+```
