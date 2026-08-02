@@ -4,7 +4,7 @@ from langchain_core.tools import tool
 
 _ALLOWED = re.compile(r"^\s*SELECT\b", re.IGNORECASE)
 _BLOCKED = re.compile(
-    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE|ATTACH)\b",
+    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|ATTACH)\b",
     re.IGNORECASE,
 )
 
@@ -108,6 +108,8 @@ def execute_sql(query: str) -> str:
     try:
         conn = _get_conn()
         cursor = conn.execute(query)
+        if cursor.description is None:
+            return "결과가 없습니다."
         columns = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
         conn.close()

@@ -49,6 +49,7 @@ export default function WrongAnswersPage() {
   const [miniInput, setMiniInput] = useState("");
   const [miniLoading, setMiniLoading] = useState(false);
   const miniBottomRef = useRef<HTMLDivElement>(null);
+  const miniAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     createClient()
@@ -74,12 +75,8 @@ export default function WrongAnswersPage() {
         if (!res.ok) throw new Error(`${res.status}`);
         const d = await res.json();
         setWrongAnswers(d.wrong_answers ?? []);
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") {
-          setError(true);
-        } else {
-          setError(true); // 타임아웃도 에러로 표시
-        }
+      } catch {
+        setError(true);
       } finally {
         clearTimeout(timer);
         setLoading(false);
@@ -103,6 +100,8 @@ export default function WrongAnswersPage() {
   };
 
   const closeModal = () => {
+    miniAbortRef.current?.abort();
+    miniAbortRef.current = null;
     setSelected(null);
     setMiniMessages([]);
   };
@@ -130,10 +129,15 @@ export default function WrongAnswersPage() {
     };
 
     try {
+      miniAbortRef.current?.abort();
+      const abortController = new AbortController();
+      miniAbortRef.current = abortController;
+
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
       const res = await fetch(`${backendUrl}/api/mini-chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...(await getAuthHeaders()) },
+        signal: abortController.signal,
         body: JSON.stringify({
           question_context: questionContext,
           messages: historySnapshot,

@@ -67,19 +67,22 @@ def intent_classifier(state: TutorState) -> dict:
         print(f"[intent] follow_up_mode 활성 → chat, text={text!r}")
         return {"current_mode": "chat"}
 
-    # DRILL을 SQL보다 먼저 체크 — "SQL 활용 문제 줘"처럼 카테고리명에 SQL이 포함된 경우 오분류 방지
+    # 명시적 drill 요청("문제 줘" 등)을 먼저 체크하고, 이후 설명 의도를 우선 처리.
+    # bare "문제" 단독 매칭은 폴백으로 두어 "이 문제 개념이 뭐야?" 같은 입력이 explain으로 가도록 함.
     if _REVIEW.search(text):
         mode = "review"
     elif _NEGATE_DRILL.search(text):
         mode = "chat"
-    elif _DRILL.search(text):
+    elif _DRILL_EXPLICIT.search(text):
         mode = "drill"
-    elif not pending and _SQL.search(text):
+    elif _SQL.search(text):
         mode = "sql"
     elif _EXPLAIN.search(text):
         mode = "explain"
     elif _DIAGNOSE.search(text):
         mode = "diagnose"
+    elif _DRILL.search(text):
+        mode = "drill"
     else:
         mode = "chat"
 

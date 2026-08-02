@@ -63,7 +63,8 @@ async def open_checkpointer_pool():
             await _async_saver.setup()
             print("[checkpointer] AsyncPostgresSaver setup 완료", flush=True)
         except Exception as e:
-            print(f"[checkpointer] setup() 스킵 (테이블 이미 존재): {e}", flush=True)
+            import logging
+            logging.warning("[checkpointer] setup() 스킵 (테이블 이미 존재): %s", e)
 
         from app.agent.graph import graph
         graph.checkpointer = _async_saver

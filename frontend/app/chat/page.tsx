@@ -315,6 +315,7 @@ function ChatContent() {
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
     // 스트림 버전 — 구 스트림의 done 이벤트가 신 스트림에 간섭하지 못하도록 방지
     const myStreamId = ++streamIdRef.current;
+    abortStreamRef.current?.();
     const controller = new AbortController();
     abortStreamRef.current = () => controller.abort();
     // pending_question을 클라이언트 캐시에서 먼저 캡처한 뒤 즉시 초기화
@@ -341,6 +342,7 @@ function ChatContent() {
         signal: controller.signal,
       });
 
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
@@ -477,7 +479,7 @@ function ChatContent() {
         }
       } catch {}
     })();
-  }, [sessionReady, threadId, searchParams]);
+  }, [sessionReady, threadId, searchParams, messages.length]);
 
   const sendMessage = async () => {
     const text = input.trim();

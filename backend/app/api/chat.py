@@ -18,7 +18,7 @@ INITIAL_STATE = {
     "question_history": [],
     "last_category": None,
     "student_level": "beginner",
-    "target_score": 60,
+    "target_score": 70,
     "difficulty_preference": "mix",
     "accuracy_by_category": {
         "데이터 모델링 기초": 0.0,
@@ -138,6 +138,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                 break
             if kind_tag == "error":
                 yield f"data: {json.dumps({'type': 'error', 'content': str(payload)})}\n\n"
+                yield f"data: {json.dumps({'type': 'done'})}\n\n"
                 break
 
             event = payload

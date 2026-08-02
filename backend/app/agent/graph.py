@@ -72,6 +72,8 @@ def adaptive_difficulty_router(state: TutorState) -> str:
 def after_chatbot(state: TutorState) -> str:
     """chatbot이 tool_call을 요청하면 tools로, 아니면 종료."""
     from langchain_core.messages import AIMessage
+    if not state.get("messages"):
+        return END
     last = state["messages"][-1]
     if isinstance(last, AIMessage) and last.tool_calls:
         return "tools"
