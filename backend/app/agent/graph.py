@@ -63,7 +63,7 @@ def adaptive_difficulty_router(state: TutorState) -> str:
         already_explained = state.get("last_explained_category") == last_category
         last_was_correct = state.get("last_was_correct")
         print(f"[router] cat={last_category!r} attempts={cat_attempts} acc={cat_accuracy:.2f} already={already_explained} correct={last_was_correct}")
-        if _AUTO_EXPLAIN and not last_was_correct and cat_attempts >= 1 and cat_accuracy < 0.4 and not already_explained:
+        if _AUTO_EXPLAIN and not last_was_correct and cat_attempts >= 1 and cat_accuracy < 0.2 and not already_explained:
             return "explain"
 
     return END
