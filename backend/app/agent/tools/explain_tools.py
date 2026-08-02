@@ -153,5 +153,8 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     content = re.sub(r'\n•\s*', '\n- ', content)
     # "다음 문제를 풀려면 문제 줘" 안내 문장 제거 (UI 버튼으로 대체)
     content = re.sub(r'\n*-{0,3}\n*>\s*다음 문제를 풀려면.*$', '', content, flags=re.MULTILINE)
+    # COUNT(*), SELECT * 등 SQL 별표가 마크다운 이탤릭으로 소비되는 문제 방지
+    content = re.sub(r'\(\*\)', r'(\\*)', content)
+    content = re.sub(r'(?<=[A-Za-z\s])\*(?=[\s,\n]|$)', r'\\*', content)
     print(f"[explain] processed_len={len(content)}, preview={repr(content[:120])}")
     return content.strip()

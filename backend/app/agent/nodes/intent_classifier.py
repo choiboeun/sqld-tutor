@@ -9,7 +9,7 @@ _NEGATE_DRILL = re.compile(r"문제.{0,5}(주지마|하지마|싫|안\s*줘|필�
 _DRILL = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)?")
 _EXPLAIN = re.compile(r"설명|뭐야|뭐예요|무엇|개념|알려|이해[가하]")
 _DIAGNOSE = re.compile(r"약점|분석|취약|통계|결과|어디.*약")
-_SQL = re.compile(r"SELECT\b|실행|쿼리|돌려", re.IGNORECASE)
+_SQL = re.compile(r"실행|(?<!서브)(?<!계층형\s)(?<!계층\s)쿼리(?!\s*[가를는이란])|돌려", re.IGNORECASE)
 _DIAGNOSTIC_START = re.compile(r"진단\s*시작|초기\s*진단|다시\s*진단|진단\s*다시|진단\s*해줘|진단\s*받고|진단\s*문제")
 # follow_up_mode 종료 조건 — "문제 줘" 등 명시적 새 문제 요청만 (bare "문제" 제외)
 _DRILL_EXPLICIT = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)|다음\s*문제|새\s*문제")

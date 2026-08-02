@@ -40,6 +40,8 @@ export default function WrongAnswersPage() {
   const [threadId, setThreadId] = useState<string | null>(null);
   const [wrongAnswers, setWrongAnswers] = useState<WrongAnswer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [selected, setSelected] = useState<WrongAnswer | null>(null);
 
   // 미니 채팅
@@ -58,17 +60,37 @@ export default function WrongAnswersPage() {
 
   useEffect(() => {
     if (!threadId) return;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
+    setLoading(true);
+    setError(false);
+
     (async () => {
       try {
-        const res = await fetch(`/api/wrong-answers/${threadId}`, { headers: await getAuthHeaders() });
+        const res = await fetch(`/api/wrong-answers/${threadId}`, {
+          headers: await getAuthHeaders(),
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error(`${res.status}`);
         const d = await res.json();
         setWrongAnswers(d.wrong_answers ?? []);
-      } catch {
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") {
+          setError(true);
+        } else {
+          setError(true); // 타임아웃도 에러로 표시
+        }
       } finally {
+        clearTimeout(timer);
         setLoading(false);
       }
     })();
-  }, [threadId]);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [threadId, retryKey]);
 
   useEffect(() => {
     miniBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -197,6 +219,16 @@ export default function WrongAnswersPage() {
         {/* 카드 목록 */}
         {loading ? (
           <p className="text-center text-stone-400 py-12">불러오는 중...</p>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-stone-500 mb-4">오답 기록을 불러오지 못했습니다.</p>
+            <button
+              onClick={() => setRetryKey((k) => k + 1)}
+              className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
         ) : wrongAnswers.length === 0 ? (
           <p className="text-center text-stone-400 py-12">아직 오답 기록이 없습니다.</p>
         ) : (
