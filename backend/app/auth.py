@@ -19,8 +19,10 @@ async def get_current_user_id(
     now = time.time()
 
     cached = _token_cache.get(token)
-    if cached and now < cached[1]:
-        return cached[0]
+    if cached:
+        if now < cached[1]:
+            return cached[0]
+        del _token_cache[token]
 
     async with httpx.AsyncClient() as client:
         resp = await client.get(

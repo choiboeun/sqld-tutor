@@ -73,7 +73,7 @@ def build_system_prompt(state: "TutorState") -> str:
             f"[학습 현황 — 아래 수치는 실시간 데이터입니다. 직접 계산하지 말고 이 값을 그대로 사용하세요]\n"
             f"학생 수준: {level_label} | 누적 풀이: {total}문제 | 누적 정답: {total_correct}문제 | 연속 정답: {streak}개 | "
             f"목표 점수: {target_score}점 | 예상 점수: 약 {predicted}점 "
-            f"(데이터 보유: {covered}/11개 카테고리, 미보유는 50% 추정)"
+            f"(데이터 보유: {covered}/11개 카테고리, 미보유 카테고리는 0점 처리)"
         ),
     ]
 
@@ -124,7 +124,6 @@ def build_system_prompt(state: "TutorState") -> str:
 
     lines += [
         "필요에 따라 다음 도구를 사용할 수 있습니다:",
-        "- generate_sqld_question: 문제 출제 (category, difficulty 지정 가능)",
         "- grade_answer: 답안 채점",
         "- execute_sql: SQL 실행 (EMP, DEPT, SALGRADE 테이블 사용 가능)",
         "- explain_concept: 개념 설명",

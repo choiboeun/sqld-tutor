@@ -145,6 +145,7 @@ export default function WrongAnswersPage() {
         }),
       });
 
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
@@ -200,7 +201,7 @@ export default function WrongAnswersPage() {
     } finally {
       setMiniLoading(false);
     }
-  }, [miniInput, miniLoading, selected, threadId]);
+  }, [miniInput, miniLoading, selected]);
 
   return (
     <div className="min-h-screen bg-stone-50">

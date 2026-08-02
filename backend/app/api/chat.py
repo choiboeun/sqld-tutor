@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage
 
 from app.agent.graph import graph
+from app.agent.tools.question_tools import get_question_by_id
 from app.analytics import log_event
 from app.auth import get_current_user_id
 
@@ -90,7 +91,12 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             input_data["pending_question"] = {}
         elif client_pending_question and isinstance(client_pending_question, dict) and client_pending_question.get("id"):
             # 클라이언트가 캐시한 pending_question 사용 → checkpoint 저장 완료 전에도 즉시 채점 가능
-            input_data["pending_question"] = client_pending_question
+            # answer 필드는 클라이언트에 전송하지 않으므로 서버에서 복원
+            full_q = get_question_by_id(client_pending_question["id"])
+            if full_q:
+                input_data["pending_question"] = {**client_pending_question, "answer": full_q["answer"]}
+            else:
+                input_data["pending_question"] = client_pending_question
             # 스테일 체크포인트 우회 — pending_question에 포함된 state_updater 최신 값 주입
             _pq = client_pending_question
             if _pq.get("_diag_count") is not None:
@@ -180,7 +186,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                     pq = output.get("pending_question")
                     if pq and isinstance(pq, dict) and pq.get("id"):
                         # state_updater 값을 포함 → 스테일 체크포인트 읽어도 누적 데이터 정확
-                        pq_payload = dict(pq)
+                        pq_payload = {k: v for k, v in pq.items() if k != "answer"}
                         if _su_cache.get("diagnostic_question_count") is not None:
                             pq_payload["_diag_count"] = _su_cache["diagnostic_question_count"]
                         if _su_cache.get("total_answered") is not None:
