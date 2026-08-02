@@ -334,7 +334,7 @@ def _format_feedback(q: dict, user_answer: int, correct: bool) -> str:
     else:
         correct_circle = _CIRCLE.get(q['answer'], str(q['answer']))
         header = f"오답입니다. 정답은 {correct_circle}번입니다."
-    return f"{header}\n\n해설: {q.get('explanation', '')}"
+    return f"{header}\n\n---\n\n**해설**\n\n{q.get('explanation', '')}"
 
 
 def drill_node(state: TutorState) -> dict:

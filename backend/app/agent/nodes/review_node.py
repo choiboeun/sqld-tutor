@@ -67,7 +67,7 @@ def _format_feedback(q: dict, user_answer: int, correct: bool) -> str:
     else:
         correct_circle = _CIRCLE.get(q['answer'], str(q['answer']))
         header = f"아직 틀렸어요. 정답은 {correct_circle}번이에요."
-    return f"{header}\n\n해설: {q.get('explanation', '')}"
+    return f"{header}\n\n---\n\n**해설**\n\n{q.get('explanation', '')}"
 
 
 def review_node(state: TutorState) -> dict:
