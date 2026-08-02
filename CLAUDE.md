@@ -514,7 +514,39 @@ accuracy_by_category = {
 - `bug_fix_log_round1.md` — 1차 피드백 대응 수정 이력 (25건)
 - `bug_fix_log_round2.md` — 2차 피드백 대응 수정 이력 (14건)
 - `14주차_개선보고서.docx` — 개선 보고서
-- `연구보고서_초안.md` — 연구 보고서 초안 (LangSmith + Supabase 데이터 기반, 15~16주차 완성 예정)
+- `연구보고서_초안.md` — 연구 보고서 초안 (LangSmith + Supabase 데이터 기반, 15주차까지 반영 완료)
+
+---
+
+### ✅ 15주차 (완료)
+
+**A/B 테스트 설계 및 실행 (2026-07-24 ~ 07-31)**
+- [x] `AUTO_EXPLAIN` 환경변수 추가 — `graph.py`에 `_AUTO_EXPLAIN = os.getenv("AUTO_EXPLAIN", "true").lower() != "false"` 추가 (commit `b18ddbe`)
+- [x] Render 환경변수 `AUTO_EXPLAIN=false`로 설정 → 오답 후 자동 개념 설명 비활성화 (2026-07-27 밤 배포)
+- [x] A 기간 (24~27일, 자동설명) / B 기간 (28~31일, 직접질문) 순차 within-subject 설계
+- [x] 테스터 3명에게 A기간 안내 메시지 발송 + B기간 전환 시 재안내
+
+**3차 피드백 수집 (2026-07-31 ~ 08-01)**
+- [x] 구글폼 18문항 작성 — A/B 비교, 페인포인트 재측정, 핵심 기능 평가, NPS 포함
+- [x] 구글폼 3명 전원 응답 완료 (테스터 A: 07-31 오후 7시, 테스터 B: 08-01 오전 3시, 테스터 C: 08-01 오후 11시)
+
+**분석 (2026-08-02)**
+- [x] 정성 분석 — A/B 선호도(직접질문 2:1 우세), 페인포인트 해소 점수, NPS(평균 6.7)
+- [x] 정량 분석 — Supabase `user_events` 쿼리, A기간 241문제 88.4% / B기간 50문제 74.0% (전체 착시, 개인별 B기간 동등하거나 우세)
+- [x] 연구 보고서 초안 15주차 내용 반영 — 4.4절 A/B 테스트 결과, 5.3절 3차 버그 목록, 6절 한계 보완, 7절 15주차 완료로 전환
+
+**핵심 발견:**
+- 직접 질문 방식이 학습 집중도를 높이는 경향 (3명 중 2명 선호, 1명은 라우팅 버그로 인한 자동 선택)
+- 전체 집계 A>B는 특정 사용자(195문제, 99.5%)가 A기간 81% 차지한 착시
+- 테스터 C 저점수는 난이도 '상' 재고 버그로 이틀 공백이 원인 (기능 문제 아님)
+
+**코드 변경:**
+- `backend/app/agent/graph.py` — `import os` 추가, `_AUTO_EXPLAIN` 변수 추가, `adaptive_difficulty_router` 조건 수정
+
+**산출물 위치:** `docs/week15/`
+- `beta_feedback_round3.md` — 3차 구글폼 원문 응답 (3명 전원)
+- `qualitative_analysis.md` — A/B 정성 분석
+- `quantitative_analysis.md` — Supabase 기반 정량 분석
 
 ---
 
