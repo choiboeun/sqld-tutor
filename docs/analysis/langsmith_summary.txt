@@ -1,0 +1,227 @@
+===== LangSmith 트레이스 요약 =====
+기간: 2026-07-01 ~ 오늘
+총 트레이스 수: 547
+에러 발생 수: 14
+총 토큰 사용량: 2,077,857
+평균 토큰 / 1회: 3799
+평균 응답 시간: 10.6초
+
+===== 에러 목록 (14건) =====
+
+[2026-07-22 05:56:56.204942+00:00]
+입력: [{'additional_kwargs': {}, 'content': '3번', 'id': '3f3ad296-29d5-4e4b-a3f3-a25e46af14ae', 'response_metadata': {}, 'type': 'human'}]
+에러: CancelledError("Cancelled via cancel scope 7c0727b1b390 by <Task pending name='Task-573' coro=<RequestResponseCycle.run_asgi() running at /opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py:422> cb=[set.discard()]>", <Task cancelled name='Task-2097' coro=<AsyncExitStack.__aexit__() done, defined at /opt/render/project/python/Python-3.14.3/lib/python3.14/contextlib.py:716>>)Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/l
+
+[2026-07-22 05:34:40.624550+00:00]
+입력: [{'additional_kwargs': {}, 'content': '3번', 'id': '6aff274e-0674-4c21-9da1-1eeceddc753b', 'response_metadata': {}, 'type': 'human'}]
+에러: CancelledError("Cancelled via cancel scope 7c0727ba6f30 by <Task pending name='Task-225' coro=<RequestResponseCycle.run_asgi() running at /opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py:422> cb=[set.discard()]>", <Task cancelled name='Task-292' coro=<AsyncExitStack.__aexit__() done, defined at /opt/render/project/python/Python-3.14.3/lib/python3.14/contextlib.py:716>>)Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/li
+
+[2026-07-20 13:15:09.134040+00:00]
+입력: [{'additional_kwargs': {}, 'content': '4번', 'id': '234bb563-7162-45ba-acd5-e2de886432db', 'response_metadata': {}, 'type': 'human'}]
+에러: CancelledError("Cancelled via cancel scope 782cc6fd5450 by <Task pending name='Task-607' coro=<RequestResponseCycle.run_asgi() running at /opt/render/project/src/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py:422> cb=[set.discard()]>", <Task cancelled name='Task-658' coro=<AsyncExitStack.__aexit__() done, defined at /opt/render/project/python/Python-3.14.3/lib/python3.14/contextlib.py:716>>)Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/li
+
+[2026-07-20 13:12:18.451476+00:00]
+입력: [{'additional_kwargs': {}, 'content': '4번', 'id': 'eb5cea3d-8606-4c63-a337-ffffdbda1500', 'response_metadata': {}, 'type': 'human'}]
+에러: CancelledError(<Task cancelled name='Task-429' coro=<AsyncExitStack.__aexit__() done, defined at /opt/render/project/python/Python-3.14.3/lib/python3.14/contextlib.py:716>>)Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3353, in astream
+    async with AsyncPregelLoop(
+               ~~~~~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<18 lines>...
+        has_graph_lifecycle_callbacks=bool(graph_callback_m
+
+[2026-07-20 13:12:04.590492+00:00]
+입력: [{'additional_kwargs': {}, 'content': '2번', 'id': '8a966dd2-afd9-4f1b-b733-f0124d83cd6f', 'response_metadata': {}, 'type': 'human'}]
+에러: CancelledError(<Task cancelled name='Task-354' coro=<AsyncExitStack.__aexit__() done, defined at /opt/render/project/python/Python-3.14.3/lib/python3.14/contextlib.py:716>>)Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3353, in astream
+    async with AsyncPregelLoop(
+               ~~~~~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<18 lines>...
+        has_graph_lifecycle_callbacks=bool(graph_callback_m
+
+[2026-07-20 08:46:50.643251+00:00]
+입력: [{'additional_kwargs': {}, 'content': '3번', 'id': '8d6d9743-7fe2-4fad-85a4-c7c0e3a588e3', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 08:34:41.583023+00:00]
+입력: [{'additional_kwargs': {}, 'content': '4번', 'id': 'a1675e4e-e4b0-40cf-8371-893f412e8713', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 08:24:18.249881+00:00]
+입력: [{'additional_kwargs': {}, 'content': '2번', 'id': 'd5c2eda2-9ffd-45a6-86e0-fbe86771c0de', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 08:03:46.049187+00:00]
+입력: [{'additional_kwargs': {}, 'content': '1번', 'id': '3772033c-313f-4048-8372-1d9ce9f64f84', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 07:41:53.820188+00:00]
+입력: [{'additional_kwargs': {}, 'content': '2번', 'id': '300f0b0a-d709-4949-a1c8-91cca3bc8a1d', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 07:35:48.671734+00:00]
+입력: [{'additional_kwargs': {}, 'content': '2번', 'id': 'aa33700f-199b-4d62-b616-2d46d2380dc2', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 07:17:21.834732+00:00]
+입력: [{'additional_kwargs': {}, 'content': '2번', 'id': '1bcef402-1b5d-4029-9874-1b6b358d43e0', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 07:16:09.562798+00:00]
+입력: [{'additional_kwargs': {}, 'content': '4번', 'id': '8ab4a1bd-e5bb-41a7-a342-05eb7c5d1e62', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
+
+[2026-07-20 06:27:06.406036+00:00]
+입력: [{'additional_kwargs': {}, 'content': '4번', 'id': 'e17e0be7-8e11-45cd-bb08-0875ec79c806', 'response_metadata': {}, 'type': 'human'}]
+에러: PatternError('global flags not at the start of the expression at position 16')Traceback (most recent call last):
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/main.py", line 3440, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+
+
+  File "/opt/render/project/src/.venv/lib/python3.14/site-packages/langgraph/pregel/_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+
+
+  File "/opt/render/p
