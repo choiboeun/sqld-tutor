@@ -49,8 +49,9 @@ def _pick_diverse_category(state: TutorState, available: list[str]) -> str | Non
     return random.choices(candidates, weights=weights, k=1)[0]
 
 
-# 보기가 SQL 구문으로 시작할 때만 코드 블록 처리 (한국어 문장 중 SQL 키워드 언급은 제외)
+# 보기가 SQL 구문 전용일 때만 코드 블록 처리 (한글 설명이 섞인 경우 제외)
 _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
+_HAS_KOREAN = re.compile(r'[가-힣]')
 _MARKDOWN_TABLE_RE = re.compile(r'^\s*\|.+\|', re.MULTILINE)
 # [SQL1] SELECT...\n[SQL2] SELECT... 패턴 감지
 _SQL_LABEL_RE = re.compile(r'^\[SQL(\d+)\]\s+(.+)$', re.MULTILINE)
@@ -305,7 +306,7 @@ def _format_question(q: dict) -> str:
             table_str, suffix_str = result
             fmt, content = "result_table", (table_str, suffix_str)
             has_block = True
-        elif _SQL_IN_OPTION.search(opt_text):
+        elif _SQL_IN_OPTION.search(opt_text) and not _HAS_KOREAN.search(opt_text):
             fmt, content = "sql_block", opt_text
             has_block = True
         elif _MARKDOWN_TABLE_RE.search(opt_text):

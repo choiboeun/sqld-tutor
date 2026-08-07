@@ -8,6 +8,7 @@ _ANSWER = re.compile(r"^\s*([1-4①②③④])번?[\s.,]*$")
 _CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
 _CIRCLE_TO_INT = {"①": 1, "②": 2, "③": 3, "④": 4}
 _SQL_IN_OPTION = re.compile(r'^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|MERGE)\b(?!\s*[가-힣])', re.IGNORECASE)
+_HAS_KOREAN = re.compile(r'[가-힣]')
 _SQL_LABEL_RE = re.compile(r'^\[SQL(\d+)\]\s+(.+)$', re.MULTILINE)
 
 
@@ -47,12 +48,12 @@ def _format_question(q: dict) -> str:
     else:
         opts_list = [(i + 1, opt) for i, opt in enumerate(options)]
 
-    has_sql = any(_SQL_IN_OPTION.search(text) for _, text in opts_list)
+    has_sql = any(_SQL_IN_OPTION.search(text) and not _HAS_KOREAN.search(text) for _, text in opts_list)
 
     formatted_opts = []
     for num, text in opts_list:
         circle = _CIRCLE[num]
-        if has_sql and _SQL_IN_OPTION.search(text):
+        if has_sql and _SQL_IN_OPTION.search(text) and not _HAS_KOREAN.search(text):
             formatted_opts.append(f"**{circle}**\n```sql\n{text}\n```")
         elif has_sql:
             formatted_opts.append(f"**{circle}** {text}")
