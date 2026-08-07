@@ -347,7 +347,12 @@ export default function WrongAnswersPage() {
                         }`}>
                           {opt.num}
                         </span>
-                        <span className="leading-relaxed">{opt.text}</span>
+                        <div className="leading-relaxed min-w-0 flex-1">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
+                            ...mdComponents,
+                            p: ({ children }) => <p className="leading-relaxed">{children}</p>,
+                          }}>{opt.text}</ReactMarkdown>
+                        </div>
                         {isCorrect && <span className="ml-auto text-xs font-semibold text-green-600 shrink-0">정답</span>}
                         {isStudentAnswer && !isCorrect && <span className="ml-auto text-xs font-semibold text-red-500 shrink-0">내 답</span>}
                       </div>
