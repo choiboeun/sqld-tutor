@@ -30,6 +30,32 @@ interface MiniMessage {
   content: string;
 }
 
+const mdComponents = {
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+  ),
+  table: ({ children }: { children?: React.ReactNode }) => (
+    <div className="overflow-x-auto my-2">
+      <table className="border-collapse text-xs w-full">{children}</table>
+    </div>
+  ),
+  th: ({ children }: { children?: React.ReactNode }) => (
+    <th className="border border-stone-200 bg-stone-100 px-2 py-1 text-left font-semibold whitespace-nowrap">{children}</th>
+  ),
+  td: ({ children }: { children?: React.ReactNode }) => (
+    <td className="border border-stone-200 px-2 py-1 whitespace-nowrap">{children}</td>
+  ),
+  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+    <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>{children}</code>
+  ),
+  pre: ({ children }: { children?: React.ReactNode }) => (
+    <pre className="bg-stone-100 rounded-lg p-3 overflow-x-auto text-xs font-mono my-2 whitespace-pre-wrap border border-stone-200">{children}</pre>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold">{children}</strong>
+  ),
+};
+
 const DIFF_STYLE: Record<string, string> = {
   하: "bg-green-100 text-green-700",
   중: "bg-amber-100 text-amber-700",
@@ -291,11 +317,11 @@ export default function WrongAnswersPage() {
               <div>
                 {selected.context && (
                   <div className="text-sm text-stone-600 mb-3 p-3 bg-stone-50 rounded-lg border border-stone-100">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.context}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.context}</ReactMarkdown>
                   </div>
                 )}
                 <div className="text-sm font-medium text-stone-800 mb-3 prose prose-sm max-w-none">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.question}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.question}</ReactMarkdown>
                 </div>
                 <div className="space-y-1.5">
                   {selected.options.map((opt) => {
@@ -334,7 +360,7 @@ export default function WrongAnswersPage() {
               <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
                 <p className="text-xs font-semibold text-amber-700 mb-1">해설</p>
                 <div className="text-sm text-amber-900 leading-relaxed prose prose-sm max-w-none prose-p:text-amber-900">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.explanation}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.explanation}</ReactMarkdown>
                 </div>
               </div>
 
