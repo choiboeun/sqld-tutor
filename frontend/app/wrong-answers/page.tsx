@@ -255,7 +255,9 @@ export default function WrongAnswersPage() {
                     <span className="ml-auto text-xs text-red-500 font-semibold">복습 필요</span>
                   )}
                 </div>
-                <p className="text-sm text-stone-700 line-clamp-2">{wa.question}</p>
+                <p className="text-sm text-stone-700 line-clamp-2">
+                  {wa.question.replace(/```[\s\S]*?```/g, "[SQL]").replace(/`[^`]+`/g, "").trim()}
+                </p>
               </button>
             ))}
           </div>
@@ -292,7 +294,9 @@ export default function WrongAnswersPage() {
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.context}</ReactMarkdown>
                   </div>
                 )}
-                <p className="text-sm font-medium text-stone-800 mb-3">{selected.question}</p>
+                <div className="text-sm font-medium text-stone-800 mb-3 prose prose-sm max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.question}</ReactMarkdown>
+                </div>
                 <div className="space-y-1.5">
                   {selected.options.map((opt) => {
                     const isStudentAnswer = opt.num === selected.student_answer;
@@ -329,7 +333,9 @@ export default function WrongAnswersPage() {
               {/* 해설 */}
               <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
                 <p className="text-xs font-semibold text-amber-700 mb-1">해설</p>
-                <p className="text-sm text-amber-900 leading-relaxed">{selected.explanation}</p>
+                <div className="text-sm text-amber-900 leading-relaxed prose prose-sm max-w-none prose-p:text-amber-900">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.explanation}</ReactMarkdown>
+                </div>
               </div>
 
               {/* 미니 채팅 */}
