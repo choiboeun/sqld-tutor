@@ -821,11 +821,12 @@ function ChatContent() {
                               </button>
                             </div>
                           )}
-                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !isLoading && !hasConceptAfter && !hasPendingQuestion && (
+                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !hasConceptAfter && !hasPendingQuestion && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
-                                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                                disabled={isLoading}
+                                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
                               >
                                 다음 문제
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -834,7 +835,15 @@ function ChatContent() {
                               </button>
                             </div>
                           )}
-                          {isLastAiMessage && hasEverGraded && !isLoading && !hasPendingQuestion && !isNextQuestionEligible && !isDiagnosticContext && (
+                          {(() => {
+                            // 이전 메시지 중 채점 버블(다음 문제 버튼 있는 것)이 있으면 fallback 버튼 숨김
+                            const hasPrevGradingBtn = messages.slice(0, i).some((m, mi) =>
+                              m.role === "ai" &&
+                              /^(정답|오답)입니다/.test(m.content) &&
+                              !messages.slice(mi + 1, i).some(u => u.role === "user")
+                            );
+                            return isLastAiMessage && hasEverGraded && !isLoading && !hasPendingQuestion && !isNextQuestionEligible && !isDiagnosticContext && !hasPrevGradingBtn;
+                          })() && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
