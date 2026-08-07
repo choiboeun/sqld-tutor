@@ -178,20 +178,10 @@ function ChatContent() {
   const [threadId, setThreadId] = useState<string | null>(null);
   const [targetScore, setTargetScore] = useState(70);
   const [sessionReady, setSessionReady] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showAccountModal, setShowAccountModal] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [pwLoading, setPwLoading] = useState(false);
-  const [pwMsg, setPwMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [sqlPanelOpen, setSqlPanelOpen] = useState(false);
   const [sqlQuery, setSqlQuery] = useState("SELECT * FROM EMP;");
   const [sqlResult, setSqlResult] = useState<{ columns: string[]; rows: string[][]; error: string | null } | null>(null);
   const [sqlLoading, setSqlLoading] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const [pendingQuestionCache, setPendingQuestionCache] = useState<Record<string, unknown>>({});
   const pendingQuestionCacheRef = useRef<Record<string, unknown>>({});
   const streamIdRef = useRef(0);
@@ -215,7 +205,6 @@ function ChatContent() {
           setThreadId(uid);
           threadIdRef.current = uid;
           setTargetScore(data.user.user_metadata?.target_score ?? 70);
-          setUserEmail(data.user.email ?? "");
           try {
             const saved = sessionStorage.getItem(`chat_${uid}`);
             if (saved) {
@@ -254,51 +243,6 @@ function ChatContent() {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
-  // 드롭다운 외부 클릭 시 닫기
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const handlePasswordChange = async () => {
-    if (newPassword !== confirmPassword) {
-      setPwMsg({ type: "error", text: "비밀번호가 일치하지 않습니다." });
-      return;
-    }
-    if (newPassword.length < 6) {
-      setPwMsg({ type: "error", text: "6자 이상 입력해주세요." });
-      return;
-    }
-    setPwLoading(true);
-    setPwMsg(null);
-    const { error } = await createClient().auth.updateUser({ password: newPassword });
-    setPwLoading(false);
-    if (error) {
-      setPwMsg({ type: "error", text: error.message });
-    } else {
-      setPwMsg({ type: "success", text: "비밀번호가 변경됐습니다." });
-      setNewPassword("");
-      setConfirmPassword("");
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    setDeleteLoading(true);
-    const resp = await fetch("/account/delete", { method: "DELETE" });
-    if (!resp.ok) {
-      setDeleteLoading(false);
-      alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      return;
-    }
-    await createClient().auth.signOut();
-    window.location.href = "/login";
-  };
 
   // 페이지 떠날 때 스크롤 위치 저장
   useEffect(() => {
@@ -586,10 +530,10 @@ function ChatContent() {
           {/* SQL 패널 토글 버튼 — PC만 표시 */}
           <button
             onClick={() => setSqlPanelOpen((v) => !v)}
-            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
               sqlPanelOpen
-                ? "bg-amber-50 border-amber-200 text-amber-700"
-                : "border-stone-200 text-stone-500 hover:border-stone-300 hover:text-stone-700"
+                ? "bg-amber-50 border-amber-300 text-amber-700"
+                : "border-stone-200 text-stone-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50"
             }`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -598,111 +542,8 @@ function ChatContent() {
             SQL 실행
           </button>
 
-          {/* 아바타 + 드롭다운 */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setShowDropdown((v) => !v)}
-              className="flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-700 transition-colors"
-              aria-label="계정 메뉴"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              내 계정
-            </button>
-
-            {showDropdown && (
-              <div className="absolute right-0 top-10 w-52 bg-white border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden">
-                <div className="px-4 py-3 border-b border-stone-100">
-                  <p className="text-xs text-stone-400 truncate">{userEmail}</p>
-                </div>
-                <button
-                  onClick={() => { setShowDropdown(false); setShowAccountModal(true); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-2"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-                  계정 설정
-                </button>
-                <button
-                  onClick={async () => {
-                    setShowDropdown(false);
-                    sessionStorage.removeItem(`chat_${threadId}`);
-                    await createClient().auth.signOut();
-                    window.location.href = "/login";
-                  }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-stone-500 hover:bg-stone-50 transition-colors flex items-center gap-2 border-t border-stone-100"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                  로그아웃
-                </button>
-              </div>
-            )}
-          </div>
           </div>
         </div>
-
-        {/* 계정 설정 모달 */}
-        {showAccountModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
-                <h2 className="text-base font-semibold text-stone-800">계정 설정</h2>
-                <button onClick={() => { setShowAccountModal(false); setPwMsg(null); setDeleteConfirm(false); setNewPassword(""); setConfirmPassword(""); }} className="text-stone-400 hover:text-stone-600">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-              </div>
-
-              <div className="px-6 py-4 space-y-3">
-                <p className="text-xs text-stone-400">{userEmail}</p>
-                <p className="text-sm font-medium text-stone-700">비밀번호 변경</p>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="새 비밀번호 (6자 이상)"
-                  className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-                />
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="비밀번호 확인"
-                  className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-                />
-                {pwMsg && (
-                  <p className={`text-xs ${pwMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>{pwMsg.text}</p>
-                )}
-                <button
-                  onClick={handlePasswordChange}
-                  disabled={pwLoading}
-                  className="w-full bg-amber-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
-                >
-                  {pwLoading ? "변경 중..." : "비밀번호 변경"}
-                </button>
-              </div>
-
-              <div className="px-6 py-4 border-t border-stone-100">
-                <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">위험 구역</p>
-                {!deleteConfirm ? (
-                  <button
-                    onClick={() => setDeleteConfirm(true)}
-                    className="w-full border border-red-200 text-red-500 py-2 rounded-lg text-sm hover:bg-red-50 transition-colors"
-                  >
-                    회원 탈퇴
-                  </button>
-                ) : (
-                  <div className="space-y-2">
-                    <p className="text-xs text-red-500">모든 학습 기록이 삭제됩니다. 정말 탈퇴하시겠습니까?</p>
-                    <div className="flex gap-2">
-                      <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-stone-200 text-stone-500 py-2 rounded-lg text-sm hover:bg-stone-50 transition-colors">취소</button>
-                      <button onClick={handleDeleteAccount} disabled={deleteLoading} className="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm hover:bg-red-600 disabled:opacity-40 transition-colors">
-                        {deleteLoading ? "처리 중..." : "탈퇴 확인"}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {diagnosticResume && (
@@ -952,28 +793,28 @@ function ChatContent() {
         {chipsVisible && sessionReady && !isLoading && !parseQuestionHeader(
           [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? ""
         ) && (
-          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-stone-100 bg-white">
+          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-stone-200 bg-white">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 bg-stone-100 hover:bg-amber-50 hover:text-amber-800 rounded-full transition-colors border border-transparent hover:border-amber-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors"
             >
               📝 문제 풀기
             </button>
             <button
               onClick={() => streamChat("약점 분석해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 bg-stone-100 hover:bg-amber-50 hover:text-amber-800 rounded-full transition-colors border border-transparent hover:border-amber-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
               📊 약점 분석
             </button>
             <button
               onClick={() => streamChat("오답 복습해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 bg-stone-100 hover:bg-amber-50 hover:text-amber-800 rounded-full transition-colors border border-transparent hover:border-amber-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
               🔁 오답 복습
             </button>
             <button
               onClick={handleWeakConceptChip}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 bg-stone-100 hover:bg-amber-50 hover:text-amber-800 rounded-full transition-colors border border-transparent hover:border-amber-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
               💡 틀린 개념 복습
             </button>
@@ -984,7 +825,7 @@ function ChatContent() {
           <div className="flex gap-3 items-end">
             <textarea
               ref={inputRef}
-              className={`flex-1 resize-none border border-stone-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-amber-400 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
+              className={`flex-1 resize-none border border-stone-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-amber-500 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
               rows={1}
               placeholder={inputPlaceholder}
               value={input}
@@ -994,7 +835,7 @@ function ChatContent() {
             <button
               onClick={sendMessage}
               disabled={isLoading || !input.trim()}
-              className="px-5 py-3 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-5 py-3 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               전송
             </button>

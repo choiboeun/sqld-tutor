@@ -47,6 +47,13 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwMsg, setPwMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -99,8 +106,108 @@ export default function HomePage() {
     window.location.href = "/login";
   };
 
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setPwMsg({ type: "error", text: "비밀번호가 일치하지 않습니다." });
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPwMsg({ type: "error", text: "6자 이상 입력해주세요." });
+      return;
+    }
+    setPwLoading(true);
+    setPwMsg(null);
+    const { error } = await createClient().auth.updateUser({ password: newPassword });
+    setPwLoading(false);
+    if (error) {
+      setPwMsg({ type: "error", text: error.message });
+    } else {
+      setPwMsg({ type: "success", text: "비밀번호가 변경됐습니다." });
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true);
+    const resp = await fetch("/account/delete", { method: "DELETE" });
+    if (!resp.ok) {
+      setDeleteLoading(false);
+      alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+    await createClient().auth.signOut();
+    window.location.href = "/login";
+  };
+
   return (
     <div className="min-h-[100dvh] flex flex-col md:flex-row pb-16 md:pb-0">
+
+      {/* 계정 설정 모달 */}
+      {showAccountModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+              <h2 className="text-base font-semibold text-stone-800">계정 설정</h2>
+              <button
+                onClick={() => { setShowAccountModal(false); setPwMsg(null); setDeleteConfirm(false); setNewPassword(""); setConfirmPassword(""); }}
+                className="text-stone-400 hover:text-stone-600"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div className="px-6 py-4 space-y-3">
+              <p className="text-xs text-stone-400">{userEmail}</p>
+              <p className="text-sm font-medium text-stone-700">비밀번호 변경</p>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="새 비밀번호 (6자 이상)"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="비밀번호 확인"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+              {pwMsg && (
+                <p className={`text-xs ${pwMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>{pwMsg.text}</p>
+              )}
+              <button
+                onClick={handlePasswordChange}
+                disabled={pwLoading}
+                className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
+              >
+                {pwLoading ? "변경 중..." : "비밀번호 변경"}
+              </button>
+            </div>
+            <div className="px-6 py-4 border-t border-stone-100">
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">위험 구역</p>
+              {!deleteConfirm ? (
+                <button
+                  onClick={() => setDeleteConfirm(true)}
+                  className="w-full border border-red-200 text-red-500 py-2 text-sm hover:bg-red-50 transition-colors"
+                >
+                  회원 탈퇴
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs text-red-500">모든 학습 기록이 삭제됩니다. 정말 탈퇴하시겠습니까?</p>
+                  <div className="flex gap-2">
+                    <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-stone-200 text-stone-500 py-2 text-sm hover:bg-stone-50 transition-colors">취소</button>
+                    <button onClick={handleDeleteAccount} disabled={deleteLoading} className="flex-1 bg-red-500 text-white py-2 text-sm hover:bg-red-600 disabled:opacity-40 transition-colors">
+                      {deleteLoading ? "처리 중..." : "탈퇴 확인"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
       <div className="bg-amber-600 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen flex flex-col p-7 md:p-10">
@@ -135,14 +242,13 @@ export default function HomePage() {
                 <div className="px-4 py-3 border-b border-stone-100">
                   <p className="text-xs text-stone-400 truncate">{userEmail}</p>
                 </div>
-                <Link
-                  href="/account"
-                  onClick={() => setShowDropdown(false)}
+                <button
+                  onClick={() => { setShowDropdown(false); setShowAccountModal(true); }}
                   className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-2"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                   계정 관리
-                </Link>
+                </button>
                 <button
                   onClick={() => { setShowDropdown(false); handleLogout(); }}
                   className="w-full text-left px-4 py-2.5 text-sm text-stone-500 hover:bg-stone-50 transition-colors flex items-center gap-2 border-t border-stone-100"
