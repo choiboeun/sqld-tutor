@@ -576,10 +576,13 @@ function ChatContent() {
                 <rect y="15" width="20" height="2" rx="1"/>
               </svg>
             </button>
-            <Link href="/home" className="text-lg font-semibold text-stone-900 hover:text-amber-600 transition-colors">
+            <Link href="/home" className="md:hidden text-lg font-semibold text-stone-900 hover:text-amber-600 transition-colors">
               SQLD AI 튜터
             </Link>
           </div>
+
+          {/* 우측 컨트롤: SQL + 계정 */}
+          <div className="flex items-center gap-3">
           {/* SQL 패널 토글 버튼 — PC만 표시 */}
           <button
             onClick={() => setSqlPanelOpen((v) => !v)}
@@ -632,6 +635,7 @@ function ChatContent() {
                 </button>
               </div>
             )}
+          </div>
           </div>
         </div>
 
