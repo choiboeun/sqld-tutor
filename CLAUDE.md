@@ -550,7 +550,7 @@ accuracy_by_category = {
 
 ---
 
-### ✅ 16주차 (진행 중)
+### ✅ 16주차 (완료)
 
 **문제 은행 확장 및 스키마 정리 (2026-08-07)**
 - [x] Gemini 2.5 Flash로 신규 310문제 생성 → 품질 검수 완료 (실질 이슈 0건)
@@ -594,6 +594,27 @@ accuracy_by_category = {
 - `backend/app/data/questions/questions_v0.1.jsonl` — 530개, 킬러→상 변환, <u> 태그 제거, 스키마 정리
 - `backend/app/agent/nodes/drill_node.py` — _pick_diverse_category, _auto_difficulty, _DIFFICULTY_MAP 수정
 - `backend/app/agent/nodes/review_node.py` — 오답 복습 정답 시 question_history 제거
+
+**데이터 품질 개선 (2026-08-07)**
+- [x] context SQL 누락 6건 수정 (q332, q343, q341, q344, q358, q355)
+- [x] 보기 번호 중복 9건 수정 (q282, q285, q286, q305, q306, q307, q308, q309, q353)
+- [x] question 끝 인라인 SQL 7건 → context 분리 (q305, q307, q308, q327, q501, q522, q523)
+- [x] 평문 `sql` 키워드 코드 블록 변환 93건 (q256~q530 다수, commit `833739f`)
+
+**explanation 스타일 통일 (2026-08-07)**
+- [x] 신규 310문제(q221~q530) explanation을 원본 스타일로 Gemini 배치 재작성
+  - 수정 전: 번호목록/불릿/혼용 다양한 형식
+  - 수정 후: 번호/불릿 없이 1~4문장, 핵심 개념 중심 단순 줄글
+  - `docs/rewrite_explanation.py` — Gemini 배치 재작성 스크립트 (commit `19c3330`)
+
+**버그 수정 (2026-08-07)**
+- [x] `_SQL_IN_OPTION` 한글 섞인 보기 코드 박스 오변환 — `_HAS_KOREAN` 조건 추가 (drill_node.py, review_node.py, commit `2f09ddb`)
+  - 예) `SELECT * FROM 테이블명; 문장은 해당 테이블의 특정 컬럼만 선택하여 조회한다.` → 코드 박스로 오변환되던 문제
+
+**오답 회고 페이지 개선 (2026-08-07)**
+- [x] 카드 목록 — 코드 블록 기호를 `[SQL]`로 치환해 미리보기 정리 (commit `723db35`)
+- [x] 모달 문제/해설 — ReactMarkdown + mdComponents 적용 (코드 박스·테이블 스타일, commit `a592477`)
+- [x] 모달 보기 — ReactMarkdown 적용 (마크다운 테이블 보기 정상 렌더링, commit `d451fc4`)
 
 ---
 
