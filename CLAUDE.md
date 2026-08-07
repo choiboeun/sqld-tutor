@@ -550,6 +550,53 @@ accuracy_by_category = {
 
 ---
 
+### ✅ 16주차 (진행 중)
+
+**문제 은행 확장 및 스키마 정리 (2026-08-07)**
+- [x] Gemini 2.5 Flash로 신규 310문제 생성 → 품질 검수 완료 (실질 이슈 0건)
+- [x] 220문제 → 530문제 병합 (`docs/merge_to_main.py` 실행, q221~q530)
+- [x] 스키마 정리 — 미사용 필드 3개 제거 (main_category, sub_category, question_type)
+- [x] subject 필드 전체 530개 채움 (데이터 모델링의 이해 109개, SQL 기본 및 활용 421개)
+- [x] `<u>` 태그 3개 → `**볼드**` 변환 (q260, q262, q264 — ReactMarkdown rehype-raw 없어서 렌더링 불가)
+- [x] 킬러 난이도 → 상으로 흡수 (55개, 상 난이도 110개 → 165개)
+  - 킬러는 별도 로직 없이 자동 출제 불가 상태였음 → 흡수로 출제 풀 편입
+  - `_DIFFICULTY_MAP`에 "킬러", "최고난도" 키워드 추가 → 사용자 명시 시 상 문제 출제
+
+**오답 복습 흐름 수정 (2026-08-07)**
+- [x] `review_node.py` — 오답 복습에서 정답 시 `question_history`에서도 제거
+  - 수정 전: 정답해도 question_history에 추가 → 영구 랜덤 제외
+  - 수정 후: 정답 시 question_history에서 해당 ID 제거 → 랜덤 출제 풀로 복귀
+
+**사용자 맞춤 출제 강화 (2026-08-07)**
+- [x] `_pick_diverse_category` 수정 — 약점 카테고리 우선 출제
+  - 수정 전: 시도 횟수 적은 카테고리 우선 (`1 / (attempts + 1)`)
+  - 수정 후: 정답률 낮은 카테고리 우선 (`(1 - accuracy)^2 + 0.1`)
+  - 예) 정답률 0% → 가중치 1.1, 50% → 0.35, 100% → 0.1 (약 11배 차이)
+- [x] `_auto_difficulty` 수정 — streak/연속오답으로 난이도 미세 조정
+  - 수정 전: 카테고리 정답률 단일 임계값으로만 결정
+  - 수정 후: 정답률 기반 기본 난이도 결정 후 → 연속 3정답이면 한 단계 올림, 연속 2오답이면 한 단계 내림
+
+**전체 디버깅 결과 (2026-08-07)**
+
+| 항목 | 결과 |
+|------|------|
+| Python 파일 문법 검사 (29개) | ✅ 오류 없음 |
+| questions_v0.1.jsonl 스키마 전수 검증 (530개) | ✅ 오류 없음 |
+| 난이도 종류 | ✅ 하/중/상 3종 (킬러 0개) |
+| 필수 필드 누락 | ✅ 없음 |
+| answer 범위 (1~4) | ✅ 전수 정상 |
+| options 키 구조 {"1"~"4"} | ✅ 전수 정상 |
+| <u> 태그 잔존 | ✅ 없음 |
+| 프론트엔드 TypeScript 타입 검사 | ✅ 오류 없음 |
+| state.py 필드 / INITIAL_STATE 일치 | ✅ 30개 일치 |
+
+**수정 파일:**
+- `backend/app/data/questions/questions_v0.1.jsonl` — 530개, 킬러→상 변환, <u> 태그 제거, 스키마 정리
+- `backend/app/agent/nodes/drill_node.py` — _pick_diverse_category, _auto_difficulty, _DIFFICULTY_MAP 수정
+- `backend/app/agent/nodes/review_node.py` — 오답 복습 정답 시 question_history 제거
+
+---
+
 ## 주요 페인포인트 (인터뷰 기반)
 
 1. **취약점 파악 어려움** — 어디가 약한지 모름 (4건)

@@ -119,15 +119,20 @@ def review_node(state: TutorState) -> dict:
     # 정답 시 recent_mistakes, wrong_answer_log에서 제거
     mistakes = list(state.get("recent_mistakes") or [])
     wrong_log = dict(state.get("wrong_answer_log") or {})
+    history = list(state.get("question_history") or [])
     if correct:
         if pending["id"] in mistakes:
             mistakes.remove(pending["id"])
         wrong_log.pop(pending["id"], None)
+        # 풀었던 목록에서도 제거 → 랜덤 출제 풀로 복귀
+        history = [qid for qid in history if qid != pending["id"]]
+    else:
+        history = history + [pending["id"]]
 
     return {
         "messages": [AIMessage(content=_format_feedback(pending, user_answer, correct))],
         "pending_question": {},
-        "question_history": (state.get("question_history") or []) + [pending["id"]],
+        "question_history": history,
         "recent_mistakes": mistakes,
         "wrong_answer_log": wrong_log,
         "last_grade_result": {

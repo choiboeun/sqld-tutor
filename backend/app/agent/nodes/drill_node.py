@@ -30,10 +30,11 @@ def _extract_select_cols(context: str) -> list[str]:
 
 
 def _pick_diverse_category(state: TutorState, available: list[str]) -> str | None:
-    """시도 횟수가 적은 카테고리를 우선 선택한다."""
+    """약점 카테고리를 우선 선택한다. 정답률 낮을수록 더 자주 출제."""
     if not available:
         return None
     attempts = state.get("attempts_by_category") or {}
+    accuracy = state.get("accuracy_by_category") or {}
     last_cat = state.get("last_category")
 
     # 한 번도 안 푼 카테고리 우선 (직전 카테고리 제외)
@@ -41,9 +42,10 @@ def _pick_diverse_category(state: TutorState, available: list[str]) -> str | Non
     if not_tried:
         return random.choice(not_tried)
 
-    # 모두 시도했으면 시도 횟수 역비례 가중치로 선택
+    # 모두 시도했으면 정답률 낮은 카테고리에 높은 가중치
+    # (1 - acc)^2 + 0.1 → 정답률 0%는 1.1, 50%는 0.35, 100%는 0.1
     candidates = [c for c in available if c != last_cat] or available
-    weights = [1.0 / (attempts.get(c, 0) + 1) for c in candidates]
+    weights = [(1.0 - accuracy.get(c, 0.5)) ** 2 + 0.1 for c in candidates]
     return random.choices(candidates, weights=weights, k=1)[0]
 
 
@@ -221,7 +223,7 @@ _CATEGORY_ALIASES = {
 _DIFFICULTY_MAP = {
     "쉬운": "하", "쉽게": "하", "쉬워": "하", "쉬운걸로": "하",
     "중간": "중", "보통": "중",
-    "어려운": "상", "어렵게": "상", "어려워": "상", "어려운걸로": "상", "어렵": "상", "고난도": "상",
+    "어려운": "상", "어렵게": "상", "어려워": "상", "어려운걸로": "상", "어렵": "상", "고난도": "상", "킬러": "상", "최고난도": "상",
 }
 
 # target_score → 난이도 가중치 (진단 중 or 해당 카테고리 데이터 없을 때 사용)
@@ -233,21 +235,34 @@ _TARGET_DIFF_WEIGHTS: dict[int, tuple[list, list]] = {
 }
 
 
+_DIFF_LEVELS = ["하", "중", "상"]
+
+
 def _auto_difficulty(state: TutorState, category: str | None, is_diagnostic: bool) -> str:
     """사용자가 난이도를 명시하지 않았을 때 자동 결정.
     - 진단 중: target_score 가중치 랜덤
-    - 진단 후: 카테고리 정답률 기반 (데이터 없으면 target_score 폴백)
+    - 진단 후: 카테고리 정답률 기반 → streak/연속오답으로 미세 조정
     """
     if not is_diagnostic and category:
         attempts = (state.get("attempts_by_category") or {}).get(category, 0)
         if attempts >= 1:
             acc = (state.get("accuracy_by_category") or {}).get(category, 0.5)
             if acc >= 0.7:
-                return "상"
+                base = "상"
             elif acc >= 0.4:
-                return "중"
+                base = "중"
             else:
-                return "하"
+                base = "하"
+
+            # streak/연속오답으로 한 단계 조정
+            streak = state.get("streak") or 0
+            consec_wrong = state.get("consecutive_wrong") or 0
+            idx = _DIFF_LEVELS.index(base)
+            if streak >= 3:
+                idx = min(idx + 1, 2)   # 연속 3정답 → 한 단계 올림
+            elif consec_wrong >= 2:
+                idx = max(idx - 1, 0)   # 연속 2오답 → 한 단계 내림
+            return _DIFF_LEVELS[idx]
 
     target = state.get("target_score") or 70
     key = min(_TARGET_DIFF_WEIGHTS, key=lambda k: abs(k - target))
