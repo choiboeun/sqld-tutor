@@ -26,27 +26,28 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
-  // 미인증: /chat, /onboarding, /wrong-answers → /login
-  if (!user && (path.startsWith("/chat") || path.startsWith("/onboarding") || path.startsWith("/wrong-answers"))) {
+  // 미인증: 보호 경로 → /login
+  const protectedPaths = ["/home", "/chat", "/onboarding", "/wrong-answers"];
+  if (!user && protectedPaths.some((p) => path.startsWith(p))) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (user) {
     const onboardingDone = user.user_metadata?.onboarding_completed === true;
 
-    // 인증됨 + 온보딩 미완료: /chat → /onboarding
-    if (!onboardingDone && path.startsWith("/chat")) {
+    // 인증됨 + 온보딩 미완료: /home, /chat → /onboarding
+    if (!onboardingDone && (path.startsWith("/home") || path.startsWith("/chat"))) {
       return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 
-    // 인증됨 + 온보딩 완료: /onboarding → /chat
+    // 인증됨 + 온보딩 완료: /onboarding → /home
     if (onboardingDone && path.startsWith("/onboarding")) {
-      return NextResponse.redirect(new URL("/chat", request.url));
+      return NextResponse.redirect(new URL("/home", request.url));
     }
 
-    // 인증됨: /login, /signup → /chat
+    // 인증됨: /login, /signup → /home
     if (path === "/login" || path === "/signup") {
-      return NextResponse.redirect(new URL("/chat", request.url));
+      return NextResponse.redirect(new URL("/home", request.url));
     }
   }
 
@@ -54,5 +55,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/onboarding", "/wrong-answers", "/login", "/signup"],
+  matcher: ["/home", "/chat/:path*", "/onboarding", "/wrong-answers", "/login", "/signup"],
 };

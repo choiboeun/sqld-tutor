@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
+import BottomNav from "@/components/BottomNav";
 
 interface Option {
   num: number;
@@ -230,10 +231,10 @@ export default function WrongAnswersPage() {
   }, [miniInput, miniLoading, selected]);
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-stone-50 pb-20 md:pb-0">
       {/* 헤더 */}
-      <div className="bg-white border-b border-stone-200 px-6 py-4 flex items-center gap-3">
-        <Link href="/chat" className="text-stone-400 hover:text-stone-600 transition-colors">
+      <div className="bg-white border-b border-stone-200 px-6 py-4 flex items-center gap-3 sticky top-0 z-20">
+        <Link href="/home" className="text-stone-400 hover:text-stone-600 transition-colors">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
@@ -421,6 +422,8 @@ export default function WrongAnswersPage() {
           </div>
         </div>
       )}
+
+      <BottomNav />
     </div>
   );
 }

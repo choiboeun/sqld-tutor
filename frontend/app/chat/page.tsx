@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Sidebar, { LiveStats } from "@/components/Sidebar";
@@ -575,7 +576,9 @@ function ChatContent() {
                 <rect y="15" width="20" height="2" rx="1"/>
               </svg>
             </button>
-            <h1 className="text-lg font-semibold text-stone-900">SQLD AI 튜터</h1>
+            <Link href="/home" className="text-lg font-semibold text-stone-900 hover:text-amber-600 transition-colors">
+              SQLD AI 튜터
+            </Link>
           </div>
           {/* SQL 패널 토글 버튼 — PC만 표시 */}
           <button
