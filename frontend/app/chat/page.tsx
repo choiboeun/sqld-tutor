@@ -545,7 +545,7 @@ function ChatContent() {
           </div>
         </div>
 
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-stone-50">
           {diagnosticResume && (
             <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
               <span className="text-amber-800">이전 진단을 <strong>{diagnosticResume.progress}/8</strong> 문제까지 풀었어요. 이어서 마저 풀까요?</span>
@@ -566,16 +566,17 @@ function ChatContent() {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
             const isLastAiMessage = i === lastAiIndex;
             if (msg.role === "ai" && msg.content === "" && isAnswered) return null;
+            if (msg.role === "user" && /^[1-4]번?\s*$/.test(msg.content.trim())) return null;
             return (
             <div
               key={i}
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
-                    ? "max-w-[75%] bg-stone-800 text-white rounded-br-sm"
-                    : "max-w-[90%] bg-white border border-stone-200 text-stone-800 rounded-bl-sm shadow-sm"
+                    ? "max-w-[75%] bg-stone-800 text-white rounded-lg"
+                    : "w-full bg-white border border-stone-200 text-stone-800"
                 }`}
               >
                 {msg.role === "ai" ? (
@@ -617,7 +618,7 @@ function ChatContent() {
                                 {isLong && (
                                   <button
                                     onClick={() => toggleConcept(i)}
-                                    className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1 hover:bg-amber-100 transition-colors"
+                                    className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 hover:bg-amber-100 transition-colors"
                                   >
                                     {msg.conceptExpanded ? "접기 ▲" : "더 보기 ▼"}
                                   </button>
@@ -625,7 +626,7 @@ function ChatContent() {
                                 {(!isAnswered || isLastAiMessage) && !isLoading && !hasPendingQuestion && (
                                   <button
                                     onClick={() => streamChat("문제 줘", true)}
-                                    className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                                    className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-sm font-semibold px-4 py-2 transition-colors"
                                   >
                                     다음 문제
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -674,7 +675,7 @@ function ChatContent() {
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
                                 disabled={isLoading}
-                                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                                className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 transition-colors"
                               >
                                 다음 문제
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -695,7 +696,7 @@ function ChatContent() {
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
-                                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                                className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-sm font-semibold px-4 py-2 transition-colors"
                               >
                                 다음 문제
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -708,6 +709,13 @@ function ChatContent() {
                       );
                     }
                     const optData = parseOptions(parsed.body);
+                    const selectedNum = isAnswered
+                      ? (() => {
+                          const nextUserMsg = messages.slice(i + 1).find(m => m.role === "user");
+                          const n = parseInt(nextUserMsg?.content?.match(/^(\d+)/)?.[1] ?? "0");
+                          return n >= 1 && n <= 4 ? n : null;
+                        })()
+                      : null;
                     return (
                       <>
                         {parsed.progress && (
@@ -719,7 +727,7 @@ function ChatContent() {
                           </div>
                         )}
                         <div className="flex gap-1.5 mb-3">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
                             {parsed.category}
                           </span>
                           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[parsed.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
@@ -731,28 +739,35 @@ function ChatContent() {
                         </ReactMarkdown>
                         {optData && (
                           <>
-                            <div className="mt-3 space-y-1">
-                              {optData.options.map((opt) => (
-                                <button
-                                  key={opt.circle}
-                                  onClick={() => streamChat(`${opt.num}번`, true)}
-                                  disabled={(isLoading && !hasPendingQuestion) || isAnswered}
-                                  className={`w-full text-left flex items-start gap-2.5 px-2 py-1.5 rounded-lg transition-colors group ${
-                                    isLoading && !hasPendingQuestion && !isAnswered
-                                      ? "bg-stone-100 animate-pulse cursor-not-allowed"
-                                      : "hover:bg-amber-50 active:bg-amber-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                                  }`}
-                                >
-                                  <span className="shrink-0 w-5 h-5 rounded-full bg-stone-100 group-hover:bg-amber-500 group-hover:text-white flex items-center justify-center text-[11px] font-bold text-stone-500 transition-colors mt-0.5">
-                                    {opt.num}
-                                  </span>
-                                  <div className="flex-1 text-sm leading-relaxed text-stone-800">
-                                    <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                                      {opt.content}
-                                    </ReactMarkdown>
-                                  </div>
-                                </button>
-                              ))}
+                            <div className="mt-3 border border-stone-200 overflow-hidden">
+                              {optData.options.map((opt) => {
+                                const isSelected = !!selectedNum && opt.num === selectedNum;
+                                return (
+                                  <button
+                                    key={opt.circle}
+                                    onClick={() => streamChat(`${opt.num}번`, true)}
+                                    disabled={(isLoading && !hasPendingQuestion) || isAnswered}
+                                    className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
+                                      isSelected
+                                        ? "bg-amber-500 cursor-default"
+                                        : isAnswered
+                                          ? "bg-white cursor-default"
+                                          : isLoading && !hasPendingQuestion
+                                            ? "bg-stone-50 animate-pulse cursor-not-allowed"
+                                            : "bg-white hover:bg-amber-50"
+                                    }`}
+                                  >
+                                    <span className={`shrink-0 text-sm font-bold mt-0.5 ${isSelected ? "text-white" : "text-stone-400"}`}>
+                                      {opt.circle}
+                                    </span>
+                                    <div className={`flex-1 text-sm leading-relaxed ${isSelected ? "text-white" : "text-stone-800"}`}>
+                                      <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
+                                        {opt.content}
+                                      </ReactMarkdown>
+                                    </div>
+                                  </button>
+                                );
+                              })}
                             </div>
                             {optData.suffix && (
                               <div className="mt-2">
@@ -798,25 +813,25 @@ function ChatContent() {
               onClick={() => streamChat("문제 줘", true, true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors"
             >
-              📝 문제 풀기
+              문제 풀기
             </button>
             <button
               onClick={() => streamChat("약점 분석해줘", true, true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
-              📊 약점 분석
+              약점 분석
             </button>
             <button
               onClick={() => streamChat("오답 복습해줘", true, true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
-              🔁 오답 복습
+              오답 복습
             </button>
             <button
               onClick={handleWeakConceptChip}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
-              💡 틀린 개념 복습
+              틀린 개념 복습
             </button>
           </div>
         )}
@@ -835,9 +850,11 @@ function ChatContent() {
             <button
               onClick={sendMessage}
               disabled={isLoading || !input.trim()}
-              className="px-5 py-3 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-3 bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             >
-              전송
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
             </button>
           </div>
         </div>
