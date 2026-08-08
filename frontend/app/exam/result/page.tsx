@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import dynamic from "next/dynamic";
+
+const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
+  ssr: false,
+  loading: () => <div className="bg-stone-100 p-3 text-xs text-stone-400 my-2">다이어그램 로딩 중...</div>,
+});
 
 interface QuestionResult {
   id: string;
@@ -34,6 +40,9 @@ const mdComponents = {
     <td className="border border-stone-300 px-2 py-1" {...props} />
   ),
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement> & { className?: string }) => {
+    if (className === "language-mermaid") {
+      return <MermaidChart code={String(children)} />;
+    }
     const isBlock = className?.includes("language-");
     return isBlock ? (
       <pre className="bg-stone-800 text-stone-100 rounded p-3 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap break-words">
