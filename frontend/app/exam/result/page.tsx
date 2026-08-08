@@ -35,7 +35,7 @@ const mdComponents = {
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement> & { className?: string }) => {
     const isBlock = className?.includes("language-");
     return isBlock ? (
-      <pre className="bg-stone-800 text-stone-100 rounded p-3 overflow-x-auto text-xs my-2 font-mono">
+      <pre className="bg-stone-800 text-stone-100 rounded p-3 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap break-words">
         <code {...props}>{children}</code>
       </pre>
     ) : (
@@ -92,7 +92,7 @@ export default function ExamResultPage() {
 
       {/* 결과 헤더 */}
       <div className={`${passed ? "bg-amber-600" : "bg-stone-700"} text-white`}>
-        <div className="max-w-2xl mx-auto px-4 py-10 text-center">
+        <div className="max-w-3xl mx-auto px-5 py-10 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest mb-3 opacity-80">SQLD 모의고사 결과</p>
           <div className="flex items-baseline justify-center gap-2 mb-4">
             <span className="text-8xl font-black tabular-nums leading-none">{totalScore}</span>
@@ -130,7 +130,7 @@ export default function ExamResultPage() {
       </div>
 
       {/* 문제별 정오표 */}
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-5 py-8">
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-widest mb-4">문제별 정오표</h2>
         <p className="text-xs text-stone-400 mb-4">문제를 클릭하면 내 답변과 해설을 볼 수 있어요.</p>
 

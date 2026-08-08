@@ -45,7 +45,7 @@ const mdComponents = {
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement> & { className?: string }) => {
     const isBlock = className?.includes("language-");
     return isBlock ? (
-      <pre className="bg-stone-800 text-stone-100 rounded p-3 overflow-x-auto text-xs my-2 font-mono">
+      <pre className="bg-stone-800 text-stone-100 rounded p-3 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap break-words">
         <code {...props}>{children}</code>
       </pre>
     ) : (
@@ -339,7 +339,7 @@ export default function ExamPage() {
 
         {/* 메인: 문제 */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-4 py-6">
+          <div className="max-w-3xl mx-auto px-5 py-6">
 
             {/* 문제 헤더 */}
             <div className="flex items-center gap-2 mb-4">
