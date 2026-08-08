@@ -20,7 +20,15 @@ interface ExamQuestion {
   explanation: string;
 }
 
+interface ExamStorage {
+  questions: ExamQuestion[];
+  answers: Record<number, number>;
+  current: number;
+  startTimestamp: number; // Date.now() 기준
+}
+
 const TOTAL_SECS = 90 * 60;
+const STORAGE_KEY = "examInProgress";
 
 const mdComponents = {
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
@@ -48,6 +56,11 @@ const mdComponents = {
   },
 };
 
+function calcSecsLeft(startTimestamp: number): number {
+  const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+  return Math.max(0, TOTAL_SECS - elapsed);
+}
+
 export default function ExamPage() {
   const router = useRouter();
   const [questions, setQuestions] = useState<ExamQuestion[]>([]);
@@ -58,13 +71,31 @@ export default function ExamPage() {
   const [error, setError] = useState("");
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
+
+  // 타이머 콜백에서 최신 state를 stale closure 없이 읽기 위한 ref
+  const questionsRef = useRef<ExamQuestion[]>([]);
+  const answersRef = useRef<Record<number, number>>({});
+  const startTimestampRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const submittedRef = useRef(false);
 
+  // ── sessionStorage에 현재 상태 저장 ──
+  const persist = useCallback((
+    qs: ExamQuestion[],
+    ans: Record<number, number>,
+    cur: number,
+    startTs: number,
+  ) => {
+    const data: ExamStorage = { questions: qs, answers: ans, current: cur, startTimestamp: startTs };
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, []);
+
+  // ── 제출 ──
   const submit = useCallback((qs: ExamQuestion[], ans: Record<number, number>) => {
     if (submittedRef.current) return;
     submittedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
+    sessionStorage.removeItem(STORAGE_KEY); // 진행 중 상태 삭제
 
     const results = qs.map((q) => ({
       id: q.id,
@@ -85,48 +116,99 @@ export default function ExamPage() {
     router.push("/exam/result");
   }, [router]);
 
-  // 문제 로드
+  // ── 타이머 시작 (ref에서 최신 state를 읽어 stale closure 방지) ──
+  const startTimer = useCallback((startTs: number) => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      const left = calcSecsLeft(startTs);
+      setSecsLeft(left);
+      if (left <= 0) {
+        clearInterval(timerRef.current!);
+        submit(questionsRef.current, answersRef.current);
+      }
+    }, 1000);
+  }, [submit]);
+
+  // ── 초기 로드: sessionStorage 복원 또는 신규 fetch ──
   useEffect(() => {
     (async () => {
+      // 1) 이미 진행 중인 시험이 있는지 확인
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const stored: ExamStorage = JSON.parse(saved);
+          const left = calcSecsLeft(stored.startTimestamp);
+          if (left > 0 && stored.questions?.length === 50) {
+            // 복원
+            startTimestampRef.current = stored.startTimestamp;
+            questionsRef.current = stored.questions;
+            answersRef.current = stored.answers ?? {};
+            setQuestions(stored.questions);
+            setAnswers(stored.answers ?? {});
+            setCurrent(stored.current ?? 0);
+            setSecsLeft(left);
+            setLoading(false);
+            startTimer(stored.startTimestamp);
+            return;
+          }
+          // 시간 초과된 저장본 → 삭제 후 새로 시작
+          sessionStorage.removeItem(STORAGE_KEY);
+        } catch {
+          sessionStorage.removeItem(STORAGE_KEY);
+        }
+      }
+
+      // 2) 인증 확인
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) { router.push("/login"); return; }
 
+        // 3) 신규 문제 fetch
         const headers = await getAuthHeaders();
         const res = await fetch("/api/exam/generate", { headers });
         if (!res.ok) throw new Error("문제 로드 실패");
         const data = await res.json();
+
+        const startTs = Date.now();
+        startTimestampRef.current = startTs;
+        questionsRef.current = data.questions;
+        answersRef.current = {};
         setQuestions(data.questions);
-      } catch (e) {
+        setSecsLeft(TOTAL_SECS);
+        persist(data.questions, {}, 0, startTs);
+        startTimer(startTs);
+      } catch {
         setError("문제를 불러오지 못했어요. 다시 시도해주세요.");
       } finally {
         setLoading(false);
       }
     })();
-  }, [router]);
 
-  // 타이머
-  useEffect(() => {
-    if (loading || questions.length === 0) return;
-    timerRef.current = setInterval(() => {
-      setSecsLeft((s) => {
-        if (s <= 1) {
-          clearInterval(timerRef.current!);
-          submit(questions, answers);
-          return 0;
-        }
-        return s - 1;
-      });
-    }, 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, questions.length]);
+  }, []);
 
+  // ── 답변 선택 ──
+  const selectAnswer = useCallback((questionNum: number, optNum: number) => {
+    setAnswers((prev) => {
+      const next = { ...prev, [questionNum]: optNum };
+      answersRef.current = next;
+      persist(questionsRef.current, next, current, startTimestampRef.current);
+      return next;
+    });
+  }, [current, persist]);
+
+  // ── 문제 이동 (저장 포함) ──
+  const moveTo = useCallback((idx: number) => {
+    setCurrent(idx);
+    persist(questionsRef.current, answersRef.current, idx, startTimestampRef.current);
+  }, [persist]);
+
+  // ── 렌더 ──
   const mm = String(Math.floor(secsLeft / 60)).padStart(2, "0");
   const ss = String(secsLeft % 60).padStart(2, "0");
-  const timerUrgent = secsLeft <= 300; // 5분 이하 빨간색
-
+  const timerUrgent = secsLeft <= 300;
   const q = questions[current];
   const answeredCount = Object.keys(answers).length;
   const unansweredCount = questions.length - answeredCount;
@@ -163,7 +245,6 @@ export default function ExamPage() {
       {/* 상단 바 */}
       <header className="bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-3">
-          {/* 모바일: 번호 그리드 토글 */}
           <button
             onClick={() => setShowGrid((v) => !v)}
             className="md:hidden text-xs px-2 py-1.5 border border-stone-200 text-stone-600 bg-stone-50"
@@ -192,7 +273,7 @@ export default function ExamPage() {
 
       <div className="flex flex-1 overflow-hidden">
 
-        {/* 왼쪽: 번호 그리드 (데스크탑 고정 / 모바일 드로어) */}
+        {/* 번호 그리드 사이드바 */}
         <>
           {showGrid && (
             <div className="fixed inset-0 bg-black/40 z-20 md:hidden" onClick={() => setShowGrid(false)} />
@@ -204,13 +285,12 @@ export default function ExamPage() {
           `}>
             <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">문제 번호</p>
 
-            {/* 1과목 */}
             <p className="text-[10px] text-stone-400 mb-1.5">1과목 (1~10)</p>
             <div className="grid grid-cols-5 gap-1.5 mb-4">
               {questions.filter(q => q.subject === 1).map((q) => (
                 <button
                   key={q.num}
-                  onClick={() => { setCurrent(q.num - 1); setShowGrid(false); }}
+                  onClick={() => { moveTo(q.num - 1); setShowGrid(false); }}
                   className={`h-8 text-xs font-semibold transition-colors ${
                     current === q.num - 1
                       ? "bg-amber-500 text-white"
@@ -224,13 +304,12 @@ export default function ExamPage() {
               ))}
             </div>
 
-            {/* 2과목 */}
             <p className="text-[10px] text-stone-400 mb-1.5">2과목 (11~50)</p>
             <div className="grid grid-cols-5 gap-1.5">
               {questions.filter(q => q.subject === 2).map((q) => (
                 <button
                   key={q.num}
-                  onClick={() => { setCurrent(q.num - 1); setShowGrid(false); }}
+                  onClick={() => { moveTo(q.num - 1); setShowGrid(false); }}
                   className={`h-8 text-xs font-semibold transition-colors ${
                     current === q.num - 1
                       ? "bg-amber-500 text-white"
@@ -244,7 +323,6 @@ export default function ExamPage() {
               ))}
             </div>
 
-            {/* 범례 */}
             <div className="mt-4 pt-3 border-t border-stone-100 space-y-1.5">
               <div className="flex items-center gap-2 text-[10px] text-stone-400">
                 <span className="w-4 h-4 bg-stone-100 inline-block" />미답변
@@ -297,7 +375,7 @@ export default function ExamPage() {
                 return (
                   <button
                     key={opt.num}
-                    onClick={() => setAnswers((prev) => ({ ...prev, [q.num]: opt.num }))}
+                    onClick={() => selectAnswer(q.num, opt.num)}
                     className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
                       selected ? "bg-amber-500" : "bg-white hover:bg-amber-50"
                     }`}
@@ -321,7 +399,7 @@ export default function ExamPage() {
             {/* 이전/다음 */}
             <div className="flex items-center justify-between">
               <button
-                onClick={() => setCurrent((c) => Math.max(0, c - 1))}
+                onClick={() => moveTo(Math.max(0, current - 1))}
                 disabled={current === 0}
                 className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium disabled:opacity-30 hover:bg-stone-50 transition-colors"
               >
@@ -330,7 +408,7 @@ export default function ExamPage() {
               <span className="text-xs text-stone-400">미답변 {unansweredCount}문제</span>
               {current < questions.length - 1 ? (
                 <button
-                  onClick={() => setCurrent((c) => Math.min(questions.length - 1, c + 1))}
+                  onClick={() => moveTo(Math.min(questions.length - 1, current + 1))}
                   className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium hover:bg-stone-50 transition-colors"
                 >
                   다음 →
@@ -361,9 +439,7 @@ export default function ExamPage() {
                   미답변 문제가 {unansweredCount}개 남아있어요.
                 </p>
               )}
-              <p className="text-sm text-stone-500">
-                답변 완료: {answeredCount} / {questions.length}문제
-              </p>
+              <p className="text-sm text-stone-500">답변 완료: {answeredCount} / {questions.length}문제</p>
               <p className="text-sm text-stone-500">남은 시간: {mm}:{ss}</p>
             </div>
             <div className="px-6 py-4 flex gap-3">
@@ -374,7 +450,7 @@ export default function ExamPage() {
                 계속 풀기
               </button>
               <button
-                onClick={() => submit(questions, answers)}
+                onClick={() => submit(questionsRef.current, answersRef.current)}
                 className="flex-1 py-2 bg-stone-900 text-white text-sm font-semibold hover:bg-stone-700"
               >
                 제출하기
