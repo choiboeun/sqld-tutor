@@ -276,51 +276,64 @@ export default function HomePage() {
             </div>
           ) : (
             <>
-              <p className="text-xs font-semibold text-amber-300 uppercase tracking-widest mb-2">예상 점수</p>
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-7xl md:text-8xl font-black leading-none tabular-nums">{predictedScore}</span>
-                <span className="text-xl text-amber-300">/ 100점</span>
-              </div>
-              {/* 진행 바 + 목표 마커 */}
-              <div className="w-full mb-6 mt-1">
-                <div className="relative h-2 bg-white/20">
-                  <div
-                    className="h-full bg-white transition-all duration-700"
-                    style={{ width: `${Math.min(predictedScore, 100)}%` }}
-                  />
-                  <div
-                    className="absolute top-0 bottom-0 w-px bg-amber-200"
-                    style={{ left: `${targetScore}%` }}
-                  />
+              <p className="text-xs font-semibold text-amber-300 uppercase tracking-widest mb-3">예상 점수</p>
+
+              {/* 점수 + diff */}
+              <div className="flex items-end justify-between mb-5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-7xl md:text-8xl font-black leading-none tabular-nums">{predictedScore}</span>
+                  <span className="text-xl text-amber-300">/ 100점</span>
                 </div>
-                <div className="relative h-5 mt-1">
-                  <div
-                    className="absolute flex items-center -translate-x-1/2"
-                    style={{ left: `${targetScore}%` }}
-                  >
-                    <span className="text-[10px] font-semibold text-amber-200 whitespace-nowrap">목표 {targetScore}점</span>
-                  </div>
-                  <div className="absolute right-0">
-                    <span className={`text-[11px] font-bold ${scoreDiff >= 0 ? "text-white" : "text-amber-200"}`}>
-                      {scoreDiff >= 0 ? `+${scoreDiff}점` : `${scoreDiff}점`}
-                    </span>
-                  </div>
+                <div className="text-right mb-1">
+                  <p className={`text-xl font-black leading-none ${scoreDiff >= 0 ? "text-white" : "text-amber-100"}`}>
+                    {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
+                  </p>
+                  <p className="text-[11px] text-amber-300/80 mt-0.5">목표 {targetScore}점까지</p>
                 </div>
               </div>
 
-              {/* 통계 */}
-              <div className="grid grid-cols-3 border-t border-amber-500/40 pt-5 gap-0">
-                <div>
-                  <p className="text-2xl font-bold tabular-nums">{totalAnswered}</p>
-                  <p className="text-amber-300 text-xs mt-0.5">총 풀이</p>
+              {/* 3구간 진행 바 */}
+              <div className="mb-8">
+                <div className="relative h-1.5 w-full">
+                  <div className="absolute inset-0 bg-white/15" />
+                  <div
+                    className="absolute top-0 left-0 h-full bg-white transition-all duration-700"
+                    style={{ width: `${Math.min(predictedScore, 100)}%` }}
+                  />
+                  {scoreDiff < 0 && (
+                    <div
+                      className="absolute top-0 h-full bg-white/30"
+                      style={{ left: `${predictedScore}%`, width: `${targetScore - predictedScore}%` }}
+                    />
+                  )}
+                  <div
+                    className="absolute w-px bg-amber-200"
+                    style={{ left: `${targetScore}%`, top: '-4px', bottom: '-4px' }}
+                  />
                 </div>
-                <div className="border-x border-amber-500/40 px-4">
-                  <p className={`text-2xl font-bold tabular-nums ${streak > 0 ? "text-green-300" : ""}`}>{streak}</p>
-                  <p className="text-amber-300 text-xs mt-0.5">연속 정답</p>
+                <div className="relative h-5 mt-1">
+                  <span
+                    className="absolute -translate-x-1/2 text-[10px] text-amber-300 whitespace-nowrap"
+                    style={{ left: `${targetScore}%` }}
+                  >
+                    목표 {targetScore}
+                  </span>
                 </div>
-                <div className="pl-4">
-                  <p className={`font-black tabular-nums leading-none ${wrongCount > 0 ? "text-3xl text-red-300" : "text-2xl"}`}>{wrongCount}</p>
-                  <p className={`text-xs mt-1 ${wrongCount > 0 ? "text-red-400 font-semibold" : "text-amber-300"}`}>오답</p>
+              </div>
+
+              {/* 통계 미니 카드 */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-black/10 px-3 py-2.5">
+                  <p className="text-2xl font-bold tabular-nums leading-none">{totalAnswered}</p>
+                  <p className="text-[10px] text-amber-300 mt-1.5 uppercase tracking-wide">총 풀이</p>
+                </div>
+                <div className="bg-black/10 px-3 py-2.5">
+                  <p className={`text-2xl font-bold tabular-nums leading-none ${streak > 0 ? "text-green-300" : ""}`}>{streak}</p>
+                  <p className="text-[10px] text-amber-300 mt-1.5 uppercase tracking-wide">연속 정답</p>
+                </div>
+                <div className="bg-black/10 px-3 py-2.5">
+                  <p className={`tabular-nums leading-none font-black ${wrongCount > 0 ? "text-3xl text-red-300" : "text-2xl"}`}>{wrongCount}</p>
+                  <p className={`text-[10px] mt-1.5 uppercase tracking-wide ${wrongCount > 0 ? "text-red-300" : "text-amber-300"}`}>오답</p>
                 </div>
               </div>
 
