@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 interface QuestionResult {
   id: string;
@@ -224,13 +225,13 @@ export default function ExamResultPage() {
               {/* context */}
               {selected.context && (
                 <div className="bg-stone-100 border border-stone-200 px-3 py-2 text-sm text-stone-700">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.context}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>{selected.context}</ReactMarkdown>
                 </div>
               )}
 
               {/* 문제 */}
               <div className="text-sm font-medium text-stone-800 leading-relaxed">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.question}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>{selected.question}</ReactMarkdown>
               </div>
 
               {/* 보기 */}
@@ -250,8 +251,8 @@ export default function ExamResultPage() {
                       }`}>
                         {["①", "②", "③", "④"][opt.num - 1]}
                       </span>
-                      <div className="flex-1 min-w-0 text-sm leading-relaxed text-stone-800">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
+                      <div className="flex-1 min-w-0 overflow-hidden text-sm leading-relaxed text-stone-800">
+                        <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
                           ...mdComponents,
                           p: ({ children }) => <span>{children}</span>,
                         }}>{opt.text}</ReactMarkdown>
@@ -267,7 +268,7 @@ export default function ExamResultPage() {
               <div className="bg-amber-50 border border-amber-200 px-4 py-3">
                 <p className="text-xs font-semibold text-amber-700 mb-1.5">해설</p>
                 <div className="text-sm text-stone-700 leading-relaxed">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.explanation}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>{selected.explanation}</ReactMarkdown>
                 </div>
               </div>
 

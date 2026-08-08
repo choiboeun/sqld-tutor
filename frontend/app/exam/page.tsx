@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 interface ExamQuestion {
   id: string;
@@ -355,7 +356,7 @@ export default function ExamPage() {
             {/* context */}
             {q.context && (
               <div className="bg-stone-100 border border-stone-200 px-4 py-3 mb-4 text-sm text-stone-700 leading-relaxed">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
                   {q.context}
                 </ReactMarkdown>
               </div>
@@ -363,7 +364,7 @@ export default function ExamPage() {
 
             {/* 문제 본문 */}
             <div className="text-base font-medium text-stone-800 leading-relaxed mb-6">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
                 {q.question}
               </ReactMarkdown>
             </div>
@@ -383,8 +384,8 @@ export default function ExamPage() {
                     <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
                       {["①", "②", "③", "④"][opt.num - 1]}
                     </span>
-                    <div className={`flex-1 min-w-0 text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
-                      <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
+                    <div className={`flex-1 min-w-0 overflow-hidden text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
+                      <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
                         ...mdComponents,
                         p: ({ children }) => <span>{children}</span>,
                       }}>
