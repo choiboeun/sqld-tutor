@@ -281,19 +281,31 @@ export default function HomePage() {
                 <span className="text-7xl md:text-8xl font-black leading-none tabular-nums">{predictedScore}</span>
                 <span className="text-xl text-amber-300">/ 100점</span>
               </div>
-              <p className="text-amber-200 text-sm mb-5">
-                목표 {targetScore}점&nbsp;
-                <span className={`font-bold ${scoreDiff >= 0 ? "text-white" : "text-amber-100"}`}>
-                  {scoreDiff >= 0 ? `+${scoreDiff}점` : `${scoreDiff}점`}
-                </span>
-              </p>
-
-              {/* 진행 바 */}
-              <div className="w-full h-1 bg-amber-800/50 mb-6">
-                <div
-                  className="h-full bg-white transition-all duration-700"
-                  style={{ width: `${Math.min(predictedScore, 100)}%` }}
-                />
+              {/* 진행 바 + 목표 마커 */}
+              <div className="w-full mb-6 mt-1">
+                <div className="relative h-2 bg-white/20">
+                  <div
+                    className="h-full bg-white transition-all duration-700"
+                    style={{ width: `${Math.min(predictedScore, 100)}%` }}
+                  />
+                  <div
+                    className="absolute top-0 bottom-0 w-px bg-amber-200"
+                    style={{ left: `${targetScore}%` }}
+                  />
+                </div>
+                <div className="relative h-5 mt-1">
+                  <div
+                    className="absolute flex items-center -translate-x-1/2"
+                    style={{ left: `${targetScore}%` }}
+                  >
+                    <span className="text-[10px] font-semibold text-amber-200 whitespace-nowrap">목표 {targetScore}점</span>
+                  </div>
+                  <div className="absolute right-0">
+                    <span className={`text-[11px] font-bold ${scoreDiff >= 0 ? "text-white" : "text-amber-200"}`}>
+                      {scoreDiff >= 0 ? `+${scoreDiff}점` : `${scoreDiff}점`}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* 통계 */}
@@ -307,8 +319,8 @@ export default function HomePage() {
                   <p className="text-amber-300 text-xs mt-0.5">연속 정답</p>
                 </div>
                 <div className="pl-4">
-                  <p className={`text-2xl font-bold tabular-nums ${wrongCount > 0 ? "text-red-300" : ""}`}>{wrongCount}</p>
-                  <p className="text-amber-300 text-xs mt-0.5">오답</p>
+                  <p className={`font-black tabular-nums leading-none ${wrongCount > 0 ? "text-3xl text-red-300" : "text-2xl"}`}>{wrongCount}</p>
+                  <p className={`text-xs mt-1 ${wrongCount > 0 ? "text-red-400 font-semibold" : "text-amber-300"}`}>오답</p>
                 </div>
               </div>
 
