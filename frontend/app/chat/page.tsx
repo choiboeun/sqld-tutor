@@ -5,7 +5,13 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import dynamic from "next/dynamic";
 import Sidebar, { LiveStats } from "@/components/Sidebar";
+
+const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
+  ssr: false,
+  loading: () => <div className="bg-stone-100 p-3 text-xs text-stone-400 my-2">다이어그램 로딩 중...</div>,
+});
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 
@@ -125,12 +131,17 @@ const mdComponents = {
     if (text === "") return null;
     return <li className="leading-relaxed">{children}</li>;
   },
-  // 코드 블록 — pre 안의 code는 블록, 밖은 인라인
-  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
-    <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>
-      {children}
-    </code>
-  ),
+  // 코드 블록 — mermaid는 다이어그램으로, 나머지는 코드 스타일
+  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => {
+    if (className === "language-mermaid") {
+      return <MermaidChart code={String(children)} />;
+    }
+    return (
+      <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>
+        {children}
+      </code>
+    );
+  },
   pre: ({ children }: { children?: React.ReactNode }) => (
     <pre className="bg-stone-100 rounded p-2 overflow-x-auto text-xs font-mono my-1 whitespace-pre-wrap">
       {children}
