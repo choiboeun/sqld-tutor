@@ -863,9 +863,9 @@ function ChatContent() {
 
           {/* 테이블 안내 */}
           <div className="px-4 py-2 bg-stone-50 border-b border-stone-100 text-xs text-stone-500 flex gap-3 flex-wrap">
-            <span>📋 <strong>EMP</strong>(EMP_ID, EMP_NAME, JOB, SALARY, DEPT_ID)</span>
-            <span>📋 <strong>DEPT</strong>(DEPT_ID, DEPT_NAME, LOC)</span>
-            <span>📋 <strong>SALGRADE</strong>(GRADE, LOSAL, HISAL)</span>
+            <span><strong>EMP</strong>(EMP_ID, EMP_NAME, JOB, SALARY, DEPT_ID)</span>
+            <span><strong>DEPT</strong>(DEPT_ID, DEPT_NAME, LOC)</span>
+            <span><strong>SALGRADE</strong>(GRADE, LOSAL, HISAL)</span>
           </div>
 
           {/* 에디터 + 실행 */}
@@ -874,14 +874,14 @@ function ChatContent() {
               value={sqlQuery}
               onChange={(e) => setSqlQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runSql(); } }}
-              className="w-full h-32 resize-none border border-stone-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-400 placeholder:text-stone-400"
+              className="w-full h-32 resize-none border border-stone-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 placeholder:text-stone-400"
               placeholder="SELECT * FROM EMP;"
               spellCheck={false}
             />
             <button
               onClick={runSql}
               disabled={sqlLoading || !sqlQuery.trim()}
-              className="self-end flex items-center gap-1.5 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="self-end flex items-center gap-1.5 px-4 py-2 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {sqlLoading ? "실행 중..." : "▶ 실행"}
             </button>
@@ -894,7 +894,7 @@ function ChatContent() {
               <p className="text-xs text-stone-400 text-center mt-8">쿼리를 실행하면 결과가 여기 표시돼요.</p>
             )}
             {sqlResult?.error && (
-              <div className="bg-red-50 border border-red-100 rounded-lg px-3 py-2 text-sm text-red-600">
+              <div className="bg-red-50 border border-red-100 px-3 py-2 text-sm text-red-600">
                 {sqlResult.error}
               </div>
             )}
