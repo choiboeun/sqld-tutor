@@ -567,7 +567,6 @@ function ChatContent() {
             const isLastAiMessage = i === lastAiIndex;
             if (msg.role === "ai" && msg.content === "" && isAnswered) return null;
             if (msg.role === "user" && /^[1-4]번?\s*$/.test(msg.content.trim())) return null;
-            const isQuestionMsg = msg.role === "ai" && !!parseQuestionHeader(msg.content);
             return (
             <div
               key={i}
@@ -577,9 +576,7 @@ function ChatContent() {
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "max-w-[75%] bg-stone-800 text-white rounded-lg"
-                    : isQuestionMsg
-                      ? "w-full bg-white border border-stone-200 text-stone-800"
-                      : "max-w-[85%] bg-white border border-stone-200 text-stone-800"
+                    : "max-w-[90%] bg-white border border-stone-200 text-stone-800"
                 }`}
               >
                 {msg.role === "ai" ? (
