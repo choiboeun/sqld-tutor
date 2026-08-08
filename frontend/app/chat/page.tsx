@@ -255,14 +255,14 @@ function ChatContent() {
     }
   }, [messages]);
 
-  // 페이지 떠날 때 스크롤 위치 저장
+  // SPA 이동 시 채팅 초기화 (F5 새로고침은 cleanup이 실행 안 되므로 메시지 유지)
   useEffect(() => {
     return () => {
       const tid = threadIdRef.current;
-      const container = scrollContainerRef.current;
-      if (container && tid) {
+      if (tid) {
         try {
-          sessionStorage.setItem(`scroll_${tid}`, String(container.scrollTop));
+          sessionStorage.removeItem(`chat_${tid}`);
+          sessionStorage.removeItem(`scroll_${tid}`);
         } catch {}
       }
     };
