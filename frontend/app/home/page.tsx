@@ -404,22 +404,27 @@ export default function HomePage() {
             </svg>
           </Link>
 
-          {/* 모의고사 (준비중) */}
-          <div className="flex items-center justify-between py-5 border-b border-stone-200 opacity-50 select-none">
+          {/* 모의고사 */}
+          <Link
+            href="/exam"
+            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
+          >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-stone-100 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a8a29e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="0"/><line x1="16" y1="2" x2="16" y2="6"/>
                   <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-stone-500">모의고사</p>
-                <p className="text-xs text-stone-400 mt-0.5">50문제 · 90분</p>
+                <p className="text-sm font-semibold text-stone-900">모의고사</p>
+                <p className="text-xs text-stone-400 mt-0.5">50문제 · 90분 · 실전 배점</p>
               </div>
             </div>
-            <span className="text-[10px] font-semibold text-stone-400 bg-stone-200 px-2 py-0.5 uppercase tracking-wide">준비중</span>
-          </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
         </div>
 
         {/* 집중 복습 필요 */}
