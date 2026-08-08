@@ -383,7 +383,7 @@ export default function ExamPage() {
                     <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
                       {["①", "②", "③", "④"][opt.num - 1]}
                     </span>
-                    <div className={`flex-1 text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
+                    <div className={`flex-1 min-w-0 text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
                       <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
                         ...mdComponents,
                         p: ({ children }) => <span>{children}</span>,

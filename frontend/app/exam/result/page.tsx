@@ -250,7 +250,7 @@ export default function ExamResultPage() {
                       }`}>
                         {["①", "②", "③", "④"][opt.num - 1]}
                       </span>
-                      <div className="flex-1 text-sm leading-relaxed text-stone-800">
+                      <div className="flex-1 min-w-0 text-sm leading-relaxed text-stone-800">
                         <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
                           ...mdComponents,
                           p: ({ children }) => <span>{children}</span>,
