@@ -575,7 +575,7 @@ function ChatContent() {
               <div
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
-                    ? "max-w-[75%] bg-stone-800 text-white rounded-lg"
+                    ? "max-w-[75%] bg-stone-600 text-white rounded-lg"
                     : "max-w-[90%] bg-white border border-stone-200 text-stone-800"
                 }`}
               >

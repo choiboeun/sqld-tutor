@@ -143,13 +143,13 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           <Link
             href="/home"
             onClick={onClose}
-            className="inline-flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 transition-colors mb-3"
+            className="inline-flex items-center gap-1 text-xs text-amber-500 hover:text-amber-600 transition-colors mb-3"
           >
             ← 홈으로
           </Link>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-amber-700 flex items-center justify-center text-xs font-black text-white shrink-0">
+              <div className="w-6 h-6 bg-amber-600 flex items-center justify-center text-xs font-black text-white shrink-0">
                 ◇
               </div>
               <span className="text-sm font-bold text-stone-800">SQLD AI 튜터</span>
@@ -174,7 +174,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           <div className="bg-white px-4 py-3 mb-3 border border-stone-200">
             <div className="flex items-baseline justify-between mb-1.5">
               <span className="text-xs text-stone-500 font-semibold">예상 점수</span>
-              <span className="text-xs font-semibold text-amber-700">
+              <span className="text-xs font-semibold text-amber-600">
                 목표 {targetScore}점 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
               </span>
             </div>
@@ -184,7 +184,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
             </div>
             <div className="mt-2 h-1.5 bg-amber-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-amber-600 rounded-full transition-all"
+                className="h-full bg-amber-500 rounded-full transition-all"
                 style={{ width: `${Math.min(predictedScore, 100)}%` }}
               />
             </div>
@@ -199,7 +199,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               <p className="text-xs text-stone-400 mt-0.5">풀이 수</p>
             </div>
             <div className="bg-white px-3 py-2 text-center border border-stone-200">
-              <p className={`text-lg font-bold ${streak > 0 ? "text-amber-700" : "text-stone-800"}`}>{streak}개</p>
+              <p className={`text-lg font-bold ${streak > 0 ? "text-amber-600" : "text-stone-800"}`}>{streak}개</p>
               <p className="text-xs text-stone-400 mt-0.5">연속 정답</p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
             </div>
             <div className="h-1.5 bg-amber-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-amber-600 rounded-full transition-all"
+                className="h-full bg-amber-500 rounded-full transition-all"
                 style={{ width: `${(attemptedCount / 11) * 100}%` }}
               />
             </div>
@@ -230,10 +230,10 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               const tried = (stat?.attempts ?? 0) > 0;
               const acc = stat?.accuracy ?? 0;
               const dotColor = !tried ? "bg-stone-300"
-                : acc === 0 ? "bg-amber-200"
-                : acc < 0.4 ? "bg-amber-300"
-                : acc < 0.7 ? "bg-amber-500"
-                : "bg-amber-800";
+                : acc === 0 ? "bg-amber-100"
+                : acc < 0.4 ? "bg-amber-200"
+                : acc < 0.7 ? "bg-amber-400"
+                : "bg-amber-600";
               return (
                 <div key={cat} title={cat}>
                   <div className="flex items-center gap-1.5 mb-1">
@@ -249,8 +249,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                     {tried && (
                       <div
                         className={`h-full rounded-full transition-all ${
-                          acc < 0.4 ? "bg-amber-300" :
-                          acc < 0.7 ? "bg-amber-500" : "bg-amber-800"
+                          acc < 0.4 ? "bg-amber-200" :
+                          acc < 0.7 ? "bg-amber-400" : "bg-amber-600"
                         }`}
                         style={{ width: `${acc * 100}%` }}
                       />
@@ -273,7 +273,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                 <li key={category} className="flex items-center gap-2 text-xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
                   <span className="truncate text-stone-700" title={category}>{shortName(category)}</span>
-                  <span className="ml-auto shrink-0 font-semibold text-amber-800">{Math.round(accuracy * 100)}%</span>
+                  <span className="ml-auto shrink-0 font-semibold text-amber-700">{Math.round(accuracy * 100)}%</span>
                 </li>
               ))}
             </ul>
@@ -283,7 +283,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         {/* 오답 회고 */}
         <Link
           href="/wrong-answers"
-          className="flex items-center justify-between w-full px-4 py-2.5 bg-white hover:bg-amber-50 transition-colors text-stone-700 border border-stone-200 hover:border-amber-200 hover:text-amber-800"
+          className="flex items-center justify-between w-full px-4 py-2.5 bg-white hover:bg-amber-50 transition-colors text-stone-700 border border-stone-200 hover:border-amber-200 hover:text-amber-700"
           onClick={onClose}
         >
           <span className="text-sm font-medium">오답 회고</span>
