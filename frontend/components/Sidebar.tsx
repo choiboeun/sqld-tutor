@@ -122,7 +122,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         .slice(0, 3)
     : (data?.weak_categories ?? []);
 
-  const asideClass = "flex flex-col bg-stone-50 border-r border-stone-200 p-5 gap-5 overflow-y-auto";
+  const asideClass = "flex flex-col bg-amber-50 border-r border-amber-100 p-5 gap-5 overflow-y-auto";
 
   return (
     <>
@@ -139,7 +139,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       }>
 
         {/* Logo + 홈으로 */}
-        <div className="pb-4 border-b border-stone-200">
+        <div className="pb-4 border-b border-amber-100">
           <Link
             href="/home"
             onClick={onClose}
@@ -171,7 +171,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">학습 현황</h2>
 
           {/* 예상 점수 */}
-          <div className="bg-white px-4 py-3 mb-3 border border-stone-200">
+          <div className="bg-white px-4 py-3 mb-3 border border-amber-100">
             <div className="flex items-baseline justify-between mb-1.5">
               <span className="text-xs text-stone-500 font-semibold">예상 점수</span>
               <span className={`text-xs font-semibold ${scoreDiff >= 0 ? "text-emerald-600" : "text-red-500"}`}>
@@ -182,7 +182,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               <span className="text-3xl font-bold text-stone-900 leading-none">{predictedScore}</span>
               <span className="text-sm text-stone-400 mb-0.5">/ 100점</span>
             </div>
-            <div className="mt-2 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+            <div className="mt-2 h-1.5 bg-amber-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-amber-500 rounded-full transition-all"
                 style={{ width: `${Math.min(predictedScore, 100)}%` }}
@@ -194,23 +194,23 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="bg-white px-3 py-2 text-center border border-stone-200">
+            <div className="bg-white px-3 py-2 text-center border border-amber-100">
               <p className="text-lg font-bold text-stone-800">{totalAnswered}문제</p>
               <p className="text-xs text-stone-400 mt-0.5">풀이 수</p>
             </div>
-            <div className="bg-white px-3 py-2 text-center border border-stone-200">
+            <div className="bg-white px-3 py-2 text-center border border-amber-100">
               <p className={`text-lg font-bold ${streak > 0 ? "text-emerald-600" : "text-stone-800"}`}>{streak}개</p>
               <p className="text-xs text-stone-400 mt-0.5">연속 정답</p>
             </div>
           </div>
 
           {/* 전체 진행률 */}
-          <div className="bg-white px-3 py-2 border border-stone-200">
+          <div className="bg-white px-3 py-2 border border-amber-100">
             <div className="flex justify-between text-xs text-stone-500 mb-1">
               <span>학습 진행</span>
               <span className="font-medium">{attemptedCount} / 11 카테고리</span>
             </div>
-            <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-amber-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-amber-500 rounded-full transition-all"
                 style={{ width: `${(attemptedCount / 11) * 100}%` }}
@@ -224,32 +224,35 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">
             카테고리별 정답률
           </h3>
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {sortedCats.map((cat) => {
               const stat = catMap[cat];
               const tried = (stat?.attempts ?? 0) > 0;
               const acc = stat?.accuracy ?? 0;
+              const dotColor = !tried ? "bg-stone-300"
+                : acc < 0.4 ? "bg-red-400"
+                : acc < 0.7 ? "bg-amber-400"
+                : "bg-emerald-500";
               return (
                 <div key={cat} title={cat}>
-                  <div className="flex justify-between text-xs mb-0.5">
-                    <span className={`truncate max-w-[130px] font-medium ${tried ? "text-stone-700" : "text-stone-300"}`}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                    <span className={`truncate text-xs font-medium flex-1 ${tried ? "text-stone-700" : "text-stone-400"}`}>
                       {shortName(cat)}
                     </span>
-                    <span className={tried ? "text-stone-600 shrink-0 ml-1 font-semibold" : "text-stone-300 shrink-0 ml-1"}>
-                      {tried ? `${Math.round(acc * 100)}%` : "미학습"}
+                    <span className={`text-xs shrink-0 tabular-nums ${tried ? "text-stone-500 font-semibold" : "text-stone-300"}`}>
+                      {tried ? `${Math.round(acc * 100)}%` : "—"}
                     </span>
                   </div>
-                  <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
-                    {tried ? (
+                  <div className="h-1 bg-amber-100 rounded-full overflow-hidden">
+                    {tried && (
                       <div
                         className={`h-full rounded-full transition-all ${
                           acc < 0.4 ? "bg-red-400" :
                           acc < 0.7 ? "bg-amber-400" : "bg-emerald-500"
                         }`}
-                        style={{ width: acc === 0 ? "4px" : `${acc * 100}%` }}
+                        style={{ width: acc === 0 ? "3px" : `${acc * 100}%` }}
                       />
-                    ) : (
-                      <div className="h-full w-0" />
                     )}
                   </div>
                 </div>
@@ -279,7 +282,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         {/* 오답 회고 */}
         <Link
           href="/wrong-answers"
-          className="flex items-center justify-between w-full px-4 py-2.5 bg-white hover:bg-amber-50 transition-colors text-stone-700 border border-stone-200 hover:border-amber-300 hover:text-amber-700"
+          className="flex items-center justify-between w-full px-4 py-2.5 bg-white hover:bg-amber-50 transition-colors text-stone-700 border border-amber-100 hover:border-amber-300 hover:text-amber-700"
           onClick={onClose}
         >
           <span className="text-sm font-medium">오답 회고</span>
