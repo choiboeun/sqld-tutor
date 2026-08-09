@@ -229,7 +229,7 @@ export default function WrongAnswersPage() {
     } finally {
       setMiniLoading(false);
     }
-  }, [miniInput, miniLoading, selected]);
+  }, [miniInput, miniLoading, miniMessages, selected]);
 
   return (
     <div className="min-h-screen bg-stone-50 pb-20 md:pb-0">

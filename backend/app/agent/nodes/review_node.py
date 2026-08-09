@@ -3,6 +3,7 @@ import re
 from langchain_core.messages import AIMessage, HumanMessage
 from app.agent.state import TutorState
 from app.agent.tools.question_tools import get_question_by_id
+from app.agent.nodes.drill_node import _try_result_table, _MARKDOWN_TABLE_RE
 
 _ANSWER = re.compile(r"^\s*([1-4①②③④])번?[\s.,]*$")
 _CIRCLE = {1: "①", 2: "②", 3: "③", 4: "④"}
@@ -44,21 +45,42 @@ def _format_question(q: dict) -> str:
     options = q["options"]
 
     if isinstance(options, dict):
-        opts_list = [(int(k), options[k]) for k in sorted(options.keys(), key=int)]
+        opts_list = [(str(k), options[k]) for k in sorted(options.keys(), key=int)]
     else:
-        opts_list = [(i + 1, opt) for i, opt in enumerate(options)]
+        opts_list = [(str(i + 1), opt) for i, opt in enumerate(options)]
 
-    has_sql = any(_SQL_IN_OPTION.search(text) and not _HAS_KOREAN.search(text) for _, text in opts_list)
+    opt_data = []
+    has_block = False
+    for key, opt_text in opts_list:
+        result = _try_result_table(opt_text, context)
+        if result is not None:
+            fmt, content = "result_table", result
+            has_block = True
+        elif _SQL_IN_OPTION.search(opt_text) and not _HAS_KOREAN.search(opt_text):
+            fmt, content = "sql_block", opt_text
+            has_block = True
+        elif _MARKDOWN_TABLE_RE.search(opt_text):
+            fmt, content = "md_table", opt_text
+            has_block = True
+        else:
+            fmt, content = "plain", opt_text
+        opt_data.append((fmt, key, content))
 
     formatted_opts = []
-    for num, text in opts_list:
-        circle = _CIRCLE[num]
-        if has_sql and _SQL_IN_OPTION.search(text) and not _HAS_KOREAN.search(text):
-            formatted_opts.append(f"**{circle}**\n```sql\n{text}\n```")
-        elif has_sql:
-            formatted_opts.append(f"**{circle}** {text}")
+    for fmt, key, content in opt_data:
+        circle = _CIRCLE[int(key)]
+        if not has_block:
+            formatted_opts.append(f"{circle} {content}")
+        elif fmt == "result_table":
+            table_str, suffix_str = content
+            label = f"**{circle}** {suffix_str}" if suffix_str else f"**{circle}**"
+            formatted_opts.append(f"{label}\n{table_str}")
+        elif fmt == "sql_block":
+            formatted_opts.append(f"**{circle}**\n```sql\n{content}\n```")
+        elif fmt == "md_table":
+            formatted_opts.append(f"**{circle}**\n{content}")
         else:
-            formatted_opts.append(f"{circle} {text}")
+            formatted_opts.append(f"**{circle}** {content}")
 
     opts_block = "\n\n".join(formatted_opts)
 

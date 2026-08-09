@@ -12,6 +12,7 @@ const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
   ssr: false,
   loading: () => <div className="bg-stone-100 p-3 text-xs text-stone-400 my-2">다이어그램 로딩 중...</div>,
 });
+import { flushSync } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 
@@ -280,13 +281,16 @@ function ChatContent() {
     pendingQuestionCacheRef.current = {};
 
     setChipsVisible(false);
-    setIsLoading(true);
     setNetworkError(false);
     lastUserMessageRef.current = message;
-    if (showUserMsg) {
-      setMessages((prev) => [...prev, { role: "user", content: message }]);
-    }
-    setMessages((prev) => [...prev, { role: "ai", content: "" }]);
+    // fetch 시작 전 빈 슬롯을 동기적으로 커밋해 ...버블이 항상 먼저 보이도록 강제
+    flushSync(() => {
+      setIsLoading(true);
+      if (showUserMsg) {
+        setMessages((prev) => [...prev, { role: "user", content: message }]);
+      }
+      setMessages((prev) => [...prev, { role: "ai", content: "" }]);
+    });
 
     try {
       const authHeaders = await getAuthHeaders();

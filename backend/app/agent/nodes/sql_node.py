@@ -46,11 +46,13 @@ def sql_node(state: TutorState) -> dict:
     try:
         import sqlite3
         conn = _get_conn()
-        cursor = conn.execute(query)
-        columns = [desc[0] for desc in cursor.description]
-        rows = cursor.fetchall()
-        conn.close()
-        result = _format_table(columns, rows)
+        try:
+            cursor = conn.execute(query)
+            columns = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            result = _format_table(columns, rows)
+        finally:
+            conn.close()
         return {"messages": [AIMessage(content=result)]}
     except Exception as e:
         return {"messages": [AIMessage(content=f"SQL 오류가 발생했어요: {e}\n\n{_TABLES_INFO}")]}

@@ -130,14 +130,19 @@ export default function HomePage() {
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
-    const resp = await fetch("/account/delete", { method: "DELETE" });
-    if (!resp.ok) {
-      setDeleteLoading(false);
+    try {
+      const resp = await fetch("/account/delete", { method: "DELETE" });
+      if (!resp.ok) {
+        alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        return;
+      }
+      await createClient().auth.signOut();
+      window.location.href = "/login";
+    } catch {
       alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      return;
+    } finally {
+      setDeleteLoading(false);
     }
-    await createClient().auth.signOut();
-    window.location.href = "/login";
   };
 
   return (

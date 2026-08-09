@@ -31,12 +31,67 @@ interface ExamStorage {
   questions: ExamQuestion[];
   answers: Record<number, number>;
   current: number;
-  startTimestamp: number; // Date.now() 기준
+  startTimestamp: number;
 }
 
 const TOTAL_SECS = 90 * 60;
 const STORAGE_KEY = "examInProgress";
 
+// **[섹션명]** → ### 섹션명 으로 변환해 h3 스타일링 적용
+function preprocessContext(ctx: string): string {
+  return ctx.replace(/\*\*\[([^\]]+)\]\*\*/g, (_, title) => `### ${title}`);
+}
+
+// ── 배경 정보 전용 마크다운 컴포넌트 ──
+const contextMdComponents = {
+  // 섹션 헤더: ### 섹션명 → 배경색 구분 배너
+  h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <div className="text-[11px] font-bold text-stone-500 bg-stone-200 px-4 py-1.5 -mx-4 mt-3 mb-1.5 uppercase tracking-widest border-l-2 border-stone-400">
+      {children}
+    </div>
+  ),
+  // 데이터 테이블: 13px, 컴팩트, 왼쪽 정렬
+  table: (props: React.HTMLAttributes<HTMLTableElement>) => (
+    <div className="overflow-x-auto my-1.5">
+      <table className="border-collapse text-xs w-full" {...props} />
+    </div>
+  ),
+  th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <th className="border border-stone-300 px-2 py-0.5 bg-stone-200 font-semibold text-left text-xs whitespace-nowrap" {...props} />
+  ),
+  td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <td className="border border-stone-300 px-2 py-0.5 text-left text-xs" {...props} />
+  ),
+  // 스키마 정의 리스트: 줄 전체 코드 폰트
+  li: ({ children }: React.HTMLAttributes<HTMLLIElement>) => (
+    <li className="font-mono text-xs leading-relaxed my-0.5">{children}</li>
+  ),
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul className="my-1 pl-4 list-disc" {...props} />
+  ),
+  p: ({ children }: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p className="text-sm leading-relaxed mb-1.5">{children}</p>
+  ),
+  code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement> & { className?: string }) => {
+    if (className === "language-mermaid") {
+      return <MermaidChart code={String(children)} />;
+    }
+    const isBlock = className?.includes("language-");
+    return isBlock ? (
+      // SQL 코드블록: 약간 밝은 배경
+      <pre className="bg-stone-700 text-stone-100 rounded p-2.5 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap">
+        <code {...props}>{children}</code>
+      </pre>
+    ) : (
+      // 인라인 코드: 테이블명, 컬럼명 등
+      <code className="bg-stone-300 text-stone-800 px-1 py-0.5 rounded text-xs font-mono font-semibold" {...props}>
+        {children}
+      </code>
+    );
+  },
+};
+
+// ── 문제 본문 + 보기 전용 마크다운 컴포넌트 ──
 const mdComponents = {
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-2">
@@ -47,7 +102,7 @@ const mdComponents = {
     <th className="border border-stone-300 px-2 py-1 bg-stone-100 font-semibold text-left" {...props} />
   ),
   td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <td className="border border-stone-300 px-2 py-1" {...props} />
+    <td className="border border-stone-300 px-2 py-1 text-left" {...props} />
   ),
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement> & { className?: string }) => {
     if (className === "language-mermaid") {
@@ -55,11 +110,12 @@ const mdComponents = {
     }
     const isBlock = className?.includes("language-");
     return isBlock ? (
-      <pre className="bg-stone-800 text-stone-100 rounded p-3 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap break-words">
+      // SQL 코드블록: bg-stone-700 (약간 밝게)
+      <pre className="bg-stone-700 text-stone-100 rounded p-3 overflow-x-auto text-sm my-3 font-mono whitespace-pre-wrap">
         <code {...props}>{children}</code>
       </pre>
     ) : (
-      <code className="bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono" {...props}>
+      <code className="bg-stone-200 text-stone-800 px-1.5 py-0.5 rounded text-sm font-mono font-semibold" {...props}>
         {children}
       </code>
     );
@@ -82,14 +138,12 @@ export default function ExamPage() {
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
 
-  // 타이머 콜백에서 최신 state를 stale closure 없이 읽기 위한 ref
   const questionsRef = useRef<ExamQuestion[]>([]);
   const answersRef = useRef<Record<number, number>>({});
   const startTimestampRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const submittedRef = useRef(false);
 
-  // ── sessionStorage에 현재 상태 저장 ──
   const persist = useCallback((
     qs: ExamQuestion[],
     ans: Record<number, number>,
@@ -100,12 +154,11 @@ export default function ExamPage() {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, []);
 
-  // ── 제출 ──
   const submit = useCallback((qs: ExamQuestion[], ans: Record<number, number>) => {
     if (submittedRef.current) return;
     submittedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
-    sessionStorage.removeItem(STORAGE_KEY); // 진행 중 상태 삭제
+    sessionStorage.removeItem(STORAGE_KEY);
 
     const results = qs.map((q) => ({
       id: q.id,
@@ -126,7 +179,6 @@ export default function ExamPage() {
     router.push("/exam/result");
   }, [router]);
 
-  // ── 타이머 시작 (ref에서 최신 state를 읽어 stale closure 방지) ──
   const startTimer = useCallback((startTs: number) => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
@@ -139,17 +191,14 @@ export default function ExamPage() {
     }, 1000);
   }, [submit]);
 
-  // ── 초기 로드: sessionStorage 복원 또는 신규 fetch ──
   useEffect(() => {
     (async () => {
-      // 1) 이미 진행 중인 시험이 있는지 확인
       const saved = sessionStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
           const stored: ExamStorage = JSON.parse(saved);
           const left = calcSecsLeft(stored.startTimestamp);
           if (left > 0 && stored.questions?.length === 50) {
-            // 복원
             startTimestampRef.current = stored.startTimestamp;
             questionsRef.current = stored.questions;
             answersRef.current = stored.answers ?? {};
@@ -161,20 +210,17 @@ export default function ExamPage() {
             startTimer(stored.startTimestamp);
             return;
           }
-          // 시간 초과된 저장본 → 삭제 후 새로 시작
           sessionStorage.removeItem(STORAGE_KEY);
         } catch {
           sessionStorage.removeItem(STORAGE_KEY);
         }
       }
 
-      // 2) 인증 확인
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) { router.push("/login"); return; }
 
-        // 3) 신규 문제 fetch
         const headers = await getAuthHeaders();
         const res = await fetch("/api/exam/generate", { headers });
         if (!res.ok) throw new Error("문제 로드 실패");
@@ -199,7 +245,6 @@ export default function ExamPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── 답변 선택 ──
   const selectAnswer = useCallback((questionNum: number, optNum: number) => {
     setAnswers((prev) => {
       const next = { ...prev, [questionNum]: optNum };
@@ -209,13 +254,11 @@ export default function ExamPage() {
     });
   }, [current, persist]);
 
-  // ── 문제 이동 (저장 포함) ──
   const moveTo = useCallback((idx: number) => {
     setCurrent(idx);
     persist(questionsRef.current, answersRef.current, idx, startTimestampRef.current);
   }, [persist]);
 
-  // ── 렌더 ──
   const mm = String(Math.floor(secsLeft / 60)).padStart(2, "0");
   const ss = String(secsLeft % 60).padStart(2, "0");
   const timerUrgent = secsLeft <= 300;
@@ -248,6 +291,46 @@ export default function ExamPage() {
   if (!q) return null;
 
   const opts = [1, 2, 3, 4].map((n) => ({ num: n, text: q.options[String(n)] ?? "" }));
+
+  // 문제 본문 + 보기 블록 (컨텍스트 유무 관계없이 동일 구조)
+  const questionBlock = (
+    <>
+      {/* 문제 본문: 15px, 줄간격 1.75 */}
+      <div className="text-[15px] font-medium text-stone-800 leading-7 mb-5">
+        <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
+          {q.question}
+        </ReactMarkdown>
+      </div>
+
+      {/* 보기 */}
+      <div className="border border-stone-200 overflow-hidden mb-8">
+        {opts.map((opt) => {
+          const selected = answers[q.num] === opt.num;
+          return (
+            <button
+              key={opt.num}
+              onClick={() => selectAnswer(q.num, opt.num)}
+              className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
+                selected ? "bg-amber-500" : "bg-white hover:bg-amber-50"
+              }`}
+            >
+              <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
+                {["①", "②", "③", "④"][opt.num - 1]}
+              </span>
+              <div className={`flex-1 min-w-0 overflow-hidden text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
+                  ...mdComponents,
+                  p: ({ children }) => <span>{children}</span>,
+                }}>
+                  {opt.text}
+                </ReactMarkdown>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
@@ -349,7 +432,7 @@ export default function ExamPage() {
 
         {/* 메인: 문제 */}
         <main className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-5 py-6">
+          <div className="max-w-5xl mx-auto px-5 py-6">
 
             {/* 문제 헤더 */}
             <div className="flex items-center gap-2 mb-4">
@@ -362,52 +445,31 @@ export default function ExamPage() {
               }`}>{q.difficulty}</span>
             </div>
 
-            {/* context */}
-            {q.context && (
-              <div className="bg-stone-100 border border-stone-200 px-4 py-3 mb-4 text-sm text-stone-700 leading-relaxed">
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
-                  {q.context}
-                </ReactMarkdown>
+            {q.context ? (
+              /* ── 배경 정보 있음: 2단 레이아웃 ── */
+              <div className="flex flex-col md:flex-row gap-5 items-start">
+
+                {/* 왼쪽: 배경 정보 */}
+                <div className="w-full md:w-[42%] md:shrink-0 border border-stone-200 bg-stone-50 overflow-hidden">
+                  <div className="px-4 py-3 text-stone-700">
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={contextMdComponents}>
+                      {preprocessContext(q.context)}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+
+                {/* 오른쪽: 문제 + 보기 */}
+                <div className="flex-1 min-w-0">
+                  {questionBlock}
+                </div>
               </div>
+            ) : (
+              /* ── 배경 정보 없음: 단일 컬럼 ── */
+              questionBlock
             )}
 
-            {/* 문제 본문 */}
-            <div className="text-base font-medium text-stone-800 leading-relaxed mb-6">
-              <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
-                {q.question}
-              </ReactMarkdown>
-            </div>
-
-            {/* 보기 */}
-            <div className="border border-stone-200 overflow-hidden mb-8">
-              {opts.map((opt) => {
-                const selected = answers[q.num] === opt.num;
-                return (
-                  <button
-                    key={opt.num}
-                    onClick={() => selectAnswer(q.num, opt.num)}
-                    className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
-                      selected ? "bg-amber-500" : "bg-white hover:bg-amber-50"
-                    }`}
-                  >
-                    <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
-                      {["①", "②", "③", "④"][opt.num - 1]}
-                    </span>
-                    <div className={`flex-1 min-w-0 overflow-hidden text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
-                      <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
-                        ...mdComponents,
-                        p: ({ children }) => <span>{children}</span>,
-                      }}>
-                        {opt.text}
-                      </ReactMarkdown>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
             {/* 이전/다음 */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mt-2">
               <button
                 onClick={() => moveTo(Math.max(0, current - 1))}
                 disabled={current === 0}
