@@ -257,6 +257,13 @@ function ChatContent() {
     }
   }, [messages]);
 
+  // 로딩 시작 순간 즉시 스크롤 → ...버블이 smooth scroll 지연 없이 바로 보이도록
+  useEffect(() => {
+    if (isLoading) {
+      bottomRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+  }, [isLoading]);
+
   // SPA 이동 시 채팅 초기화 (F5 새로고침은 cleanup이 실행 안 되므로 메시지 유지)
   useEffect(() => {
     return () => {
