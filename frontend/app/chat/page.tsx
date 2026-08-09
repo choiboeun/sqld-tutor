@@ -503,7 +503,7 @@ function ChatContent() {
 
   const hasPendingQ = !!pendingQuestionCache.id;
   const lastAiContent = [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? "";
-  const isAfterGrading = /^(정답입니다|오답입니다)/.test(lastAiContent);
+  const isAfterGrading = /^(정답입니다|오답입니다|정답이에요|아직 틀렸어요)/.test(lastAiContent);
   const inputPlaceholder = hasPendingQ
     ? "1~4번으로 답하거나 질문하세요"
     : isAfterGrading
@@ -576,7 +576,7 @@ function ChatContent() {
           {(() => {
             const hasPendingQuestion = !!pendingQuestionCache.id;
             const lastAiIndex = messages.map((m, idx) => m.role === "ai" ? idx : -1).filter(idx => idx !== -1).at(-1) ?? -1;
-            const hasEverGraded = messages.some(m => m.role === "ai" && /^(정답|오답)입니다/.test(m.content));
+            const hasEverGraded = messages.some(m => m.role === "ai" && /^(정답|오답)입니다|^정답이에요|^아직 틀렸어요/.test(m.content));
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
             const isLastAiMessage = i === lastAiIndex;
@@ -655,7 +655,7 @@ function ChatContent() {
                         );
                       }
 
-                      const isGradingResult = /^(정답|오답)입니다/.test(msg.content);
+                      const isGradingResult = /^(정답|오답)입니다|^정답이에요|^아직 틀렸어요/.test(msg.content);
                       const isNextQuestionEligible =
                         isGradingResult ||
                         msg.content.includes("다음 문제를 풀려면");
@@ -672,7 +672,7 @@ function ChatContent() {
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                             {safeContent}
                           </ReactMarkdown>
-                          {/^오답입니다/.test(msg.content) && isLoading && liveStats !== null && !isAnswered && !isDiagnosticContext && (
+                          {/^(오답입니다|아직 틀렸어요)/.test(msg.content) && isLoading && liveStats !== null && !isAnswered && !isDiagnosticContext && (
                             <div className="mt-2 flex justify-end">
                               <button
                                 onClick={() => abortStreamRef.current?.()}

@@ -633,34 +633,32 @@ export default function HomePage() {
         </div>
 
         {/* ── D-day ── */}
-        {!loading && (
-          <div className="mt-8 pt-6 border-t border-stone-200">
-            <div className="flex items-center justify-between mb-5">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">시험까지</p>
-              <button
-                onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                className="text-[11px] text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
-              >
-                {dDayCount !== null ? "날짜 변경" : "날짜 설정 +"}
-              </button>
-            </div>
-
-            {dDayCount !== null ? (
-              <div className="flex items-baseline gap-3">
-                <span className={`text-5xl font-black leading-none tabular-nums ${
-                  dDayCount === 0 ? "text-red-600" :
-                  dDayCount < 0 ? "text-stone-400" :
-                  "text-stone-900"
-                }`}>
-                  {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
-                </span>
-                <span className="text-xs text-stone-400 mb-1">{examDate}</span>
-              </div>
-            ) : (
-              <p className="text-sm text-stone-400 py-1">시험일을 설정하면 카운트다운이 표시됩니다.</p>
-            )}
+        <div className="mt-8 pt-6 border-t border-stone-200">
+          <div className="flex items-center justify-between mb-5">
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">시험까지</p>
+            <button
+              onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
+              className="text-[11px] text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
+            >
+              {dDayCount !== null ? "날짜 변경" : "날짜 설정 +"}
+            </button>
           </div>
-        )}
+
+          {dDayCount !== null ? (
+            <div className="flex items-baseline gap-3">
+              <span className={`text-5xl font-black leading-none tabular-nums ${
+                dDayCount === 0 ? "text-red-600" :
+                dDayCount < 0 ? "text-stone-400" :
+                "text-stone-900"
+              }`}>
+                {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
+              </span>
+              <span className="text-xs text-stone-400 mb-1">{examDate}</span>
+            </div>
+          ) : (
+            <p className="text-sm text-stone-400 py-1">시험일을 설정하면 카운트다운이 표시됩니다.</p>
+          )}
+        </div>
 
         {/* ── 학습 캘린더 ── */}
         <div className="mt-8">
@@ -730,20 +728,6 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* 로딩 스켈레톤 */}
-        {loading && (
-          <div className="mt-3 space-y-0 animate-pulse">
-            {[1,2,3].map((i) => (
-              <div key={i} className="flex items-center gap-3 py-5 border-b border-stone-200">
-                <div className="w-9 h-9 bg-stone-200 shrink-0" />
-                <div className="flex-1 space-y-1.5">
-                  <div className="h-3.5 bg-stone-200 w-20" />
-                  <div className="h-2.5 bg-stone-100 w-28" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       <BottomNav />
