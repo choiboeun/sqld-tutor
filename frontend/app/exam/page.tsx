@@ -53,7 +53,7 @@ const contextMdComponents = {
   // 데이터 테이블: 13px, 컴팩트, 왼쪽 정렬
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-1.5">
-      <table className="border-collapse text-xs w-full" {...props} />
+      <table className="border-collapse text-xs" {...props} />
     </div>
   ),
   th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
@@ -95,7 +95,7 @@ const contextMdComponents = {
 const mdComponents = {
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-2">
-      <table className="border-collapse text-sm w-full" {...props} />
+      <table className="border-collapse text-sm" {...props} />
     </div>
   ),
   th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (

@@ -104,7 +104,7 @@ const mdComponents = {
   // Fix 1: GFM 테이블
   table: ({ children }: { children?: React.ReactNode }) => (
     <div className="overflow-x-auto my-2">
-      <table className="border-collapse text-xs w-full">{children}</table>
+      <table className="border-collapse text-xs">{children}</table>
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
@@ -934,7 +934,7 @@ function ChatContent() {
               <div>
                 <p className="text-xs text-stone-400 mb-2 font-medium">{sqlResult.rows.length}건</p>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs border-collapse">
+                  <table className="text-xs border-collapse">
                     <thead>
                       <tr className="bg-stone-100">
                         {sqlResult.columns.map((col) => (

@@ -37,7 +37,7 @@ const mdComponents = {
   ),
   table: ({ children }: { children?: React.ReactNode }) => (
     <div className="overflow-x-auto my-2">
-      <table className="border-collapse text-xs w-full">{children}</table>
+      <table className="border-collapse text-xs">{children}</table>
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
