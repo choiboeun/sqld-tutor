@@ -307,6 +307,33 @@ export default function HomePage() {
     (reviewTiming?.this_week.length ?? 0) +
     (reviewTiming?.overdue.length ?? 0);
 
+  const weakCats = ALL_CATEGORIES
+    .map(cat => ({ category: cat, accuracy: catMap[cat]?.accuracy ?? 1, attempts: catMap[cat]?.attempts ?? 0 }))
+    .filter(c => c.attempts > 0)
+    .sort((a, b) => a.accuracy - b.accuracy)
+    .slice(0, 2);
+
+  const urgentCount = (reviewTiming?.today.length ?? 0) + (reviewTiming?.overdue.length ?? 0);
+  const todayTasks: { id: string; title: string; sub: string; href: string }[] = [];
+  if (urgentCount > 0) {
+    todayTasks.push({
+      id: "review",
+      title: `오답 복습 ${urgentCount}개`,
+      sub: (reviewTiming?.overdue.length ?? 0) > 0
+        ? `기간 지난 ${reviewTiming?.overdue.length ?? 0}개 포함 — 오늘 안에 복습하세요`
+        : "오늘 복습하면 기억에 가장 효과적",
+      href: "/wrong-answers",
+    });
+  }
+  weakCats.forEach((c, i) => {
+    todayTasks.push({
+      id: `cat-${i}`,
+      title: `${c.category} 문제 풀기`,
+      sub: `정답률 ${Math.round(c.accuracy * 100)}%${i === 0 ? " — 가장 취약한 카테고리" : ""}`,
+      href: "/chat",
+    });
+  });
+
   return (
     <div className="min-h-[100dvh] flex flex-col md:flex-row pb-16 md:pb-0">
 
@@ -632,100 +659,144 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* ── D-day ── */}
-        <div className="mt-8 pt-6 border-t border-stone-200">
-          <div className="flex items-center justify-between mb-5">
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">시험까지</p>
-            <button
-              onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-              className="text-[11px] text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
-            >
-              {dDayCount !== null ? "날짜 변경" : "날짜 설정 +"}
-            </button>
-          </div>
+        {/* ── 2열 그리드: 1열(D-day·캘린더·복습타이밍) / 2열(오늘 할 일) ── */}
+        <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-1 md:grid-cols-2 md:gap-x-10 items-start">
 
-          {dDayCount !== null ? (
-            <div className="flex items-baseline gap-3">
-              <span className={`text-5xl font-black leading-none tabular-nums ${
-                dDayCount === 0 ? "text-red-600" :
-                dDayCount < 0 ? "text-stone-400" :
-                "text-stone-900"
-              }`}>
-                {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
-              </span>
-              <span className="text-xs text-stone-400 mb-1">{examDate}</span>
+          {/* 1열 */}
+          <div>
+            {/* D-day */}
+            <div>
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">시험까지</p>
+                <button
+                  onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
+                  className="text-[11px] text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
+                >
+                  {dDayCount !== null ? "날짜 변경" : "날짜 설정 +"}
+                </button>
+              </div>
+              {dDayCount !== null ? (
+                <div className="flex items-baseline gap-3">
+                  <span className={`text-5xl font-black leading-none tabular-nums ${
+                    dDayCount === 0 ? "text-red-600" :
+                    dDayCount < 0 ? "text-stone-400" :
+                    "text-stone-900"
+                  }`}>
+                    {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
+                  </span>
+                  <span className="text-xs text-stone-400 mb-1">{examDate}</span>
+                </div>
+              ) : (
+                <p className="text-sm text-stone-400 py-1">시험일을 설정하면 카운트다운이 표시됩니다.</p>
+              )}
             </div>
-          ) : (
-            <p className="text-sm text-stone-400 py-1">시험일을 설정하면 카운트다운이 표시됩니다.</p>
-          )}
-        </div>
 
-        {/* ── 학습 캘린더 ── */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">학습 캘린더</p>
-            <p className="text-[10px] text-stone-300">최근 13주</p>
-          </div>
-          {calendarData ? (
-            <CalendarHeatmap dates={calendarData.dates} />
-          ) : (
-            <div className="flex gap-1 animate-pulse">
-              {Array.from({ length: 14 }).map((_, wi) => (
-                <div key={wi} className="flex flex-col gap-1">
-                  {Array.from({ length: 7 }).map((_, di) => (
-                    <div key={di} className="w-2.5 h-2.5 bg-stone-100" />
+            {/* 학습 캘린더 */}
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">학습 캘린더</p>
+                <p className="text-[10px] text-stone-300">최근 13주</p>
+              </div>
+              {calendarData ? (
+                <CalendarHeatmap dates={calendarData.dates} />
+              ) : (
+                <div className="flex gap-1 animate-pulse">
+                  {Array.from({ length: 14 }).map((_, wi) => (
+                    <div key={wi} className="flex flex-col gap-1">
+                      {Array.from({ length: 7 }).map((_, di) => (
+                        <div key={di} className="w-2.5 h-2.5 bg-stone-100" />
+                      ))}
+                    </div>
                   ))}
                 </div>
-              ))}
+              )}
+              <div className="flex items-center gap-1.5 mt-2.5">
+                <span className="text-[10px] text-stone-300">적음</span>
+                <div className="w-2.5 h-2.5 bg-stone-100" />
+                <div className="w-2.5 h-2.5 bg-amber-200" />
+                <div className="w-2.5 h-2.5 bg-amber-400" />
+                <div className="w-2.5 h-2.5 bg-amber-600" />
+                <span className="text-[10px] text-stone-300">많음</span>
+              </div>
             </div>
-          )}
-          {/* legend */}
-          <div className="flex items-center gap-1.5 mt-2.5">
-            <span className="text-[10px] text-stone-300">적음</span>
-            <div className="w-2.5 h-2.5 bg-stone-100" />
-            <div className="w-2.5 h-2.5 bg-amber-200" />
-            <div className="w-2.5 h-2.5 bg-amber-400" />
-            <div className="w-2.5 h-2.5 bg-amber-600" />
-            <span className="text-[10px] text-stone-300">많음</span>
+
+            {/* 복습 타이밍 */}
+            <div className="mt-8 mb-6">
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">복습 타이밍</p>
+              {reviewTiming === null ? (
+                <div className="space-y-2 animate-pulse">
+                  <div className="h-9 bg-stone-100" />
+                  <div className="h-9 bg-stone-100" />
+                </div>
+              ) : reviewTotal === 0 ? (
+                <p className="text-xs text-stone-400 py-3">복습할 오답이 없어요</p>
+              ) : (
+                <div>
+                  {reviewTiming.overdue.length > 0 && (
+                    <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-stone-300" />
+                  )}
+                  {reviewTiming.today.length > 0 && (
+                    <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
+                  )}
+                  {reviewTiming.tomorrow.length > 0 && (
+                    <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-amber-400" />
+                  )}
+                  {reviewTiming.this_week.length > 0 && (
+                    <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
+                  )}
+                  <Link
+                    href="/wrong-answers"
+                    className="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:underline mt-3"
+                  >
+                    오답 회고 전체 보기
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* ── 복습 타이밍 ── */}
-        <div className="mt-8 mb-6">
-          <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">복습 타이밍</p>
+          {/* 2열: 오늘 할 일 */}
+          <div className="mt-6 pt-6 border-t border-stone-200 md:border-t-0 md:pt-0 md:mt-0 mb-6">
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">오늘 할 일</p>
+            {loading ? (
+              <div className="space-y-3 animate-pulse">
+                <div className="h-[72px] bg-stone-100" />
+                <div className="h-[72px] bg-stone-100" />
+                <div className="h-[72px] bg-stone-100" />
+              </div>
+            ) : todayTasks.length === 0 ? (
+              <p className="text-xs text-stone-400 py-3">문제를 풀면 맞춤 학습 목표가 생성됩니다.</p>
+            ) : (
+              <div className="space-y-2.5">
+                {todayTasks.map((task, i) => (
+                  <div key={task.id} className="border border-stone-200 p-4 hover:border-amber-300 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <span className="w-5 h-5 bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                        {i + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-stone-800 leading-snug">{task.title}</p>
+                        <p className="text-[11px] text-stone-400 mt-0.5 leading-relaxed">{task.sub}</p>
+                      </div>
+                    </div>
+                    <Link
+                      href={task.href}
+                      className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-amber-600 border border-amber-300 py-1.5 hover:bg-amber-50 transition-colors"
+                    >
+                      시작하기
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                      </svg>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {reviewTiming === null ? (
-            <div className="space-y-2 animate-pulse">
-              <div className="h-9 bg-stone-100" />
-              <div className="h-9 bg-stone-100" />
-            </div>
-          ) : reviewTotal === 0 ? (
-            <p className="text-xs text-stone-400 py-3">복습할 오답이 없어요</p>
-          ) : (
-            <div>
-              {reviewTiming.overdue.length > 0 && (
-                <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-stone-300" />
-              )}
-              {reviewTiming.today.length > 0 && (
-                <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
-              )}
-              {reviewTiming.tomorrow.length > 0 && (
-                <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-amber-400" />
-              )}
-              {reviewTiming.this_week.length > 0 && (
-                <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
-              )}
-              <Link
-                href="/wrong-answers"
-                className="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:underline mt-3"
-              >
-                오답 회고 전체 보기
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </Link>
-            </div>
-          )}
         </div>
 
       </div>
