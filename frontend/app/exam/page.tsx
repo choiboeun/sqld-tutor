@@ -297,7 +297,7 @@ export default function ExamPage() {
     <>
       {/* 문제 본문: 15px, 줄간격 1.75 */}
       <div className="text-[15px] font-medium text-stone-800 leading-7 mb-5">
-        <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
+        <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={mdComponents}>
           {q.question}
         </ReactMarkdown>
       </div>
@@ -318,7 +318,7 @@ export default function ExamPage() {
                 {["①", "②", "③", "④"][opt.num - 1]}
               </span>
               <div className={`flex-1 min-w-0 overflow-hidden text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
+                <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={{
                   ...mdComponents,
                   p: ({ children }) => <span>{children}</span>,
                 }}>
@@ -452,7 +452,7 @@ export default function ExamPage() {
                 {/* 왼쪽: 배경 정보 */}
                 <div className="w-full md:w-[42%] md:shrink-0 border border-stone-200 bg-stone-50 overflow-hidden">
                   <div className="px-4 py-3 text-stone-700">
-                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={contextMdComponents}>
+                    <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={contextMdComponents}>
                       {preprocessContext(q.context)}
                     </ReactMarkdown>
                   </div>
