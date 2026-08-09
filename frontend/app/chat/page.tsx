@@ -200,6 +200,7 @@ function ChatContent() {
   const abortStreamRef = useRef<(() => void) | null>(null);
   const diagnosticFired = useRef(false);
   const resumeDiagnosticFired = useRef(false);
+  const autoActionFired = useRef(false);
   const [diagnosticResume, setDiagnosticResume] = useState<{ progress: number } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -422,6 +423,20 @@ function ChatContent() {
       if (messages.length <= 1) {
         streamChat("진단 시작해줘", false);
       }
+    }
+  }, [searchParams, threadId, streamChat, sessionReady]);
+
+  // ?action=review 또는 ?category=... 로 진입 시 자동 메시지 전송
+  useEffect(() => {
+    if (!threadId || !sessionReady || autoActionFired.current) return;
+    const action = searchParams.get("action");
+    const category = searchParams.get("category");
+    if (action === "review") {
+      autoActionFired.current = true;
+      streamChat("오답 복습해줘", false);
+    } else if (category) {
+      autoActionFired.current = true;
+      streamChat(`${category} 문제 줘`, false);
     }
   }, [searchParams, threadId, streamChat, sessionReady]);
 

@@ -322,7 +322,7 @@ export default function HomePage() {
       sub: (reviewTiming?.overdue.length ?? 0) > 0
         ? `기간 지난 ${reviewTiming?.overdue.length ?? 0}개 포함 — 오늘 안에 복습하세요`
         : "오늘 복습하면 기억에 가장 효과적",
-      href: "/wrong-answers",
+      href: "/chat?action=review",
     });
   }
   weakCats.forEach((c, i) => {
@@ -330,7 +330,7 @@ export default function HomePage() {
       id: `cat-${i}`,
       title: `${c.category} 문제 풀기`,
       sub: `정답률 ${Math.round(c.accuracy * 100)}%${i === 0 ? " — 가장 취약한 카테고리" : ""}`,
-      href: "/chat",
+      href: `/chat?category=${encodeURIComponent(c.category)}`,
     });
   });
 
