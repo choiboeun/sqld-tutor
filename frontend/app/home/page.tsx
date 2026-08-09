@@ -54,6 +54,10 @@ export default function HomePage() {
   const [pwMsg, setPwMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [examDate, setExamDate] = useState<string>("");
+  const [showExamModal, setShowExamModal] = useState(false);
+  const [examDateInput, setExamDateInput] = useState("");
+  const [examSaving, setExamSaving] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +67,7 @@ export default function HomePage() {
         if (!authData.user) { window.location.href = "/login"; return; }
         setThreadId(authData.user.id);
         setUserEmail(authData.user.email ?? "");
+        setExamDate(authData.user.user_metadata?.exam_date ?? "");
       });
   }, []);
 
@@ -99,7 +104,60 @@ export default function HomePage() {
     }, 0) * 100
   );
   const scoreDiff = predictedScore - targetScore;
-  const weakCategories = (data?.weak_categories ?? []).slice(0, 3);
+
+  // D-day
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dDayCount = examDate
+    ? Math.ceil((new Date(examDate).getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+
+  // 합격 경로: 점수 상승 여력이 큰 카테고리 순
+  const passPath = ALL_CATEGORIES
+    .map((cat) => ({
+      category: cat,
+      accuracy: catMap[cat]?.accuracy ?? 0,
+      gain: (1 - (catMap[cat]?.accuracy ?? 0)) * (CATEGORY_WEIGHTS[cat] ?? 0) * 100,
+    }))
+    .sort((a, b) => b.gain - a.gain)
+    .slice(0, 3);
+
+  // 오늘의 미션
+  const missionList: { text: string; sub: string; href: string; color: string }[] = [];
+  if (wrongCount > 0) {
+    missionList.push({
+      text: `오답 ${wrongCount}문제 복습`,
+      sub: "틀린 문제를 다시 확인하세요",
+      href: "/wrong-answers",
+      color: "red",
+    });
+  }
+  if (data?.weak_categories?.[0]) {
+    const wc = data.weak_categories[0];
+    missionList.push({
+      text: `${wc.category} 집중 학습`,
+      sub: `현재 정답률 ${Math.round(wc.accuracy * 100)}%`,
+      href: "/chat",
+      color: "amber",
+    });
+  }
+  if (missionList.length < 3) {
+    if (streak >= 3) {
+      missionList.push({
+        text: `${streak}일 연속 학습 유지`,
+        sub: "오늘도 빠짐없이 완주!",
+        href: "/chat",
+        color: "green",
+      });
+    } else {
+      missionList.push({
+        text: totalAnswered === 0 ? "첫 번째 문제 풀기" : "오늘의 문제 풀기",
+        sub: totalAnswered === 0 ? "AI 튜터와 함께 시작하세요" : "꾸준한 학습이 합격의 지름길",
+        href: "/chat",
+        color: "stone",
+      });
+    }
+  }
 
   const handleLogout = async () => {
     await createClient().auth.signOut();
@@ -125,6 +183,19 @@ export default function HomePage() {
       setPwMsg({ type: "success", text: "비밀번호가 변경됐습니다." });
       setNewPassword("");
       setConfirmPassword("");
+    }
+  };
+
+  const handleSaveExamDate = async () => {
+    if (!examDateInput) return;
+    setExamSaving(true);
+    const { error } = await createClient().auth.updateUser({
+      data: { exam_date: examDateInput },
+    });
+    setExamSaving(false);
+    if (!error) {
+      setExamDate(examDateInput);
+      setShowExamModal(false);
     }
   };
 
@@ -209,6 +280,39 @@ export default function HomePage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 시험일 설정 모달 */}
+      {showExamModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+              <h2 className="text-base font-semibold text-stone-800">시험일 설정</h2>
+              <button
+                onClick={() => setShowExamModal(false)}
+                className="text-stone-400 hover:text-stone-600"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-sm text-stone-500">시험 날짜를 설정하면 D-day와 오늘의 미션이 맞춤형으로 표시됩니다.</p>
+              <input
+                type="date"
+                value={examDateInput}
+                onChange={(e) => setExamDateInput(e.target.value)}
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+              <button
+                onClick={handleSaveExamDate}
+                disabled={examSaving || !examDateInput}
+                className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
+              >
+                {examSaving ? "저장 중..." : "저장"}
+              </button>
             </div>
           </div>
         </div>
@@ -437,26 +541,78 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 집중 복습 필요 */}
-        {!loading && weakCategories.length > 0 && (
+        {/* 오늘의 학습 */}
+        {!loading && (
           <div className="mt-8">
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">집중 복습 필요</p>
+            {/* 헤더 */}
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">오늘의 학습</p>
+              <div className="flex items-center gap-2">
+                {dDayCount !== null && (
+                  <span className={`text-xs font-bold px-2 py-0.5 ${
+                    dDayCount > 0 ? "bg-amber-100 text-amber-700" :
+                    dDayCount === 0 ? "bg-red-100 text-red-600" :
+                    "bg-stone-100 text-stone-500"
+                  }`}>
+                    {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day!" : "시험 완료"}
+                  </span>
+                )}
+                <button
+                  onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
+                  className="text-xs text-stone-400 hover:text-amber-600 transition-colors"
+                >
+                  {dDayCount !== null ? "날짜 변경" : "시험일 설정 +"}
+                </button>
+              </div>
+            </div>
+
+            {/* 오늘의 미션 */}
+            <div className="flex flex-col gap-2 mb-6">
+              {missionList.map((m, i) => (
+                <Link
+                  key={i}
+                  href={m.href}
+                  className="flex items-center justify-between px-3 py-3 bg-white border border-stone-200 hover:border-amber-400 transition-colors group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className={`w-1.5 h-1.5 shrink-0 ${
+                      m.color === "red" ? "bg-red-400" :
+                      m.color === "green" ? "bg-green-400" :
+                      m.color === "amber" ? "bg-amber-400" :
+                      "bg-stone-300"
+                    }`} />
+                    <div>
+                      <p className="text-sm text-stone-700 font-medium leading-none">{m.text}</p>
+                      <p className="text-[11px] text-stone-400 mt-1">{m.sub}</p>
+                    </div>
+                  </div>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-stone-300 group-hover:text-amber-500 transition-colors shrink-0">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </Link>
+              ))}
+            </div>
+
+            {/* 합격 경로 */}
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">합격 경로</p>
             <div className="flex flex-col gap-2">
-              {weakCategories.map(({ category, accuracy }) => (
+              {passPath.map(({ category, accuracy, gain }) => (
                 <Link
                   key={category}
                   href="/chat"
                   className="flex items-center justify-between px-3 py-3 bg-white border border-stone-200 hover:border-amber-400 transition-colors group"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-red-400 shrink-0" />
-                    <span className="text-sm text-stone-700 font-medium">{category}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-stone-700 font-medium truncate">{category}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <div className="flex-1 h-1 bg-stone-100">
+                        <div className="h-full bg-amber-400 transition-all duration-500" style={{ width: `${Math.round(accuracy * 100)}%` }} />
+                      </div>
+                      <span className="text-[11px] text-stone-400 tabular-nums shrink-0">{Math.round(accuracy * 100)}%</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs font-bold text-red-500 tabular-nums">{Math.round(accuracy * 100)}%</span>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-stone-300 group-hover:text-amber-500 transition-colors">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                  <div className="ml-3 shrink-0 text-right">
+                    <span className="text-[11px] font-bold text-green-600 tabular-nums">+{gain.toFixed(1)}점</span>
                   </div>
                 </Link>
               ))}
