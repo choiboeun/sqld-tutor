@@ -46,7 +46,7 @@ function preprocessContext(ctx: string): string {
 const contextMdComponents = {
   // 섹션 헤더: ### 섹션명 → 배경색 구분 배너
   h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <div className="text-[11px] font-bold text-stone-500 bg-stone-200 px-4 py-1.5 -mx-4 mt-3 mb-1.5 uppercase tracking-widest border-l-2 border-stone-400">
+    <div className="text-[11px] font-bold text-stone-500 bg-stone-200 px-4 py-1.5 -mx-4 mt-5 mb-2 uppercase tracking-widest border-l-2 border-stone-400">
       {children}
     </div>
   ),
