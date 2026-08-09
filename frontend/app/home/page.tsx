@@ -348,6 +348,11 @@ export default function HomePage() {
             </>
           )}
         </div>
+
+        {/* 신뢰 문구 */}
+        <p className="text-[11px] text-white/40 mt-auto pt-6 leading-relaxed">
+          SQLD 합격자가 기출 경향을 분석해 제작한 문제은행
+        </p>
       </div>
 
       {/* ── 오른쪽 패널 (흰색) ── */}
