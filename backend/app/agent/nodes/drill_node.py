@@ -357,7 +357,10 @@ def drill_node(state: TutorState) -> dict:
     pending = state.get("pending_question") or {}
 
     if not pending:
-        history = state.get("question_history") or []
+        history = list(
+            set(state.get("question_history") or []) |
+            set((state.get("wrong_answer_log") or {}).keys())
+        )
         last_human = next(
             (m for m in reversed(state["messages"]) if isinstance(m, HumanMessage)), None
         )

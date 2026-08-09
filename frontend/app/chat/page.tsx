@@ -433,10 +433,10 @@ function ChatContent() {
     const category = searchParams.get("category");
     if (action === "review") {
       autoActionFired.current = true;
-      streamChat("오답 복습해줘", false);
+      streamChat("오답 복습해줘", true);
     } else if (category) {
       autoActionFired.current = true;
-      streamChat(`${category} 문제 줘`, false);
+      streamChat(`${category} 문제 줘`, true);
     }
   }, [searchParams, threadId, streamChat, sessionReady]);
 
