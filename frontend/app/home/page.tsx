@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
-import BottomNav from "@/components/BottomNav";
 
 interface CategoryStat {
   accuracy: number;
@@ -328,7 +327,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-[100dvh] flex flex-col md:flex-row pb-16 md:pb-0">
+    <div className="min-h-[100dvh] flex flex-col md:flex-row">
 
       {/* 계정 설정 모달 */}
       {showAccountModal && (
@@ -794,7 +793,6 @@ export default function HomePage() {
 
       </div>
 
-      <BottomNav />
     </div>
   );
 }

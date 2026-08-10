@@ -709,7 +709,7 @@ function ChatContent() {
                               </button>
                             </div>
                           )}
-                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !hasConceptAfter && !hasPendingQuestion && (
+                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !hasConceptAfter && !hasPendingQuestion && !isLoading && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}

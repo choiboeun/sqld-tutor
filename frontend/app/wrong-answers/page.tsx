@@ -284,7 +284,7 @@ export default function WrongAnswersPage() {
                     <span className="ml-auto text-xs text-red-500 font-semibold">복습 필요</span>
                   )}
                 </div>
-                <p className="text-sm text-stone-700 line-clamp-2">
+                <p className="text-sm text-stone-700 line-clamp-2 min-h-[2.5rem]">
                   {wa.question.replace(/```[\s\S]*?```/g, "[SQL]").replace(/`[^`]+`/g, "").trim()}
                 </p>
               </button>
