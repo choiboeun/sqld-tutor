@@ -127,7 +127,8 @@ export default function LoginPage() {
         .login-fl-input{width:100%;border:1.5px solid #ede9e4;background:#fafaf9;padding:20px 14px 7px;font-size:13.5px;color:#1c1917;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
         .login-fl-input:focus{border-color:#d97706;background:#fff;box-shadow:0 0 0 3px rgba(217,119,6,.08)}
         .login-fl-label{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:#b5b0ab;pointer-events:none;transition:all .18s ease}
-        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#d97706}
+        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#d97706}
+        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fafaf9 inset;-webkit-text-fill-color:#1c1917;transition:background-color 5000s ease-in-out 0s}
         .login-signup-link{color:#d97706;font-weight:700;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
         .login-signup-link:hover{border-bottom-color:#d97706}
         @media(max-width:680px){
