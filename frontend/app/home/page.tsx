@@ -181,6 +181,10 @@ export default function HomePage() {
   const [examSaving, setExamSaving] = useState(false);
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
   const [reviewTiming, setReviewTiming] = useState<ReviewTiming | null>(null);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
+  const [inquiryMsg, setInquiryMsg] = useState("");
+  const [inquiryLoading, setInquiryLoading] = useState(false);
+  const [inquiryResult, setInquiryResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -239,6 +243,31 @@ export default function HomePage() {
   const handleLogout = async () => {
     await createClient().auth.signOut();
     window.location.href = "/login";
+  };
+
+  const handleInquirySubmit = async () => {
+    if (!inquiryMsg.trim()) return;
+    setInquiryLoading(true);
+    setInquiryResult(null);
+    try {
+      const { data: authData } = await createClient().auth.getSession();
+      const token = authData.session?.access_token;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"}/api/inquiries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ message: inquiryMsg.trim() }),
+      });
+      if (res.ok) {
+        setInquiryResult({ type: "success", text: "문의가 접수됐습니다. 빠르게 확인하고 답변 드릴게요." });
+        setInquiryMsg("");
+      } else {
+        setInquiryResult({ type: "error", text: "제출 중 오류가 발생했습니다. 다시 시도해주세요." });
+      }
+    } catch {
+      setInquiryResult({ type: "error", text: "네트워크 오류가 발생했습니다." });
+    } finally {
+      setInquiryLoading(false);
+    }
   };
 
   const handlePasswordChange = async () => {
@@ -467,6 +496,13 @@ export default function HomePage() {
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                   계정 관리
+                </button>
+                <button
+                  onClick={() => { setShowDropdown(false); setShowInquiryModal(true); }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-2"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  문의하기
                 </button>
                 <button
                   onClick={() => { setShowDropdown(false); handleLogout(); }}
@@ -792,6 +828,57 @@ export default function HomePage() {
         </div>
 
       </div>
+
+      {/* 문의하기 모달 */}
+      {showInquiryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+              <h2 className="text-base font-semibold text-stone-800">문의하기</h2>
+              <button
+                onClick={() => { setShowInquiryModal(false); setInquiryMsg(""); setInquiryResult(null); }}
+                className="text-stone-400 hover:text-stone-600"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              {inquiryResult ? (
+                <div className={`text-sm px-4 py-3 ${inquiryResult.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+                  {inquiryResult.text}
+                </div>
+              ) : (
+                <p className="text-sm text-stone-500">버그, 기능 요청, 기타 문의 사항을 자유롭게 남겨주세요.</p>
+              )}
+              {!inquiryResult && (
+                <textarea
+                  value={inquiryMsg}
+                  onChange={(e) => setInquiryMsg(e.target.value)}
+                  placeholder="문의 내용을 입력해주세요."
+                  rows={5}
+                  className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+                />
+              )}
+              {inquiryResult?.type === "success" ? (
+                <button
+                  onClick={() => { setShowInquiryModal(false); setInquiryMsg(""); setInquiryResult(null); }}
+                  className="w-full bg-stone-100 text-stone-700 py-2 text-sm font-semibold hover:bg-stone-200 transition-colors"
+                >
+                  닫기
+                </button>
+              ) : (
+                <button
+                  onClick={handleInquirySubmit}
+                  disabled={inquiryLoading || !inquiryMsg.trim()}
+                  className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
+                >
+                  {inquiryLoading ? "제출 중..." : "제출하기"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
