@@ -93,6 +93,11 @@ const contextMdComponents = {
 
 // ── 문제 본문 + 보기 전용 마크다운 컴포넌트 ──
 const mdComponents = {
+  h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <div className="text-[11px] font-bold text-stone-500 border-l-2 border-stone-400 pl-2 mt-4 mb-1.5">
+      {children}
+    </div>
+  ),
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-2">
       <table className="border-collapse text-sm" {...props} />
@@ -307,17 +312,20 @@ export default function ExamPage() {
         {opts.map((opt) => {
           const selected = answers[q.num] === opt.num;
           return (
-            <button
+            <div
               key={opt.num}
+              role="button"
+              tabIndex={0}
               onClick={() => selectAnswer(q.num, opt.num)}
-              className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
+              onKeyDown={(e) => e.key === "Enter" && selectAnswer(q.num, opt.num)}
+              className={`w-full text-left flex items-start gap-3 px-4 py-3.5 border-b border-stone-100 last:border-b-0 transition-colors cursor-pointer ${
                 selected ? "bg-amber-500" : "bg-white hover:bg-amber-50"
               }`}
             >
               <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
                 {["①", "②", "③", "④"][opt.num - 1]}
               </span>
-              <div className={`flex-1 min-w-0 overflow-hidden text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
+              <div className={`flex-1 min-w-0 overflow-x-auto text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
                 <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={{
                   ...mdComponents,
                   p: ({ children }) => <span>{children}</span>,
@@ -325,7 +333,7 @@ export default function ExamPage() {
                   {opt.text}
                 </ReactMarkdown>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>

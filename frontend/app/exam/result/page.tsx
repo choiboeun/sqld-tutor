@@ -28,6 +28,11 @@ interface QuestionResult {
 }
 
 const mdComponents = {
+  h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <div className="text-[11px] font-bold text-stone-500 border-l-2 border-stone-400 pl-2 mt-3 mb-1.5">
+      {children}
+    </div>
+  ),
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-2">
       <table className="border-collapse text-sm w-full" {...props} />
@@ -260,7 +265,7 @@ export default function ExamResultPage() {
                       }`}>
                         {["①", "②", "③", "④"][opt.num - 1]}
                       </span>
-                      <div className="flex-1 min-w-0 overflow-hidden text-sm leading-relaxed text-stone-800">
+                      <div className="flex-1 min-w-0 overflow-x-auto text-sm leading-relaxed text-stone-800">
                         <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={{
                           ...mdComponents,
                           p: ({ children }) => <span>{children}</span>,
