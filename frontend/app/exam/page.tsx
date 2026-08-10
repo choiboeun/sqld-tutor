@@ -50,6 +50,12 @@ const contextMdComponents = {
       {children}
     </div>
   ),
+  // 테이블명 서브헤더: #### TABLE명 → 작은 레이블 (계층 구분)
+  h4: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <div className="text-[10px] font-semibold text-stone-400 mt-3 mb-0.5 tracking-wider uppercase">
+      {children}
+    </div>
+  ),
   // 데이터 테이블: 13px, 컴팩트, 왼쪽 정렬
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-1.5">

@@ -33,6 +33,11 @@ const mdComponents = {
       {children}
     </div>
   ),
+  h4: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <div className="text-[10px] font-semibold text-stone-400 mt-3 mb-0.5 tracking-wider uppercase">
+      {children}
+    </div>
+  ),
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-2">
       <table className="border-collapse text-sm w-full" {...props} />
