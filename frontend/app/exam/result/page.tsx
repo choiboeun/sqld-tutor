@@ -71,6 +71,7 @@ export default function ExamResultPage() {
   const router = useRouter();
   const [results, setResults] = useState<QuestionResult[]>([]);
   const [selected, setSelected] = useState<QuestionResult | null>(null);
+  const [exitTarget, setExitTarget] = useState<"home" | "retry" | null>(null);
 
   useEffect(() => {
     const raw = sessionStorage.getItem("examResult");
@@ -203,22 +204,61 @@ export default function ExamResultPage() {
           <span><span className="inline-block w-3 h-3 bg-stone-100 border border-stone-200 mr-1" />미답변</span>
         </div>
 
+        {/* 나가기 경고 배너 */}
+        <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 px-4 py-3 mb-3">
+          <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <p className="text-xs text-amber-800 leading-relaxed">
+            이 페이지를 벗어나면 <span className="font-semibold">오답 기록이 사라집니다.</span> 틀린 문제를 먼저 클릭해 확인하세요.
+          </p>
+        </div>
+
         {/* 버튼 */}
         <div className="flex gap-3">
           <button
-            onClick={() => { sessionStorage.removeItem("examResult"); router.push("/home"); }}
+            onClick={() => setExitTarget("home")}
             className="flex-1 py-3 border border-stone-200 text-stone-600 text-sm font-medium hover:bg-stone-100 transition-colors"
           >
             홈으로
           </button>
           <button
-            onClick={() => { sessionStorage.removeItem("examResult"); router.push("/exam"); }}
+            onClick={() => setExitTarget("retry")}
             className="flex-1 py-3 bg-stone-900 text-white text-sm font-semibold hover:bg-stone-700 transition-colors"
           >
             다시 풀기
           </button>
         </div>
       </div>
+
+      {/* 나가기 확인 모달 */}
+      {exitTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-5">
+          <div className="bg-white w-full max-w-sm shadow-xl p-6">
+            <p className="text-sm font-semibold text-stone-800 mb-1.5">
+              {exitTarget === "retry" ? "다시 풀기로 이동할까요?" : "홈으로 이동할까요?"}
+            </p>
+            <p className="text-xs text-stone-500 mb-5 leading-relaxed">
+              이동하면 현재 시험 결과와 오답 기록이 <span className="font-semibold text-stone-700">영구적으로 사라집니다.</span> 틀린 문제를 다 확인하셨나요?
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setExitTarget(null)}
+                className="flex-1 py-2.5 border border-stone-200 text-stone-600 text-sm hover:bg-stone-50 transition-colors"
+              >
+                계속 보기
+              </button>
+              <button
+                onClick={() => {
+                  sessionStorage.removeItem("examResult");
+                  router.push(exitTarget === "retry" ? "/exam" : "/home");
+                }}
+                className="flex-1 py-2.5 bg-stone-900 text-white text-sm font-semibold hover:bg-stone-700 transition-colors"
+              >
+                {exitTarget === "retry" ? "다시 풀기" : "홈으로"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 문제 해설 모달 */}
       {selected && (
