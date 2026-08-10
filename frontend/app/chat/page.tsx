@@ -253,7 +253,9 @@ function ChatContent() {
       }
       isRestoredRef.current = false;
     } else {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      const lastMsg = messages[messages.length - 1];
+      const hasLoadingBubble = lastMsg?.role === "ai" && lastMsg.content === "";
+      bottomRef.current?.scrollIntoView({ behavior: hasLoadingBubble ? "instant" : "smooth" });
     }
   }, [messages]);
 

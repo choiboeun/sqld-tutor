@@ -6,7 +6,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import chat, progress, wrong_answers, mini_chat, sql_execute, user, exam, calendar, review_timing
+from app.api import chat, progress, wrong_answers, mini_chat, sql_execute, user, exam, calendar, review_timing, home_data
 from app.db.checkpointer import open_checkpointer_pool
 
 
@@ -35,6 +35,7 @@ app.include_router(user.router, prefix="/api")
 app.include_router(exam.router, prefix="/api")
 app.include_router(calendar.router, prefix="/api")
 app.include_router(review_timing.router, prefix="/api")
+app.include_router(home_data.router, prefix="/api")
 
 
 @app.get("/health")

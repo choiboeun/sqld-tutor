@@ -165,7 +165,6 @@ function ReviewRow({
 }
 
 export default function HomePage() {
-  const [threadId, setThreadId] = useState<string | null>(null);
   const [data, setData] = useState<ProgressData | null>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
@@ -186,33 +185,27 @@ export default function HomePage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    createClient()
-      .auth.getUser()
-      .then(({ data: authData }) => {
-        if (!authData.user) { window.location.href = "/login"; return; }
-        setThreadId(authData.user.id);
-        setUserEmail(authData.user.email ?? "");
-        setExamDate(authData.user.user_metadata?.exam_date ?? "");
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!threadId) return;
     (async () => {
+      const { data: authData } = await createClient().auth.getUser();
+      if (!authData.user) { window.location.href = "/login"; return; }
+
+      const uid = authData.user.id;
+      setUserEmail(authData.user.email ?? "");
+      setExamDate(authData.user.user_metadata?.exam_date ?? "");
+
       try {
         const headers = await getAuthHeaders();
-        const [progressRes, calRes, reviewRes] = await Promise.all([
-          fetch(`/api/progress/${threadId}`, { headers }),
-          fetch(`/api/calendar/${threadId}`, { headers }),
-          fetch(`/api/review-timing/${threadId}`, { headers }),
-        ]);
-        if (progressRes.ok) setData(await progressRes.json());
-        if (calRes.ok) setCalendarData(await calRes.json());
-        if (reviewRes.ok) setReviewTiming(await reviewRes.json());
+        const res = await fetch(`/api/home-data/${uid}`, { headers });
+        if (res.ok) {
+          const { progress, calendar, review_timing } = await res.json();
+          setData(progress);
+          setCalendarData(calendar);
+          setReviewTiming(review_timing);
+        }
       } catch {}
       finally { setLoading(false); }
     })();
-  }, [threadId]);
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
