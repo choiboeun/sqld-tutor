@@ -391,12 +391,6 @@ export default function HomePage() {
               >
                 진단 시작하기
               </Link>
-              <button
-                onClick={() => setShowWelcomeModal(false)}
-                className="block w-full text-center text-xs text-stone-400 hover:text-stone-600 transition-colors py-1"
-              >
-                나중에 할게요
-              </button>
             </div>
           </div>
         </div>
