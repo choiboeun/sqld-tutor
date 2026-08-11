@@ -2,6 +2,7 @@ import json
 import random
 from pathlib import Path
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from app.auth import get_current_user_id
 
 router = APIRouter()
@@ -33,14 +34,16 @@ DIFF_PLAN: dict[int, dict[str, int]] = {
 SUBJECT1_CATS = {"데이터 모델링 기초", "데이터 모델과 SQL"}
 
 _QUESTIONS: list[dict] | None = None
+_QUESTIONS_INDEX: dict[str, dict] | None = None
 
 
 def _load_questions() -> list[dict]:
-    global _QUESTIONS
+    global _QUESTIONS, _QUESTIONS_INDEX
     if _QUESTIONS is None:
         path = Path(__file__).parent.parent / "data" / "questions" / "questions_v0.1.jsonl"
         with open(path) as f:
             _QUESTIONS = [json.loads(line) for line in f if line.strip()]
+        _QUESTIONS_INDEX = {q["id"]: q for q in _QUESTIONS}
     return _QUESTIONS
 
 
@@ -107,9 +110,29 @@ async def generate_exam(user_id: str = Depends(get_current_user_id)):
                 "question": q["question"],
                 "context": q.get("context") or "",
                 "options": q["options"],
-                "answer": q["answer"],
-                "explanation": q.get("explanation") or "",
             }
             for i, q in enumerate(ordered)
         ]
     }
+
+
+class GradeRequest(BaseModel):
+    answers: dict[str, int | None]  # question_id → 선택 보기 (1~4), None = 미답변
+
+
+@router.post("/exam/grade")
+async def grade_exam(body: GradeRequest, user_id: str = Depends(get_current_user_id)):
+    _load_questions()
+    results = []
+    for qid, selected in body.answers.items():
+        q = (_QUESTIONS_INDEX or {}).get(qid)
+        if not q:
+            continue
+        correct_answer = q["answer"]
+        results.append({
+            "id": qid,
+            "answer": correct_answer,
+            "explanation": q.get("explanation") or "",
+            "correct": selected == correct_answer if selected is not None else False,
+        })
+    return {"results": results}

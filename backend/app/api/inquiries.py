@@ -6,7 +6,7 @@ from app.auth import get_current_user_id, get_current_user_email
 
 router = APIRouter()
 
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "libresearch8@gmail.com")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "")
 
 
 def _get_supabase():

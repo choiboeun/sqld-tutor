@@ -1,3 +1,4 @@
+import asyncio
 import os
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -103,8 +104,8 @@ async def get_home_data(thread_id: str, user_id: str = Depends(get_current_user_
     client = _get_supabase()
     if client:
         since = (datetime.now(timezone.utc) - timedelta(days=91)).isoformat()
-        rows = (
-            client.table("user_events")
+        rows = await asyncio.to_thread(
+            lambda: client.table("user_events")
             .select("properties, created_at")
             .eq("user_id", thread_id)
             .eq("event_type", "question_answered")

@@ -23,8 +23,6 @@ interface ExamQuestion {
   question: string;
   context: string;
   options: Record<string, string>;
-  answer: number;
-  explanation: string;
 }
 
 interface ExamStorage {
@@ -148,6 +146,7 @@ export default function ExamPage() {
   const [error, setError] = useState("");
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
+  const [grading, setGrading] = useState(false);
 
   const questionsRef = useRef<ExamQuestion[]>([]);
   const answersRef = useRef<Record<number, number>>({});
@@ -165,29 +164,53 @@ export default function ExamPage() {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, []);
 
-  const submit = useCallback((qs: ExamQuestion[], ans: Record<number, number>) => {
+  const submit = useCallback(async (qs: ExamQuestion[], ans: Record<number, number>) => {
     if (submittedRef.current) return;
     submittedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
     sessionStorage.removeItem(STORAGE_KEY);
+    setGrading(true);
 
-    const results = qs.map((q) => ({
-      id: q.id,
-      num: q.num,
-      subject: q.subject,
-      category: q.category,
-      difficulty: q.difficulty,
-      question: q.question,
-      context: q.context,
-      options: q.options,
-      answer: q.answer,
-      explanation: q.explanation,
-      selected: ans[q.num] ?? null,
-      correct: ans[q.num] === q.answer,
-    }));
+    try {
+      const answersPayload: Record<string, number | null> = {};
+      for (const q of qs) {
+        answersPayload[q.id] = ans[q.num] ?? null;
+      }
 
-    sessionStorage.setItem("examResult", JSON.stringify(results));
-    router.push("/exam/result");
+      const headers = await getAuthHeaders();
+      const res = await fetch("/api/exam/grade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...headers },
+        body: JSON.stringify({ answers: answersPayload }),
+      });
+      if (!res.ok) throw new Error("채점 실패");
+      const { results: graded } = await res.json();
+
+      const gradedMap: Record<string, { answer: number; explanation: string; correct: boolean }> = {};
+      for (const g of graded) gradedMap[g.id] = g;
+
+      const results = qs.map((q) => ({
+        id: q.id,
+        num: q.num,
+        subject: q.subject,
+        category: q.category,
+        difficulty: q.difficulty,
+        question: q.question,
+        context: q.context,
+        options: q.options,
+        answer: gradedMap[q.id]?.answer ?? 0,
+        explanation: gradedMap[q.id]?.explanation ?? "",
+        selected: ans[q.num] ?? null,
+        correct: gradedMap[q.id]?.correct ?? false,
+      }));
+
+      sessionStorage.setItem("examResult", JSON.stringify(results));
+      router.push("/exam/result");
+    } catch {
+      setGrading(false);
+      submittedRef.current = false;
+      setError("채점 중 오류가 발생했어요. 다시 시도해주세요.");
+    }
   }, [router]);
 
   const startTimer = useCallback((startTs: number) => {
@@ -277,12 +300,12 @@ export default function ExamPage() {
   const answeredCount = Object.keys(answers).length;
   const unansweredCount = questions.length - answeredCount;
 
-  if (loading) {
+  if (loading || grading) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-stone-500 text-sm">문제를 준비하는 중...</p>
+          <p className="text-stone-500 text-sm">{grading ? "채점하는 중..." : "문제를 준비하는 중..."}</p>
         </div>
       </div>
     );

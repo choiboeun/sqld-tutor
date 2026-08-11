@@ -6,10 +6,11 @@ from langchain_core.tools import tool
 QUESTIONS_PATH = Path(__file__).parent.parent.parent / "data" / "questions" / "questions_v0.1.jsonl"
 
 _QUESTIONS_CACHE: list[dict] | None = None
+_QUESTIONS_INDEX: dict[str, dict] | None = None
 
 
 def _load_questions() -> list[dict]:
-    global _QUESTIONS_CACHE
+    global _QUESTIONS_CACHE, _QUESTIONS_INDEX
     if _QUESTIONS_CACHE is not None:
         return _QUESTIONS_CACHE
     questions = []
@@ -18,6 +19,7 @@ def _load_questions() -> list[dict]:
             if line.strip():
                 questions.append(json.loads(line))
     _QUESTIONS_CACHE = questions
+    _QUESTIONS_INDEX = {q["id"]: q for q in questions}
     return questions
 
 
@@ -67,11 +69,10 @@ def get_available_categories(exclude_ids: list[str] | None = None) -> list[str]:
 
 
 def get_question_by_id(question_id: str) -> dict | None:
-    """id로 특정 문제 반환."""
-    for q in _load_questions():
-        if q["id"] == question_id:
-            return _to_question_dict(q)
-    return None
+    """id로 특정 문제 반환 (O(1) dict 조회)."""
+    _load_questions()
+    q = (_QUESTIONS_INDEX or {}).get(question_id)
+    return _to_question_dict(q) if q else None
 
 
 @tool

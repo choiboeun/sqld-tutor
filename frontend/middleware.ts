@@ -35,8 +35,8 @@ export async function middleware(request: NextRequest) {
   if (user) {
     const onboardingDone = user.user_metadata?.onboarding_completed === true;
 
-    // 인증됨 + 온보딩 미완료: /home, /chat → /onboarding
-    if (!onboardingDone && (path.startsWith("/home") || path.startsWith("/chat"))) {
+    // 인증됨 + 온보딩 미완료: /home, /chat, /wrong-answers, /exam → /onboarding
+    if (!onboardingDone && (path.startsWith("/home") || path.startsWith("/chat") || path.startsWith("/wrong-answers") || path.startsWith("/exam"))) {
       return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 
@@ -55,5 +55,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/home", "/chat/:path*", "/onboarding", "/wrong-answers", "/exam/:path*", "/exam", "/login", "/signup"],
+  matcher: ["/home", "/chat/:path*", "/onboarding", "/wrong-answers", "/exam/:path*", "/exam", "/login", "/signup", "/admin/:path*"],
 };

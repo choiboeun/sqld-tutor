@@ -17,7 +17,7 @@ export async function DELETE() {
   const userToken = session.access_token;
 
   // 학습 데이터 삭제 (user JWT → auth.uid() 작동)
-  await fetch(`${SUPABASE_URL}/rest/v1/rpc/delete_user`, {
+  const rpcResp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/delete_user`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${userToken}`,
@@ -26,6 +26,11 @@ export async function DELETE() {
     },
     body: JSON.stringify({}),
   });
+
+  if (!rpcResp.ok) {
+    const text = await rpcResp.text();
+    return NextResponse.json({ error: `데이터 삭제 실패: ${text}` }, { status: 500 });
+  }
 
   // auth.users 삭제 (service_role Admin API)
   const adminResp = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {

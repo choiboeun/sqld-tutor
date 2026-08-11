@@ -313,7 +313,8 @@ function ChatContent() {
       });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const reader = res.body!.getReader();
+      if (!res.body) throw new Error("응답 스트림 없음");
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
       let streamingContent = "";
@@ -645,7 +646,7 @@ function ChatContent() {
                                 }}
                               >
                                 <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                                  {msg.content.replace(/\*\*([^*\n]+)\*\*/g, "$1")}
+                                  {msg.content}
                                 </ReactMarkdown>
                               </div>
                               {isLong && !msg.conceptExpanded && (

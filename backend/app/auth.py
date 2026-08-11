@@ -17,10 +17,16 @@ async def _fetch_user_info(token: str) -> tuple[str, str]:
     """Returns (user_id, email). Caches result for CACHE_TTL seconds."""
     now = time.time()
     cached = _token_cache.get(token)
-    if cached and now < cached[2]:
-        return cached[0], cached[1]
     if cached:
+        if now < cached[2]:
+            return cached[0], cached[1]
         del _token_cache[token]
+
+    # 만료 항목 주기적 정리 (캐시 크기가 100 초과 시)
+    if len(_token_cache) > 100:
+        stale = [k for k, v in _token_cache.items() if now >= v[2]]
+        for k in stale:
+            _token_cache.pop(k, None)
 
     async with httpx.AsyncClient() as client:
         resp = await client.get(

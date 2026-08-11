@@ -34,4 +34,4 @@ def log_event(user_id: str, event_type: str, properties: dict = None):
         except Exception as e:
             print(f"[analytics] log_event 실패: {e}")
 
-    threading.Thread(target=_send, daemon=True).start()
+    threading.Thread(target=_send, daemon=False).start()

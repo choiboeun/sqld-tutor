@@ -61,7 +61,7 @@ class ChatRequest(BaseModel):
     message: str
     thread_id: str = "default"
     user_id: str = "anonymous"
-    target_score: int = 60
+    target_score: int = 70
     clear_pending: bool = False
     client_pending_question: dict = {}
 
@@ -99,17 +99,17 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                 input_data["pending_question"] = client_pending_question
             # 스테일 체크포인트 우회 — pending_question에 포함된 state_updater 최신 값 주입
             _pq = client_pending_question
-            if _pq.get("_diag_count") is not None:
+            if isinstance(_pq.get("_diag_count"), int):
                 input_data["diagnostic_question_count"] = _pq["_diag_count"]
-            if _pq.get("_total_answered") is not None:
+            if isinstance(_pq.get("_total_answered"), int):
                 input_data["total_answered"] = _pq["_total_answered"]
-            if _pq.get("_attempts_by_cat") is not None:
+            if isinstance(_pq.get("_attempts_by_cat"), dict):
                 input_data["attempts_by_category"] = _pq["_attempts_by_cat"]
-            if _pq.get("_accuracy_by_cat") is not None:
+            if isinstance(_pq.get("_accuracy_by_cat"), dict):
                 input_data["accuracy_by_category"] = _pq["_accuracy_by_cat"]
-            if _pq.get("_wrong_log") is not None:
+            if isinstance(_pq.get("_wrong_log"), dict):
                 input_data["wrong_answer_log"] = _pq["_wrong_log"]
-            if _pq.get("_streak") is not None:
+            if isinstance(_pq.get("_streak"), int):
                 input_data["streak"] = _pq["_streak"]
 
     NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain", "diagnostic_block"}
