@@ -164,6 +164,7 @@ function ReviewRow({
 }
 
 export default function HomePage() {
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [data, setData] = useState<ProgressData | null>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
@@ -186,6 +187,10 @@ export default function HomePage() {
   const [inquiryLoading, setInquiryLoading] = useState(false);
   const [inquiryResult, setInquiryResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("welcome") === "true") setShowWelcomeModal(true);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -357,6 +362,45 @@ export default function HomePage() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col md:flex-row">
+
+      {/* 신규 가입 웰컴 모달 */}
+      {showWelcomeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
+            <div className="bg-amber-600 px-7 py-6">
+              <p className="text-xs font-bold text-amber-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
+              <h2 className="text-2xl font-black text-white leading-snug">가입을 환영해요!</h2>
+              <p className="text-sm text-amber-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
+            </div>
+            <div className="px-7 py-6 space-y-4">
+              <div className="space-y-2.5">
+                {[
+                  { icon: "①", text: "8문제로 카테고리별 실력을 진단해요" },
+                  { icon: "②", text: "진단 결과를 바탕으로 맞춤 문제를 출제해요" },
+                  { icon: "③", text: "취약한 부분은 AI가 개념까지 설명해줘요" },
+                ].map(({ icon, text }) => (
+                  <div key={icon} className="flex items-start gap-3">
+                    <span className="text-amber-600 font-bold text-sm shrink-0 w-5">{icon}</span>
+                    <p className="text-sm text-stone-600 leading-relaxed">{text}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/chat?new=true"
+                className="block w-full bg-amber-600 text-white text-center py-3 text-sm font-bold tracking-wide hover:bg-amber-700 transition-colors"
+              >
+                진단 시작하기
+              </Link>
+              <button
+                onClick={() => setShowWelcomeModal(false)}
+                className="block w-full text-center text-xs text-stone-400 hover:text-stone-600 transition-colors py-1"
+              >
+                나중에 할게요
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 계정 설정 모달 */}
       {showAccountModal && (
