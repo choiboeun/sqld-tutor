@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // 미인증: 보호 경로 → /login
-  const protectedPaths = ["/home", "/chat", "/onboarding", "/wrong-answers", "/exam"];
+  const protectedPaths = ["/home", "/chat", "/onboarding", "/wrong-answers", "/exam", "/admin"];
   if (!user && protectedPaths.some((p) => path.startsWith(p))) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
