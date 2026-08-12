@@ -173,6 +173,7 @@ export default function WrongAnswersPage() {
         }),
       });
 
+      if (res.status === 429) throw new Error("1시간에 30회까지 질문할 수 있어요. 잠시 후 다시 시도해주세요.");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       if (!res.body) throw new Error("스트림 응답이 없습니다.");
       const reader = res.body.getReader();
@@ -221,10 +222,11 @@ export default function WrongAnswersPage() {
           } catch { /* JSON 파싱 실패 무시 */ }
         }
       }
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "오류가 발생했습니다. 다시 시도해주세요.";
       setMiniMessages((prev) => {
         const next = [...prev];
-        next[next.length - 1] = { role: "ai", content: "오류가 발생했습니다. 다시 시도해주세요." };
+        next[next.length - 1] = { role: "ai", content: msg };
         return next;
       });
     } finally {

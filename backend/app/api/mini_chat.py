@@ -1,5 +1,7 @@
 import json
-from fastapi import APIRouter, Depends
+import time
+from collections import defaultdict
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
@@ -8,6 +10,20 @@ from app.agent.llm import llm
 from app.auth import get_current_user_id
 
 router = APIRouter()
+
+_rate_limit: dict[str, list[float]] = defaultdict(list)
+_LIMIT = 30   # 1시간에 최대 30회
+_WINDOW = 3600
+
+
+def _check_rate_limit(user_id: str) -> bool:
+    now = time.time()
+    calls = _rate_limit[user_id]
+    _rate_limit[user_id] = [t for t in calls if now - t < _WINDOW]
+    if len(_rate_limit[user_id]) >= _LIMIT:
+        return False
+    _rate_limit[user_id].append(now)
+    return True
 
 
 class MiniMessage(BaseModel):
@@ -44,7 +60,9 @@ def _build_system_prompt(ctx: dict) -> str:
 
 
 @router.post("/mini-chat")
-async def mini_chat(request: MiniChatRequest, _: str = Depends(get_current_user_id)):
+async def mini_chat(request: MiniChatRequest, user_id: str = Depends(get_current_user_id)):
+    if not _check_rate_limit(user_id):
+        raise HTTPException(status_code=429, detail="잠시 후 다시 시도해주세요. (1시간에 30회 제한)")
     async def event_stream():
         try:
             system_prompt = _build_system_prompt(request.question_context)
