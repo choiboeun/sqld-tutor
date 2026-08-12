@@ -113,7 +113,7 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
         {weeks.map((_, wi) => {
           const lbl = monthLabels.find((m) => m.col === wi);
           return (
-            <div key={wi} className="w-2.5 shrink-0 text-[9px] text-stone-400 leading-none">
+            <div key={wi} className="w-2.5 shrink-0 text-[10px] text-stone-400 leading-none">
               {lbl ? lbl.label : ""}
             </div>
           );
@@ -152,9 +152,9 @@ function ReviewRow({
   return (
     <div className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-0">
       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${accent}`} />
-      <span className="text-xs font-semibold text-stone-500 w-14 shrink-0">{label}</span>
-      <span className="flex-1 text-xs text-stone-400 truncate">{preview}</span>
-      <span className={`text-xs font-bold tabular-nums shrink-0 ${
+      <span className="text-sm font-semibold text-stone-500 w-14 shrink-0">{label}</span>
+      <span className="flex-1 text-sm text-stone-400 truncate">{preview}</span>
+      <span className={`text-sm font-bold tabular-nums shrink-0 ${
         accent === "bg-red-400" ? "text-red-500" :
         accent === "bg-amber-400" ? "text-amber-600" :
         "text-stone-400"
@@ -509,7 +509,7 @@ export default function HomePage() {
               </div>
               <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
             </div>
-            <p className="text-amber-200 text-xs pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
+            <p className="text-amber-200 text-sm pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
           </div>
 
           {/* 계정 드롭다운 */}
@@ -581,7 +581,7 @@ export default function HomePage() {
                   <p className={`text-xl font-black leading-none ${scoreDiff >= 0 ? "text-white" : "text-amber-100"}`}>
                     {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
                   </p>
-                  <p className="text-[11px] text-amber-300/80 mt-0.5">목표 {targetScore}점까지</p>
+                  <p className="text-xs text-amber-300/80 mt-0.5">목표 {targetScore}점까지</p>
                 </div>
               </div>
 
@@ -606,7 +606,7 @@ export default function HomePage() {
                 </div>
                 <div className="relative h-5 mt-1">
                   <span
-                    className="absolute -translate-x-1/2 text-[10px] text-amber-300 whitespace-nowrap"
+                    className="absolute -translate-x-1/2 text-xs text-amber-300 whitespace-nowrap"
                     style={{ left: `${targetScore}%` }}
                   >
                     목표 {targetScore}
@@ -618,27 +618,27 @@ export default function HomePage() {
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-black/10 px-3 py-2.5">
                   <p className="text-2xl font-bold tabular-nums leading-none">{totalAnswered}</p>
-                  <p className="text-[10px] text-amber-300 mt-1.5 uppercase tracking-wide">총 풀이</p>
+                  <p className="text-xs text-amber-300 mt-1.5 uppercase tracking-wide">총 풀이</p>
                 </div>
                 <div className="bg-black/10 px-3 py-2.5">
                   <p className={`text-2xl font-bold tabular-nums leading-none ${streak > 0 ? "text-green-300" : ""}`}>{streak}</p>
-                  <p className="text-[10px] text-amber-300 mt-1.5 uppercase tracking-wide">연속 정답</p>
+                  <p className="text-xs text-amber-300 mt-1.5 uppercase tracking-wide">연속 정답</p>
                 </div>
                 <div className="bg-black/10 px-3 py-2.5">
                   <p className={`tabular-nums leading-none font-black ${wrongCount > 0 ? "text-3xl text-red-300" : "text-2xl"}`}>{wrongCount}</p>
-                  <p className={`text-[10px] mt-1.5 uppercase tracking-wide ${wrongCount > 0 ? "text-red-300" : "text-amber-300"}`}>오답</p>
+                  <p className={`text-xs mt-1.5 uppercase tracking-wide ${wrongCount > 0 ? "text-red-300" : "text-amber-300"}`}>오답</p>
                 </div>
               </div>
 
               {totalAnswered === 0 && (
-                <p className="text-amber-300/70 text-xs mt-5">문제를 풀면 예상 점수가 계산됩니다.</p>
+                <p className="text-amber-300/70 text-sm mt-5">문제를 풀면 예상 점수가 계산됩니다.</p>
               )}
             </>
           )}
         </div>
 
         {/* 신뢰 문구 */}
-        <p className="text-[11px] text-white/40 mt-auto pt-6 leading-relaxed">
+        <p className="text-xs text-white/40 mt-auto pt-6 leading-relaxed">
           SQLD 합격자가 기출 경향을 분석해 제작한 문제은행
         </p>
       </div>
@@ -663,7 +663,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-stone-900">AI 학습</p>
-                <p className="text-xs text-stone-400 mt-0.5">{totalAnswered}문제 풀이 중</p>
+                <p className="text-sm text-stone-400 mt-0.5">{totalAnswered}문제 풀이 중</p>
               </div>
             </div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:translate-x-0.5 transition-transform">
@@ -692,7 +692,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-stone-900">오답 회고</p>
-                <p className={`text-xs mt-0.5 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
+                <p className={`text-sm mt-0.5 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
                   {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
                 </p>
               </div>
@@ -716,7 +716,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-stone-900">모의고사</p>
-                <p className="text-xs text-stone-400 mt-0.5">50문제 · 90분 · 실전 배점</p>
+                <p className="text-sm text-stone-400 mt-0.5">50문제 · 90분 · 실전 배점</p>
               </div>
             </div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
@@ -736,7 +736,7 @@ export default function HomePage() {
                 <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">시험까지</p>
                 <button
                   onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                  className="text-[11px] text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
+                  className="text-xs text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
                 >
                   {dDayCount !== null ? "날짜 변경" : "날짜 설정 +"}
                 </button>
@@ -750,7 +750,7 @@ export default function HomePage() {
                   }`}>
                     {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
                   </span>
-                  <span className="text-xs text-stone-400 mb-1">{examDate}</span>
+                  <span className="text-sm text-stone-400 mb-1">{examDate}</span>
                 </div>
               ) : (
                 <p className="text-sm text-stone-400 py-1">시험일을 설정하면 카운트다운이 표시됩니다.</p>
@@ -761,7 +761,7 @@ export default function HomePage() {
             <div className="mt-8">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">학습 캘린더</p>
-                <p className="text-[10px] text-stone-300">최근 13주</p>
+                <p className="text-xs text-stone-300">최근 13주</p>
               </div>
               {calendarData ? (
                 <CalendarHeatmap dates={calendarData.dates} />
@@ -777,12 +777,12 @@ export default function HomePage() {
                 </div>
               )}
               <div className="flex items-center gap-1.5 mt-2.5">
-                <span className="text-[10px] text-stone-300">적음</span>
+                <span className="text-xs text-stone-300">적음</span>
                 <div className="w-2.5 h-2.5 bg-stone-100" />
                 <div className="w-2.5 h-2.5 bg-amber-200" />
                 <div className="w-2.5 h-2.5 bg-amber-400" />
                 <div className="w-2.5 h-2.5 bg-amber-600" />
-                <span className="text-[10px] text-stone-300">많음</span>
+                <span className="text-xs text-stone-300">많음</span>
               </div>
             </div>
 
@@ -812,7 +812,7 @@ export default function HomePage() {
                   )}
                   <Link
                     href="/wrong-answers"
-                    className="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:underline mt-3"
+                    className="inline-flex items-center gap-1.5 text-sm text-amber-600 hover:underline mt-3"
                   >
                     오답 회고 전체 보기
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -834,23 +834,23 @@ export default function HomePage() {
                 <div className="h-[72px] bg-stone-100" />
               </div>
             ) : todayTasks.length === 0 ? (
-              <p className="text-xs text-stone-400 py-3">문제를 풀면 맞춤 학습 목표가 생성됩니다.</p>
+              <p className="text-sm text-stone-400 py-3">문제를 풀면 맞춤 학습 목표가 생성됩니다.</p>
             ) : (
               <div className="space-y-2.5">
                 {todayTasks.map((task, i) => (
                   <div key={task.id} className="border border-stone-200 p-4 hover:border-amber-300 transition-colors">
                     <div className="flex items-start gap-3">
-                      <span className="w-5 h-5 bg-amber-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="w-5 h-5 bg-amber-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                         {i + 1}
                       </span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-stone-800 leading-snug">{task.title}</p>
-                        <p className="text-[11px] text-stone-400 mt-0.5 leading-relaxed">{task.sub}</p>
+                        <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">{task.sub}</p>
                       </div>
                     </div>
                     <Link
                       href={task.href}
-                      className="mt-3 w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-amber-600 border border-amber-300 py-1.5 hover:bg-amber-50 transition-colors"
+                      className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-semibold text-amber-600 border border-amber-300 py-1.5 hover:bg-amber-50 transition-colors"
                     >
                       시작하기
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
