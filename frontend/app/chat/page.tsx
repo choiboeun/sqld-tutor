@@ -301,6 +301,10 @@ function ChatContent() {
       }
       setMessages((prev) => [...prev, { role: "ai", content: "" }]);
     });
+    // useEffect(scroll)은 paint 이후에 실행되므로 채점 응답이 먼저 도착하면
+    // ...버블이 보이기 전에 교체됨 → flushSync 직후 동기 스크롤로 강제
+    bottomRef.current?.scrollIntoView({ behavior: "instant" });
+    console.debug("[stream] flushSync 완료, ...버블 스크롤 완료");
 
     try {
       const authHeaders = await getAuthHeaders();
