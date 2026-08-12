@@ -710,7 +710,7 @@ function ChatContent() {
                               </button>
                             </div>
                           )}
-                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !hasConceptAfter && !hasPendingQuestion && !isLoading && (
+                          {isNextQuestionEligible && (!isAnswered || isLastAiMessage) && !hasConceptAfter && !hasPendingQuestion && !isLoading && !isDiagnosticContext && (
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
@@ -726,11 +726,14 @@ function ChatContent() {
                           )}
                           {(() => {
                             // 이전 메시지 중 채점 버블(다음 문제 버튼 있는 것)이 있으면 fallback 버튼 숨김
-                            const hasPrevGradingBtn = messages.slice(0, i).some((m, mi) =>
-                              m.role === "ai" &&
-                              /^(정답|오답)입니다/.test(m.content) &&
-                              !messages.slice(mi + 1, i).some(u => u.role === "user")
-                            );
+                            // 단, 진단 컨텍스트의 채점 버블은 카운트 제외 (진단 요약 버블에 버튼이 뜨도록)
+                            const hasPrevGradingBtn = messages.slice(0, i).some((m, mi) => {
+                              if (m.role !== "ai") return false;
+                              if (!/^(정답|오답)입니다/.test(m.content)) return false;
+                              if (messages.slice(mi + 1, i).some(u => u.role === "user")) return false;
+                              const prevOfM = messages.slice(0, mi).reverse().find(pm => pm.role === "ai" && pm.content !== "");
+                              return !(prevOfM && parseQuestionHeader(prevOfM.content)?.progress);
+                            });
                             return isLastAiMessage && hasEverGraded && !isLoading && !hasPendingQuestion && !isNextQuestionEligible && !isDiagnosticContext && !hasPrevGradingBtn;
                           })() && (
                             <div className="mt-3 flex justify-end">
