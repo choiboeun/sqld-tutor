@@ -105,14 +105,28 @@ def execute_sql(query: str) -> str:
     if _BLOCKED.search(query):
         return "허용되지 않는 구문이 포함되어 있습니다."
 
+    conn = _get_conn()
     try:
-        conn = _get_conn()
         cursor = conn.execute(query)
         if cursor.description is None:
             return "결과가 없습니다."
         columns = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
-        conn.close()
         return _format_table(columns, rows)
     except sqlite3.Error as e:
         return f"SQL 오류: {e}"
+    finally:
+        conn.close()
+
+
+# Public API for use by sql_execute.py
+def get_sandbox_conn() -> sqlite3.Connection:
+    return _get_conn()
+
+
+def is_allowed_query(query: str) -> bool:
+    return bool(_ALLOWED.match(query))
+
+
+def is_blocked_query(query: str) -> bool:
+    return bool(_BLOCKED.search(query))

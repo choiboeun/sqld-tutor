@@ -144,7 +144,6 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     ]
     response = llm.invoke(messages)
     content = response.content
-    print(f"[explain] concept={concept!r}, raw_len={len(content)}, preview={repr(content[:120])}")
     # LLM 볼드 전부 제거 후 SQLD 키워드만 재적용
     content = _apply_keyword_bold(content)
     # 인라인 불릿(줄 중간의 •) → 새 줄 불릿으로 분리
@@ -158,5 +157,4 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     # COUNT(*), SELECT * 등 SQL 별표가 마크다운 이탤릭으로 소비되는 문제 방지
     content = re.sub(r'\(\*\)', r'(\\*)', content)
     content = re.sub(r'(?<=[A-Za-z\s])\*(?=[\s,\n]|$)', r'\\*', content)
-    print(f"[explain] processed_len={len(content)}, preview={repr(content[:120])}")
     return content.strip()

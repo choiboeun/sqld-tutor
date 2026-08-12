@@ -49,7 +49,6 @@ def state_updater(state: TutorState) -> dict:
             AIMessage(content=f"연속 {streak}개 정답! 다른 카테고리로 넘어갈게요.")
         )
 
-    print(f"[state] qid={qid}, cat={category!r}, correct={correct}, streak={streak}, total={state.get('total_answered',0)+1}")
     user_id = state.get("user_id") or "anonymous"
     log_event(user_id, "question_answered", {
         "question_id": qid,

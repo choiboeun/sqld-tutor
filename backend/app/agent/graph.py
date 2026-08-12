@@ -44,7 +44,6 @@ def adaptive_difficulty_router(state: TutorState) -> str:
     # 초기 진단 모드 (우선 처리) — suggest_category_switch보다 먼저 체크
     if state.get("is_diagnostic"):
         diag_count = state.get("diagnostic_question_count") or 0
-        print(f"[router] 진단 진행 중 ({diag_count}/8)")
         if diag_count >= 8:
             return "diagnose"
         return "drill"
@@ -62,7 +61,6 @@ def adaptive_difficulty_router(state: TutorState) -> str:
         cat_accuracy = accuracy.get(last_category, 0.0)
         already_explained = state.get("last_explained_category") == last_category
         last_was_correct = state.get("last_was_correct")
-        print(f"[router] cat={last_category!r} attempts={cat_attempts} acc={cat_accuracy:.2f} already={already_explained} correct={last_was_correct}")
         if _AUTO_EXPLAIN and not last_was_correct and cat_attempts >= 1 and cat_accuracy < 0.2 and not already_explained:
             return "explain"
 

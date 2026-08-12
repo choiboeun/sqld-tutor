@@ -174,7 +174,8 @@ export default function WrongAnswersPage() {
       });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const reader = res.body!.getReader();
+      if (!res.body) throw new Error("스트림 응답이 없습니다.");
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
       let streaming = "";

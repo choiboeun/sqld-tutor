@@ -75,7 +75,7 @@ def _get_text(content) -> str:
     return str(content)
 
 
-async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 60, clear_pending: bool = False, client_pending_question: Optional[dict] = None):
+async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 70, clear_pending: bool = False, client_pending_question: Optional[dict] = None):
     config = {"configurable": {"thread_id": thread_id}}
 
     existing = await graph.aget_state(config)

@@ -1,3 +1,4 @@
+import logging
 import os
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -7,6 +8,8 @@ from app.auth import get_current_user_id, get_current_user_email
 router = APIRouter()
 
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "")
+if not ADMIN_EMAIL:
+    logging.warning("[inquiries] ADMIN_EMAIL 환경변수가 설정되지 않았습니다. 관리자 API(/admin/inquiries)가 비활성화됩니다.")
 
 
 def _get_supabase():

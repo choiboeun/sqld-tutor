@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
-const ADMIN_EMAIL = "libresearch8@gmail.com";
 
 type Inquiry = {
   id: string;
@@ -36,17 +35,38 @@ export default function AdminPage() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await createClient().auth.getSession();
-      const email = data.session?.user.email;
-      if (!email || email !== ADMIN_EMAIL) {
+      const client = createClient();
+      // getUser()는 서버 검증 포함 — localStorage 조작으로 우회 불가
+      const { data: { user } } = await client.auth.getUser();
+      if (!user) {
+        setAuthorized(false);
+        setLoading(false);
+        return;
+      }
+      // access_token은 API 호출용으로만 getSession()에서 획득
+      const { data: { session } } = await client.auth.getSession();
+      const accessToken = session?.access_token ?? null;
+      setToken(accessToken);
+
+      // 관리자 여부는 백엔드 API 응답(403)으로 판별
+      if (!accessToken) {
+        setAuthorized(false);
+        setLoading(false);
+        return;
+      }
+      const res = await fetch(`${BACKEND_URL}/api/admin/inquiries`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (res.status === 403) {
         setAuthorized(false);
         setLoading(false);
         return;
       }
       setAuthorized(true);
-      const accessToken = data.session?.access_token ?? null;
-      setToken(accessToken);
-      await fetchInquiries(accessToken);
+      if (res.ok) {
+        const data: Inquiry[] = await res.json();
+        setInquiries(data);
+      }
       setLoading(false);
     })();
   }, []);

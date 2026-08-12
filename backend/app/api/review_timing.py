@@ -1,5 +1,6 @@
+import asyncio
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from supabase import create_client
 from app.auth import get_current_user_id
@@ -54,11 +55,15 @@ async def get_review_timing(thread_id: str, user_id: str = Depends(get_current_u
     ts_map: dict[str, str] = {}
     client = _get_supabase()
     if client:
-        rows = client.table("user_events") \
-            .select("properties, created_at") \
-            .eq("user_id", thread_id) \
-            .eq("event_type", "question_answered") \
+        since = (datetime.now(timezone.utc) - timedelta(days=180)).isoformat()
+        rows = await asyncio.to_thread(
+            lambda: client.table("user_events")
+            .select("properties, created_at")
+            .eq("user_id", thread_id)
+            .eq("event_type", "question_answered")
+            .gte("created_at", since)
             .execute()
+        )
         for row in rows.data or []:
             props = row.get("properties", {})
             qid = str(props.get("question_id", ""))
