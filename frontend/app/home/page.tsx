@@ -108,30 +108,41 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
 
   return (
     <div className="overflow-x-auto pb-1">
-      {/* month labels */}
-      <div className="flex gap-1 mb-1" style={{ paddingLeft: "0px" }}>
+      {/* X축 월 라벨 — Y축 너비만큼 왼쪽 여백 */}
+      <div className="flex gap-1.5 mb-1.5 ml-[26px]">
         {weeks.map((_, wi) => {
           const lbl = monthLabels.find((m) => m.col === wi);
           return (
-            <div key={wi} className="w-2.5 shrink-0 text-[10px] text-stone-400 leading-none">
+            <div key={wi} className="w-3.5 shrink-0 text-[10px] text-stone-400 leading-none">
               {lbl ? lbl.label : ""}
             </div>
           );
         })}
       </div>
-      {/* grid */}
-      <div className="flex gap-1">
-        {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-1 shrink-0">
-            {week.map((cell, di) => (
-              <div
-                key={di}
-                className={`w-2.5 h-2.5 ${cellColor(cell.count, cell.isFuture)}`}
-                title={cell.date && !cell.isFuture ? `${cell.date}: ${cell.count}문제` : ""}
-              />
-            ))}
-          </div>
-        ))}
+      {/* Y축 + 격자 */}
+      <div className="flex gap-2">
+        {/* Y축: 요일 */}
+        <div className="flex flex-col gap-1.5 shrink-0">
+          {["일","월","화","수","목","금","토"].map((d) => (
+            <div key={d} className="h-3.5 w-4 text-[10px] text-stone-300 leading-none flex items-center justify-end">
+              {d}
+            </div>
+          ))}
+        </div>
+        {/* 격자 */}
+        <div className="flex gap-1.5">
+          {weeks.map((week, wi) => (
+            <div key={wi} className="flex flex-col gap-1.5 shrink-0">
+              {week.map((cell, di) => (
+                <div
+                  key={di}
+                  className={`w-3.5 h-3.5 ${cellColor(cell.count, cell.isFuture)}`}
+                  title={cell.date && !cell.isFuture ? `${cell.date}: ${cell.count}문제` : ""}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -766,11 +777,11 @@ export default function HomePage() {
               {calendarData ? (
                 <CalendarHeatmap dates={calendarData.dates} />
               ) : (
-                <div className="flex gap-1 animate-pulse">
+                <div className="flex gap-1.5 animate-pulse">
                   {Array.from({ length: 14 }).map((_, wi) => (
-                    <div key={wi} className="flex flex-col gap-1">
+                    <div key={wi} className="flex flex-col gap-1.5">
                       {Array.from({ length: 7 }).map((_, di) => (
-                        <div key={di} className="w-2.5 h-2.5 bg-stone-100" />
+                        <div key={di} className="w-3.5 h-3.5 bg-stone-100" />
                       ))}
                     </div>
                   ))}
@@ -778,10 +789,10 @@ export default function HomePage() {
               )}
               <div className="flex items-center gap-1.5 mt-2.5">
                 <span className="text-xs text-stone-300">적음</span>
-                <div className="w-2.5 h-2.5 bg-stone-100" />
-                <div className="w-2.5 h-2.5 bg-amber-200" />
-                <div className="w-2.5 h-2.5 bg-amber-400" />
-                <div className="w-2.5 h-2.5 bg-amber-600" />
+                <div className="w-3.5 h-3.5 bg-stone-100" />
+                <div className="w-3.5 h-3.5 bg-amber-200" />
+                <div className="w-3.5 h-3.5 bg-amber-400" />
+                <div className="w-3.5 h-3.5 bg-amber-600" />
                 <span className="text-xs text-stone-300">많음</span>
               </div>
             </div>
