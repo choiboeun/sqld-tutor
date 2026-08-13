@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import React, { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -301,10 +301,10 @@ function ChatContent() {
       }
       setMessages((prev) => [...prev, { role: "ai", content: "" }]);
     });
-    // useEffect(scroll)은 paint 이후에 실행되므로 채점 응답이 먼저 도착하면
-    // ...버블이 보이기 전에 교체됨 → flushSync 직후 동기 스크롤로 강제
-    bottomRef.current?.scrollIntoView({ behavior: "instant" });
-    console.debug("[stream] flushSync 완료, ...버블 스크롤 완료");
+    // scrollIntoView는 window를 스크롤할 수 있으므로 채팅 컨테이너를 직접 조작
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
 
     try {
       const authHeaders = await getAuthHeaders();
@@ -609,11 +609,29 @@ function ChatContent() {
             return messages.map((msg, i) => {
             const isAnswered = messages.slice(i + 1).some(m => m.role === "user");
             const isLastAiMessage = i === lastAiIndex;
-            if (msg.role === "ai" && msg.content === "" && isAnswered) return null;
+            // 문제 버블 바로 뒤에 별도 ...버블을 Fragment로 렌더링할 조건
+            const isQuestionLoadingBubble = msg.role === "ai" && msg.content !== "" && isAnswered && isLoading && (() => {
+              const p = parseQuestionHeader(msg.content);
+              if (!p) return false;
+              if (!parseOptions(p.body)) return false;
+              const nextAi = messages.slice(i + 1).find(m => m.role === "ai");
+              return !nextAi || nextAi.content === "";
+            })();
+            if (msg.role === "ai" && msg.content === "") {
+              if (isAnswered) return null;
+              // Fragment 로딩 버블이 표시될 때 emptyAI 슬롯(①) 중복 방지
+              if (isLoading && i >= 2 && /^[1-4]번?\s*$/.test((messages[i - 1]?.content ?? "").trim())) {
+                const qMsg = messages[i - 2];
+                if (qMsg?.role === "ai" && qMsg.content !== "") {
+                  const p = parseQuestionHeader(qMsg.content);
+                  if (p && parseOptions(p.body)) return null;
+                }
+              }
+            }
             if (msg.role === "user" && /^[1-4]번?\s*$/.test(msg.content.trim())) return null;
             return (
+            <React.Fragment key={i}>
             <div
-              key={i}
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
@@ -833,6 +851,18 @@ function ChatContent() {
                 )}
               </div>
             </div>
+            {isQuestionLoadingBubble && (
+              <div className="flex justify-start">
+                <div className="px-4 py-3 text-sm leading-relaxed max-w-[90%] bg-white border border-stone-200 text-stone-800">
+                  <span className="inline-flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </span>
+                </div>
+              </div>
+            )}
+            </React.Fragment>
             );
           });
           })()}
