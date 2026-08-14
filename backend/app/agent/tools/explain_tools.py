@@ -174,5 +174,6 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     content = re.sub(r'\n*-{0,3}\n*>\s*다음 문제를 풀려면.*$', '', content, flags=re.MULTILINE)
     # COUNT(*), SELECT * 등 SQL 별표가 마크다운 이탤릭으로 소비되는 문제 방지
     content = re.sub(r'\(\*\)', r'(\\*)', content)
-    content = re.sub(r'(?<=[A-Za-z\s])\*(?=[\s,\n]|$)', r'\\*', content)
+    # \n 은 줄 시작 * 불릿마커이므로 이스케이프 제외 → [ \t] 만 허용
+    content = re.sub(r'(?<=[A-Za-z \t])\*(?=[\s,\n]|$)', r'\\*', content)
     return content.strip()
