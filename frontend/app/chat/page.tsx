@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import dynamic from "next/dynamic";
 import Sidebar, { LiveStats } from "@/components/Sidebar";
+import { visit } from 'unist-util-visit';
 
 const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
   ssr: false,
@@ -21,6 +22,80 @@ interface Message {
   content: string;
   isConcept?: boolean;
   conceptExpanded?: boolean;
+}
+
+// ── 개념 설명 전용: 키워드 하이라이팅 remark 플러그인 ──
+const _SQLD_KW = [
+  "GROUP BY", "ORDER BY", "PARTITION BY",
+  "INNER JOIN", "LEFT OUTER JOIN", "RIGHT OUTER JOIN", "FULL OUTER JOIN",
+  "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "CROSS JOIN",
+  "UNION ALL", "GROUPING SETS",
+  "IS NOT NULL", "NOT EXISTS", "NOT IN",
+  "IS NULL", "EXISTS",
+  "PRIMARY KEY", "FOREIGN KEY", "NOT NULL",
+  "ON DELETE CASCADE", "ON DELETE SET NULL",
+  "ROW_NUMBER", "DENSE_RANK", "PERCENT_RANK", "CUME_DIST", "RATIO_TO_REPORT",
+  "ROLLUP", "CUBE", "PIVOT", "UNPIVOT",
+  "SELECT", "FROM", "WHERE", "HAVING", "JOIN",
+  "UNION", "INTERSECT", "MINUS", "EXCEPT",
+  "INSERT", "UPDATE", "DELETE", "MERGE",
+  "CREATE", "ALTER", "DROP", "TRUNCATE",
+  "GRANT", "REVOKE", "COMMIT", "ROLLBACK", "SAVEPOINT",
+  "DISTINCT", "BETWEEN", "LIKE",
+  "CASE", "WHEN", "THEN", "ELSE", "END",
+  "COUNT", "SUM", "AVG", "MAX", "MIN",
+  "RANK", "NTILE", "LAG", "LEAD",
+  "OVER", "WITH", "ROWNUM", "ROWID",
+  "NVL", "NVL2", "DECODE", "COALESCE", "NULLIF",
+  "SUBSTR", "INSTR", "TRIM", "REPLACE",
+  "TO_CHAR", "TO_DATE", "TO_NUMBER",
+  "SYSDATE", "DUAL", "SEQUENCE", "SYNONYM",
+  "UNIQUE", "NULL",
+  "RDBMS", "DBMS", "DDL", "DML", "DCL", "TCL", "RDB", "ERD", "SQL",
+  "제1정규형", "제2정규형", "제3정규형", "BCNF",
+  "참조 무결성", "개체 무결성", "도메인 무결성",
+  "함수 종속", "이행 종속", "부분 종속",
+  "클러스터형 인덱스", "비클러스터형 인덱스",
+  "집합 연산자", "윈도우 함수", "집계 함수", "그룹 함수",
+  "계층형 쿼리", "분산 데이터베이스", "격리 수준",
+  "기본키", "외래키", "후보키", "슈퍼키", "대리키",
+  "시험 포인트", "핵심 포인트",
+  "반정규화", "정규화", "무결성", "트랜잭션", "인덱스",
+  "파티션", "서브쿼리", "조인", "뷰", "시퀀스",
+  "엔터티", "속성", "관계", "식별자",
+  "교착 상태", "옵티마이저",
+  "카디널리티", "도메인",
+];
+
+const _KW_RE = new RegExp(
+  _SQLD_KW.map(kw => {
+    const esc = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return /[a-zA-Z0-9]/.test(kw) ? `\\b${esc}\\b` : esc;
+  }).join('|'),
+  'gi'
+);
+
+function remarkHighlightKeywords() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (visit as any)(tree, 'text', (node: any, index: number | undefined, parent: any) => {
+      if (index == null || !parent || parent.type === 'strong') return;
+      const text: string = node.value;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parts: any[] = [];
+      let last = 0;
+      for (const m of text.matchAll(_KW_RE)) {
+        if (m.index! > last) parts.push({ type: 'text', value: text.slice(last, m.index) });
+        parts.push({ type: 'strong', children: [{ type: 'text', value: m[0] }] });
+        last = m.index! + m[0].length;
+      }
+      if (parts.length === 0) return;
+      if (last < text.length) parts.push({ type: 'text', value: text.slice(last) });
+      parent.children.splice(index, 1, ...parts);
+      return index + parts.length;
+    });
+  };
 }
 
 const QUESTION_HDR_RE = /^\[(.+?) \/ 난이도:\s*(상|중|하)\]\n*/;
@@ -59,6 +134,30 @@ const DIFF_STYLE: Record<string, string> = {
 };
 
 const CIRCLE_TO_NUM: Record<string, number> = { "①": 1, "②": 2, "③": 3, "④": 4 };
+
+// LLM이 구분자 행 없이 생성한 파이프 표에 --- 행 자동 삽입 (GFM 파서가 표로 인식하도록)
+function fixMissingTableSeparator(text: string): string {
+  const lines = text.split("\n");
+  const result: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    result.push(lines[i]);
+    const cur = lines[i];
+    const prv = i > 0 ? lines[i - 1] : "";
+    const nxt = i + 1 < lines.length ? lines[i + 1] : "";
+    const curHasPipe = cur.includes("|");
+    const prvHasPipe = prv.includes("|");
+    const nxtHasPipe = nxt.includes("|");
+    const isSepLine = (s: string) => /^[\s|:-]*-{2,}[\s|:-]*$/.test(s);
+    if (curHasPipe && !prvHasPipe && nxtHasPipe && !isSepLine(nxt) && !isSepLine(cur)) {
+      const pipes = (cur.match(/\|/g) ?? []).length;
+      const numCols = cur.trim().startsWith("|") && cur.trim().endsWith("|")
+        ? Math.max(pipes - 1, 1)
+        : pipes + 1;
+      result.push("| " + Array(numCols).fill("---").join(" | ") + " |");
+    }
+  }
+  return result.join("\n");
+}
 
 function parseOptions(body: string): {
   stem: string;
@@ -489,6 +588,7 @@ function ChatContent() {
     if (!threadId) return;
     try {
       const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
+      if (!res.ok) throw new Error(`${res.status}`);
       const data = await res.json();
       const cats = data.accuracy_by_category as Record<string, { accuracy: number; attempts: number }>;
       const entries = Object.entries(cats).filter(([, v]) => v.attempts > 0);
@@ -531,7 +631,12 @@ function ChatContent() {
   };
 
   const hasPendingQ = !!pendingQuestionCache.id;
-  const lastAiContent = [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? "";
+  const lastAiContent = ((): string => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "ai" && messages[i].content !== "") return messages[i].content;
+    }
+    return "";
+  })();
   const isAfterGrading = /^(정답입니다|오답입니다|정답이에요|아직 틀렸어요)/.test(lastAiContent);
   const inputPlaceholder = hasPendingQ
     ? "1~4번으로 답하거나 질문하세요"
@@ -548,6 +653,7 @@ function ChatContent() {
         onStatsRefreshed={() => setLiveStats(null)}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        highlightHome={!isLoading && messages.some(m => m.role === "ai" && m.content.startsWith("**진단 완료!"))}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -667,8 +773,8 @@ function ChatContent() {
                                   transition: "max-height 0.38s cubic-bezier(0.4,0,0.2,1)",
                                 }}
                               >
-                                <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                                  {msg.content}
+                                <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkHighlightKeywords]} components={mdComponents}>
+                                  {fixMissingTableSeparator(msg.content)}
                                 </ReactMarkdown>
                               </div>
                               {isLong && !msg.conceptExpanded && (
@@ -717,7 +823,7 @@ function ChatContent() {
                       return (
                         <>
                           <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                            {safeContent}
+                            {fixMissingTableSeparator(safeContent)}
                           </ReactMarkdown>
                           {/^(오답입니다|아직 틀렸어요)/.test(msg.content) && isLoading && liveStats !== null && !isAnswered && !isDiagnosticContext && (
                             <div className="mt-2 flex justify-end">
@@ -800,7 +906,7 @@ function ChatContent() {
                           </span>
                         </div>
                         <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                          {optData ? optData.stem : parsed.body}
+                          {fixMissingTableSeparator(optData ? optData.stem : parsed.body)}
                         </ReactMarkdown>
                         {optData && (
                           <>
@@ -827,7 +933,7 @@ function ChatContent() {
                                     </span>
                                     <div className={`flex-1 text-sm leading-relaxed ${isSelected ? "text-white" : "text-stone-800"}`}>
                                       <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                                        {opt.content}
+                                        {fixMissingTableSeparator(opt.content)}
                                       </ReactMarkdown>
                                     </div>
                                   </button>
@@ -837,7 +943,7 @@ function ChatContent() {
                             {optData.suffix && (
                               <div className="mt-2">
                                 <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
-                                  {optData.suffix}
+                                  {fixMissingTableSeparator(optData.suffix ?? "")}
                                 </ReactMarkdown>
                               </div>
                             )}

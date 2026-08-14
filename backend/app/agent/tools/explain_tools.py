@@ -11,91 +11,6 @@ from app.agent.llm import llm
 
 CHROMA_DIR = Path(__file__).parent.parent.parent / "data" / "chroma_db"
 
-# SQLD 시험 범위 내 키워드만 볼드 허용 (긴 것 먼저 — 부분 매칭 방지)
-_SQLD_KEYWORDS = [
-    # 복합 SQL 키워드
-    "GROUP BY", "ORDER BY", "PARTITION BY",
-    "INNER JOIN", "LEFT OUTER JOIN", "RIGHT OUTER JOIN", "FULL OUTER JOIN",
-    "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "CROSS JOIN",
-    "UNION ALL", "GROUPING SETS",
-    "IS NOT NULL", "NOT EXISTS", "NOT IN",
-    "IS NULL", "EXISTS",
-    "PRIMARY KEY", "FOREIGN KEY", "NOT NULL",
-    "ON DELETE CASCADE", "ON DELETE SET NULL",
-    # 단일 SQL 키워드
-    "ROW_NUMBER", "DENSE_RANK", "PERCENT_RANK", "CUME_DIST", "RATIO_TO_REPORT",
-    "ROLLUP", "CUBE", "PIVOT", "UNPIVOT",
-    "SELECT", "FROM", "WHERE", "HAVING", "JOIN",
-    "UNION", "INTERSECT", "MINUS", "EXCEPT",
-    "INSERT", "UPDATE", "DELETE", "MERGE",
-    "CREATE", "ALTER", "DROP", "TRUNCATE",
-    "GRANT", "REVOKE", "COMMIT", "ROLLBACK", "SAVEPOINT",
-    "DISTINCT", "BETWEEN", "LIKE",
-    "CASE", "WHEN", "THEN", "ELSE", "END",
-    "COUNT", "SUM", "AVG", "MAX", "MIN",
-    "RANK", "NTILE", "LAG", "LEAD",
-    "OVER", "WITH", "ROWNUM", "ROWID",
-    "NVL", "NVL2", "DECODE", "COALESCE", "NULLIF",
-    "SUBSTR", "INSTR", "TRIM", "REPLACE",
-    "TO_CHAR", "TO_DATE", "TO_NUMBER",
-    "SYSDATE", "DUAL", "SEQUENCE", "SYNONYM",
-    "UNIQUE", "NULL",
-    # 약어
-    "RDBMS", "DBMS", "DDL", "DML", "DCL", "TCL", "RDB", "ERD", "SQL",
-    # 한국어 개념명 (긴 것 먼저)
-    "제1정규형", "제2정규형", "제3정규형", "BCNF",
-    "참조 무결성", "개체 무결성", "도메인 무결성",
-    "함수 종속", "이행 종속", "부분 종속",
-    "클러스터형 인덱스", "비클러스터형 인덱스",
-    "집합 연산자", "윈도우 함수", "집계 함수", "그룹 함수",
-    "계층형 쿼리", "분산 데이터베이스", "격리 수준",
-    "기본키", "외래키", "후보키", "슈퍼키", "대리키",
-    "시험 포인트", "핵심 포인트",
-    "반정규화", "정규화", "무결성", "트랜잭션", "인덱스",
-    "파티션", "서브쿼리", "조인", "뷰", "시퀀스",
-    "엔터티", "속성", "관계", "식별자",
-    "교착 상태", "옵티마이저",
-    "카디널리티", "도메인",
-]
-
-
-def _apply_keyword_bold(content: str) -> str:
-    # 코드 블록을 플레이스홀더로 보호 (코드 블록 안에는 ** 적용 안 함)
-    code_blocks: list[str] = []
-
-    def save_block(m: re.Match) -> str:
-        code_blocks.append(m.group())
-        return f'\x00BLOCK{len(code_blocks) - 1}\x00'
-
-    content = re.sub(r'```[\s\S]*?```', save_block, content)
-    # 인라인 백틱 코드 스팬도 보호 (펜스 블록과 동일하게 ** 추가 금지)
-    content = re.sub(r'`[^`\n]+`', save_block, content)
-
-    # Step 1: LLM이 생성한 볼드 전부 제거 (비코드 구간만)
-    content = re.sub(r'\*\*([^*\n]+)\*\*', r'\1', content)
-
-    # Step 2: 키워드 목록 순서대로 볼드 추가 (비코드 구간만)
-    for kw in _SQLD_KEYWORDS:
-        escaped = re.escape(kw)
-        if re.search(r'[a-zA-Z0-9]', kw):
-            kw_pat = r'\b' + escaped + r'\b'
-            flags = re.IGNORECASE
-        else:
-            kw_pat = escaped
-            flags = 0
-        pattern = re.compile(r'\*\*[^*\n]+\*\*|' + kw_pat, flags)
-        content = pattern.sub(
-            lambda m: m.group() if m.group().startswith('**') else f'**{m.group()}**',
-            content,
-        )
-
-    # 코드 블록 복원 (LLM이 넣은 ** 도 안전하게 제거)
-    for i, block in enumerate(code_blocks):
-        clean = re.sub(r'\*\*([^*]+)\*\*', r'\1', block)
-        content = content.replace(f'\x00BLOCK{i}\x00', clean)
-
-    return content
-
 _PROMPT = """당신은 SQLD 자격증 시험 전문 튜터입니다.
 아래 [참고 자료]를 바탕으로 개념을 설명하세요.
 설명 순서: 개념 정의 → 시험 포인트 → 간단한 예시
@@ -160,12 +75,8 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     ]
     response = llm.invoke(messages)
     content = response.content
-    # 인라인 * 단독 불릿 → 줄바꿈 불릿 (** 볼드 마커는 보호)
-    # AI가 줄바꿈 없이 "text * 다음항목" 형태로 쓸 때 마크다운 파서가 * 를 이탤릭으로 읽어
-    # 같은 단락 안의 **keyword** 파싱까지 깨지는 문제를 방지
+    # 인라인 * 단독 불릿 → 줄바꿈 불릿 (AI가 줄 바꿈 없이 "텍스트 * 항목" 형태로 쓸 때 수정)
     content = re.sub(r'(?<=[^\*\n]) \* (?!\*)', '\n- ', content)
-    # LLM 볼드 전부 제거 후 SQLD 키워드만 재적용
-    content = _apply_keyword_bold(content)
     # 인라인 불릿(줄 중간의 •) → 새 줄 불릿으로 분리
     content = re.sub(r'([^\n])\s*•\s*', r'\1\n- ', content)
     # 들여쓰기 있는 서브불릿(\n  • 또는 \n\t•) → \n  - (마크다운 중첩 리스트)
