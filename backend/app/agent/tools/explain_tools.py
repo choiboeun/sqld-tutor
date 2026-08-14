@@ -60,12 +60,19 @@ _SQLD_KEYWORDS = [
 
 
 def _apply_keyword_bold(content: str) -> str:
-    # Step 1: LLM이 생성한 볼드 전부 제거
+    # 코드 블록을 플레이스홀더로 보호 (코드 블록 안에는 ** 적용 안 함)
+    code_blocks: list[str] = []
+
+    def save_block(m: re.Match) -> str:
+        code_blocks.append(m.group())
+        return f'\x00BLOCK{len(code_blocks) - 1}\x00'
+
+    content = re.sub(r'```[\s\S]*?```', save_block, content)
+
+    # Step 1: LLM이 생성한 볼드 전부 제거 (비코드 구간만)
     content = re.sub(r'\*\*([^*\n]+)\*\*', r'\1', content)
 
-    # Step 2: 키워드 목록 순서대로 볼드 추가
-    # alternation trick: \*\*...\*\* 구간은 건드리지 않고 통과
-    # (?i) 인라인 플래그는 Python 3.12에서 패턴 중간 사용 불가 → re.IGNORECASE 플래그 사용
+    # Step 2: 키워드 목록 순서대로 볼드 추가 (비코드 구간만)
     for kw in _SQLD_KEYWORDS:
         escaped = re.escape(kw)
         if re.search(r'[a-zA-Z0-9]', kw):
@@ -79,6 +86,11 @@ def _apply_keyword_bold(content: str) -> str:
             lambda m: m.group() if m.group().startswith('**') else f'**{m.group()}**',
             content,
         )
+
+    # 코드 블록 복원 (LLM이 넣은 ** 도 안전하게 제거)
+    for i, block in enumerate(code_blocks):
+        clean = re.sub(r'\*\*([^*]+)\*\*', r'\1', block)
+        content = content.replace(f'\x00BLOCK{i}\x00', clean)
 
     return content
 
