@@ -158,6 +158,10 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     ]
     response = llm.invoke(messages)
     content = response.content
+    # 인라인 * 단독 불릿 → 줄바꿈 불릿 (** 볼드 마커는 보호)
+    # AI가 줄바꿈 없이 "text * 다음항목" 형태로 쓸 때 마크다운 파서가 * 를 이탤릭으로 읽어
+    # 같은 단락 안의 **keyword** 파싱까지 깨지는 문제를 방지
+    content = re.sub(r'(?<=[^\*\n]) \* (?!\*)', '\n- ', content)
     # LLM 볼드 전부 제거 후 SQLD 키워드만 재적용
     content = _apply_keyword_bold(content)
     # 인라인 불릿(줄 중간의 •) → 새 줄 불릿으로 분리
