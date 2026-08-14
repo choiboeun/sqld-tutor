@@ -32,6 +32,7 @@ interface Props {
   onStatsRefreshed?: () => void;
   isOpen?: boolean;
   onClose?: () => void;
+  highlightHome?: boolean;
 }
 
 const ALL_CATEGORIES = [
@@ -68,7 +69,7 @@ function shortName(cat: string): string {
   return SHORT_NAMES[cat] ?? cat;
 }
 
-export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose }: Props) {
+export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false }: Props) {
   const [data, setData] = useState<ProgressData | null>(null);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         onStatsRefreshed?.();
       } catch {}
     })();
-  }, [threadId, refresh]);
+  }, [threadId, refresh, onStatsRefreshed]);
 
   const catMap: Record<string, CategoryStat> = liveStats
     ? Object.fromEntries(
@@ -143,9 +144,14 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           <Link
             href="/home"
             onClick={onClose}
-            className="inline-flex items-center gap-1 text-xs text-amber-500 hover:text-amber-600 transition-colors mb-3"
+            className={`inline-flex items-center gap-1 text-xs transition-colors mb-3 ${
+              highlightHome
+                ? "text-amber-700 font-semibold"
+                : "text-amber-500 hover:text-amber-600"
+            }`}
           >
             ← 홈으로
+            {highlightHome && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse ml-0.5" />}
           </Link>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

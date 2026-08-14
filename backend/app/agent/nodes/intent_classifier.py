@@ -30,41 +30,31 @@ def intent_classifier(state: TutorState) -> dict:
     if pending:
         prior = state.get("current_mode", "drill")
         mode = prior if prior in ("drill", "review") else "drill"
-        print(f"[intent] pending 있음 → mode={mode!r}, text={text!r}")
         return {"current_mode": mode}
 
     # 초기 진단 시작 — 다른 패턴보다 먼저 체크
     if _DIAGNOSTIC_START.search(text):
         # 이미 진단 완료 → 차단
         if state.get("is_diagnostic_done", False):
-            print(f"[intent] 진단 완료 상태에서 재요청 차단")
             return {"current_mode": "diagnostic_block"}
         # 이미 진단 진행 중 → 카운터 유지하며 이어서
         if state.get("is_diagnostic", False):
-            print(f"[intent] 진단 진행 중 재요청 → 이어서 진행")
             return {"current_mode": "drill"}
-        total = state.get("total_answered") or 0
-        print(f"[intent] text={text!r} → 진단 시작, total_answered={total}")
-        return {"current_mode": "drill", "is_diagnostic": True, "diagnostic_start_count": total}
+        return {"current_mode": "drill", "is_diagnostic": True, "diagnostic_start_count": state.get("total_answered") or 0}
 
     # 채점 직후 follow_up_mode 활성 → 질문은 chatbot으로 라우팅
     if state.get("follow_up_mode", False):
         # "문제 줘" / "다음 문제" 등 명시적 새 문제 요청만 follow_up 종료
         # bare "문제" ("이 문제에 대해서...")는 종료 조건에서 제외
         if _DRILL_EXPLICIT.search(text):
-            print(f"[intent] follow_up_mode 종료 (drill 요청) → drill")
             return {"current_mode": "drill", "follow_up_mode": False}
         # 오답 복습 / 약점 분석은 follow_up_mode에서도 즉시 허용
         if _REVIEW.search(text):
-            print(f"[intent] follow_up_mode 종료 (review 요청) → review")
             return {"current_mode": "review", "follow_up_mode": False}
         if _DIAGNOSE.search(text):
-            print(f"[intent] follow_up_mode 종료 (diagnose 요청) → diagnose")
             return {"current_mode": "diagnose", "follow_up_mode": False}
         if _SQL.search(text):
-            print(f"[intent] follow_up_mode 종료 (SQL 요청) → sql")
             return {"current_mode": "sql", "follow_up_mode": False}
-        print(f"[intent] follow_up_mode 활성 → chat, text={text!r}")
         return {"current_mode": "chat"}
 
     # 명시적 drill 요청("문제 줘" 등)을 먼저 체크하고, 이후 설명 의도를 우선 처리.
@@ -86,7 +76,6 @@ def intent_classifier(state: TutorState) -> dict:
     else:
         mode = "chat"
 
-    print(f"[intent] text={text!r} → mode={mode!r}")
     if mode in ("explain", "diagnose", "sql", "review"):
         user_id = state.get("user_id") or "anonymous"
         log_event(user_id, "feature_used", {"feature": mode, "text": text[:100]})

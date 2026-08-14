@@ -1,5 +1,7 @@
 import asyncio
 import json
+import time
+from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -12,6 +14,20 @@ from app.analytics import log_event
 from app.auth import get_current_user_id
 
 router = APIRouter()
+
+_rate_limit: dict[str, list[float]] = defaultdict(list)
+_LIMIT = 200   # 1시간에 최대 200회
+_WINDOW = 3600
+
+
+def _check_rate_limit(user_id: str) -> bool:
+    now = time.time()
+    calls = _rate_limit[user_id]
+    _rate_limit[user_id] = [t for t in calls if now - t < _WINDOW]
+    if len(_rate_limit[user_id]) >= _LIMIT:
+        return False
+    _rate_limit[user_id].append(now)
+    return True
 
 INITIAL_STATE = {
     "current_mode": "chat",
@@ -60,7 +76,6 @@ INITIAL_STATE = {
 class ChatRequest(BaseModel):
     message: str
     thread_id: str = "default"
-    user_id: str = "anonymous"
     target_score: int = 70
     clear_pending: bool = False
     client_pending_question: dict = {}
@@ -145,8 +160,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             if kind_tag == "done":
                 break
             if kind_tag == "error":
-                yield f"data: {json.dumps({'type': 'error', 'content': str(payload)})}\n\n"
-                yield f"data: {json.dumps({'type': 'done'})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'content': str(payload)}, ensure_ascii=False)}\n\n"
+                yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
                 break
 
             event = payload
@@ -163,9 +178,9 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             content = _get_text(msg.content)
                             if content:
                                 msg_type = "concept" if name == "explain" else "message"
-                                yield f"data: {json.dumps({'type': msg_type, 'content': content})}\n\n"
+                                yield f"data: {json.dumps({'type': msg_type, 'content': content}, ensure_ascii=False)}\n\n"
                     if name in ("drill", "review") and output.get("last_grade_result"):
-                        yield f"data: {json.dumps({'type': 'loading'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'loading'}, ensure_ascii=False)}\n\n"
                     if name == "state_updater":
                         # state_updater 출력 캐시 — 이후 pending_question SSE에 첨부
                         _su_cache["diagnostic_question_count"] = output.get("diagnostic_question_count")
@@ -180,9 +195,9 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             "total_answered": output.get("total_answered", 0),
                             "streak": output.get("streak", 0),
                         }
-                        yield f"data: {json.dumps({'type': 'stats_updated', 'content': stats_payload})}\n\n"
+                        yield f"data: {json.dumps({'type': 'stats_updated', 'content': stats_payload}, ensure_ascii=False)}\n\n"
                         if output.get("suggest_category_switch"):
-                            yield f"data: {json.dumps({'type': 'loading'})}\n\n"
+                            yield f"data: {json.dumps({'type': 'loading'}, ensure_ascii=False)}\n\n"
                     pq = output.get("pending_question")
                     if pq and isinstance(pq, dict) and pq.get("id"):
                         # state_updater 값을 포함 → 스테일 체크포인트 읽어도 누적 데이터 정확
@@ -199,14 +214,14 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             pq_payload["_wrong_log"] = _su_cache["wrong_answer_log"]
                         if _su_cache.get("streak") is not None:
                             pq_payload["_streak"] = _su_cache["streak"]
-                        yield f"data: {json.dumps({'type': 'pending_question', 'content': pq_payload})}\n\n"
+                        yield f"data: {json.dumps({'type': 'pending_question', 'content': pq_payload}, ensure_ascii=False)}\n\n"
 
             # LLM 토큰 단위 스트리밍 — chatbot만 적용
             elif kind == "on_chat_model_stream" and node == "chatbot":
                 chunk = event["data"]["chunk"]
                 token = _get_text(chunk.content) if hasattr(chunk, "content") else ""
                 if token:
-                    yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
+                    yield f"data: {json.dumps({'type': 'token', 'content': token}, ensure_ascii=False)}\n\n"
 
     finally:
         collector.cancel()
@@ -215,13 +230,15 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
         except asyncio.CancelledError:
             pass
 
-    yield f"data: {json.dumps({'type': 'done'})}\n\n"
+    yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
 
 
 @router.post("/chat")
 async def chat(req: ChatRequest, user_id: str = Depends(get_current_user_id)):
     if req.thread_id != user_id:
         raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
+    if not _check_rate_limit(user_id):
+        raise HTTPException(status_code=429, detail="요청이 너무 많아요. 잠시 후 다시 시도해주세요.")
     return StreamingResponse(
         _stream_response(req.message, req.thread_id, user_id, req.target_score, req.clear_pending, req.client_pending_question or None),
         media_type="text/event-stream",

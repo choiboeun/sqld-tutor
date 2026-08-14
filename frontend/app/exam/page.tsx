@@ -276,8 +276,7 @@ export default function ExamPage() {
     })();
 
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [startTimer, submit, persist, router]);
 
   const selectAnswer = useCallback((questionNum: number, optNum: number) => {
     setAnswers((prev) => {

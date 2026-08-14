@@ -38,12 +38,15 @@ async def create_inquiry(
     if not client:
         raise HTTPException(status_code=500, detail="서버 오류가 발생했습니다.")
 
-    client.table("inquiries").insert({
-        "user_id": user_id,
-        "user_email": user_email,
-        "message": body.message.strip(),
-        "status": "new",
-    }).execute()
+    try:
+        client.table("inquiries").insert({
+            "user_id": user_id,
+            "user_email": user_email,
+            "message": body.message.strip(),
+            "status": "new",
+        }).execute()
+    except Exception:
+        raise HTTPException(status_code=500, detail="문의 저장 중 오류가 발생했습니다.")
 
     return {"ok": True}
 
@@ -53,19 +56,23 @@ async def create_inquiry(
 async def get_inquiries(
     user_email: str = Depends(get_current_user_email),
 ):
-    if user_email != ADMIN_EMAIL:
+    if not ADMIN_EMAIL or user_email != ADMIN_EMAIL:
         raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
 
     client = _get_supabase()
     if not client:
         raise HTTPException(status_code=500, detail="서버 오류가 발생했습니다.")
 
-    result = (
-        client.table("inquiries")
-        .select("*")
-        .order("created_at", desc=True)
-        .execute()
-    )
+    try:
+        result = (
+            client.table("inquiries")
+            .select("*")
+            .order("created_at", desc=True)
+            .execute()
+        )
+    except Exception:
+        raise HTTPException(status_code=500, detail="문의 조회 중 오류가 발생했습니다.")
+
     return result.data
 
 
@@ -80,7 +87,7 @@ async def update_inquiry_status(
     body: StatusUpdate,
     user_email: str = Depends(get_current_user_email),
 ):
-    if user_email != ADMIN_EMAIL:
+    if not ADMIN_EMAIL or user_email != ADMIN_EMAIL:
         raise HTTPException(status_code=403, detail="접근 권한이 없습니다.")
 
     if body.status not in ("new", "read", "resolved"):
@@ -90,5 +97,9 @@ async def update_inquiry_status(
     if not client:
         raise HTTPException(status_code=500, detail="서버 오류가 발생했습니다.")
 
-    client.table("inquiries").update({"status": body.status}).eq("id", inquiry_id).execute()
+    try:
+        client.table("inquiries").update({"status": body.status}).eq("id", inquiry_id).execute()
+    except Exception:
+        raise HTTPException(status_code=500, detail="상태 변경 중 오류가 발생했습니다.")
+
     return {"ok": True}

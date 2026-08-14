@@ -266,11 +266,10 @@ export default function HomePage() {
     setInquiryLoading(true);
     setInquiryResult(null);
     try {
-      const { data: authData } = await createClient().auth.getSession();
-      const token = authData.session?.access_token;
+      const authHeaders = await getAuthHeaders();
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"}/api/inquiries`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", ...authHeaders },
         body: JSON.stringify({ message: inquiryMsg.trim() }),
       });
       if (res.ok) {
@@ -324,7 +323,7 @@ export default function HomePage() {
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
     try {
-      const resp = await fetch("/account/delete", { method: "DELETE" });
+      const resp = await fetch("/account/delete", { method: "DELETE", headers: await getAuthHeaders() });
       if (!resp.ok) {
         alert("탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         return;

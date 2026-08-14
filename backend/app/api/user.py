@@ -20,6 +20,18 @@ async def delete_user(
     token = credentials.credentials
 
     async with httpx.AsyncClient() as client:
+        admin_resp = await client.delete(
+            f"{SUPABASE_URL}/auth/v1/admin/users/{user_id}",
+            headers={
+                "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+            },
+            timeout=10.0,
+        )
+        if admin_resp.status_code not in (200, 204):
+            raise HTTPException(status_code=500, detail=f"계정 삭제 실패: {admin_resp.text}")
+
+    async with httpx.AsyncClient() as client:
         rpc_resp = await client.post(
             f"{SUPABASE_URL}/rest/v1/rpc/delete_user",
             headers={
@@ -32,17 +44,5 @@ async def delete_user(
         )
         if rpc_resp.status_code not in (200, 204):
             raise HTTPException(status_code=500, detail=f"학습 데이터 삭제 실패: {rpc_resp.text}")
-
-    async with httpx.AsyncClient() as client:
-        admin_resp = await client.delete(
-            f"{SUPABASE_URL}/auth/v1/admin/users/{user_id}",
-            headers={
-                "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
-                "apikey": SUPABASE_SERVICE_ROLE_KEY,
-            },
-            timeout=10.0,
-        )
-        if admin_resp.status_code not in (200, 204):
-            raise HTTPException(status_code=500, detail=f"계정 삭제 실패: {admin_resp.text}")
 
     return {"message": "계정이 삭제되었습니다."}

@@ -84,7 +84,12 @@ export default function WrongAnswersPage() {
       .auth.getUser()
       .then(({ data }) => {
         if (data.user) setThreadId(data.user.id);
+        else window.location.href = "/login";
       });
+  }, []);
+
+  useEffect(() => {
+    return () => { miniAbortRef.current?.abort(); };
   }, []);
 
   useEffect(() => {
@@ -396,7 +401,7 @@ export default function WrongAnswersPage() {
                               <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                             </span>
                           ) : (
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{m.content}</ReactMarkdown>
                           )}
                         </div>
                       </div>

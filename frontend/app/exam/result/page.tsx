@@ -72,6 +72,7 @@ export default function ExamResultPage() {
   const [results, setResults] = useState<QuestionResult[]>([]);
   const [selected, setSelected] = useState<QuestionResult | null>(null);
   const [exitTarget, setExitTarget] = useState<"home" | "retry" | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const raw = sessionStorage.getItem("examResult");
@@ -80,9 +81,16 @@ export default function ExamResultPage() {
       setResults(JSON.parse(raw));
     } catch {
       router.push("/home");
+    } finally {
+      setLoading(false);
     }
   }, [router]);
 
+  if (loading) return (
+    <div className="flex h-[100dvh] items-center justify-center bg-stone-50">
+      <p className="text-sm text-stone-400">결과를 불러오는 중...</p>
+    </div>
+  );
   if (results.length === 0) return null;
 
   // 채점

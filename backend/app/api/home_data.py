@@ -104,14 +104,17 @@ async def get_home_data(thread_id: str, user_id: str = Depends(get_current_user_
     client = _get_supabase()
     if client:
         since = (datetime.now(timezone.utc) - timedelta(days=91)).isoformat()
-        rows = await asyncio.to_thread(
-            lambda: client.table("user_events")
-            .select("properties, created_at")
-            .eq("user_id", thread_id)
-            .eq("event_type", "question_answered")
-            .gte("created_at", since)
-            .execute()
-        )
+        try:
+            rows = await asyncio.to_thread(
+                lambda: client.table("user_events")
+                .select("properties, created_at")
+                .eq("user_id", thread_id)
+                .eq("event_type", "question_answered")
+                .gte("created_at", since)
+                .execute()
+            )
+        except Exception:
+            rows = type("R", (), {"data": []})()
         for row in rows.data or []:
             # calendar
             calendar_counts[row["created_at"][:10]] += 1

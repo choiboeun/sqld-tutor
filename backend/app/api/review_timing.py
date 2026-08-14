@@ -56,14 +56,17 @@ async def get_review_timing(thread_id: str, user_id: str = Depends(get_current_u
     client = _get_supabase()
     if client:
         since = (datetime.now(timezone.utc) - timedelta(days=180)).isoformat()
-        rows = await asyncio.to_thread(
-            lambda: client.table("user_events")
-            .select("properties, created_at")
-            .eq("user_id", thread_id)
-            .eq("event_type", "question_answered")
-            .gte("created_at", since)
-            .execute()
-        )
+        try:
+            rows = await asyncio.to_thread(
+                lambda: client.table("user_events")
+                .select("properties, created_at")
+                .eq("user_id", thread_id)
+                .eq("event_type", "question_answered")
+                .gte("created_at", since)
+                .execute()
+            )
+        except Exception:
+            rows = type("R", (), {"data": []})()
         for row in rows.data or []:
             props = row.get("properties", {})
             qid = str(props.get("question_id", ""))

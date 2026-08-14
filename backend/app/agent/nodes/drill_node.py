@@ -421,6 +421,7 @@ def drill_node(state: TutorState) -> dict:
                 hint += ")"
             return {
                 "messages": [AIMessage(content=f"조건에 맞는 문제가 없어요{hint}. 조건을 바꿔보세요.")],
+                "suggest_category_switch": False,
             }
 
         if is_diagnostic:

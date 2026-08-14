@@ -28,14 +28,17 @@ async def get_calendar(thread_id: str, user_id: str = Depends(get_current_user_i
 
     since = (datetime.now(timezone.utc) - timedelta(days=91)).isoformat()
 
-    result = await asyncio.to_thread(
-        lambda: client.table("user_events")
-        .select("created_at")
-        .eq("user_id", thread_id)
-        .eq("event_type", "question_answered")
-        .gte("created_at", since)
-        .execute()
-    )
+    try:
+        result = await asyncio.to_thread(
+            lambda: client.table("user_events")
+            .select("created_at")
+            .eq("user_id", thread_id)
+            .eq("event_type", "question_answered")
+            .gte("created_at", since)
+            .execute()
+        )
+    except Exception:
+        return {"dates": {}}
 
     counts: dict[str, int] = defaultdict(int)
     for row in result.data or []:
