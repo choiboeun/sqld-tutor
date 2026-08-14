@@ -68,6 +68,8 @@ def _apply_keyword_bold(content: str) -> str:
         return f'\x00BLOCK{len(code_blocks) - 1}\x00'
 
     content = re.sub(r'```[\s\S]*?```', save_block, content)
+    # 인라인 백틱 코드 스팬도 보호 (펜스 블록과 동일하게 ** 추가 금지)
+    content = re.sub(r'`[^`\n]+`', save_block, content)
 
     # Step 1: LLM이 생성한 볼드 전부 제거 (비코드 구간만)
     content = re.sub(r'\*\*([^*\n]+)\*\*', r'\1', content)
