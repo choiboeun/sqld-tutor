@@ -1,4 +1,5 @@
 import os
+import logging
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -44,5 +45,16 @@ async def delete_user(
         )
         if rpc_resp.status_code not in (200, 204):
             raise HTTPException(status_code=500, detail=f"학습 데이터 삭제 실패: {rpc_resp.text}")
+
+    # LangGraph checkpoint 테이블에서 해당 유저 대화 기록 삭제
+    from app.db.checkpointer import _async_pool
+    if _async_pool is not None:
+        try:
+            async with _async_pool.connection() as conn:
+                await conn.execute("DELETE FROM checkpoint_blobs WHERE thread_id = %s", (user_id,))
+                await conn.execute("DELETE FROM checkpoint_writes WHERE thread_id = %s", (user_id,))
+                await conn.execute("DELETE FROM checkpoints WHERE thread_id = %s", (user_id,))
+        except Exception as e:
+            logging.warning("[delete_user] checkpoint 삭제 실패: %s", e)
 
     return {"message": "계정이 삭제되었습니다."}
