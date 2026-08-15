@@ -1,4 +1,3 @@
-import os
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 
@@ -13,8 +12,8 @@ from app.agent.nodes.state_updater import state_updater
 from app.agent.nodes.sql_node import sql_node
 from langchain_core.messages import AIMessage as _AIMessage
 
-# A/B 테스트용: Render 환경변수 AUTO_EXPLAIN=false 로 설정하면 오답 후 자동 개념 설명 비활성화
-_AUTO_EXPLAIN = os.getenv("AUTO_EXPLAIN", "true").lower() != "false"
+# A/B 테스트 완료 (2026-07-31): B안(직접 질문) 선호 2:1 → 자동 개념 설명 영구 비활성화
+_AUTO_EXPLAIN = False
 
 tool_node = ToolNode(ALL_TOOLS)
 

@@ -426,6 +426,7 @@ def drill_node(state: TutorState) -> dict:
 
         if is_diagnostic:
             question["_diag_seq"] = diag_count + 1
+            question["_is_diagnostic"] = True  # 체크포인트 유실 시 클라이언트 캐시로 복원용
         return {
             "messages": [AIMessage(content=diagnostic_intro + _format_question(question))],
             "pending_question": question,

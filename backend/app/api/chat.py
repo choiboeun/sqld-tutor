@@ -126,6 +126,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                 input_data["wrong_answer_log"] = _pq["_wrong_log"]
             if isinstance(_pq.get("_streak"), int):
                 input_data["streak"] = _pq["_streak"]
+            if isinstance(_pq.get("_is_diagnostic"), bool):
+                input_data["is_diagnostic"] = _pq["_is_diagnostic"]
 
     NON_LLM_NODES = {"drill", "review", "diagnose", "sql", "state_updater", "explain", "diagnostic_block"}
     KEEPALIVE_INTERVAL = 10  # 초 — LLM 무응답 구간에 중간 서버 연결 유지
@@ -189,6 +191,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                         _su_cache["accuracy_by_category"] = output.get("accuracy_by_category")
                         _su_cache["wrong_answer_log"] = output.get("wrong_answer_log")
                         _su_cache["streak"] = output.get("streak")
+                        _su_cache["is_diagnostic"] = output.get("is_diagnostic")
                         stats_payload = {
                             "accuracy_by_category": output.get("accuracy_by_category", {}),
                             "attempts_by_category": output.get("attempts_by_category", {}),
@@ -214,6 +217,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
                             pq_payload["_wrong_log"] = _su_cache["wrong_answer_log"]
                         if _su_cache.get("streak") is not None:
                             pq_payload["_streak"] = _su_cache["streak"]
+                        if _su_cache.get("is_diagnostic") is not None:
+                            pq_payload["_is_diagnostic"] = _su_cache["is_diagnostic"]
                         yield f"data: {json.dumps({'type': 'pending_question', 'content': pq_payload}, ensure_ascii=False)}\n\n"
 
             # LLM 토큰 단위 스트리밍 — chatbot만 적용
