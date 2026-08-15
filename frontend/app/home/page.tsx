@@ -197,6 +197,7 @@ export default function HomePage() {
   const [inquiryMsg, setInquiryMsg] = useState("");
   const [inquiryLoading, setInquiryLoading] = useState(false);
   const [inquiryResult, setInquiryResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showAllCats, setShowAllCats] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -506,7 +507,7 @@ export default function HomePage() {
       )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
-      <div className="bg-amber-600 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen flex flex-col p-7 md:p-10">
+      <div className="bg-amber-600 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10">
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
@@ -564,40 +565,80 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 점수 영역 */}
-        <div className="flex-1 flex flex-col justify-center py-6 md:py-0">
+        {/* 예상 점수 + D-day + 오늘 할 일 + 카테고리 */}
+        <div className="mt-6 md:mt-8 flex flex-col flex-1">
           {loading ? (
             <div className="space-y-4 animate-pulse">
-              <div className="h-3 bg-white/20 w-20" />
-              <div className="h-20 bg-white/20 w-36" />
-              <div className="h-1.5 bg-white/20 w-full" />
-              <div className="grid grid-cols-3 gap-4 pt-4">
-                <div className="h-8 bg-white/20" />
-                <div className="h-8 bg-white/20" />
-                <div className="h-8 bg-white/20" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="h-2 bg-white/20 w-16 mb-2.5" />
+                  <div className="h-12 bg-white/20 w-20" />
+                </div>
+                <div>
+                  <div className="h-2 bg-white/20 w-16 mb-2.5" />
+                  <div className="h-12 bg-white/20 w-16" />
+                </div>
+              </div>
+              <div className="h-1 bg-white/20 w-full" />
+              <div className="mt-4 space-y-2">
+                <div className="h-2 bg-white/20 w-20" />
+                <div className="h-14 bg-white/20" />
+                <div className="h-14 bg-white/20" />
               </div>
             </div>
           ) : (
             <>
-              <p className="text-xs font-semibold text-amber-300 uppercase tracking-widest mb-3">예상 점수</p>
-
-              {/* 점수 + diff */}
-              <div className="flex items-end justify-between mb-5">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-7xl md:text-8xl font-black leading-none tabular-nums">{predictedScore}</span>
-                  <span className="text-xl text-amber-300">/ 100점</span>
-                </div>
-                <div className="text-right mb-1">
-                  <p className={`text-xl font-black leading-none ${scoreDiff >= 0 ? "text-white" : "text-amber-100"}`}>
-                    {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
+              {/* 예상 점수 + D-day 2열 */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <p className="text-[10px] font-bold text-amber-300/70 uppercase tracking-widest mb-2">예상 점수</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-5xl font-black leading-none tabular-nums">{predictedScore}</span>
+                    <span className="text-sm text-amber-300">점</span>
+                  </div>
+                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-300" : "text-amber-200/80"}`}>
+                    목표 {targetScore}점까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
                   </p>
-                  <p className="text-xs text-amber-300/80 mt-0.5">목표 {targetScore}점까지</p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center justify-end gap-2 mb-2">
+                    <p className="text-[10px] font-bold text-amber-300/70 uppercase tracking-widest">시험까지</p>
+                    <button
+                      onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
+                      className="text-amber-300/50 hover:text-amber-200 transition-colors"
+                      title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                    </button>
+                  </div>
+                  {dDayCount !== null ? (
+                    <>
+                      <p className={`text-4xl font-black leading-none tabular-nums ${
+                        dDayCount === 0 ? "text-red-200" : dDayCount < 0 ? "text-white/50" : ""
+                      }`}>
+                        {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
+                      </p>
+                      {streak > 0 && (
+                        <p className="text-xs text-amber-200/80 mt-1.5">🔥 {streak}일 연속</p>
+                      )}
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
+                      className="text-xs text-amber-300/60 hover:text-amber-200 transition-colors mt-1"
+                    >
+                      날짜 설정 +
+                    </button>
+                  )}
                 </div>
               </div>
 
-              {/* 3구간 진행 바 */}
-              <div className="mb-8">
-                <div className="relative h-1.5 w-full">
+              {/* 진행 바 */}
+              <div className="mb-6">
+                <div className="relative h-1 w-full">
                   <div className="absolute inset-0 bg-white/15" />
                   <div
                     className="absolute top-0 left-0 h-full bg-white transition-all duration-700"
@@ -610,39 +651,77 @@ export default function HomePage() {
                     />
                   )}
                   <div
-                    className="absolute w-px bg-amber-200"
-                    style={{ left: `${targetScore}%`, top: '-4px', bottom: '-4px' }}
+                    className="absolute w-px bg-amber-200/60"
+                    style={{ left: `${targetScore}%`, top: "-3px", bottom: "-3px" }}
                   />
                 </div>
-                <div className="relative h-5 mt-1">
-                  <span
-                    className="absolute -translate-x-1/2 text-xs text-amber-300 whitespace-nowrap"
-                    style={{ left: `${targetScore}%` }}
-                  >
-                    목표 {targetScore}
-                  </span>
-                </div>
               </div>
 
-              {/* 통계 미니 카드 */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="bg-black/10 px-3 py-2.5">
-                  <p className="text-2xl font-bold tabular-nums leading-none">{totalAnswered}</p>
-                  <p className="text-xs text-amber-300 mt-1.5 uppercase tracking-wide">총 풀이</p>
-                </div>
-                <div className="bg-black/10 px-3 py-2.5">
-                  <p className={`text-2xl font-bold tabular-nums leading-none ${streak > 0 ? "text-green-300" : ""}`}>{streak}</p>
-                  <p className="text-xs text-amber-300 mt-1.5 uppercase tracking-wide">연속 정답</p>
-                </div>
-                <div className="bg-black/10 px-3 py-2.5">
-                  <p className={`tabular-nums leading-none font-black ${wrongCount > 0 ? "text-3xl text-red-300" : "text-2xl"}`}>{wrongCount}</p>
-                  <p className={`text-xs mt-1.5 uppercase tracking-wide ${wrongCount > 0 ? "text-red-300" : "text-amber-300"}`}>오답</p>
-                </div>
+              {/* 오늘 할 일 */}
+              <div className="mb-5">
+                <p className="text-[10px] font-bold text-amber-300/70 uppercase tracking-widest mb-3">오늘 할 일</p>
+                {todayTasks.length === 0 ? (
+                  <p className="text-xs text-white/40 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {todayTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className={`flex items-center gap-3 px-3 py-2.5 bg-white/10 border-l-2 ${
+                          task.id === "review" ? "border-red-300/70" : "border-white/25"
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold leading-snug">{task.title}</p>
+                          <p className="text-xs text-white/55 mt-0.5 leading-relaxed">{task.sub}</p>
+                        </div>
+                        <Link
+                          href={task.href}
+                          className="shrink-0 text-[10px] font-bold tracking-wide bg-white/90 text-amber-700 px-3 py-1.5 hover:bg-white transition-colors whitespace-nowrap"
+                        >
+                          시작
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {totalAnswered === 0 && (
-                <p className="text-amber-300/70 text-sm mt-5">문제를 풀면 예상 점수가 계산됩니다.</p>
-              )}
+              {/* 카테고리 정답률 (접기/펼치기) */}
+              <div className="border-t border-white/15">
+                <button
+                  onClick={() => setShowAllCats((v) => !v)}
+                  className="w-full flex items-center justify-between py-2.5"
+                >
+                  <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">카테고리 정답률 (11개)</span>
+                  <span className="text-[10px] text-white/35">{showAllCats ? "▴ 접기" : "▾ 펼치기"}</span>
+                </button>
+                <div className="space-y-2.5 pb-3">
+                  {(showAllCats ? ALL_CATEGORIES : weakCats.map((c) => c.category)).map((cat) => {
+                    const entry = catMap[cat];
+                    const pct = entry ? Math.round(entry.accuracy * 100) : null;
+                    return (
+                      <div key={cat}>
+                        <div className="flex justify-between text-[10px] text-white/65 mb-1">
+                          <span className="truncate mr-2">{cat}</span>
+                          <span className={`font-bold shrink-0 ${pct !== null && pct < 50 ? "text-red-300" : ""}`}>
+                            {pct !== null ? `${pct}%` : "—"}
+                          </span>
+                        </div>
+                        <div className="h-[2px] bg-white/18 relative">
+                          <div
+                            className="absolute top-0 left-0 h-full bg-white/65 transition-all duration-500"
+                            style={{ width: pct !== null ? `${pct}%` : "0%" }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {!showAllCats && weakCats.length === 0 && (
+                    <p className="text-[10px] text-white/35 pb-1">문제를 풀면 카테고리 현황이 표시됩니다.</p>
+                  )}
+                </div>
+              </div>
             </>
           )}
         </div>
@@ -735,140 +814,71 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* ── 2열 그리드: 1열(D-day·캘린더·복습타이밍) / 2열(오늘 할 일) ── */}
-        <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-1 md:grid-cols-2 md:gap-x-10 items-start">
+        {/* ── 학습 캘린더 + 복습 타이밍 ── */}
+        <div className="mt-8 pt-6 border-t border-stone-200">
 
-          {/* 1열 */}
-          <div>
-            {/* D-day */}
-            <div>
-              <div className="flex items-center justify-between mb-5">
-                <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">시험까지</p>
-                <button
-                  onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                  className="text-xs text-stone-400 hover:text-amber-600 transition-colors border border-stone-200 px-2.5 py-1 hover:border-amber-400"
-                >
-                  {dDayCount !== null ? "날짜 변경" : "날짜 설정 +"}
-                </button>
-              </div>
-              {dDayCount !== null ? (
-                <div className="flex items-baseline gap-3">
-                  <span className={`text-5xl font-black leading-none tabular-nums ${
-                    dDayCount === 0 ? "text-red-600" :
-                    dDayCount < 0 ? "text-stone-400" :
-                    "text-stone-900"
-                  }`}>
-                    {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
-                  </span>
-                  <span className="text-sm text-stone-400 mb-1">{examDate}</span>
-                </div>
-              ) : (
-                <p className="text-sm text-stone-400 py-1">시험일을 설정하면 카운트다운이 표시됩니다.</p>
-              )}
+          {/* 학습 캘린더 */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">학습 캘린더</p>
+              <p className="text-xs text-stone-300">최근 13주</p>
             </div>
-
-            {/* 학습 캘린더 */}
-            <div className="mt-8">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">학습 캘린더</p>
-                <p className="text-xs text-stone-300">최근 13주</p>
+            {calendarData ? (
+              <CalendarHeatmap dates={calendarData.dates} />
+            ) : (
+              <div className="flex gap-1.5 animate-pulse">
+                {Array.from({ length: 14 }).map((_, wi) => (
+                  <div key={wi} className="flex flex-col gap-1.5">
+                    {Array.from({ length: 7 }).map((_, di) => (
+                      <div key={di} className="w-3.5 h-3.5 bg-stone-100" />
+                    ))}
+                  </div>
+                ))}
               </div>
-              {calendarData ? (
-                <CalendarHeatmap dates={calendarData.dates} />
-              ) : (
-                <div className="flex gap-1.5 animate-pulse">
-                  {Array.from({ length: 14 }).map((_, wi) => (
-                    <div key={wi} className="flex flex-col gap-1.5">
-                      {Array.from({ length: 7 }).map((_, di) => (
-                        <div key={di} className="w-3.5 h-3.5 bg-stone-100" />
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center gap-1.5 mt-2.5">
-                <span className="text-xs text-stone-300">적음</span>
-                <div className="w-3.5 h-3.5 bg-stone-100" />
-                <div className="w-3.5 h-3.5 bg-amber-200" />
-                <div className="w-3.5 h-3.5 bg-amber-400" />
-                <div className="w-3.5 h-3.5 bg-amber-600" />
-                <span className="text-xs text-stone-300">많음</span>
-              </div>
-            </div>
-
-            {/* 복습 타이밍 */}
-            <div className="mt-8 mb-6">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">복습 타이밍</p>
-              {reviewTiming === null ? (
-                <div className="space-y-2 animate-pulse">
-                  <div className="h-9 bg-stone-100" />
-                  <div className="h-9 bg-stone-100" />
-                </div>
-              ) : reviewTotal === 0 ? (
-                <p className="text-xs text-stone-400 py-3">복습할 오답이 없어요</p>
-              ) : (
-                <div>
-                  {reviewTiming.overdue.length > 0 && (
-                    <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-stone-300" />
-                  )}
-                  {reviewTiming.today.length > 0 && (
-                    <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
-                  )}
-                  {reviewTiming.tomorrow.length > 0 && (
-                    <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-amber-400" />
-                  )}
-                  {reviewTiming.this_week.length > 0 && (
-                    <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
-                  )}
-                  <Link
-                    href="/wrong-answers"
-                    className="inline-flex items-center gap-1.5 text-sm text-amber-600 hover:underline mt-3"
-                  >
-                    오답 회고 전체 보기
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                  </Link>
-                </div>
-              )}
+            )}
+            <div className="flex items-center gap-1.5 mt-2.5">
+              <span className="text-xs text-stone-300">적음</span>
+              <div className="w-3.5 h-3.5 bg-stone-100" />
+              <div className="w-3.5 h-3.5 bg-amber-200" />
+              <div className="w-3.5 h-3.5 bg-amber-400" />
+              <div className="w-3.5 h-3.5 bg-amber-600" />
+              <span className="text-xs text-stone-300">많음</span>
             </div>
           </div>
 
-          {/* 2열: 오늘 할 일 */}
-          <div className="mt-6 pt-6 border-t border-stone-200 md:border-t-0 md:pt-0 md:mt-0 mb-6">
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">오늘 할 일</p>
-            {loading ? (
-              <div className="space-y-3 animate-pulse">
-                <div className="h-[72px] bg-stone-100" />
-                <div className="h-[72px] bg-stone-100" />
-                <div className="h-[72px] bg-stone-100" />
+          {/* 복습 타이밍 */}
+          <div className="mb-6">
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">복습 타이밍</p>
+            {reviewTiming === null ? (
+              <div className="space-y-2 animate-pulse">
+                <div className="h-9 bg-stone-100" />
+                <div className="h-9 bg-stone-100" />
               </div>
-            ) : todayTasks.length === 0 ? (
-              <p className="text-sm text-stone-400 py-3">문제를 풀면 맞춤 학습 목표가 생성됩니다.</p>
+            ) : reviewTotal === 0 ? (
+              <p className="text-xs text-stone-400 py-3">복습할 오답이 없어요</p>
             ) : (
-              <div className="space-y-2.5">
-                {todayTasks.map((task, i) => (
-                  <div key={task.id} className="border border-stone-200 p-4 hover:border-amber-300 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <span className="w-5 h-5 bg-amber-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                        {i + 1}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-stone-800 leading-snug">{task.title}</p>
-                        <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">{task.sub}</p>
-                      </div>
-                    </div>
-                    <Link
-                      href={task.href}
-                      className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-semibold text-amber-600 border border-amber-300 py-1.5 hover:bg-amber-50 transition-colors"
-                    >
-                      시작하기
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                      </svg>
-                    </Link>
-                  </div>
-                ))}
+              <div>
+                {reviewTiming.overdue.length > 0 && (
+                  <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-stone-300" />
+                )}
+                {reviewTiming.today.length > 0 && (
+                  <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
+                )}
+                {reviewTiming.tomorrow.length > 0 && (
+                  <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-amber-400" />
+                )}
+                {reviewTiming.this_week.length > 0 && (
+                  <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
+                )}
+                <Link
+                  href="/wrong-answers"
+                  className="inline-flex items-center gap-1.5 text-sm text-amber-600 hover:underline mt-3"
+                >
+                  오답 회고 전체 보기
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </Link>
               </div>
             )}
           </div>
