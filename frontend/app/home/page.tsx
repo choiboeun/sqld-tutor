@@ -109,11 +109,11 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
   return (
     <div className="overflow-x-auto pb-1">
       {/* X축 월 라벨 — Y축 너비만큼 왼쪽 여백 */}
-      <div className="flex gap-1.5 mb-1.5 ml-[26px]">
+      <div className="flex gap-2 mb-2 ml-[32px]">
         {weeks.map((_, wi) => {
           const lbl = monthLabels.find((m) => m.col === wi);
           return (
-            <div key={wi} className="w-3.5 shrink-0 text-[10px] text-stone-400 leading-none">
+            <div key={wi} className="w-5 shrink-0 text-xs text-stone-400 leading-none">
               {lbl ? lbl.label : ""}
             </div>
           );
@@ -122,21 +122,21 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
       {/* Y축 + 격자 */}
       <div className="flex gap-2">
         {/* Y축: 요일 */}
-        <div className="flex flex-col gap-1.5 shrink-0">
+        <div className="flex flex-col gap-2 shrink-0">
           {["일","월","화","수","목","금","토"].map((d) => (
-            <div key={d} className="h-3.5 w-4 text-[10px] text-stone-300 leading-none flex items-center justify-end">
+            <div key={d} className="h-5 w-5 text-xs text-stone-300 leading-none flex items-center justify-end">
               {d}
             </div>
           ))}
         </div>
         {/* 격자 */}
-        <div className="flex gap-1.5">
+        <div className="flex gap-2">
           {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-1.5 shrink-0">
+            <div key={wi} className="flex flex-col gap-2 shrink-0">
               {week.map((cell, di) => (
                 <div
                   key={di}
-                  className={`w-3.5 h-3.5 ${cellColor(cell.count, cell.isFuture)}`}
+                  className={`w-5 h-5 ${cellColor(cell.count, cell.isFuture)}`}
                   title={cell.date && !cell.isFuture ? `${cell.date}: ${cell.count}문제` : ""}
                 />
               ))}
@@ -591,7 +591,7 @@ export default function HomePage() {
               {/* 예상 점수 + D-day 2열 */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                  <p className="text-[10px] font-bold text-amber-300/70 uppercase tracking-widest mb-2">예상 점수</p>
+                  <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest mb-2">예상 점수</p>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-5xl font-black leading-none tabular-nums">{predictedScore}</span>
                     <span className="text-sm text-amber-300">점</span>
@@ -602,13 +602,13 @@ export default function HomePage() {
                 </div>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2 mb-2">
-                    <p className="text-[10px] font-bold text-amber-300/70 uppercase tracking-widest">시험까지</p>
+                    <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest">시험까지</p>
                     <button
                       onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                      className="text-amber-300/50 hover:text-amber-200 transition-colors"
+                      className="text-amber-300/60 hover:text-amber-200 transition-colors"
                       title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
                     >
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                         <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
                       </svg>
@@ -628,7 +628,7 @@ export default function HomePage() {
                   ) : (
                     <button
                       onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
-                      className="text-xs text-amber-300/60 hover:text-amber-200 transition-colors mt-1"
+                      className="text-sm font-medium text-amber-200/70 hover:text-amber-100 transition-colors mt-2"
                     >
                       날짜 설정 +
                     </button>
@@ -659,7 +659,7 @@ export default function HomePage() {
 
               {/* 오늘 할 일 */}
               <div className="mb-5">
-                <p className="text-[10px] font-bold text-amber-300/70 uppercase tracking-widest mb-3">오늘 할 일</p>
+                <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest mb-3">오늘 할 일</p>
                 {todayTasks.length === 0 ? (
                   <p className="text-xs text-white/40 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
                 ) : (
@@ -693,8 +693,8 @@ export default function HomePage() {
                   onClick={() => setShowAllCats((v) => !v)}
                   className="w-full flex items-center justify-between py-2.5"
                 >
-                  <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">카테고리 정답률 (11개)</span>
-                  <span className="text-[10px] text-white/35">{showAllCats ? "▴ 접기" : "▾ 펼치기"}</span>
+                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">카테고리 정답률 (11개)</span>
+                  <span className="text-xs text-white/35">{showAllCats ? "▴ 접기" : "▾ 펼치기"}</span>
                 </button>
                 <div className="space-y-2.5 pb-3">
                   {(showAllCats ? ALL_CATEGORIES : weakCats.map((c) => c.category)).map((cat) => {
@@ -702,7 +702,7 @@ export default function HomePage() {
                     const pct = entry ? Math.round(entry.accuracy * 100) : null;
                     return (
                       <div key={cat}>
-                        <div className="flex justify-between text-[10px] text-white/65 mb-1">
+                        <div className="flex justify-between text-xs text-white/65 mb-1">
                           <span className="truncate mr-2">{cat}</span>
                           <span className={`font-bold shrink-0 ${pct !== null && pct < 50 ? "text-red-300" : ""}`}>
                             {pct !== null ? `${pct}%` : "—"}
@@ -718,7 +718,7 @@ export default function HomePage() {
                     );
                   })}
                   {!showAllCats && weakCats.length === 0 && (
-                    <p className="text-[10px] text-white/35 pb-1">문제를 풀면 카테고리 현황이 표시됩니다.</p>
+                    <p className="text-xs text-white/35 pb-1">문제를 풀면 카테고리 현황이 표시됩니다.</p>
                   )}
                 </div>
               </div>
@@ -736,7 +736,7 @@ export default function HomePage() {
       <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10">
 
         {/* 바로 시작 */}
-        <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
+        <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
 
         <div className="flex flex-col border-t border-stone-200 mt-3">
           {/* AI 학습 */}
@@ -751,7 +751,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-stone-900">AI 학습</p>
+                <p className="text-base font-semibold text-stone-900">AI 학습</p>
                 <p className="text-sm text-stone-400 mt-0.5">{totalAnswered}문제 풀이 중</p>
               </div>
             </div>
@@ -780,7 +780,7 @@ export default function HomePage() {
                 )}
               </div>
               <div>
-                <p className="text-sm font-semibold text-stone-900">오답 회고</p>
+                <p className="text-base font-semibold text-stone-900">오답 회고</p>
                 <p className={`text-sm mt-0.5 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
                   {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
                 </p>
@@ -804,7 +804,7 @@ export default function HomePage() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-stone-900">모의고사</p>
+                <p className="text-base font-semibold text-stone-900">모의고사</p>
                 <p className="text-sm text-stone-400 mt-0.5">50문제 · 90분 · 실전 배점</p>
               </div>
             </div>
@@ -820,35 +820,35 @@ export default function HomePage() {
           {/* 학습 캘린더 */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest">학습 캘린더</p>
-              <p className="text-xs text-stone-300">최근 13주</p>
+              <p className="text-sm font-semibold text-stone-500">학습 캘린더</p>
+              <p className="text-sm text-stone-300">최근 13주</p>
             </div>
             {calendarData ? (
               <CalendarHeatmap dates={calendarData.dates} />
             ) : (
-              <div className="flex gap-1.5 animate-pulse">
+              <div className="flex gap-2 animate-pulse">
                 {Array.from({ length: 14 }).map((_, wi) => (
-                  <div key={wi} className="flex flex-col gap-1.5">
+                  <div key={wi} className="flex flex-col gap-2">
                     {Array.from({ length: 7 }).map((_, di) => (
-                      <div key={di} className="w-3.5 h-3.5 bg-stone-100" />
+                      <div key={di} className="w-5 h-5 bg-stone-100" />
                     ))}
                   </div>
                 ))}
               </div>
             )}
-            <div className="flex items-center gap-1.5 mt-2.5">
-              <span className="text-xs text-stone-300">적음</span>
-              <div className="w-3.5 h-3.5 bg-stone-100" />
-              <div className="w-3.5 h-3.5 bg-amber-200" />
-              <div className="w-3.5 h-3.5 bg-amber-400" />
-              <div className="w-3.5 h-3.5 bg-amber-600" />
-              <span className="text-xs text-stone-300">많음</span>
+            <div className="flex items-center gap-2 mt-3">
+              <span className="text-xs text-stone-400">적음</span>
+              <div className="w-5 h-5 bg-stone-100" />
+              <div className="w-5 h-5 bg-amber-200" />
+              <div className="w-5 h-5 bg-amber-400" />
+              <div className="w-5 h-5 bg-amber-600" />
+              <span className="text-xs text-stone-400">많음</span>
             </div>
           </div>
 
           {/* 복습 타이밍 */}
           <div className="mb-6">
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">복습 타이밍</p>
+            <p className="text-sm font-semibold text-stone-500 mb-3">복습 타이밍</p>
             {reviewTiming === null ? (
               <div className="space-y-2 animate-pulse">
                 <div className="h-9 bg-stone-100" />
