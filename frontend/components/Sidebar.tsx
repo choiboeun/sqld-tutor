@@ -96,7 +96,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       )
     : (data?.accuracy_by_category ?? {});
   const attemptedCount = ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) > 0).length;
-  const totalAnswered = liveStats?.total_answered ?? data?.total_answered ?? 0;
+  const totalAnswered = Math.max(liveStats?.total_answered ?? 0, data?.total_answered ?? 0);
   const streak = liveStats?.streak ?? data?.streak ?? 0;
   const targetScore = data?.target_score ?? 70;
 
@@ -236,10 +236,10 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               const tried = (stat?.attempts ?? 0) > 0;
               const acc = stat?.accuracy ?? 0;
               const dotColor = !tried ? "bg-stone-300"
-                : acc === 0 ? "bg-amber-100"
-                : acc < 0.4 ? "bg-amber-200"
-                : acc < 0.7 ? "bg-amber-400"
-                : "bg-amber-600";
+                : acc === 0 ? "bg-amber-300"
+                : acc < 0.4 ? "bg-amber-400"
+                : acc < 0.7 ? "bg-amber-500"
+                : "bg-amber-700";
               return (
                 <div key={cat} title={cat}>
                   <div className="flex items-center gap-1.5 mb-1">
@@ -251,12 +251,12 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                       {tried ? `${Math.round(acc * 100)}%` : "—"}
                     </span>
                   </div>
-                  <div className="h-1 bg-amber-200 rounded-full overflow-hidden">
-                    {tried && (
+                  <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
+                    {tried && acc > 0 && (
                       <div
                         className={`h-full rounded-full transition-all ${
-                          acc < 0.4 ? "bg-amber-200" :
-                          acc < 0.7 ? "bg-amber-400" : "bg-amber-600"
+                          acc < 0.4 ? "bg-amber-400" :
+                          acc < 0.7 ? "bg-amber-500" : "bg-amber-700"
                         }`}
                         style={{ width: `${acc * 100}%` }}
                       />

@@ -650,7 +650,7 @@ function ChatContent() {
         threadId={threadId}
         refresh={refreshSidebar}
         liveStats={liveStats}
-        onStatsRefreshed={() => setLiveStats(null)}
+        onStatsRefreshed={undefined}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         highlightHome={!isLoading && messages.some(m => m.role === "ai" && m.content.startsWith("**진단 완료!"))}
