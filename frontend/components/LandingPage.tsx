@@ -155,7 +155,7 @@ const CSS = `
 .reveal{opacity:0;transform:translateY(52px);transition:opacity .7s cubic-bezier(0.22,1,0.36,1),transform .7s cubic-bezier(0.22,1,0.36,1)}
 .reveal.in{opacity:1;transform:none}
 .hero-l{position:relative}
-.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:-2px;opacity:0;animation:shAppear .5s ease 2.2s forwards;pointer-events:none;transition:opacity .4s ease}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:-8px;opacity:0;animation:shAppear .5s ease 2.2s forwards;pointer-events:none;transition:opacity .4s ease}
 .scroll-hint.hide{opacity:0!important}
 .scroll-hint svg:nth-child(1){animation:shWave 1.6s ease-in-out 2.2s infinite;opacity:.25}
 .scroll-hint svg:nth-child(2){animation:shWave 1.6s ease-in-out 2.45s infinite;opacity:.5}
@@ -492,9 +492,9 @@ export default function LandingPage() {
           </Link>
           <p className="hero-note">회원가입 필요 · 무료 · 광고 없음</p>
           <div className="scroll-hint" id="scroll-hint">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+            <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
+            <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
+            <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
           </div>
         </div>
 
