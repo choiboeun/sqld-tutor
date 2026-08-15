@@ -154,6 +154,14 @@ const CSS = `
 .faq-a{font-size:13.5px;line-height:1.75;color:var(--fg-2);grid-column:2}
 .reveal{opacity:0;transform:translateY(52px);transition:opacity .7s cubic-bezier(0.22,1,0.36,1),transform .7s cubic-bezier(0.22,1,0.36,1)}
 .reveal.in{opacity:1;transform:none}
+.hero-l{position:relative}
+.scroll-hint{position:absolute;bottom:36px;left:60px;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:0;animation:shAppear .5s ease 2.2s forwards;pointer-events:none;transition:opacity .4s}
+.scroll-hint.hide{opacity:0!important}
+.scroll-hint-label{font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.scroll-hint-arrow{animation:shBounce 1.5s ease-in-out 2.2s infinite}
+@keyframes shAppear{to{opacity:1}}
+@keyframes shBounce{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(8px);opacity:.9}}
+@media(max-width:820px){.scroll-hint{left:28px;bottom:28px}}
 @media(max-width:820px){
   .hero{grid-template-columns:1fr}.hero-l{padding:60px 28px 80px}.hero-r{display:none}
   .wrap{padding:72px 28px}.pain-grid,.steps-grid{grid-template-columns:1fr}
@@ -437,7 +445,15 @@ export default function LandingPage() {
     }
     initReveal();
 
-    return () => { aborted = true; };
+    /* 스크롤하면 scroll-hint 사라짐 */
+    const hint = document.getElementById('scroll-hint');
+    const onScroll = () => { if (hint && window.scrollY > 60) hint.classList.add('hide'); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      aborted = true;
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (
@@ -475,6 +491,12 @@ export default function LandingPage() {
             </svg>
           </Link>
           <p className="hero-note">회원가입 필요 · 무료 · 광고 없음</p>
+          <div className="scroll-hint" id="scroll-hint">
+            <span className="scroll-hint-label">scroll</span>
+            <svg className="scroll-hint-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
         </div>
 
         <div className="hero-r">
