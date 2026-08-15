@@ -174,6 +174,112 @@ function ReviewRow({
   );
 }
 
+/* ── 레이더 차트 ── */
+const RADAR_SHORT: Record<string, string> = {
+  "데이터 모델링 기초":      "모델링",
+  "데이터 모델과 SQL":       "모델SQL",
+  "SELECT & WHERE":          "SELECT",
+  "함수":                    "함수",
+  "GROUP BY & ORDER BY":     "GROUP BY",
+  "조인":                    "조인",
+  "서브쿼리 & Top N":        "서브쿼리",
+  "집합 연산자 & 그룹 함수": "집합/그룹",
+  "윈도우 함수":             "윈도우",
+  "SQL 활용 기타":           "SQL기타",
+  "관리 구문":               "관리구문",
+};
+
+function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
+  const n = ALL_CATEGORIES.length;
+  const cx = 120, cy = 108, maxR = 78, labelR = 100;
+
+  const toAngle = (i: number) => (i / n) * 2 * Math.PI - Math.PI / 2;
+  const pt = (i: number, r: number): [number, number] => [
+    cx + r * Math.cos(toAngle(i)),
+    cy + r * Math.sin(toAngle(i)),
+  ];
+
+  const points = ALL_CATEGORIES.map((cat) => {
+    const stat  = catMap[cat];
+    const tried = (stat?.attempts ?? 0) > 0;
+    const pct   = tried ? (stat?.accuracy ?? 0) : 0;
+    return { cat, tried, pct };
+  });
+
+  const dataPolygon = points
+    .map((d, i) => pt(i, d.pct * maxR).join(","))
+    .join(" ");
+
+  const hasAnyData = points.some((d) => d.tried);
+
+  return (
+    <svg width="100%" viewBox="0 0 240 210" style={{ overflow: "visible", display: "block" }}>
+      {/* 배경 링 */}
+      {[0.2, 0.4, 0.6, 0.8, 1].map((r, ri) => (
+        <polygon
+          key={ri}
+          points={ALL_CATEGORIES.map((_, i) => pt(i, r * maxR).join(",")).join(" ")}
+          fill="none"
+          stroke="rgba(255,255,255,0.11)"
+          strokeWidth="1"
+        />
+      ))}
+
+      {/* 스포크 */}
+      {ALL_CATEGORIES.map((_, i) => {
+        const [x2, y2] = pt(i, maxR);
+        return (
+          <line key={i} x1={cx} y1={cy} x2={x2} y2={y2}
+            stroke="rgba(255,255,255,0.11)" strokeWidth="1" />
+        );
+      })}
+
+      {/* 데이터 다각형 */}
+      <polygon
+        points={dataPolygon}
+        fill="rgba(255,255,255,0.18)"
+        stroke={hasAnyData ? "rgba(255,255,255,0.82)" : "transparent"}
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+
+      {/* 꼭짓점 점 */}
+      {points.map((d, i) => {
+        if (!d.tried || d.pct === 0) return null;
+        const [x, y] = pt(i, d.pct * maxR);
+        return <circle key={i} cx={x} cy={y} r="3" fill="white" />;
+      })}
+
+      {/* 라벨 */}
+      {points.map((d, i) => {
+        const [x, y] = pt(i, labelR);
+        return (
+          <text
+            key={i}
+            x={x} y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={d.tried ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.30)"}
+            fontSize="8"
+            fontWeight={d.tried ? "600" : "400"}
+            fontFamily="system-ui, sans-serif"
+          >
+            {RADAR_SHORT[d.cat] ?? d.cat}
+          </text>
+        );
+      })}
+
+      {/* 데이터 없을 때 안내 */}
+      {!hasAnyData && (
+        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle"
+          fill="rgba(255,255,255,0.28)" fontSize="9" fontFamily="system-ui, sans-serif">
+          문제를 풀면 표시됩니다
+        </text>
+      )}
+    </svg>
+  );
+}
+
 export default function HomePage() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [data, setData] = useState<ProgressData | null>(null);
@@ -197,7 +303,6 @@ export default function HomePage() {
   const [inquiryMsg, setInquiryMsg] = useState("");
   const [inquiryLoading, setInquiryLoading] = useState(false);
   const [inquiryResult, setInquiryResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [showAllCats, setShowAllCats] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -687,40 +792,10 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* 카테고리 정답률 (접기/펼치기) */}
-              <div className="border-t border-white/15">
-                <button
-                  onClick={() => setShowAllCats((v) => !v)}
-                  className="w-full flex items-center justify-between py-2.5"
-                >
-                  <span className="text-xs font-bold text-white/50 uppercase tracking-widest">카테고리 정답률 (11개)</span>
-                  <span className="text-xs text-white/35">{showAllCats ? "▴ 접기" : "▾ 펼치기"}</span>
-                </button>
-                <div className="space-y-2.5 pb-3">
-                  {(showAllCats ? ALL_CATEGORIES : weakCats.map((c) => c.category)).map((cat) => {
-                    const entry = catMap[cat];
-                    const pct = entry ? Math.round(entry.accuracy * 100) : null;
-                    return (
-                      <div key={cat}>
-                        <div className="flex justify-between text-xs text-white/65 mb-1">
-                          <span className="truncate mr-2">{cat}</span>
-                          <span className={`font-bold shrink-0 ${pct !== null && pct < 50 ? "text-red-300" : ""}`}>
-                            {pct !== null ? `${pct}%` : "—"}
-                          </span>
-                        </div>
-                        <div className="h-[2px] bg-white/18 relative">
-                          <div
-                            className="absolute top-0 left-0 h-full bg-white/65 transition-all duration-500"
-                            style={{ width: pct !== null ? `${pct}%` : "0%" }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {!showAllCats && weakCats.length === 0 && (
-                    <p className="text-xs text-white/35 pb-1">문제를 풀면 카테고리 현황이 표시됩니다.</p>
-                  )}
-                </div>
+              {/* 카테고리 정답률 — 레이더 차트 */}
+              <div className="border-t border-white/15 pt-3">
+                <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-1">카테고리 정답률</p>
+                <RadarChart catMap={catMap} />
               </div>
             </>
           )}
