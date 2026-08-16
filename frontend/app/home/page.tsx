@@ -795,7 +795,7 @@ export default function HomePage() {
               {/* 카테고리 정답률 — 레이더 차트 */}
               <div className="border-t border-white/15 pt-3">
                 <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-2">카테고리 정답률</p>
-                <div style={{ height: "clamp(180px, calc(100vh - 520px), 340px)" }}>
+                <div style={{ height: "clamp(140px, calc(100vh - 670px), 210px)" }}>
                   <RadarChart catMap={catMap} />
                 </div>
               </div>
