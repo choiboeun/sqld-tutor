@@ -213,7 +213,7 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
   const hasAnyData = points.some((d) => d.tried);
 
   return (
-    <svg width="100%" height="100%" viewBox="0 0 280 190" preserveAspectRatio="xMidYMid meet" style={{ overflow: "visible", display: "block" }}>
+    <svg width="100%" height="100%" viewBox="0 0 280 190" style={{ overflow: "visible", display: "block" }}>
       {/* 배경 링 */}
       {[0.2, 0.4, 0.6, 0.8, 1].map((r, ri) => (
         <polygon
@@ -793,9 +793,9 @@ export default function HomePage() {
               </div>
 
               {/* 카테고리 정답률 — 레이더 차트 */}
-              <div className="border-t border-white/15 pt-3 flex-1 min-h-0 flex flex-col">
+              <div className="border-t border-white/15 pt-3">
                 <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-2">카테고리 정답률</p>
-                <div className="flex-1 min-h-0">
+                <div style={{ height: "clamp(180px, calc(100vh - 520px), 340px)" }}>
                   <RadarChart catMap={catMap} />
                 </div>
               </div>
