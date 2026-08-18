@@ -939,8 +939,8 @@ export default function HomePage() {
                           width: "20px", height: "20px", borderRadius: "6px", flexShrink: 0,
                           marginTop: "1px", fontSize: "10px", fontWeight: 800, letterSpacing: ".04em",
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          background: task.id === "review" ? "#fff1f1" : "#eef2ff",
-                          color: task.id === "review" ? "#f87171" : "#818cf8",
+                          background: task.id === "review" ? "#fffbeb" : "#eef2ff",
+                          color: task.id === "review" ? "#d97706" : "#818cf8",
                         }}
                       >
                         {task.id === "review" ? "!" : String(i).padStart(2, "0")}
@@ -958,7 +958,7 @@ export default function HomePage() {
                           padding: "6px 14px",
                           fontSize: "10px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase",
                           color: "#fff",
-                          background: task.id === "review" ? "#ef4444" : "#4f46e5",
+                          background: task.id === "review" ? "#f59e0b" : "#4f46e5",
                           display: "inline-block",
                           transition: "transform .15s, box-shadow .15s",
                         }}
