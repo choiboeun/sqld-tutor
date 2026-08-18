@@ -130,7 +130,7 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
       {/* 요일 헤더 */}
       <div className="grid grid-cols-7 mb-1">
         {DAYS.map(d => (
-          <div key={d} className="text-center text-[10px] font-semibold text-stone-300">{d}</div>
+          <div key={d} className="text-center text-[10px] font-semibold text-stone-400">{d}</div>
         ))}
       </div>
 
@@ -158,11 +158,11 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
 
       {/* 범례 */}
       <div className="flex items-center gap-2 mt-3">
-        <span className="text-[10px] text-stone-300 font-medium">적음</span>
+        <span className="text-[10px] text-stone-400 font-medium">적음</span>
         {["#e0e7ff","#c7d2fe","#818cf8","#4f46e5"].map(bg => (
           <div key={bg} style={{ width: "12px", height: "12px", borderRadius: "3px", background: bg }} />
         ))}
-        <span className="text-[10px] text-stone-300 font-medium">많음</span>
+        <span className="text-[10px] text-stone-400 font-medium">많음</span>
       </div>
     </div>
   );
