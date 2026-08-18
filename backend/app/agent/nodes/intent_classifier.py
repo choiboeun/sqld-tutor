@@ -26,8 +26,11 @@ def intent_classifier(state: TutorState) -> dict:
     pending = state.get("pending_question") or {}
 
     # pending 중에는 숫자/비숫자 모두 drill로 강제
-    # 비숫자 입력은 drill_node가 "현재 문제에 먼저 답해주세요" 안내 처리
+    # 단, "X 문제 줘" 같은 명시적 새 문제 요청은 pending 해제 후 drill로 전환
+    # (홈에서 카테고리 버튼 클릭 시 pending에 막히는 버그 방지)
     if pending:
+        if _DRILL_EXPLICIT.search(text) and not _REVIEW.search(text):
+            return {"current_mode": "drill", "pending_question": {}}
         prior = state.get("current_mode", "drill")
         mode = prior if prior in ("drill", "review") else "drill"
         return {"current_mode": mode}
