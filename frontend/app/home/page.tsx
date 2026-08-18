@@ -831,14 +831,33 @@ export default function HomePage() {
         </div>
 
         {/* ── 학습 캘린더 + 오늘 할 일 ── */}
-        <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-2 gap-8">
-
+        <div
+          className="mt-8 pt-6 border-t border-stone-200 grid gap-0"
+          style={{ gridTemplateColumns: "1fr 1px 1fr" }}
+        >
           {/* 학습 캘린더 */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-stone-500">학습 캘린더</p>
-              <p className="text-sm text-stone-300">최근 13주</p>
-            </div>
+          <div className="pr-10">
+            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
+              학습 캘린더
+            </p>
+
+            {/* 스트릭 배지 */}
+            {streak > 0 && (
+              <div className="flex items-center gap-3 mb-4">
+                <span
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    background: "linear-gradient(135deg,#4f46e5,#818cf8)",
+                    color: "#fff", fontSize: "11px", fontWeight: 800, letterSpacing: ".04em",
+                    padding: "5px 14px", borderRadius: "999px",
+                  }}
+                >
+                  🔥 <span style={{ fontSize: "16px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
+                </span>
+                <span className="text-[10px] text-stone-400 font-medium">어제도 학습했어요</span>
+              </div>
+            )}
+
             {calendarData ? (
               <CalendarHeatmap dates={calendarData.dates} />
             ) : (
@@ -846,43 +865,79 @@ export default function HomePage() {
                 {Array.from({ length: 14 }).map((_, wi) => (
                   <div key={wi} className="flex flex-col gap-2">
                     {Array.from({ length: 7 }).map((_, di) => (
-                      <div key={di} className="w-5 h-5 bg-stone-100" />
+                      <div key={di} className="w-3 h-3 bg-stone-100 rounded-sm" />
                     ))}
                   </div>
                 ))}
               </div>
             )}
-            <div className="flex items-center gap-2 mt-3">
-              <span className="text-xs text-stone-400">적음</span>
-              <div className="w-5 h-5 bg-stone-100" />
-              <div className="w-5 h-5 bg-indigo-200" />
-              <div className="w-5 h-5 bg-indigo-400" />
-              <div className="w-5 h-5 bg-indigo-500" />
-              <span className="text-xs text-stone-400">많음</span>
+            <div className="flex items-center gap-1.5 mt-3">
+              <span style={{ fontSize: "9px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>적음</span>
+              {["#f0edfb","#c7d2fe","#818cf8","#4f46e5"].map((c) => (
+                <div key={c} style={{ width: "10px", height: "10px", borderRadius: "2px", background: c }} />
+              ))}
+              <span style={{ fontSize: "9px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>많음</span>
             </div>
           </div>
 
+          {/* 세로 구분선 */}
+          <div style={{ background: "#ede9fe", margin: "0 40px" }} />
+
           {/* 오늘 할 일 */}
           <div>
-            <p className="text-sm font-semibold text-stone-500 mb-3">오늘 할 일</p>
+            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
+              오늘 할 일
+            </p>
+
+            {todayTasks.length > 0 && (
+              <div className="flex items-baseline gap-2 mb-5">
+                <span style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>
+                  {todayTasks.length}
+                </span>
+                <span style={{ fontSize: "11px", color: "#a8a29e", fontWeight: 500 }}>가지 남았어요</span>
+              </div>
+            )}
+
             {todayTasks.length === 0 ? (
-              <p className="text-xs text-stone-400 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
+              <p style={{ fontSize: "12px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".01em", padding: "16px 0" }}>
+                문제를 풀면 맞춤 목표가 생성됩니다.
+              </p>
             ) : (
-              <div className="space-y-2">
-                {todayTasks.map((task) => (
+              <div>
+                {todayTasks.map((task, i) => (
                   <div
                     key={task.id}
-                    className={`flex items-center gap-3 px-3 py-2.5 bg-white border border-stone-100 border-l-2 ${
-                      task.id === "review" ? "border-l-red-400" : "border-l-indigo-300"
-                    }`}
+                    className="flex items-start gap-3.5"
+                    style={{ padding: "13px 0", borderBottom: i < todayTasks.length - 1 ? "1px solid #f5f4f2" : "none" }}
                   >
+                    <div
+                      style={{
+                        width: "20px", height: "20px", borderRadius: "6px", flexShrink: 0,
+                        marginTop: "1px", fontSize: "8.5px", fontWeight: 800, letterSpacing: ".04em",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        background: task.id === "review" ? "#fff1f1" : "#eef2ff",
+                        color: task.id === "review" ? "#f87171" : "#818cf8",
+                      }}
+                    >
+                      {task.id === "review" ? "!" : String(i).padStart(2, "0")}
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-stone-800 leading-snug">{task.title}</p>
-                      <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">{task.sub}</p>
+                      <p style={{ fontSize: "13px", fontWeight: 700, color: "#1c1917", letterSpacing: "-.01em", marginBottom: "2px" }}>
+                        {task.title}
+                      </p>
+                      <p style={{ fontSize: "10.5px", color: "#a8a29e", fontWeight: 500 }}>{task.sub}</p>
                     </div>
                     <Link
                       href={task.href}
-                      className="shrink-0 text-[10px] font-bold tracking-wide bg-indigo-600 text-white px-3 py-1.5 hover:bg-indigo-700 transition-colors whitespace-nowrap"
+                      className="shrink-0 relative overflow-hidden group"
+                      style={{
+                        padding: "6px 14px",
+                        fontSize: "9px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase",
+                        color: "#fff",
+                        background: task.id === "review" ? "#ef4444" : "#4f46e5",
+                        display: "inline-block",
+                        transition: "transform .15s, box-shadow .15s",
+                      }}
                     >
                       시작
                     </Link>
@@ -891,7 +946,6 @@ export default function HomePage() {
               </div>
             )}
           </div>
-
         </div>
 
       </div>
