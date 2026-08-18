@@ -758,187 +758,195 @@ export default function HomePage() {
       {/* ── 오른쪽 패널 (흰색) ── */}
       <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10">
 
-        {/* 바로 시작 */}
-        <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-3">바로 시작</p>
+        {/* ── 전체 2열 레이아웃 ── */}
+        <div className="grid grid-cols-2 gap-8 items-start">
 
-        <div className="grid grid-cols-2 gap-2.5">
-          {/* AI 학습 — 2행 점유 */}
-          <Link
-            href="/chat"
-            className="row-span-2 flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
-          >
-            <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-              </svg>
-            </div>
-            <p className="text-[15px] font-bold text-stone-900">AI 학습</p>
-            <p className="text-sm text-indigo-500 mt-1">{totalAnswered}문제 풀이 중</p>
-            <div className="mt-auto pt-5">
-              <span className="inline-flex items-center bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-full">
-                이어서 학습 →
-              </span>
-            </div>
-          </Link>
+          {/* ── 왼쪽: 바로 시작 ── */}
+          <div className="flex flex-col gap-2.5">
+            <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
 
-          {/* 오답 회고 */}
-          <Link
-            href="/wrong-answers"
-            className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
-          >
-            <div className="w-9 h-9 bg-red-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
-            </div>
-            <p className="text-[15px] font-bold text-stone-900">오답 회고</p>
-            <p className={`text-sm mt-1 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
-              {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
-            </p>
-            {wrongCount > 0 && (
-              <div className="mt-auto pt-3">
-                <span className="inline-flex items-center bg-red-50 text-red-600 text-xs font-bold px-3 py-1.5 rounded-full">
-                  {wrongCount}개
+            {/* AI 학습 — 전체 너비 */}
+            <Link
+              href="/chat"
+              className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+            >
+              <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                </svg>
+              </div>
+              <p className="text-[15px] font-bold text-stone-900">AI 학습</p>
+              <p className="text-sm text-indigo-500 mt-1">{totalAnswered}문제 풀이 중</p>
+              <div className="mt-4">
+                <span className="inline-flex items-center bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-full">
+                  이어서 학습 →
                 </span>
               </div>
-            )}
-          </Link>
+            </Link>
 
-          {/* 모의고사 */}
-          <Link
-            href="/exam"
-            className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
-          >
-            <div className="w-9 h-9 bg-indigo-400 rounded-xl flex items-center justify-center mb-3 shrink-0">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-            </div>
-            <p className="text-[15px] font-bold text-stone-900">모의고사</p>
-            <p className="text-sm text-stone-400 mt-1">50문제 · 90분 · 실전 배점</p>
-            <div className="mt-auto pt-3">
-              <span className="inline-flex items-center bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full">
-                도전
-              </span>
-            </div>
-          </Link>
-        </div>
-
-        {/* ── 학습 캘린더 + 오늘 할 일 ── */}
-        <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-2 gap-0">
-          {/* 학습 캘린더 */}
-          <div className="pr-10 border-r border-[#ede9fe]">
-            <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
-              학습 캘린더
-            </p>
-
-            {/* 스트릭 배지 */}
-            {streak > 0 && (
-              <div className="flex items-center gap-3 mb-4">
-                <span
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "6px",
-                    background: "linear-gradient(135deg,#4f46e5,#818cf8)",
-                    color: "#fff", fontSize: "12px", fontWeight: 800, letterSpacing: ".04em",
-                    padding: "5px 14px", borderRadius: "999px",
-                  }}
-                >
-                  🔥 <span style={{ fontSize: "17px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
-                </span>
-                <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
-              </div>
-            )}
-
-            {calendarData ? (
-              <CalendarHeatmap dates={calendarData.dates} />
-            ) : (
-              <div className="flex gap-2 animate-pulse">
-                {Array.from({ length: 14 }).map((_, wi) => (
-                  <div key={wi} className="flex flex-col gap-2">
-                    {Array.from({ length: 7 }).map((_, di) => (
-                      <div key={di} className="w-3 h-3 bg-stone-100 rounded-sm" />
-                    ))}
+            {/* 오답 회고 + 모의고사 — 나란히 */}
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* 오답 회고 */}
+              <Link
+                href="/wrong-answers"
+                className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              >
+                <div className="w-9 h-9 bg-red-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                </div>
+                <p className="text-[15px] font-bold text-stone-900">오답 회고</p>
+                <p className={`text-sm mt-1 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
+                  {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
+                </p>
+                {wrongCount > 0 && (
+                  <div className="mt-auto pt-3">
+                    <span className="inline-flex items-center bg-red-50 text-red-600 text-xs font-bold px-3 py-1.5 rounded-full">
+                      {wrongCount}개
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-            <div className="flex items-center gap-1.5 mt-3">
-              <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>적음</span>
-              {["#f0edfb","#c7d2fe","#818cf8","#4f46e5"].map((c) => (
-                <div key={c} style={{ width: "11px", height: "11px", borderRadius: "2px", background: c }} />
-              ))}
-              <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>많음</span>
+                )}
+              </Link>
+
+              {/* 모의고사 */}
+              <Link
+                href="/exam"
+                className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              >
+                <div className="w-9 h-9 bg-indigo-400 rounded-xl flex items-center justify-center mb-3 shrink-0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </div>
+                <p className="text-[15px] font-bold text-stone-900">모의고사</p>
+                <p className="text-sm text-stone-400 mt-1">50문제 · 90분 · 실전 배점</p>
+                <div className="mt-auto pt-3">
+                  <span className="inline-flex items-center bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full">
+                    도전
+                  </span>
+                </div>
+              </Link>
             </div>
           </div>
 
-          {/* 오늘 할 일 */}
-          <div className="pl-10">
-            <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
-              오늘 할 일
-            </p>
+          {/* ── 오른쪽: 학습 캘린더 + 오늘 할 일 ── */}
+          <div className="flex flex-col gap-8">
 
-            {todayTasks.length > 0 && (
-              <div className="flex items-baseline gap-2 mb-5">
-                <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>
-                  {todayTasks.length}
-                </span>
-                <span style={{ fontSize: "12px", color: "#a8a29e", fontWeight: 500 }}>가지 남았어요</span>
-              </div>
-            )}
-
-            {todayTasks.length === 0 ? (
-              <p style={{ fontSize: "13px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".01em", padding: "16px 0" }}>
-                문제를 풀면 맞춤 목표가 생성됩니다.
+            {/* 학습 캘린더 */}
+            <div>
+              <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
+                학습 캘린더
               </p>
-            ) : (
-              <div>
-                {todayTasks.map((task, i) => (
-                  <div
-                    key={task.id}
-                    className="flex items-start gap-3.5"
-                    style={{ padding: "13px 0", borderBottom: i < todayTasks.length - 1 ? "1px solid #f5f4f2" : "none" }}
+
+              {streak > 0 && (
+                <div className="flex items-center gap-3 mb-4">
+                  <span
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                      background: "linear-gradient(135deg,#4f46e5,#818cf8)",
+                      color: "#fff", fontSize: "12px", fontWeight: 800, letterSpacing: ".04em",
+                      padding: "5px 14px", borderRadius: "999px",
+                    }}
                   >
-                    <div
-                      style={{
-                        width: "20px", height: "20px", borderRadius: "6px", flexShrink: 0,
-                        marginTop: "1px", fontSize: "10px", fontWeight: 800, letterSpacing: ".04em",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        background: task.id === "review" ? "#fff1f1" : "#eef2ff",
-                        color: task.id === "review" ? "#f87171" : "#818cf8",
-                      }}
-                    >
-                      {task.id === "review" ? "!" : String(i).padStart(2, "0")}
+                    🔥 <span style={{ fontSize: "17px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
+                  </span>
+                  <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
+                </div>
+              )}
+
+              {calendarData ? (
+                <CalendarHeatmap dates={calendarData.dates} />
+              ) : (
+                <div className="flex gap-2 animate-pulse">
+                  {Array.from({ length: 14 }).map((_, wi) => (
+                    <div key={wi} className="flex flex-col gap-2">
+                      {Array.from({ length: 7 }).map((_, di) => (
+                        <div key={di} className="w-3 h-3 bg-stone-100 rounded-sm" />
+                      ))}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p style={{ fontSize: "14px", fontWeight: 700, color: "#1c1917", letterSpacing: "-.01em", marginBottom: "2px" }}>
-                        {task.title}
-                      </p>
-                      <p style={{ fontSize: "12px", color: "#a8a29e", fontWeight: 500 }}>{task.sub}</p>
-                    </div>
-                    <Link
-                      href={task.href}
-                      className="shrink-0 relative overflow-hidden group"
-                      style={{
-                        padding: "6px 14px",
-                        fontSize: "10px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase",
-                        color: "#fff",
-                        background: task.id === "review" ? "#ef4444" : "#4f46e5",
-                        display: "inline-block",
-                        transition: "transform .15s, box-shadow .15s",
-                      }}
-                    >
-                      시작
-                    </Link>
-                  </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-1.5 mt-3">
+                <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>적음</span>
+                {["#f0edfb","#c7d2fe","#818cf8","#4f46e5"].map((c) => (
+                  <div key={c} style={{ width: "11px", height: "11px", borderRadius: "2px", background: c }} />
                 ))}
+                <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>많음</span>
               </div>
-            )}
+            </div>
+
+            {/* 오늘 할 일 */}
+            <div>
+              <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
+                오늘 할 일
+              </p>
+
+              {todayTasks.length > 0 && (
+                <div className="flex items-baseline gap-2 mb-5">
+                  <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>
+                    {todayTasks.length}
+                  </span>
+                  <span style={{ fontSize: "12px", color: "#a8a29e", fontWeight: 500 }}>가지 남았어요</span>
+                </div>
+              )}
+
+              {todayTasks.length === 0 ? (
+                <p style={{ fontSize: "13px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".01em", padding: "16px 0" }}>
+                  문제를 풀면 맞춤 목표가 생성됩니다.
+                </p>
+              ) : (
+                <div>
+                  {todayTasks.map((task, i) => (
+                    <div
+                      key={task.id}
+                      className="flex items-start gap-3.5"
+                      style={{ padding: "13px 0", borderBottom: i < todayTasks.length - 1 ? "1px solid #f5f4f2" : "none" }}
+                    >
+                      <div
+                        style={{
+                          width: "20px", height: "20px", borderRadius: "6px", flexShrink: 0,
+                          marginTop: "1px", fontSize: "10px", fontWeight: 800, letterSpacing: ".04em",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          background: task.id === "review" ? "#fff1f1" : "#eef2ff",
+                          color: task.id === "review" ? "#f87171" : "#818cf8",
+                        }}
+                      >
+                        {task.id === "review" ? "!" : String(i).padStart(2, "0")}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p style={{ fontSize: "14px", fontWeight: 700, color: "#1c1917", letterSpacing: "-.01em", marginBottom: "2px" }}>
+                          {task.title}
+                        </p>
+                        <p style={{ fontSize: "12px", color: "#a8a29e", fontWeight: 500 }}>{task.sub}</p>
+                      </div>
+                      <Link
+                        href={task.href}
+                        className="shrink-0 relative overflow-hidden group"
+                        style={{
+                          padding: "6px 14px",
+                          fontSize: "10px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase",
+                          color: "#fff",
+                          background: task.id === "review" ? "#ef4444" : "#4f46e5",
+                          display: "inline-block",
+                          transition: "transform .15s, box-shadow .15s",
+                        }}
+                      >
+                        시작
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
 
