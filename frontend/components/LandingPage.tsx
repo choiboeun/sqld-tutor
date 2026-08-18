@@ -8,13 +8,13 @@ const CSS = `
 :root[data-theme="dark"]{--fg:#f5f4f3;--fg-2:#a8a29e;--fg-3:#78716c;--bg:#1c1917;--bg-2:#252220;--bd:#3a3330;--badge-cat-bg:rgba(129,140,248,.18);--badge-cat-fg:#a5b4fc;--badge-dif-bg:rgba(22,163,74,.15);--badge-dif-fg:#4ade80;--ok-bg:rgba(22,163,74,.12);--ok-bd:#22c55e;--ok-fg:#4ade80}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 .lp-root{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
-.nav{position:sticky;top:0;z-index:100;height:52px;background:var(--accent);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
-.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;text-shadow:0 1px 6px rgba(60,0,120,.5)}
-.nav-icon{width:24px;height:24px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center}
+.nav{position:sticky;top:0;z-index:100;height:52px;background:#dde1fb;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid rgba(129,140,248,.2)}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#3730a3}
+.nav-icon{width:24px;height:24px;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center}
 .nav-name{font-size:15px;font-weight:700;letter-spacing:-.01em}
-.nav-login{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;padding:5px 14px;border:1px solid rgba(255,255,255,.35);transition:background .15s;text-shadow:0 1px 5px rgba(60,0,120,.45)}
-.nav-login:hover{background:rgba(255,255,255,.15);color:#fff}
-.nav.glass{background:rgba(129,140,248,.18);backdrop-filter:blur(18px) saturate(200%);-webkit-backdrop-filter:blur(18px) saturate(200%);box-shadow:0 1px 0 rgba(129,140,248,.22),0 4px 28px rgba(79,70,229,.08)}
+.nav-login{font-size:12px;font-weight:600;color:#4f46e5;text-decoration:none;padding:5px 14px;border:1px solid rgba(99,102,241,.35);transition:background .15s,color .15s}
+.nav-login:hover{background:rgba(99,102,241,.1);color:#3730a3}
+.nav.glass{background:rgba(221,225,251,.75);backdrop-filter:blur(18px) saturate(200%);-webkit-backdrop-filter:blur(18px) saturate(200%);box-shadow:0 1px 0 rgba(129,140,248,.2),0 4px 28px rgba(79,70,229,.06)}
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 52px)}
 .hero-l{background:var(--accent);padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:28px;text-shadow:0 1px 6px rgba(60,0,120,.55)}
@@ -499,7 +499,7 @@ export default function LandingPage() {
       <nav className="nav">
         <Link className="nav-brand" href="/">
           <div className="nav-icon">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
             </svg>
           </div>
