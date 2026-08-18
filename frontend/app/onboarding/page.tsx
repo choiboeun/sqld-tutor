@@ -36,8 +36,8 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
-      {/* 상단 amber 브랜드 바 */}
-      <div className="bg-amber-600 px-6 py-3.5 flex items-center gap-3">
+      {/* 상단 인디고 브랜드 바 */}
+      <div className="px-6 py-3.5 flex items-center gap-3" style={{ background: "#6366f1" }}>
         <div className="w-6 h-6 bg-white/20 flex items-center justify-center shrink-0">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
@@ -66,8 +66,8 @@ export default function OnboardingPage() {
                 onClick={() => setTargetScore(value)}
                 className={`text-left p-5 border-[1.5px] transition-all duration-150 ${
                   targetScore === value
-                    ? "border-amber-600 bg-amber-600"
-                    : "border-stone-200 bg-white hover:border-amber-400 hover:-translate-y-0.5 hover:shadow-md"
+                    ? "border-indigo-500 bg-indigo-500"
+                    : "border-stone-200 bg-white hover:border-indigo-400 hover:-translate-y-0.5 hover:shadow-md"
                 }`}
               >
                 <span className={`text-[9px] font-bold tracking-widest uppercase block mb-2 ${
@@ -96,7 +96,7 @@ export default function OnboardingPage() {
           <button
             onClick={handleStart}
             disabled={!targetScore || loading}
-            className="w-full bg-amber-600 text-white py-3.5 text-sm font-bold tracking-wide uppercase hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full text-white py-3.5 text-sm font-bold tracking-wide uppercase disabled:opacity-40 disabled:cursor-not-allowed transition-colors" style={{ background: "#6366f1" }}
           >
             {loading ? "준비 중..." : "시작하기 →"}
           </button>
