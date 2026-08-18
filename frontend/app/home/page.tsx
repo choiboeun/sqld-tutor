@@ -761,9 +761,9 @@ export default function HomePage() {
             {/* AI 학습 */}
             <Link
               href="/chat"
-              className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-none p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
+              <div className="w-9 h-9 bg-indigo-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
@@ -780,9 +780,9 @@ export default function HomePage() {
             {/* 오답 회고 */}
             <Link
               href="/wrong-answers"
-              className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <div className="w-9 h-9 bg-red-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
+              <div className="w-9 h-9 bg-red-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                   <polyline points="14 2 14 8 20 8"/>
@@ -806,9 +806,9 @@ export default function HomePage() {
             {/* 모의고사 */}
             <Link
               href="/exam"
-              className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <div className="w-9 h-9 bg-indigo-400 rounded-xl flex items-center justify-center mb-3 shrink-0">
+              <div className="w-9 h-9 bg-indigo-400 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2"/>
                   <line x1="16" y1="2" x2="16" y2="6"/>
@@ -826,7 +826,7 @@ export default function HomePage() {
             </Link>
 
             {/* 카테고리 정답률 — 레이더 차트 */}
-            <div className="bg-white border border-stone-100 rounded-2xl p-5">
+            <div className="bg-white border border-stone-100 rounded-none p-5">
               <p className="text-[15px] font-bold text-stone-800 mb-3">카테고리 정답률</p>
               <div className="relative" style={{ minHeight: "220px" }}>
                 <RadarChart catMap={catMap} />
@@ -838,7 +838,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-4">
 
             {/* 학습 캘린더 카드 */}
-            <div className="bg-white border border-stone-100 rounded-2xl p-5">
+            <div className="bg-white border border-stone-100 rounded-none p-5">
               <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
 
               {streak > 0 && (
@@ -880,7 +880,7 @@ export default function HomePage() {
             </div>
 
             {/* 오늘 할 일 카드 — flex-1으로 남은 공간 채움 */}
-            <div className="flex-1 bg-white border border-stone-100 rounded-2xl p-5">
+            <div className="flex-1 bg-white border border-stone-100 rounded-none p-5">
               <p className="text-[15px] font-bold text-stone-800 mb-4">오늘 할 일</p>
 
               {todayTasks.length > 0 && (
