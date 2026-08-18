@@ -69,13 +69,13 @@ export default function LoginPage() {
         el.style.transform = `translate(${(mx - 0.5) * spd * 24}px,${(my - 0.5) * spd * 15}px) rotate(${rot}deg)`;
       });
       if (leftBgRef.current) {
-        leftBgRef.current.style.background = `radial-gradient(ellipse 600px 420px at ${(mx * 100).toFixed(1)}% ${(my * 100).toFixed(1)}%,rgba(129,140,248,.1) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at ${(mx * 40 + 55).toFixed(1)}% ${(my * 40 + 55).toFixed(1)}%,rgba(168,162,158,.05) 0%,transparent 58%)`;
+        leftBgRef.current.style.background = `radial-gradient(ellipse 520px 380px at ${(mx * 100).toFixed(1)}% ${(my * 100).toFixed(1)}%,rgba(129,140,248,.28) 0%,transparent 58%),radial-gradient(ellipse 380px 280px at ${(mx * 40 + 55).toFixed(1)}% ${(my * 40 + 55).toFixed(1)}%,rgba(168,162,158,.08) 0%,transparent 55%)`;
       }
     };
     const onLeave = () => {
       frags.forEach(({ el, rot }) => { el.style.transform = `rotate(${rot}deg)`; });
       if (leftBgRef.current) {
-        leftBgRef.current.style.background = "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(129,140,248,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)";
+        leftBgRef.current.style.background = "radial-gradient(ellipse 520px 380px at 22% 32%,rgba(129,140,248,.16) 0%,transparent 58%),radial-gradient(ellipse 380px 280px at 80% 72%,rgba(168,162,158,.06) 0%,transparent 55%)";
       }
     };
     leftEl.addEventListener("mousemove", onMove);
@@ -121,19 +121,19 @@ export default function LoginPage() {
         .login-chip:hover{background:#6366f1;color:#fff;border-color:#6366f1;transform:translateY(-2px);box-shadow:0 4px 14px rgba(99,102,241,.28)}
         .login-submit{position:relative;overflow:hidden;transition:background .15s,transform .15s,box-shadow .15s}
         .login-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform .48s ease}
-        .login-submit:hover:not(:disabled){background:#4f46e5!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.32)}
+        .login-submit:hover:not(:disabled){background:#4f46e5!important;color:#fff!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.32)}
         .login-submit:hover:not(:disabled)::after{transform:translateX(100%)}
         .login-submit:active:not(:disabled){transform:translateY(0)}
         .login-right::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 85% 15%,rgba(255,255,255,.26) 0%,transparent 55%),radial-gradient(circle,rgba(255,255,255,.14) 1.2px,transparent 1.2px);background-size:100% 100%,22px 22px}
         .login-eye:hover{color:#78716c}
-        .login-fl-input{width:100%;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);padding:20px 14px 7px;font-size:13.5px;color:#fff;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
+        .login-fl-input{width:100%;border:1.5px solid #d6d3d1;background:#fafaf9;padding:20px 14px 7px;font-size:13.5px;color:#1c1917;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
         .login-fl-input::placeholder{color:transparent}
-        .login-fl-input:focus{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(255,255,255,.1)}
-        .login-fl-label{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:rgba(255,255,255,.5);pointer-events:none;transition:all .18s ease}
-        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85)}
-        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px rgba(120,80,220,.3) inset;-webkit-text-fill-color:#fff;transition:background-color 5000s ease-in-out 0s}
-        .login-signup-link{color:rgba(255,255,255,.9);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);transition:border-color .15s}
-        .login-signup-link:hover{border-bottom-color:rgba(255,255,255,.8)}
+        .login-fl-input:focus{border-color:#818cf8;background:#fff;box-shadow:0 0 0 3px rgba(129,140,248,.15)}
+        .login-fl-label{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:#a8a29e;pointer-events:none;transition:all .18s ease}
+        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#818cf8}
+        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fafaf9 inset;-webkit-text-fill-color:#1c1917;transition:background-color 5000s ease-in-out 0s}
+        .login-signup-link{color:#6366f1;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(99,102,241,.3);transition:border-color .15s}
+        .login-signup-link:hover{border-bottom-color:#6366f1}
         @media(max-width:680px){
           .login-page{flex-direction:column!important}
           .login-left{flex:none!important;min-height:auto!important;padding:36px 28px 32px!important}
@@ -151,7 +151,7 @@ export default function LoginPage() {
           ref={leftElRef}
           style={{ flex: "0 0 52%", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "56px 52px", background: "#f5f5f4" }}
         >
-          <div ref={leftBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(129,140,248,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)", transition: "background .28s ease" }} />
+          <div ref={leftBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 520px 380px at 22% 32%,rgba(129,140,248,.16) 0%,transparent 58%),radial-gradient(ellipse 380px 280px at 80% 72%,rgba(168,162,158,.06) 0%,transparent 55%)", transition: "background .28s ease" }} />
           <div style={{ position: "absolute", bottom: "-55px", right: "-55px", width: "310px", height: "310px", pointerEvents: "none", zIndex: 1 }}>
             <div className="login-ring" /><div className="login-ring" /><div className="login-ring" /><div className="login-ring" />
           </div>
@@ -164,7 +164,7 @@ export default function LoginPage() {
 
           {/* Typewriter headline */}
           <div style={{ position: "relative", zIndex: 5, fontSize: "clamp(34px,5.2vw,54px)", fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.06, marginBottom: "18px", minHeight: "2.2em" }}>
-            <span style={{ whiteSpace: "pre-line", background: "linear-gradient(132deg,#818cf8 0%,#6366f1 42%,#3730a3 82%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ whiteSpace: "pre-line", color: "#1c1917" }}>
               {typerText}
             </span>
             <span className="login-cursor" />
@@ -188,11 +188,11 @@ export default function LoginPage() {
 
         {/* RIGHT */}
         <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#818cf8" }}>
-          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.35)", boxShadow: "0 8px 40px rgba(60,0,120,.2),inset 0 1px 0 rgba(255,255,255,.45)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
+          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "#fff", border: "none", boxShadow: "0 12px 48px rgba(49,46,129,.28),0 2px 8px rgba(49,46,129,.12)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
 
-            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,.65)", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
-            <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#fff", letterSpacing: "-.03em", marginBottom: "5px", animation: "loginEl .4s ease .18s both" }}>로그인</h1>
-            <p style={{ fontSize: "13px", color: "rgba(255,255,255,.65)", marginBottom: "26px", animation: "loginEl .4s ease .24s both" }}>학습을 이어가세요.</p>
+            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
+            <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#1c1917", letterSpacing: "-.03em", marginBottom: "5px", animation: "loginEl .4s ease .18s both" }}>로그인</h1>
+            <p style={{ fontSize: "13px", color: "#78716c", marginBottom: "26px", animation: "loginEl .4s ease .24s both" }}>학습을 이어가세요.</p>
 
             <form onSubmit={handleLogin}>
               {/* Email */}
@@ -224,7 +224,7 @@ export default function LoginPage() {
                   type="button"
                   className="login-eye"
                   onClick={() => setShowPassword((p) => !p)}
-                  style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,.5)", display: "flex", alignItems: "center", transition: "color .15s" }}
+                  style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#a8a29e", display: "flex", alignItems: "center", transition: "color .15s" }}
                 >
                   {showPassword ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -244,23 +244,23 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className="login-submit"
-                style={{ width: "100%", background: "rgba(255,255,255,.9)", color: "#4f46e5", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1, animation: "loginEl .4s ease .48s both" }}
+                style={{ width: "100%", background: "#6366f1", color: "#fff", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1, animation: "loginEl .4s ease .48s both" }}
               >
                 {loading ? "로그인 중..." : "로그인"}
               </button>
             </form>
 
             <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0", animation: "loginEl .4s ease .56s both" }}>
-              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,.2)" }} />
-              <span style={{ fontSize: "10px", color: "rgba(255,255,255,.45)", fontWeight: 600, letterSpacing: ".06em" }}>또는</span>
-              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,.2)" }} />
+              <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }} />
+              <span style={{ fontSize: "10px", color: "#a8a29e", fontWeight: 600, letterSpacing: ".06em" }}>또는</span>
+              <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }} />
             </div>
 
-            <button disabled style={{ width: "100%", background: "rgba(255,255,255,.08)", border: "1.5px solid rgba(255,255,255,.18)", color: "rgba(255,255,255,.35)", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed", animation: "loginEl .4s ease .62s both" }}>
+            <button disabled style={{ width: "100%", background: "#f5f4f3", border: "1.5px solid #e7e5e4", color: "#c4bfbb", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed", animation: "loginEl .4s ease .62s both" }}>
               카카오로 로그인 (준비 중)
             </button>
 
-            <p style={{ textAlign: "center", fontSize: "11.5px", color: "rgba(255,255,255,.55)", marginTop: "20px", animation: "loginEl .4s ease .68s both" }}>
+            <p style={{ textAlign: "center", fontSize: "11.5px", color: "#78716c", marginTop: "20px", animation: "loginEl .4s ease .68s both" }}>
               계정이 없으신가요?{" "}
               <Link href="/signup" className="login-signup-link">회원가입</Link>
             </p>
