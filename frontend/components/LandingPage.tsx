@@ -18,7 +18,7 @@ const CSS = `
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 52px)}
 .hero-l{background:var(--accent);padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(55,48,163,.6);margin-bottom:28px}
-.hero-h1{font-size:clamp(42px,4.5vw,62px);font-weight:600;line-height:1.1;letter-spacing:-.025em;color:#1c1917;text-wrap:balance;margin-bottom:24px;text-shadow:1px 1px 0 rgba(49,46,129,.28),2px 2px 0 rgba(49,46,129,.2),3px 3px 0 rgba(49,46,129,.14),4px 4px 0 rgba(49,46,129,.09),5px 5px 0 rgba(49,46,129,.05)}
+.hero-h1{font-size:clamp(32px,3.4vw,48px);font-weight:600;line-height:1.1;letter-spacing:-.025em;color:#1c1917;text-wrap:balance;margin-bottom:24px;text-shadow:1px 1px 0 rgba(49,46,129,.28),2px 2px 0 rgba(49,46,129,.2),3px 3px 0 rgba(49,46,129,.14),4px 4px 0 rgba(49,46,129,.09),5px 5px 0 rgba(49,46,129,.05)}
 .hero-sub{font-size:17px;line-height:1.8;color:#57534e;max-width:380px;margin-bottom:44px}
 .hero-sub strong{color:#1c1917;font-weight:700}
 .btn-glow-wrap{position:relative;display:inline-block;align-self:flex-start}
