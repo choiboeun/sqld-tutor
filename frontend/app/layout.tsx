@@ -17,13 +17,13 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#6366f1",
+  themeColor: "#d97706",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className="bg-violet-50 text-indigo-950">
+      <body className="bg-stone-50 text-stone-900">
         {children}
         <Analytics />
       </body>

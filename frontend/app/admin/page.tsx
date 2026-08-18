@@ -21,7 +21,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  new: "bg-violet-100 text-indigo-600",
+  new: "bg-amber-100 text-amber-700",
   read: "bg-blue-100 text-blue-700",
   resolved: "bg-green-100 text-green-700",
 };
@@ -105,45 +105,45 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-violet-50">
-        <p className="text-sm text-indigo-300">로딩 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+        <p className="text-sm text-stone-400">로딩 중...</p>
       </div>
     );
   }
 
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-violet-50">
-        <p className="text-sm text-indigo-400">접근 권한이 없습니다.</p>
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+        <p className="text-sm text-stone-500">접근 권한이 없습니다.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-violet-50 p-6">
+    <div className="min-h-screen bg-stone-50 p-6">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-xl font-bold text-indigo-900">문의 관리</h1>
+          <h1 className="text-xl font-bold text-stone-800">문의 관리</h1>
           <button
             onClick={() => fetchInquiries(token)}
-            className="text-xs text-indigo-400 border border-violet-100 px-3 py-1.5 hover:bg-violet-50 transition-colors"
+            className="text-xs text-stone-500 border border-stone-200 px-3 py-1.5 hover:bg-stone-100 transition-colors"
           >
             새로고침
           </button>
         </div>
 
         {inquiries.length === 0 ? (
-          <div className="bg-white border border-violet-100 p-8 text-center">
-            <p className="text-sm text-indigo-300">문의가 없습니다.</p>
+          <div className="bg-white border border-stone-200 p-8 text-center">
+            <p className="text-sm text-stone-400">문의가 없습니다.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {inquiries.map((q) => (
-              <div key={q.id} className="bg-white border border-violet-100 p-5">
+              <div key={q.id} className="bg-white border border-stone-200 p-5">
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="min-w-0">
-                    <p className="text-xs text-indigo-300 truncate">{q.user_email}</p>
-                    <p className="text-xs text-indigo-200 mt-0.5">
+                    <p className="text-xs text-stone-400 truncate">{q.user_email}</p>
+                    <p className="text-xs text-stone-300 mt-0.5">
                       {new Date(q.created_at).toLocaleString("ko-KR")}
                     </p>
                   </div>
@@ -152,7 +152,7 @@ export default function AdminPage() {
                   </span>
                 </div>
 
-                <p className="text-sm text-indigo-800 whitespace-pre-wrap leading-relaxed mb-4">
+                <p className="text-sm text-stone-700 whitespace-pre-wrap leading-relaxed mb-4">
                   {q.message}
                 </p>
 
@@ -164,8 +164,8 @@ export default function AdminPage() {
                       onClick={() => updateStatus(q.id, s)}
                       className={`text-xs px-3 py-1 border transition-colors disabled:opacity-40 ${
                         q.status === s
-                          ? "border-indigo-400 text-indigo-600 bg-indigo-50"
-                          : "border-violet-100 text-indigo-400 hover:bg-violet-50"
+                          ? "border-amber-400 text-amber-700 bg-amber-50"
+                          : "border-stone-200 text-stone-500 hover:bg-stone-50"
                       }`}
                     >
                       {STATUS_LABEL[s]}

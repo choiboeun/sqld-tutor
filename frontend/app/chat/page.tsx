@@ -11,7 +11,7 @@ import { visit } from 'unist-util-visit';
 
 const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
   ssr: false,
-  loading: () => <div className="bg-violet-50 p-3 text-xs text-indigo-300 my-2">다이어그램 로딩 중...</div>,
+  loading: () => <div className="bg-stone-100 p-3 text-xs text-stone-400 my-2">다이어그램 로딩 중...</div>,
 });
 import { flushSync } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
@@ -207,12 +207,12 @@ const mdComponents = {
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
-    <th className="border border-violet-100 bg-violet-50 px-2 py-1 text-left font-semibold whitespace-nowrap">
+    <th className="border border-stone-200 bg-stone-100 px-2 py-1 text-left font-semibold whitespace-nowrap">
       {children}
     </th>
   ),
   td: ({ children }: { children?: React.ReactNode }) => (
-    <td className="border border-violet-100 px-2 py-1 whitespace-nowrap">{children}</td>
+    <td className="border border-stone-200 px-2 py-1 whitespace-nowrap">{children}</td>
   ),
   // Fix 2: 번호 목록(ol)은 숫자로, 불릿(ul)은 점으로
   ol: ({ children }: { children?: React.ReactNode }) => (
@@ -237,13 +237,13 @@ const mdComponents = {
       return <MermaidChart code={String(children)} />;
     }
     return (
-      <code className={`bg-violet-50 text-indigo-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>
+      <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>
         {children}
       </code>
     );
   },
   pre: ({ children }: { children?: React.ReactNode }) => (
-    <pre className="bg-violet-50 rounded p-2 overflow-x-auto text-xs font-mono my-1 whitespace-pre-wrap">
+    <pre className="bg-stone-100 rounded p-2 overflow-x-auto text-xs font-mono my-1 whitespace-pre-wrap">
       {children}
     </pre>
   ),
@@ -251,13 +251,13 @@ const mdComponents = {
     <strong className="font-semibold">{children}</strong>
   ),
   blockquote: ({ children }: { children?: React.ReactNode }) => (
-    <div className="my-2 px-3 py-2.5 rounded-lg bg-violet-50 border-l-4 border-indigo-300 text-sm text-indigo-800">
+    <div className="my-2 px-3 py-2.5 rounded-lg bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900">
       {children}
     </div>
   ),
-  hr: () => <hr className="my-2 border-violet-100" />,
+  hr: () => <hr className="my-2 border-stone-200" />,
   h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2 className="font-bold text-sm mt-4 mb-2 pb-1 border-b border-violet-100">{children}</h2>
+    <h2 className="font-bold text-sm mt-4 mb-2 pb-1 border-b border-stone-200">{children}</h2>
   ),
   h3: ({ children }: { children?: React.ReactNode }) => (
     <h3 className="font-semibold text-sm mt-3 mb-1">{children}</h3>
@@ -657,11 +657,11 @@ function ChatContent() {
       />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-6 py-4 border-b border-violet-100 bg-white flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-stone-200 bg-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-1 text-indigo-400 hover:text-indigo-600 transition-colors"
+              className="md:hidden p-1 text-stone-500 hover:text-stone-700 transition-colors"
               aria-label="메뉴 열기"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -670,7 +670,7 @@ function ChatContent() {
                 <rect y="15" width="20" height="2" rx="1"/>
               </svg>
             </button>
-            <Link href="/home" className="md:hidden text-lg font-semibold text-indigo-900 hover:text-indigo-500 transition-colors">
+            <Link href="/home" className="md:hidden text-lg font-semibold text-stone-900 hover:text-amber-600 transition-colors">
               SQLD AI 튜터
             </Link>
           </div>
@@ -682,8 +682,8 @@ function ChatContent() {
             onClick={() => setSqlPanelOpen((v) => !v)}
             className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
               sqlPanelOpen
-                ? "bg-violet-50 border-indigo-300 text-indigo-600"
-                : "border-violet-100 text-indigo-400 hover:border-indigo-300 hover:text-indigo-600 hover:bg-violet-50"
+                ? "bg-amber-50 border-amber-300 text-amber-700"
+                : "border-stone-200 text-stone-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50"
             }`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -695,16 +695,16 @@ function ChatContent() {
           </div>
         </div>
 
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-violet-50">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-stone-50">
           {diagnosticResume && (
-            <div className="flex items-center justify-between bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 text-sm">
-              <span className="text-indigo-700">이전 진단을 <strong>{diagnosticResume.progress}/8</strong> 문제까지 풀었어요. 이어서 마저 풀까요?</span>
+            <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
+              <span className="text-amber-800">이전 진단을 <strong>{diagnosticResume.progress}/8</strong> 문제까지 풀었어요. 이어서 마저 풀까요?</span>
               <div className="flex gap-2 ml-4 shrink-0">
                 <button
                   onClick={async () => { setDiagnosticResume(null); resumeDiagnosticFired.current = true; await streamChat("진단 이어서 해줘", false); }}
-                  className="bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-600"
+                  className="bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-amber-600"
                 >이어서 풀기</button>
-                <button onClick={() => setDiagnosticResume(null)} className="text-indigo-500 text-xs px-2 py-1.5 hover:underline">닫기</button>
+                <button onClick={() => setDiagnosticResume(null)} className="text-amber-600 text-xs px-2 py-1.5 hover:underline">닫기</button>
               </div>
             </div>
           )}
@@ -743,16 +743,16 @@ function ChatContent() {
               <div
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
-                    ? "max-w-[75%] bg-indigo-500 text-white rounded-lg"
-                    : "max-w-[90%] bg-white border border-violet-100 text-indigo-900"
+                    ? "max-w-[75%] bg-stone-600 text-white rounded-lg"
+                    : "max-w-[90%] bg-white border border-stone-200 text-stone-800"
                 }`}
               >
                 {msg.role === "ai" ? (
                   msg.content === "" && isLoading ? (
                     <span className="inline-flex gap-1">
-                      <span className="w-1.5 h-1.5 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                     </span>
                   ) : (() => {
                     const parsed = parseQuestionHeader(msg.content);
@@ -763,7 +763,7 @@ function ChatContent() {
                         return (
                           <>
                             <div className="mb-2">
-                              <span className="text-xs font-bold text-indigo-600">💡 개념 보충</span>
+                              <span className="text-xs font-bold text-amber-700">💡 개념 보충</span>
                             </div>
                             <div className="relative">
                               <div
@@ -786,7 +786,7 @@ function ChatContent() {
                                 {isLong && (
                                   <button
                                     onClick={() => toggleConcept(i)}
-                                    className="text-xs font-semibold text-indigo-600 bg-violet-50 border border-violet-100 px-3 py-1 hover:bg-violet-100 transition-colors"
+                                    className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 hover:bg-amber-100 transition-colors"
                                   >
                                     {msg.conceptExpanded ? "접기 ▲" : "더 보기 ▼"}
                                   </button>
@@ -794,7 +794,7 @@ function ChatContent() {
                                 {(!isAnswered || isLastAiMessage) && !isLoading && !hasPendingQuestion && (
                                   <button
                                     onClick={() => streamChat("문제 줘", true)}
-                                    className="flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 transition-colors"
+                                    className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-sm font-semibold px-4 py-2 transition-colors"
                                   >
                                     다음 문제
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -829,7 +829,7 @@ function ChatContent() {
                             <div className="mt-2 flex justify-end">
                               <button
                                 onClick={() => abortStreamRef.current?.()}
-                                className="text-xs text-indigo-300 hover:text-indigo-500 transition-colors flex items-center gap-1"
+                                className="text-xs text-stone-400 hover:text-stone-600 transition-colors flex items-center gap-1"
                               >
                                 해설 건너뛰기
                                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -843,7 +843,7 @@ function ChatContent() {
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
                                 disabled={isLoading}
-                                className="flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 transition-colors"
+                                className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-4 py-2 transition-colors"
                               >
                                 다음 문제
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -867,7 +867,7 @@ function ChatContent() {
                             <div className="mt-3 flex justify-end">
                               <button
                                 onClick={() => streamChat("문제 줘", true)}
-                                className="flex items-center gap-1.5 bg-indigo-900 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 transition-colors"
+                                className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 text-white text-sm font-semibold px-4 py-2 transition-colors"
                               >
                                 다음 문제
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -891,17 +891,17 @@ function ChatContent() {
                       <>
                         {parsed.progress && (
                           <div className="mb-2">
-                            <p className="text-xs text-indigo-300 font-medium">{parsed.progress}/8 진단 중</p>
+                            <p className="text-xs text-stone-400 font-medium">{parsed.progress}/8 진단 중</p>
                             {parsed.progress === "1" && (
-                              <p className="text-xs text-indigo-400 mt-0.5">8문제로 현재 실력을 진단할게요. 편하게 답해보세요!</p>
+                              <p className="text-xs text-stone-500 mt-0.5">8문제로 현재 실력을 진단할게요. 편하게 답해보세요!</p>
                             )}
                           </div>
                         )}
                         <div className="flex gap-1.5 mb-3">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-violet-100 text-indigo-600">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
                             {parsed.category}
                           </span>
-                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[parsed.difficulty] ?? "bg-violet-50 text-indigo-400"}`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[parsed.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
                             난이도 {parsed.difficulty}
                           </span>
                         </div>
@@ -910,7 +910,7 @@ function ChatContent() {
                         </ReactMarkdown>
                         {optData && (
                           <>
-                            <div className="mt-3 border border-violet-100 overflow-hidden">
+                            <div className="mt-3 border border-stone-200 overflow-hidden">
                               {optData.options.map((opt) => {
                                 const isSelected = !!selectedNum && opt.num === selectedNum;
                                 return (
@@ -918,20 +918,20 @@ function ChatContent() {
                                     key={opt.circle}
                                     onClick={() => streamChat(`${opt.num}번`, true)}
                                     disabled={(isLoading && !hasPendingQuestion) || isAnswered}
-                                    className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-violet-50 last:border-b-0 transition-colors ${
+                                    className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
                                       isSelected
-                                        ? "bg-indigo-500 cursor-default"
+                                        ? "bg-amber-500 cursor-default"
                                         : isAnswered
                                           ? "bg-white cursor-default"
                                           : isLoading && !hasPendingQuestion
-                                            ? "bg-violet-50 animate-pulse cursor-not-allowed"
-                                            : "bg-white hover:bg-violet-50"
+                                            ? "bg-stone-50 animate-pulse cursor-not-allowed"
+                                            : "bg-white hover:bg-amber-50"
                                     }`}
                                   >
-                                    <span className={`shrink-0 text-sm font-bold mt-0.5 ${isSelected ? "text-white" : "text-indigo-300"}`}>
+                                    <span className={`shrink-0 text-sm font-bold mt-0.5 ${isSelected ? "text-white" : "text-stone-400"}`}>
                                       {opt.circle}
                                     </span>
-                                    <div className={`flex-1 text-sm leading-relaxed ${isSelected ? "text-white" : "text-indigo-900"}`}>
+                                    <div className={`flex-1 text-sm leading-relaxed ${isSelected ? "text-white" : "text-stone-800"}`}>
                                       <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
                                         {fixMissingTableSeparator(opt.content)}
                                       </ReactMarkdown>
@@ -959,7 +959,7 @@ function ChatContent() {
             </div>
             {isQuestionLoadingBubble && (
               <div className="flex justify-start">
-                <div className="px-4 py-3 text-sm leading-relaxed max-w-[90%] bg-white border border-violet-100 text-indigo-900">
+                <div className="px-4 py-3 text-sm leading-relaxed max-w-[90%] bg-white border border-stone-200 text-stone-800">
                   <span className="inline-flex gap-1">
                     <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                     <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -991,39 +991,39 @@ function ChatContent() {
         {chipsVisible && sessionReady && !isLoading && !parseQuestionHeader(
           [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? ""
         ) && (
-          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-violet-100 bg-white">
+          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-stone-200 bg-white">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-600 bg-violet-100 border border-violet-200 hover:bg-violet-200 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors"
             >
               문제 풀기
             </button>
             <button
               onClick={() => streamChat("약점 분석해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-500 bg-white border border-violet-100 hover:border-indigo-300 hover:text-indigo-600 hover:bg-violet-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
               약점 분석
             </button>
             <button
               onClick={() => streamChat("오답 복습해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-500 bg-white border border-violet-100 hover:border-indigo-300 hover:text-indigo-600 hover:bg-violet-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
               오답 복습
             </button>
             <button
               onClick={handleWeakConceptChip}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-500 bg-white border border-violet-100 hover:border-indigo-300 hover:text-indigo-600 hover:bg-violet-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
             >
               틀린 개념 복습
             </button>
           </div>
         )}
 
-        <div className="px-6 py-4 border-t border-violet-100 bg-white">
+        <div className="px-6 py-4 border-t border-stone-200 bg-white">
           <div className="flex gap-3 items-end">
             <textarea
               ref={inputRef}
-              className={`flex-1 resize-none border border-violet-100 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 max-h-32 transition-opacity placeholder:text-indigo-300 ${isLoading ? "opacity-50" : ""}`}
+              className={`flex-1 resize-none border border-stone-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-amber-500 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
               rows={1}
               placeholder={inputPlaceholder}
               value={input}
@@ -1033,7 +1033,7 @@ function ChatContent() {
             <button
               onClick={sendMessage}
               disabled={isLoading || !input.trim()}
-              className="p-3 bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              className="p-3 bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 19V5M5 12l7-7 7 7"/>
@@ -1045,16 +1045,16 @@ function ChatContent() {
 
       {/* SQL 패널 — PC에서만 표시 */}
       {sqlPanelOpen && (
-        <div className="hidden md:flex flex-col w-[420px] shrink-0 border-l border-violet-100 bg-white">
+        <div className="hidden md:flex flex-col w-[420px] shrink-0 border-l border-stone-200 bg-white">
           {/* 패널 헤더 */}
-          <div className="px-4 py-3 border-b border-violet-100 flex items-center justify-between">
+          <div className="px-4 py-3 border-b border-stone-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-indigo-500">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600">
                 <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
               </svg>
-              <span className="text-sm font-semibold text-indigo-700">SQL 플레이그라운드</span>
+              <span className="text-sm font-semibold text-stone-700">SQL 플레이그라운드</span>
             </div>
-            <button onClick={() => setSqlPanelOpen(false)} className="text-indigo-300 hover:text-indigo-500 transition-colors">
+            <button onClick={() => setSqlPanelOpen(false)} className="text-stone-400 hover:text-stone-600 transition-colors">
               <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
               </svg>
@@ -1062,7 +1062,7 @@ function ChatContent() {
           </div>
 
           {/* 테이블 안내 */}
-          <div className="px-4 py-2 bg-violet-50 border-b border-violet-100 text-xs text-indigo-400 flex gap-3 flex-wrap">
+          <div className="px-4 py-2 bg-stone-50 border-b border-stone-100 text-xs text-stone-500 flex gap-3 flex-wrap">
             <span><strong>EMP</strong>(EMP_ID, EMP_NAME, JOB, SALARY, DEPT_ID)</span>
             <span><strong>DEPT</strong>(DEPT_ID, DEPT_NAME, LOC)</span>
             <span><strong>SALGRADE</strong>(GRADE, LOSAL, HISAL)</span>
@@ -1074,24 +1074,24 @@ function ChatContent() {
               value={sqlQuery}
               onChange={(e) => setSqlQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runSql(); } }}
-              className="w-full h-32 resize-none border border-violet-100 px-3 py-2 text-sm font-mono focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 placeholder:text-indigo-300"
+              className="w-full h-32 resize-none border border-stone-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 placeholder:text-stone-400"
               placeholder="SELECT * FROM EMP;"
               spellCheck={false}
             />
             <button
               onClick={runSql}
               disabled={sqlLoading || !sqlQuery.trim()}
-              className="self-end flex items-center gap-1.5 px-4 py-2 bg-indigo-500 text-white text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="self-end flex items-center gap-1.5 px-4 py-2 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {sqlLoading ? "실행 중..." : "▶ 실행"}
             </button>
-            <p className="text-xs text-indigo-300 text-right -mt-1">Ctrl+Enter로도 실행 가능</p>
+            <p className="text-xs text-stone-400 text-right -mt-1">Ctrl+Enter로도 실행 가능</p>
           </div>
 
           {/* 결과 영역 */}
           <div className="flex-1 overflow-auto px-4 pb-4">
             {sqlResult === null && (
-              <p className="text-xs text-indigo-300 text-center mt-8">쿼리를 실행하면 결과가 여기 표시돼요.</p>
+              <p className="text-xs text-stone-400 text-center mt-8">쿼리를 실행하면 결과가 여기 표시돼요.</p>
             )}
             {sqlResult?.error && (
               <div className="bg-red-50 border border-red-100 px-3 py-2 text-sm text-red-600">
@@ -1100,13 +1100,13 @@ function ChatContent() {
             )}
             {sqlResult && !sqlResult.error && sqlResult.columns.length > 0 && (
               <div>
-                <p className="text-xs text-indigo-300 mb-2 font-medium">{sqlResult.rows.length}건</p>
+                <p className="text-xs text-stone-400 mb-2 font-medium">{sqlResult.rows.length}건</p>
                 <div className="overflow-x-auto">
                   <table className="text-xs border-collapse">
                     <thead>
-                      <tr className="bg-violet-50">
+                      <tr className="bg-stone-100">
                         {sqlResult.columns.map((col) => (
-                          <th key={col} className="border border-violet-100 px-2 py-1.5 text-left font-semibold text-indigo-600 whitespace-nowrap">
+                          <th key={col} className="border border-stone-200 px-2 py-1.5 text-left font-semibold text-stone-600 whitespace-nowrap">
                             {col}
                           </th>
                         ))}
@@ -1114,9 +1114,9 @@ function ChatContent() {
                     </thead>
                     <tbody>
                       {sqlResult.rows.map((row, i) => (
-                        <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-violet-50"}>
+                        <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-stone-50"}>
                           {row.map((cell, j) => (
-                            <td key={j} className="border border-violet-100 px-2 py-1.5 text-indigo-700 whitespace-nowrap">
+                            <td key={j} className="border border-stone-200 px-2 py-1.5 text-stone-700 whitespace-nowrap">
                               {cell}
                             </td>
                           ))}
@@ -1128,7 +1128,7 @@ function ChatContent() {
               </div>
             )}
             {sqlResult && !sqlResult.error && sqlResult.columns.length === 0 && (
-              <p className="text-xs text-indigo-300 text-center mt-8">결과가 없어요. (0건)</p>
+              <p className="text-xs text-stone-400 text-center mt-8">결과가 없어요. (0건)</p>
             )}
           </div>
         </div>

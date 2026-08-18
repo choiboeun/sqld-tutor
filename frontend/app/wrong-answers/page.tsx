@@ -41,16 +41,16 @@ const mdComponents = {
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
-    <th className="border border-violet-100 bg-violet-50 px-2 py-1 text-left font-semibold whitespace-nowrap">{children}</th>
+    <th className="border border-stone-200 bg-stone-100 px-2 py-1 text-left font-semibold whitespace-nowrap">{children}</th>
   ),
   td: ({ children }: { children?: React.ReactNode }) => (
-    <td className="border border-violet-100 px-2 py-1 whitespace-nowrap">{children}</td>
+    <td className="border border-stone-200 px-2 py-1 whitespace-nowrap">{children}</td>
   ),
   code: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
-    <code className={`bg-violet-50 text-indigo-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>{children}</code>
+    <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>{children}</code>
   ),
   pre: ({ children }: { children?: React.ReactNode }) => (
-    <pre className="bg-violet-50 rounded-lg p-3 overflow-x-auto text-xs font-mono my-2 whitespace-pre-wrap border border-violet-100">{children}</pre>
+    <pre className="bg-stone-100 rounded-lg p-3 overflow-x-auto text-xs font-mono my-2 whitespace-pre-wrap border border-stone-200">{children}</pre>
   ),
   strong: ({ children }: { children?: React.ReactNode }) => (
     <strong className="font-semibold">{children}</strong>
@@ -240,49 +240,49 @@ export default function WrongAnswersPage() {
   }, [miniInput, miniLoading, miniMessages, selected]);
 
   return (
-    <div className="min-h-screen bg-violet-50 pb-20 md:pb-0">
+    <div className="min-h-screen bg-stone-50 pb-20 md:pb-0">
       {/* 헤더 */}
-      <div className="bg-white border-b border-violet-100 px-6 py-4 flex items-center gap-3 sticky top-0 z-20">
-        <button onClick={() => router.back()} className="text-indigo-300 hover:text-indigo-500 transition-colors">
+      <div className="bg-white border-b border-stone-200 px-6 py-4 flex items-center gap-3 sticky top-0 z-20">
+        <button onClick={() => router.back()} className="text-stone-400 hover:text-stone-600 transition-colors">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
         </button>
-        <h1 className="text-lg font-semibold text-indigo-900">오답 회고</h1>
+        <h1 className="text-lg font-semibold text-stone-800">오답 회고</h1>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* 안내 배너 */}
-        <div className="bg-violet-50 border border-violet-100 px-4 py-3 mb-6 text-sm text-indigo-700">
+        <div className="bg-amber-50 border border-amber-100 px-4 py-3 mb-6 text-sm text-amber-800">
           오답을 다시 풀고 싶다면 홈 채팅에서 <strong>"오답 복습해줘"</strong>를 입력해보세요.
         </div>
 
         {/* 카드 목록 */}
         {loading ? (
-          <p className="text-center text-indigo-300 py-12">불러오는 중...</p>
+          <p className="text-center text-stone-400 py-12">불러오는 중...</p>
         ) : error ? (
           <div className="text-center py-12">
-            <p className="text-indigo-400 mb-4">오답 기록을 불러오지 못했습니다.</p>
+            <p className="text-stone-500 mb-4">오답 기록을 불러오지 못했습니다.</p>
             <button
               onClick={() => setRetryKey((k) => k + 1)}
-              className="px-4 py-2 bg-indigo-500 text-white text-sm font-semibold hover:bg-indigo-600 transition-colors"
+              className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 transition-colors"
             >
               다시 시도
             </button>
           </div>
         ) : wrongAnswers.length === 0 ? (
-          <p className="text-center text-indigo-300 py-12">아직 오답 기록이 없습니다.</p>
+          <p className="text-center text-stone-400 py-12">아직 오답 기록이 없습니다.</p>
         ) : (
           <div className="space-y-3">
             {wrongAnswers.map((wa) => (
               <button
                 key={wa.question_id}
                 onClick={() => openModal(wa)}
-                className="w-full text-left bg-white border border-violet-100 px-4 py-3.5 hover:shadow-sm transition-all"
-                style={{ borderLeftWidth: '3px', borderLeftColor: wa.still_wrong ? '#6366f1' : '#e8e3ff' }}
+                className="w-full text-left bg-white border border-stone-200 px-4 py-3.5 hover:shadow-sm transition-all"
+                style={{ borderLeftWidth: '3px', borderLeftColor: wa.still_wrong ? '#f59e0b' : '#e3e1dc' }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-100 text-indigo-600">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
                     {wa.category}
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
@@ -292,7 +292,7 @@ export default function WrongAnswersPage() {
                     <span className="ml-auto text-xs text-red-500 font-semibold">복습 필요</span>
                   )}
                 </div>
-                <p className="text-sm text-indigo-800 line-clamp-2 min-h-[2.5rem]">
+                <p className="text-sm text-stone-700 line-clamp-2 min-h-[2.5rem]">
                   {wa.question.replace(/```[\s\S]*?```/g, "[SQL]").replace(/`[^`]+`/g, "").trim()}
                 </p>
               </button>
@@ -306,16 +306,16 @@ export default function WrongAnswersPage() {
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-0 sm:px-4">
           <div className="bg-white w-full sm:max-w-lg flex flex-col max-h-[90dvh]">
             {/* 모달 헤더 */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-violet-100 shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 shrink-0">
               <div className="flex gap-2">
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-100 text-indigo-600">
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
                   {selected.category}
                 </span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-violet-50 text-indigo-400"}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
                   난이도 {selected.difficulty}
                 </span>
               </div>
-              <button onClick={closeModal} className="text-indigo-300 hover:text-indigo-500 transition-colors">
+              <button onClick={closeModal} className="text-stone-400 hover:text-stone-600 transition-colors">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
@@ -327,11 +327,11 @@ export default function WrongAnswersPage() {
               {/* 문제 */}
               <div>
                 {selected.context && (
-                  <div className="text-sm text-indigo-600 mb-3 p-3 bg-violet-50 border border-violet-100">
+                  <div className="text-sm text-stone-600 mb-3 p-3 bg-stone-50 border border-stone-100">
                     <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.context}</ReactMarkdown>
                   </div>
                 )}
-                <div className="text-sm font-medium text-indigo-900 mb-3 prose prose-sm max-w-none">
+                <div className="text-sm font-medium text-stone-800 mb-3 prose prose-sm max-w-none">
                   <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.question}</ReactMarkdown>
                 </div>
                 <div className="space-y-1.5">
@@ -354,7 +354,7 @@ export default function WrongAnswersPage() {
                             ? "bg-green-200 text-green-700"
                             : isStudentAnswer
                             ? "bg-red-200 text-red-600"
-                            : "bg-violet-50 text-indigo-400"
+                            : "bg-stone-100 text-stone-500"
                         }`}>
                           {opt.num}
                         </span>
@@ -373,17 +373,17 @@ export default function WrongAnswersPage() {
               </div>
 
               {/* 해설 */}
-              <div className="bg-violet-50 border border-violet-100 px-4 py-3">
-                <p className="text-xs font-semibold text-indigo-500 mb-1">해설</p>
-                <div className="text-sm text-indigo-900 leading-relaxed prose prose-sm max-w-none prose-p:text-indigo-900">
+              <div className="bg-amber-50 border border-amber-100 px-4 py-3">
+                <p className="text-xs font-semibold text-amber-700 mb-1">해설</p>
+                <div className="text-sm text-amber-900 leading-relaxed prose prose-sm max-w-none prose-p:text-amber-900">
                   <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.explanation}</ReactMarkdown>
                 </div>
               </div>
 
               {/* 미니 채팅 */}
-              <div className="border border-violet-100 overflow-hidden">
-                <div className="px-3 py-2 bg-violet-50 border-b border-violet-100">
-                  <p className="text-xs font-medium text-indigo-400">더 궁금한 게 있으신가요?</p>
+              <div className="border border-stone-200 overflow-hidden">
+                <div className="px-3 py-2 bg-stone-50 border-b border-stone-200">
+                  <p className="text-xs font-medium text-stone-500">더 궁금한 게 있으신가요?</p>
                 </div>
                 {miniMessages.length > 0 && (
                   <div className="px-3 py-3 space-y-2 max-h-48 overflow-y-auto">
@@ -391,14 +391,14 @@ export default function WrongAnswersPage() {
                       <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={`px-3 py-2 text-xs max-w-[85%] leading-relaxed ${
                           m.role === "user"
-                            ? "bg-indigo-500 text-white"
-                            : "bg-violet-50 text-indigo-800"
+                            ? "bg-stone-600 text-white"
+                            : "bg-stone-100 text-stone-800"
                         }`}>
                           {m.role === "ai" && m.content === "" && miniLoading ? (
                             <span className="inline-flex gap-1">
-                              <span className="w-1 h-1 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                              <span className="w-1 h-1 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                              <span className="w-1 h-1 bg-indigo-300 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                              <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                              <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                              <span className="w-1 h-1 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                             </span>
                           ) : (
                             <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{m.content}</ReactMarkdown>
@@ -409,7 +409,7 @@ export default function WrongAnswersPage() {
                     <div ref={miniBottomRef} />
                   </div>
                 )}
-                <div className="flex gap-2 px-3 py-2.5 border-t border-violet-100">
+                <div className="flex gap-2 px-3 py-2.5 border-t border-stone-100">
                   <input
                     type="text"
                     value={miniInput}
@@ -417,12 +417,12 @@ export default function WrongAnswersPage() {
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMiniMessage(); } }}
                     placeholder="이 문제에 대해 질문하세요"
                     disabled={miniLoading}
-                    className="flex-1 text-xs border border-violet-100 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50 placeholder:text-indigo-300"
+                    className="flex-1 text-xs border border-stone-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 placeholder:text-stone-400"
                   />
                   <button
                     onClick={sendMiniMessage}
                     disabled={miniLoading || !miniInput.trim()}
-                    className="px-3 py-2 bg-indigo-500 text-white text-xs font-semibold hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-2 bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     전송
                   </button>

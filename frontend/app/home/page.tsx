@@ -100,10 +100,10 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
   });
 
   const cellColor = (count: number, isFuture: boolean) => {
-    if (isFuture || count === 0) return "bg-violet-50";
-    if (count <= 2) return "bg-violet-200";
-    if (count <= 5) return "bg-indigo-300";
-    return "bg-indigo-500";
+    if (isFuture || count === 0) return "bg-stone-100";
+    if (count <= 2) return "bg-amber-200";
+    if (count <= 5) return "bg-amber-400";
+    return "bg-amber-600";
   };
 
   return (
@@ -113,7 +113,7 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
         {weeks.map((_, wi) => {
           const lbl = monthLabels.find((m) => m.col === wi);
           return (
-            <div key={wi} className="w-5 shrink-0 text-xs text-indigo-300 leading-none">
+            <div key={wi} className="w-5 shrink-0 text-xs text-stone-400 leading-none">
               {lbl ? lbl.label : ""}
             </div>
           );
@@ -124,7 +124,7 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
         {/* Y축: 요일 */}
         <div className="flex flex-col gap-2 shrink-0">
           {["일","월","화","수","목","금","토"].map((d) => (
-            <div key={d} className="h-5 w-5 text-xs text-indigo-200 leading-none flex items-center justify-end">
+            <div key={d} className="h-5 w-5 text-xs text-stone-300 leading-none flex items-center justify-end">
               {d}
             </div>
           ))}
@@ -161,14 +161,14 @@ function ReviewRow({
   const cats = Array.from(new Set(items.map((i) => i.category)));
   const preview = cats.slice(0, 2).join(" · ") + (cats.length > 2 ? ` 외 ${cats.length - 2}개` : "");
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-violet-100 last:border-0">
+    <div className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-0">
       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${accent}`} />
-      <span className="text-sm font-semibold text-indigo-400 w-14 shrink-0">{label}</span>
-      <span className="flex-1 text-sm text-indigo-300 truncate">{preview}</span>
+      <span className="text-sm font-semibold text-stone-500 w-14 shrink-0">{label}</span>
+      <span className="flex-1 text-sm text-stone-400 truncate">{preview}</span>
       <span className={`text-sm font-bold tabular-nums shrink-0 ${
         accent === "bg-red-400" ? "text-red-500" :
         accent === "bg-amber-400" ? "text-amber-600" :
-        "text-indigo-300"
+        "text-stone-400"
       }`}>{items.length}개</span>
     </div>
   );
@@ -483,10 +483,10 @@ export default function HomePage() {
       {showWelcomeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="bg-indigo-500 px-7 py-6">
-              <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
+            <div className="bg-amber-600 px-7 py-6">
+              <p className="text-xs font-bold text-amber-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
               <h2 className="text-2xl font-black text-white leading-snug">가입을 환영해요!</h2>
-              <p className="text-sm text-indigo-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
+              <p className="text-sm text-amber-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
             </div>
             <div className="px-7 py-6 space-y-4">
               <div className="space-y-2.5">
@@ -496,14 +496,14 @@ export default function HomePage() {
                   { icon: "③", text: "취약한 부분은 AI가 개념까지 설명해줘요" },
                 ].map(({ icon, text }) => (
                   <div key={icon} className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold text-sm shrink-0 w-5">{icon}</span>
-                    <p className="text-sm text-indigo-600 leading-relaxed">{text}</p>
+                    <span className="text-amber-600 font-bold text-sm shrink-0 w-5">{icon}</span>
+                    <p className="text-sm text-stone-600 leading-relaxed">{text}</p>
                   </div>
                 ))}
               </div>
               <Link
                 href="/chat?new=true"
-                className="block w-full bg-indigo-500 text-white text-center py-3 text-sm font-bold tracking-wide hover:bg-indigo-600 transition-colors"
+                className="block w-full bg-amber-600 text-white text-center py-3 text-sm font-bold tracking-wide hover:bg-amber-700 transition-colors"
               >
                 진단 시작하기
               </Link>
@@ -516,31 +516,31 @@ export default function HomePage() {
       {showAccountModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-violet-100">
-              <h2 className="text-base font-semibold text-indigo-900">계정 설정</h2>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+              <h2 className="text-base font-semibold text-stone-800">계정 설정</h2>
               <button
                 onClick={() => { setShowAccountModal(false); setPwMsg(null); setDeleteConfirm(false); setNewPassword(""); setConfirmPassword(""); }}
-                className="text-indigo-300 hover:text-indigo-500"
+                className="text-stone-400 hover:text-stone-600"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
             <div className="px-6 py-4 space-y-3">
-              <p className="text-xs text-indigo-300">{userEmail}</p>
-              <p className="text-sm font-medium text-indigo-800">비밀번호 변경</p>
+              <p className="text-xs text-stone-400">{userEmail}</p>
+              <p className="text-sm font-medium text-stone-700">비밀번호 변경</p>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="새 비밀번호 (6자 이상)"
-                className="w-full border border-violet-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="비밀번호 확인"
-                className="w-full border border-violet-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
               {pwMsg && (
                 <p className={`text-xs ${pwMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>{pwMsg.text}</p>
@@ -548,13 +548,13 @@ export default function HomePage() {
               <button
                 onClick={handlePasswordChange}
                 disabled={pwLoading}
-                className="w-full bg-indigo-500 text-white py-2 text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 transition-colors"
+                className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
               >
                 {pwLoading ? "변경 중..." : "비밀번호 변경"}
               </button>
             </div>
-            <div className="px-6 py-4 border-t border-violet-100">
-              <p className="text-xs font-semibold text-indigo-300 uppercase tracking-widest mb-3">위험 구역</p>
+            <div className="px-6 py-4 border-t border-stone-100">
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">위험 구역</p>
               {!deleteConfirm ? (
                 <button
                   onClick={() => setDeleteConfirm(true)}
@@ -566,7 +566,7 @@ export default function HomePage() {
                 <div className="space-y-2">
                   <p className="text-xs text-red-500">모든 학습 기록이 삭제됩니다. 정말 탈퇴하시겠습니까?</p>
                   <div className="flex gap-2">
-                    <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-violet-100 text-indigo-400 py-2 text-sm hover:bg-violet-50 transition-colors">취소</button>
+                    <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-stone-200 text-stone-500 py-2 text-sm hover:bg-stone-50 transition-colors">취소</button>
                     <button onClick={handleDeleteAccount} disabled={deleteLoading} className="flex-1 bg-red-500 text-white py-2 text-sm hover:bg-red-600 disabled:opacity-40 transition-colors">
                       {deleteLoading ? "처리 중..." : "탈퇴 확인"}
                     </button>
@@ -582,27 +582,27 @@ export default function HomePage() {
       {showExamModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-violet-100">
-              <h2 className="text-base font-semibold text-indigo-900">시험일 설정</h2>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+              <h2 className="text-base font-semibold text-stone-800">시험일 설정</h2>
               <button
                 onClick={() => setShowExamModal(false)}
-                className="text-indigo-300 hover:text-indigo-500"
+                className="text-stone-400 hover:text-stone-600"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-indigo-400">시험 날짜를 설정하면 D-day가 자동으로 표시됩니다.</p>
+              <p className="text-sm text-stone-500">시험 날짜를 설정하면 D-day가 자동으로 표시됩니다.</p>
               <input
                 type="date"
                 value={examDateInput}
                 onChange={(e) => setExamDateInput(e.target.value)}
-                className="w-full border border-violet-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
               <button
                 onClick={handleSaveExamDate}
                 disabled={examSaving || !examDateInput}
-                className="w-full bg-indigo-500 text-white py-2 text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 transition-colors"
+                className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
               >
                 {examSaving ? "저장 중..." : "저장"}
               </button>
@@ -612,7 +612,7 @@ export default function HomePage() {
       )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
-      <div className="bg-indigo-500 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10">
+      <div className="bg-amber-600 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10">
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
@@ -625,14 +625,14 @@ export default function HomePage() {
               </div>
               <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
             </div>
-            <p className="text-indigo-200 text-sm pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
+            <p className="text-amber-200 text-sm pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
           </div>
 
           {/* 계정 드롭다운 */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowDropdown((v) => !v)}
-              className="flex items-center gap-1.5 text-xs text-indigo-200 hover:text-white transition-colors"
+              className="flex items-center gap-1.5 text-xs text-amber-200 hover:text-white transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -640,27 +640,27 @@ export default function HomePage() {
               <span>내 계정</span>
             </button>
             {showDropdown && (
-              <div className="absolute right-0 top-8 w-52 bg-white border border-violet-100 shadow-xl z-50 overflow-hidden">
-                <div className="px-4 py-3 border-b border-violet-100">
-                  <p className="text-xs text-indigo-300 truncate">{userEmail}</p>
+              <div className="absolute right-0 top-8 w-52 bg-white border border-stone-200 shadow-xl z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-stone-100">
+                  <p className="text-xs text-stone-400 truncate">{userEmail}</p>
                 </div>
                 <button
                   onClick={() => { setShowDropdown(false); setShowAccountModal(true); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-indigo-700 hover:bg-violet-50 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-2"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                   계정 관리
                 </button>
                 <button
                   onClick={() => { setShowDropdown(false); setShowInquiryModal(true); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-indigo-700 hover:bg-violet-50 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-2"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                   문의하기
                 </button>
                 <button
                   onClick={() => { setShowDropdown(false); handleLogout(); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-indigo-400 hover:bg-violet-50 transition-colors flex items-center gap-2 border-t border-violet-100"
+                  className="w-full text-left px-4 py-2.5 text-sm text-stone-500 hover:bg-stone-50 transition-colors flex items-center gap-2 border-t border-stone-100"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                   로그아웃
@@ -696,21 +696,21 @@ export default function HomePage() {
               {/* 예상 점수 + D-day 2열 */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                  <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest mb-2">예상 점수</p>
+                  <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest mb-2">예상 점수</p>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-5xl font-black leading-none tabular-nums">{predictedScore}</span>
-                    <span className="text-sm text-indigo-200">점</span>
+                    <span className="text-sm text-amber-300">점</span>
                   </div>
-                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-300" : "text-indigo-200/80"}`}>
+                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-300" : "text-amber-200/80"}`}>
                     목표 {targetScore}점까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
                   </p>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2 mb-2">
-                    <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest">시험까지</p>
+                    <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest">시험까지</p>
                     <button
                       onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                      className="text-indigo-200/60 hover:text-indigo-200 transition-colors"
+                      className="text-amber-300/60 hover:text-amber-200 transition-colors"
                       title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -727,13 +727,13 @@ export default function HomePage() {
                         {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
                       </p>
                       {streak > 0 && (
-                        <p className="text-xs text-indigo-200/80 mt-1.5">🔥 {streak}일 연속</p>
+                        <p className="text-xs text-amber-200/80 mt-1.5">🔥 {streak}일 연속</p>
                       )}
                     </>
                   ) : (
                     <button
                       onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
-                      className="text-sm font-medium text-indigo-200/70 hover:text-indigo-100 transition-colors mt-2"
+                      className="text-sm font-medium text-amber-200/70 hover:text-amber-100 transition-colors mt-2"
                     >
                       날짜 설정 +
                     </button>
@@ -756,7 +756,7 @@ export default function HomePage() {
                     />
                   )}
                   <div
-                    className="absolute w-px bg-indigo-200/60"
+                    className="absolute w-px bg-amber-200/60"
                     style={{ left: `${targetScore}%`, top: "-3px", bottom: "-3px" }}
                   />
                 </div>
@@ -764,7 +764,7 @@ export default function HomePage() {
 
               {/* 오늘 할 일 */}
               <div className="mb-5">
-                <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest mb-3">오늘 할 일</p>
+                <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest mb-3">오늘 할 일</p>
                 {todayTasks.length === 0 ? (
                   <p className="text-xs text-white/40 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
                 ) : (
@@ -782,7 +782,7 @@ export default function HomePage() {
                         </div>
                         <Link
                           href={task.href}
-                          className="shrink-0 text-[10px] font-bold tracking-wide bg-white/90 text-indigo-700 px-3 py-1.5 hover:bg-white transition-colors whitespace-nowrap"
+                          className="shrink-0 text-[10px] font-bold tracking-wide bg-white/90 text-amber-700 px-3 py-1.5 hover:bg-white transition-colors whitespace-nowrap"
                         >
                           시작
                         </Link>
@@ -810,29 +810,29 @@ export default function HomePage() {
       </div>
 
       {/* ── 오른쪽 패널 (흰색) ── */}
-      <div className="bg-violet-50 flex-1 flex flex-col p-7 md:p-10">
+      <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10">
 
         {/* 바로 시작 */}
-        <p className="text-sm font-semibold text-indigo-300 uppercase tracking-widest mb-1">바로 시작</p>
+        <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
 
-        <div className="flex flex-col border-t border-violet-100 mt-3">
+        <div className="flex flex-col border-t border-stone-200 mt-3">
           {/* AI 학습 */}
           <Link
             href="/chat"
-            className="flex items-center justify-between py-5 border-b border-violet-100 hover:bg-violet-100 -mx-2 px-2 transition-colors group"
+            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-violet-50 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-9 h-9 bg-amber-50 flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
               </div>
               <div>
-                <p className="text-base font-semibold text-indigo-900">AI 학습</p>
-                <p className="text-sm text-indigo-300 mt-0.5">{totalAnswered}문제 풀이 중</p>
+                <p className="text-base font-semibold text-stone-900">AI 학습</p>
+                <p className="text-sm text-stone-400 mt-0.5">{totalAnswered}문제 풀이 중</p>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:translate-x-0.5 transition-transform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:translate-x-0.5 transition-transform">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
@@ -840,7 +840,7 @@ export default function HomePage() {
           {/* 오답 회고 */}
           <Link
             href="/wrong-answers"
-            className="flex items-center justify-between py-5 border-b border-violet-100 hover:bg-violet-100 -mx-2 px-2 transition-colors group"
+            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 bg-red-50 flex items-center justify-center shrink-0 relative">
@@ -857,13 +857,13 @@ export default function HomePage() {
                 )}
               </div>
               <div>
-                <p className="text-base font-semibold text-indigo-900">오답 회고</p>
-                <p className={`text-sm mt-0.5 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-indigo-300"}`}>
+                <p className="text-base font-semibold text-stone-900">오답 회고</p>
+                <p className={`text-sm mt-0.5 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
                   {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
                 </p>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-300 shrink-0 group-hover:translate-x-0.5 transition-transform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
@@ -871,34 +871,34 @@ export default function HomePage() {
           {/* 모의고사 */}
           <Link
             href="/exam"
-            className="flex items-center justify-between py-5 border-b border-violet-100 hover:bg-violet-100 -mx-2 px-2 transition-colors group"
+            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-violet-50 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-9 h-9 bg-stone-100 flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="0"/><line x1="16" y1="2" x2="16" y2="6"/>
                   <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                 </svg>
               </div>
               <div>
-                <p className="text-base font-semibold text-indigo-900">모의고사</p>
-                <p className="text-sm text-indigo-300 mt-0.5">50문제 · 90분 · 실전 배점</p>
+                <p className="text-base font-semibold text-stone-900">모의고사</p>
+                <p className="text-sm text-stone-400 mt-0.5">50문제 · 90분 · 실전 배점</p>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-300 shrink-0 group-hover:translate-x-0.5 transition-transform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
         </div>
 
         {/* ── 학습 캘린더 + 복습 타이밍 ── */}
-        <div className="mt-8 pt-6 border-t border-violet-100">
+        <div className="mt-8 pt-6 border-t border-stone-200">
 
           {/* 학습 캘린더 */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-indigo-400">학습 캘린더</p>
-              <p className="text-sm text-indigo-200">최근 13주</p>
+              <p className="text-sm font-semibold text-stone-500">학습 캘린더</p>
+              <p className="text-sm text-stone-300">최근 13주</p>
             </div>
             {calendarData ? (
               <CalendarHeatmap dates={calendarData.dates} />
@@ -907,36 +907,36 @@ export default function HomePage() {
                 {Array.from({ length: 14 }).map((_, wi) => (
                   <div key={wi} className="flex flex-col gap-2">
                     {Array.from({ length: 7 }).map((_, di) => (
-                      <div key={di} className="w-5 h-5 bg-violet-50" />
+                      <div key={di} className="w-5 h-5 bg-stone-100" />
                     ))}
                   </div>
                 ))}
               </div>
             )}
             <div className="flex items-center gap-2 mt-3">
-              <span className="text-xs text-indigo-300">적음</span>
-              <div className="w-5 h-5 bg-violet-50" />
-              <div className="w-5 h-5 bg-violet-200" />
-              <div className="w-5 h-5 bg-indigo-300" />
-              <div className="w-5 h-5 bg-indigo-500" />
-              <span className="text-xs text-indigo-300">많음</span>
+              <span className="text-xs text-stone-400">적음</span>
+              <div className="w-5 h-5 bg-stone-100" />
+              <div className="w-5 h-5 bg-amber-200" />
+              <div className="w-5 h-5 bg-amber-400" />
+              <div className="w-5 h-5 bg-amber-600" />
+              <span className="text-xs text-stone-400">많음</span>
             </div>
           </div>
 
           {/* 복습 타이밍 */}
           <div className="mb-6">
-            <p className="text-sm font-semibold text-indigo-400 mb-3">복습 타이밍</p>
+            <p className="text-sm font-semibold text-stone-500 mb-3">복습 타이밍</p>
             {reviewTiming === null ? (
               <div className="space-y-2 animate-pulse">
-                <div className="h-9 bg-violet-50" />
-                <div className="h-9 bg-violet-50" />
+                <div className="h-9 bg-stone-100" />
+                <div className="h-9 bg-stone-100" />
               </div>
             ) : reviewTotal === 0 ? (
-              <p className="text-xs text-indigo-300 py-3">복습할 오답이 없어요</p>
+              <p className="text-xs text-stone-400 py-3">복습할 오답이 없어요</p>
             ) : (
               <div>
                 {reviewTiming.overdue.length > 0 && (
-                  <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-indigo-200" />
+                  <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-stone-300" />
                 )}
                 {reviewTiming.today.length > 0 && (
                   <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
@@ -945,11 +945,11 @@ export default function HomePage() {
                   <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-amber-400" />
                 )}
                 {reviewTiming.this_week.length > 0 && (
-                  <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-indigo-200" />
+                  <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
                 )}
                 <Link
                   href="/wrong-answers"
-                  className="inline-flex items-center gap-1.5 text-sm text-indigo-500 hover:underline mt-3"
+                  className="inline-flex items-center gap-1.5 text-sm text-amber-600 hover:underline mt-3"
                 >
                   오답 회고 전체 보기
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -968,11 +968,11 @@ export default function HomePage() {
       {showInquiryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-violet-100">
-              <h2 className="text-base font-semibold text-indigo-900">문의하기</h2>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+              <h2 className="text-base font-semibold text-stone-800">문의하기</h2>
               <button
                 onClick={() => { setShowInquiryModal(false); setInquiryMsg(""); setInquiryResult(null); }}
-                className="text-indigo-300 hover:text-indigo-500"
+                className="text-stone-400 hover:text-stone-600"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
@@ -983,7 +983,7 @@ export default function HomePage() {
                   {inquiryResult.text}
                 </div>
               ) : (
-                <p className="text-sm text-indigo-400">버그, 기능 요청, 기타 문의 사항을 자유롭게 남겨주세요.</p>
+                <p className="text-sm text-stone-500">버그, 기능 요청, 기타 문의 사항을 자유롭게 남겨주세요.</p>
               )}
               {!inquiryResult && (
                 <textarea
@@ -991,13 +991,13 @@ export default function HomePage() {
                   onChange={(e) => setInquiryMsg(e.target.value)}
                   placeholder="문의 내용을 입력해주세요."
                   rows={5}
-                  className="w-full border border-violet-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                  className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
                 />
               )}
               {inquiryResult?.type === "success" ? (
                 <button
                   onClick={() => { setShowInquiryModal(false); setInquiryMsg(""); setInquiryResult(null); }}
-                  className="w-full bg-violet-50 text-indigo-700 py-2 text-sm font-semibold hover:bg-violet-100 transition-colors"
+                  className="w-full bg-stone-100 text-stone-700 py-2 text-sm font-semibold hover:bg-stone-200 transition-colors"
                 >
                   닫기
                 </button>
@@ -1005,7 +1005,7 @@ export default function HomePage() {
                 <button
                   onClick={handleInquirySubmit}
                   disabled={inquiryLoading || !inquiryMsg.trim()}
-                  className="w-full bg-indigo-500 text-white py-2 text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 transition-colors"
+                  className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
                 >
                   {inquiryLoading ? "제출 중..." : "제출하기"}
                 </button>
