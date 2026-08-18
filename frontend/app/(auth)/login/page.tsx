@@ -124,7 +124,7 @@ export default function LoginPage() {
         .login-submit:hover:not(:disabled){background:#7c3aed!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(139,92,246,.32)}
         .login-submit:hover:not(:disabled)::after{transform:translateX(100%)}
         .login-submit:active:not(:disabled){transform:translateY(0)}
-        .login-right::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px 180px;opacity:.042;pointer-events:none;z-index:0}
+        .login-right::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 85% 15%,rgba(255,255,255,.26) 0%,transparent 55%),radial-gradient(circle,rgba(255,255,255,.14) 1.2px,transparent 1.2px);background-size:100% 100%,22px 22px}
         .login-eye:hover{color:#78716c}
         .login-fl-input{width:100%;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);padding:20px 14px 7px;font-size:13.5px;color:#fff;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
         .login-fl-input::placeholder{color:transparent}
@@ -187,8 +187,8 @@ export default function LoginPage() {
         <div className="login-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "linear-gradient(140deg,#0f0820 0%,#1e1040 45%,#3b1a7a 100%)" }}>
-          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.2)", boxShadow: "0 8px 48px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25)", backdropFilter: "blur(24px) saturate(160%)", WebkitBackdropFilter: "blur(24px) saturate(160%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
+        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#a78bfa" }}>
+          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.35)", boxShadow: "0 8px 40px rgba(60,0,120,.2),inset 0 1px 0 rgba(255,255,255,.45)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
 
             <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,.65)", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
             <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#fff", letterSpacing: "-.03em", marginBottom: "5px", animation: "loginEl .4s ease .18s both" }}>로그인</h1>
