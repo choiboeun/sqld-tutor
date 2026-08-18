@@ -23,6 +23,8 @@ export default function SignupPage() {
 
   const leftElRef = useRef<HTMLDivElement>(null);
   const leftBgRef = useRef<HTMLDivElement>(null);
+  const rightElRef = useRef<HTMLDivElement>(null);
+  const rightBgRef = useRef<HTMLDivElement>(null);
 
   // Typewriter
   useEffect(() => {
@@ -88,6 +90,31 @@ export default function SignupPage() {
       leftEl.removeEventListener("mousemove", onMove);
       leftEl.removeEventListener("mouseleave", onLeave);
       frags.forEach(({ el }) => el.remove());
+    };
+  }, []);
+
+  // Right panel white glow
+  useEffect(() => {
+    const rightEl = rightElRef.current;
+    if (!rightEl) return;
+    const onMove = (e: MouseEvent) => {
+      const r = rightEl.getBoundingClientRect();
+      const mx = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+      const my = ((e.clientY - r.top) / r.height * 100).toFixed(1);
+      if (rightBgRef.current) {
+        rightBgRef.current.style.background = `radial-gradient(ellipse 460px 340px at ${mx}% ${my}%,rgba(255,255,255,.18) 0%,transparent 60%)`;
+      }
+    };
+    const onLeave = () => {
+      if (rightBgRef.current) {
+        rightBgRef.current.style.background = "none";
+      }
+    };
+    rightEl.addEventListener("mousemove", onMove);
+    rightEl.addEventListener("mouseleave", onLeave);
+    return () => {
+      rightEl.removeEventListener("mousemove", onMove);
+      rightEl.removeEventListener("mouseleave", onLeave);
     };
   }, []);
 
@@ -209,7 +236,8 @@ export default function SignupPage() {
         <div className="su-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="su-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#dde1fb" }}>
+        <div ref={rightElRef} className="su-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#dde1fb" }}>
+          <div ref={rightBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", transition: "background .25s ease" }} />
           <div className="su-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "#fff", boxShadow: "0 12px 48px rgba(49,46,129,.28),0 2px 8px rgba(49,46,129,.12)", padding: "36px 32px 30px" }}>
 
             {done ? (
