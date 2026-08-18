@@ -759,16 +759,16 @@ export default function HomePage() {
       <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10">
 
         {/* ── 전체 2열 레이아웃 ── */}
-        <div className="grid grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-2 gap-8 flex-1">
 
           {/* ── 왼쪽: 바로 시작 ── */}
           <div className="flex flex-col gap-2.5">
             <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
 
-            {/* AI 학습 — 전체 너비 */}
+            {/* AI 학습 — 전체 너비, flex-1으로 공간 채움 */}
             <Link
               href="/chat"
-              className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              className="flex-1 flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -837,13 +837,11 @@ export default function HomePage() {
           </div>
 
           {/* ── 오른쪽: 학습 캘린더 + 오늘 할 일 ── */}
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
 
-            {/* 학습 캘린더 */}
-            <div>
-              <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
-                학습 캘린더
-              </p>
+            {/* 학습 캘린더 카드 */}
+            <div className="bg-white border border-stone-100 rounded-2xl p-5">
+              <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
 
               {streak > 0 && (
                 <div className="flex items-center gap-3 mb-4">
@@ -883,11 +881,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* 오늘 할 일 */}
-            <div>
-              <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
-                오늘 할 일
-              </p>
+            {/* 오늘 할 일 카드 — flex-1으로 남은 공간 채움 */}
+            <div className="flex-1 bg-white border border-stone-100 rounded-2xl p-5">
+              <p className="text-[15px] font-bold text-stone-800 mb-4">오늘 할 일</p>
 
               {todayTasks.length > 0 && (
                 <div className="flex items-baseline gap-2 mb-5">
