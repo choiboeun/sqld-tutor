@@ -726,10 +726,23 @@ export default function HomePage() {
                 <div className="h-px mb-4" style={{ background: "rgba(99,102,241,.18)" }} />
 
                 {/* 도트 세그먼트 바 */}
-                <div className="relative mb-2" style={{ height: "18px" }}>
-                  <span style={{ position: "absolute", left: 0, fontSize: "11px", fontWeight: 600, color: "rgba(55,48,163,.5)" }}>0점</span>
-                  <span style={{ position: "absolute", left: `${targetScore}%`, transform: "translateX(-50%)", fontSize: "11px", fontWeight: 700, color: "rgba(55,48,163,.6)", whiteSpace: "nowrap" }}>목표 {targetScore}점 ↓</span>
-                  <span style={{ position: "absolute", right: 0, fontSize: "11px", fontWeight: 600, color: "rgba(55,48,163,.5)" }}>100점</span>
+                <div className="relative mb-1" style={{ height: "34px" }}>
+                  <span style={{ position: "absolute", left: 0, bottom: 0, fontSize: "11px", fontWeight: 600, color: "rgba(55,48,163,.5)" }}>0점</span>
+                  {/* 목표 레이블: 7번째 도트 중심 = (targetScore - 5)% */}
+                  <div style={{
+                    position: "absolute",
+                    left: `${targetScore - 5}%`,
+                    transform: "translateX(-50%)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    bottom: 0,
+                    gap: 0,
+                  }}>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: "rgba(55,48,163,.6)", whiteSpace: "nowrap", lineHeight: 1.3 }}>목표 {targetScore}점</span>
+                    <span style={{ fontSize: "12px", color: "rgba(55,48,163,.55)", lineHeight: 1 }}>↓</span>
+                  </div>
+                  <span style={{ position: "absolute", right: 0, bottom: 0, fontSize: "11px", fontWeight: 600, color: "rgba(55,48,163,.5)" }}>100점</span>
                 </div>
                 <div className="flex gap-[5px]">
                   {Array.from({ length: 10 }, (_, i) => {
