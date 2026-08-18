@@ -674,7 +674,7 @@ export default function HomePage() {
                 {/* 점수 + D-day */}
                 <div className="flex items-end justify-between mb-5">
                   <div>
-                    <p className="font-bold uppercase mb-2" style={{ fontSize: "9px", letterSpacing: ".2em", color: "rgba(55,48,163,.45)" }}>예상 점수</p>
+                    <p className="font-bold uppercase mb-2" style={{ fontSize: "12px", letterSpacing: ".15em", color: "rgba(55,48,163,.55)" }}>예상 점수</p>
                     <div className="flex items-baseline gap-1">
                       <span className="font-black leading-[.85] tabular-nums" style={{ fontSize: "62px", letterSpacing: "-.07em", color: "#1e1b4b" }}>{predictedScore}</span>
                       <span className="text-lg font-semibold" style={{ color: "rgba(55,48,163,.38)" }}>점</span>
@@ -685,7 +685,7 @@ export default function HomePage() {
                   </div>
                   <div className="text-right pb-1">
                     <div className="flex items-center justify-end gap-2 mb-1.5">
-                      <p className="font-bold uppercase" style={{ fontSize: "9px", letterSpacing: ".14em", color: "rgba(55,48,163,.45)" }}>시험까지</p>
+                      <p className="font-bold uppercase" style={{ fontSize: "12px", letterSpacing: ".12em", color: "rgba(55,48,163,.55)" }}>시험까지</p>
                       <button
                         onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
                         className="text-indigo-400 hover:text-indigo-700 transition-colors"
@@ -727,9 +727,9 @@ export default function HomePage() {
 
                 {/* 도트 세그먼트 바 */}
                 <div className="flex justify-between mb-2">
-                  <span style={{ fontSize: "8.5px", fontWeight: 600, color: "rgba(55,48,163,.4)" }}>0점</span>
-                  <span style={{ fontSize: "8.5px", fontWeight: 600, color: "rgba(55,48,163,.4)" }}>목표 {targetScore}점 ↓</span>
-                  <span style={{ fontSize: "8.5px", fontWeight: 600, color: "rgba(55,48,163,.4)" }}>100점</span>
+                  <span style={{ fontSize: "11px", fontWeight: 600, color: "rgba(55,48,163,.5)" }}>0점</span>
+                  <span style={{ fontSize: "11px", fontWeight: 700, color: "rgba(55,48,163,.55)" }}>목표 {targetScore}점 ↓</span>
+                  <span style={{ fontSize: "11px", fontWeight: 600, color: "rgba(55,48,163,.5)" }}>100점</span>
                 </div>
                 <div className="flex gap-[5px]">
                   {Array.from({ length: 10 }, (_, i) => {
