@@ -738,13 +738,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* 카테고리 정답률 — 레이더 차트 */}
-              <div className="border-t border-indigo-200 pt-3 flex-1 min-h-0 flex flex-col">
-                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(55,48,163,.55)" }}>카테고리 정답률</p>
-                <div className="relative flex-1 min-h-0" style={{ minHeight: "160px" }}>
-                  <RadarChart catMap={catMap} />
-                </div>
-              </div>
             </>
           )}
         </div>
@@ -831,6 +824,14 @@ export default function HomePage() {
                 </span>
               </div>
             </Link>
+
+            {/* 카테고리 정답률 — 레이더 차트 */}
+            <div className="bg-white border border-stone-100 rounded-2xl p-5">
+              <p className="text-[15px] font-bold text-stone-800 mb-3">카테고리 정답률</p>
+              <div className="relative" style={{ minHeight: "220px" }}>
+                <RadarChart catMap={catMap} />
+              </div>
+            </div>
           </div>
 
           {/* ── 오른쪽: 학습 캘린더 + 오늘 할 일 ── */}
