@@ -14,13 +14,17 @@ const CSS = `
 .nav-name{font-size:14px;font-weight:700;letter-spacing:-.01em}
 .nav-login{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;padding:5px 14px;border:1px solid rgba(255,255,255,.35);transition:background .15s}
 .nav-login:hover{background:rgba(255,255,255,.15);color:#fff}
+.nav.glass{background:rgba(167,139,250,.18);backdrop-filter:blur(18px) saturate(200%);-webkit-backdrop-filter:blur(18px) saturate(200%);box-shadow:0 1px 0 rgba(167,139,250,.22),0 4px 28px rgba(124,58,237,.08)}
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 52px)}
 .hero-l{background:var(--accent);padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:28px}
 .hero-h1{font-size:clamp(38px,4.5vw,60px);font-weight:900;line-height:1.1;letter-spacing:-.025em;color:#fff;text-wrap:balance;margin-bottom:24px;text-shadow:0 1px 8px rgba(60,0,120,.35),0 2px 24px rgba(60,0,120,.2)}
 .hero-sub{font-size:15px;line-height:1.8;color:rgba(255,255,255,.72);max-width:360px;margin-bottom:44px;text-shadow:0 1px 6px rgba(60,0,120,.3)}
 .hero-sub strong{color:#fff;font-weight:700}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;padding:14px 32px;text-decoration:none;border:2px solid #fff;align-self:flex-start;transition:background .15s,color .15s}
+.btn-glow-wrap{position:relative;display:inline-block;align-self:flex-start}
+.btn-glow{position:absolute;inset:-7px;background:rgba(167,139,250,.55);filter:blur(16px);animation:glowPulse 2.4s ease-in-out infinite;z-index:0;pointer-events:none}
+@keyframes glowPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.btn-primary{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;padding:14px 32px;text-decoration:none;border:2px solid #fff;transition:background .15s,color .15s}
 .btn-primary:hover{background:transparent;color:#fff}
 .hero-note{margin-top:24px;font-size:12px;color:rgba(255,255,255,.35)}
 .hero-r{background:var(--bg-2);display:flex;align-items:center;justify-content:center;padding:36px 36px}
@@ -113,7 +117,10 @@ const CSS = `
 .step-t{font-size:17px;font-weight:700;line-height:1.3;margin-bottom:10px}
 .step-d{font-size:13px;line-height:1.65;color:var(--fg-2)}
 .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin-top:56px}
-.feat-card{background:var(--bg);padding:40px}
+.feat-card{background:var(--bg);padding:40px;transition:transform .25s ease,box-shadow .25s ease;transform-style:preserve-3d;will-change:transform}
+.feat-card:hover{box-shadow:0 20px 60px rgba(124,58,237,.1)}
+.xfeat-card{transition:transform .25s ease,box-shadow .25s ease;transform-style:preserve-3d;will-change:transform}
+.xfeat-card:hover{box-shadow:0 16px 48px rgba(124,58,237,.08)}
 .feat-big{font-size:52px;font-weight:900;line-height:1;color:var(--accent);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .feat-big span{font-size:20px;color:var(--fg-3);font-weight:700}
 .feat-t{font-size:16px;font-weight:700;margin:16px 0 8px}
@@ -445,14 +452,42 @@ export default function LandingPage() {
     }
     initReveal();
 
-    /* 스크롤하면 scroll-hint 사라짐 */
+    /* 스크롤 — scroll-hint 숨김 + nav 글래스모피즘 */
     const hint = document.getElementById('scroll-hint');
-    const onScroll = () => { if (hint && window.scrollY > 60) hint.classList.add('hide'); };
+    const navEl = document.querySelector('.nav') as HTMLElement | null;
+    const onScroll = () => {
+      if (hint && window.scrollY > 60) hint.classList.add('hide');
+      if (navEl) navEl.classList.toggle('glass', window.scrollY > 40);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
+
+    /* 3D 카드 틸트 */
+    type TiltEntry = { el: HTMLElement; move: (e: MouseEvent) => void; leave: () => void };
+    const tiltEntries: TiltEntry[] = [];
+    document.querySelectorAll<HTMLElement>('.feat-card, .xfeat-card').forEach(card => {
+      const move = (e: MouseEvent) => {
+        const r = card.getBoundingClientRect();
+        const rotY =  ((e.clientX - r.left  - r.width  / 2) / (r.width  / 2)) * 5;
+        const rotX = -((e.clientY - r.top   - r.height / 2) / (r.height / 2)) * 5;
+        card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(4px)`;
+        card.style.transition = 'transform .08s ease, box-shadow .25s ease';
+      };
+      const leave = () => {
+        card.style.transform = '';
+        card.style.transition = 'transform .35s ease, box-shadow .25s ease';
+      };
+      card.addEventListener('mousemove', move);
+      card.addEventListener('mouseleave', leave);
+      tiltEntries.push({ el: card, move, leave });
+    });
 
     return () => {
       aborted = true;
       window.removeEventListener('scroll', onScroll);
+      tiltEntries.forEach(({ el, move, leave }) => {
+        el.removeEventListener('mousemove', move);
+        el.removeEventListener('mouseleave', leave);
+      });
     };
   }, []);
 
@@ -484,12 +519,15 @@ export default function LandingPage() {
             <strong>8문제 진단</strong>으로 약점을 파악하고,
             맞춤 문제를 출제하고, 틀리면 개념까지 설명해드려요.
           </p>
-          <Link className="btn-primary" href="/login">
-            무료로 시작하기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </Link>
+          <div className="btn-glow-wrap">
+            <div className="btn-glow" />
+            <Link className="btn-primary" href="/login">
+              무료로 시작하기
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
           <p className="hero-note">회원가입 필요 · 무료 · 광고 없음</p>
           <div className="scroll-hint" id="scroll-hint">
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
