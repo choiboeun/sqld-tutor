@@ -738,36 +738,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* 오늘 할 일 */}
-              <div className="mb-5">
-                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(55,48,163,.55)" }}>오늘 할 일</p>
-                {todayTasks.length === 0 ? (
-                  <p className="text-xs text-indigo-400 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {todayTasks.map((task) => (
-                      <div
-                        key={task.id}
-                        className={`flex items-center gap-3 px-3 py-2.5 bg-white/60 border-l-2 ${
-                          task.id === "review" ? "border-red-400" : "border-indigo-300"
-                        }`}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold leading-snug">{task.title}</p>
-                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: "rgba(55,48,163,.6)" }}>{task.sub}</p>
-                        </div>
-                        <Link
-                          href={task.href}
-                          className="shrink-0 text-[10px] font-bold tracking-wide bg-indigo-600 text-white px-3 py-1.5 hover:bg-indigo-700 transition-colors whitespace-nowrap"
-                        >
-                          시작
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
               {/* 카테고리 정답률 — 레이더 차트 */}
               <div className="border-t border-indigo-200 pt-3 flex-1 min-h-0 flex flex-col">
                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(55,48,163,.55)" }}>카테고리 정답률</p>
@@ -860,11 +830,11 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* ── 학습 캘린더 + 복습 타이밍 ── */}
-        <div className="mt-8 pt-6 border-t border-stone-200">
+        {/* ── 학습 캘린더 + 오늘 할 일 ── */}
+        <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-2 gap-8">
 
           {/* 학습 캘린더 */}
-          <div className="mb-8">
+          <div>
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-stone-500">학습 캘린더</p>
               <p className="text-sm text-stone-300">최근 13주</p>
@@ -890,6 +860,36 @@ export default function HomePage() {
               <div className="w-5 h-5 bg-indigo-500" />
               <span className="text-xs text-stone-400">많음</span>
             </div>
+          </div>
+
+          {/* 오늘 할 일 */}
+          <div>
+            <p className="text-sm font-semibold text-stone-500 mb-3">오늘 할 일</p>
+            {todayTasks.length === 0 ? (
+              <p className="text-xs text-stone-400 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
+            ) : (
+              <div className="space-y-2">
+                {todayTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`flex items-center gap-3 px-3 py-2.5 bg-white border border-stone-100 border-l-2 ${
+                      task.id === "review" ? "border-l-red-400" : "border-l-indigo-300"
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-stone-800 leading-snug">{task.title}</p>
+                      <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">{task.sub}</p>
+                    </div>
+                    <Link
+                      href={task.href}
+                      className="shrink-0 text-[10px] font-bold tracking-wide bg-indigo-600 text-white px-3 py-1.5 hover:bg-indigo-700 transition-colors whitespace-nowrap"
+                    >
+                      시작
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
