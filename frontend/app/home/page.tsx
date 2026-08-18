@@ -56,93 +56,113 @@ const CATEGORY_WEIGHTS: Record<string, number> = {
   "관리 구문":               0.80 / 9,
 };
 
-/* ── GitHub-style heatmap ── */
+/* ── 월별 달력 ── */
 function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
 
-  // Start from the Sunday that includes the day 90 days back
-  const anchor = new Date(today);
-  anchor.setDate(anchor.getDate() - 90);
-  anchor.setDate(anchor.getDate() - anchor.getDay()); // rewind to Sunday
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
 
-  // Build week columns
-  const weeks: { date: string; count: number; isFuture: boolean }[][] = [];
-  const cur = new Date(anchor);
+  const goPrev = () => {
+    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
+    else setViewMonth(m => m - 1);
+  };
+  const goNext = () => {
+    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
+    else setViewMonth(m => m + 1);
+  };
 
-  while (cur <= today) {
-    if (!weeks.length || weeks[weeks.length - 1].length === 7) weeks.push([]);
-    const dateStr = cur.toISOString().split("T")[0];
-    weeks[weeks.length - 1].push({
-      date: dateStr,
-      count: dates[dateStr] ?? 0,
-      isFuture: cur > today,
-    });
-    cur.setDate(cur.getDate() + 1);
+  const isNextDisabled = viewYear === today.getFullYear() && viewMonth === today.getMonth();
+
+  // 이번 달 첫날 요일 (0=일)
+  const firstDow = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+  // 셀 배열: 첫 날 앞 빈칸 + 날짜 + 뒷 패딩
+  type Cell = { day: number | null; dateStr: string | null; count: number; isToday: boolean; isFuture: boolean };
+  const cells: Cell[] = [];
+  for (let i = 0; i < firstDow; i++) cells.push({ day: null, dateStr: null, count: 0, isToday: false, isFuture: false });
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const cellDate = new Date(viewYear, viewMonth, d);
+    cells.push({ day: d, dateStr: ds, count: dates[ds] ?? 0, isToday: ds === todayStr, isFuture: cellDate > today });
   }
-  // pad last week
-  const last = weeks[weeks.length - 1];
-  if (last && last.length < 7) {
-    while (last.length < 7) last.push({ date: "", count: 0, isFuture: true });
-  }
+  while (cells.length % 7 !== 0) cells.push({ day: null, dateStr: null, count: 0, isToday: false, isFuture: false });
 
-  // Month labels: find first week where each new month appears
-  const monthLabels: { col: number; label: string }[] = [];
-  let lastMonth = -1;
-  weeks.forEach((week, wi) => {
-    const firstValid = week.find((c) => c.date && !c.isFuture);
-    if (!firstValid) return;
-    const m = new Date(firstValid.date).getMonth();
-    if (m !== lastMonth) {
-      monthLabels.push({ col: wi, label: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"][m] });
-      lastMonth = m;
-    }
-  });
+  const MONTHS = ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
+  const DAYS   = ["일","월","화","수","목","금","토"];
 
-  const cellColor = (count: number, isFuture: boolean) => {
-    if (isFuture || count === 0) return "bg-stone-100";
-    if (count <= 2) return "bg-indigo-200";
-    if (count <= 5) return "bg-indigo-400";
-    return "bg-indigo-500";
+  const cellBg = (c: Cell) => {
+    if (c.isToday) return "#4f46e5";
+    if (!c.day || c.isFuture || c.count === 0) return "";
+    if (c.count <= 2) return "#c7d2fe";
+    if (c.count <= 5) return "#818cf8";
+    return "#4f46e5";
+  };
+  const cellText = (c: Cell) => {
+    if (c.isToday) return "#fff";
+    if (!c.day) return "transparent";
+    return c.isFuture || c.count === 0 ? "#c8c5d0" : "#fff";
   };
 
   return (
-    <div className="overflow-x-auto pb-1">
-      {/* X축 월 라벨 — Y축 너비만큼 왼쪽 여백 */}
-      <div className="flex gap-2 mb-2 ml-[32px]">
-        {weeks.map((_, wi) => {
-          const lbl = monthLabels.find((m) => m.col === wi);
-          return (
-            <div key={wi} className="w-5 shrink-0 text-xs text-stone-400 leading-none">
-              {lbl ? lbl.label : ""}
-            </div>
-          );
-        })}
+    <div>
+      {/* 헤더: 연/월 + 화살표 */}
+      <div className="flex items-center justify-between mb-3">
+        <button
+          onClick={goPrev}
+          className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-stone-100 transition-colors text-stone-400 hover:text-stone-700"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <span className="text-sm font-bold text-stone-700">{viewYear}년 {MONTHS[viewMonth]}</span>
+        <button
+          onClick={goNext}
+          disabled={isNextDisabled}
+          className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-stone-100 transition-colors text-stone-400 hover:text-stone-700 disabled:opacity-25 disabled:cursor-default"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
-      {/* Y축 + 격자 */}
-      <div className="flex gap-2">
-        {/* Y축: 요일 */}
-        <div className="flex flex-col gap-2 shrink-0">
-          {["일","월","화","수","목","금","토"].map((d) => (
-            <div key={d} className="h-5 w-5 text-xs text-stone-300 leading-none flex items-center justify-end">
-              {d}
+
+      {/* 요일 헤더 */}
+      <div className="grid grid-cols-7 mb-1">
+        {DAYS.map(d => (
+          <div key={d} className="text-center text-[10px] font-semibold text-stone-300">{d}</div>
+        ))}
+      </div>
+
+      {/* 날짜 격자 */}
+      <div className="grid grid-cols-7 gap-y-1">
+        {cells.map((c, i) => (
+          <div key={i} className="flex items-center justify-center">
+            <div
+              title={c.dateStr && !c.isFuture && c.count > 0 ? `${c.count}문제` : ""}
+              style={{
+                width: "28px", height: "28px",
+                borderRadius: "50%",
+                background: cellBg(c),
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "11px", fontWeight: c.isToday ? 800 : 500,
+                color: cellText(c),
+                transition: "background .15s",
+              }}
+            >
+              {c.day ?? ""}
             </div>
-          ))}
-        </div>
-        {/* 격자 */}
-        <div className="flex gap-2">
-          {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-2 shrink-0">
-              {week.map((cell, di) => (
-                <div
-                  key={di}
-                  className={`w-5 h-5 ${cellColor(cell.count, cell.isFuture)}`}
-                  title={cell.date && !cell.isFuture ? `${cell.date}: ${cell.count}문제` : ""}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 범례 */}
+      <div className="flex items-center gap-2 mt-3">
+        <span className="text-[10px] text-stone-300 font-medium">적음</span>
+        {["#e0e7ff","#c7d2fe","#818cf8","#4f46e5"].map(bg => (
+          <div key={bg} style={{ width: "12px", height: "12px", borderRadius: "3px", background: bg }} />
+        ))}
+        <span className="text-[10px] text-stone-300 font-medium">많음</span>
       </div>
     </div>
   );
