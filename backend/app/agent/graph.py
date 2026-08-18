@@ -12,8 +12,7 @@ from app.agent.nodes.state_updater import state_updater
 from app.agent.nodes.sql_node import sql_node
 from langchain_core.messages import AIMessage as _AIMessage
 
-# A/B 테스트 완료 (2026-07-31): B안(직접 질문) 선호 2:1 → 자동 개념 설명 영구 비활성화
-_AUTO_EXPLAIN = False
+_AUTO_EXPLAIN = True
 
 tool_node = ToolNode(ALL_TOOLS)
 
