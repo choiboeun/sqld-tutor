@@ -473,7 +473,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="h-[100dvh] overflow-hidden flex flex-col md:flex-row">
+    <div className="md:h-[100dvh] md:overflow-hidden flex flex-col md:flex-row">
 
       {/* 신규 가입 웰컴 모달 */}
       {showWelcomeModal && (
@@ -799,7 +799,7 @@ export default function HomePage() {
       </div>
 
       {/* ── 오른쪽 패널 (흰색) ── */}
-      <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10">
+      <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10 md:overflow-y-auto">
 
         {/* ── 전체 2열 레이아웃 ── */}
         <div className="grid grid-cols-2 gap-8 flex-1">
