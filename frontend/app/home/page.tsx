@@ -884,14 +884,6 @@ export default function HomePage() {
           {/* 학습 캘린더 */}
           <div className="border border-indigo-100 p-5" style={{ background: "#faf9ff" }}>
             <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
-            {streak > 0 && (
-              <div className="flex items-center gap-3 mb-4">
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,.12)", color: "#6366f1", fontSize: "12px", fontWeight: 700, letterSpacing: ".04em", padding: "5px 14px", borderRadius: "999px" }}>
-                  🔥 <span style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-.5px" }}>{streak}</span>일 연속
-                </span>
-                <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
-              </div>
-            )}
             {calendarData ? <CalendarHeatmap dates={calendarData.dates} /> : (
               <div className="flex gap-2 animate-pulse">
                 {Array.from({ length: 14 }).map((_, wi) => (
@@ -971,14 +963,6 @@ export default function HomePage() {
             {/* 학습 캘린더 카드 */}
             <div className="border border-indigo-100 rounded-none p-5" style={{ background: "#faf9ff" }}>
               <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
-              {streak > 0 && (
-                <div className="flex items-center gap-3 mb-4">
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,.12)", color: "#6366f1", fontSize: "12px", fontWeight: 700, letterSpacing: ".04em", padding: "5px 14px", borderRadius: "999px" }}>
-                    🔥 <span style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-.5px" }}>{streak}</span>일 연속
-                  </span>
-                  <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
-                </div>
-              )}
               {calendarData ? (
                 <CalendarHeatmap dates={calendarData.dates} />
               ) : (
