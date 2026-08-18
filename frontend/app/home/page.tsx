@@ -483,7 +483,7 @@ export default function HomePage() {
       {showWelcomeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="bg-indigo-500 px-7 py-6">
+            <div className="px-7 py-6" style={{ background: "#818cf8" }}>
               <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
               <h2 className="text-2xl font-black text-white leading-snug">가입을 환영해요!</h2>
               <p className="text-sm text-indigo-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
@@ -612,7 +612,7 @@ export default function HomePage() {
       )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
-      <div className="bg-indigo-500 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10">
+      <div className="text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#818cf8" }}>
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
