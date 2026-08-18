@@ -9,29 +9,29 @@ const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 .lp-root{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
 .nav{position:sticky;top:0;z-index:100;height:52px;background:var(--accent);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
-.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:#fff;text-shadow:0 1px 6px rgba(60,0,120,.5)}
 .nav-icon{width:24px;height:24px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center}
 .nav-name{font-size:14px;font-weight:700;letter-spacing:-.01em}
-.nav-login{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;padding:5px 14px;border:1px solid rgba(255,255,255,.35);transition:background .15s}
+.nav-login{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);text-decoration:none;padding:5px 14px;border:1px solid rgba(255,255,255,.35);transition:background .15s;text-shadow:0 1px 5px rgba(60,0,120,.45)}
 .nav-login:hover{background:rgba(255,255,255,.15);color:#fff}
 .nav.glass{background:rgba(167,139,250,.18);backdrop-filter:blur(18px) saturate(200%);-webkit-backdrop-filter:blur(18px) saturate(200%);box-shadow:0 1px 0 rgba(167,139,250,.22),0 4px 28px rgba(124,58,237,.08)}
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 52px)}
 .hero-l{background:var(--accent);padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:28px}
-.hero-h1{font-size:clamp(38px,4.5vw,60px);font-weight:900;line-height:1.1;letter-spacing:-.025em;color:#fff;text-wrap:balance;margin-bottom:24px;text-shadow:0 1px 8px rgba(60,0,120,.35),0 2px 24px rgba(60,0,120,.2)}
-.hero-sub{font-size:15px;line-height:1.8;color:rgba(255,255,255,.72);max-width:360px;margin-bottom:44px;text-shadow:0 1px 6px rgba(60,0,120,.3)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:28px;text-shadow:0 1px 6px rgba(60,0,120,.55)}
+.hero-h1{font-size:clamp(38px,4.5vw,60px);font-weight:900;line-height:1.1;letter-spacing:-.025em;color:#fff;text-wrap:balance;margin-bottom:24px;text-shadow:0 2px 12px rgba(60,0,120,.65),0 4px 32px rgba(60,0,120,.4)}
+.hero-sub{font-size:15px;line-height:1.8;color:rgba(255,255,255,.72);max-width:360px;margin-bottom:44px;text-shadow:0 1px 10px rgba(60,0,120,.6)}
 .hero-sub strong{color:#fff;font-weight:700}
 .btn-glow-wrap{position:relative;display:inline-block;align-self:flex-start}
 .btn-glow{position:absolute;inset:-7px;background:rgba(167,139,250,.55);filter:blur(16px);animation:glowPulse 2.4s ease-in-out infinite;z-index:0;pointer-events:none}
 @keyframes glowPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
 .btn-primary{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;padding:14px 32px;text-decoration:none;border:2px solid #fff;transition:background .15s,color .15s}
 .btn-primary:hover{background:transparent;color:#fff}
-.hero-note{margin-top:24px;font-size:12px;color:rgba(255,255,255,.35)}
+.hero-note{margin-top:24px;font-size:12px;color:rgba(255,255,255,.35);text-shadow:0 1px 6px rgba(60,0,120,.55)}
 .hero-r{background:var(--bg-2);display:flex;align-items:center;justify-content:center;padding:36px 36px}
 .cm{width:100%;background:var(--bg);border:1px solid var(--bd);box-shadow:0 8px 32px rgba(0,0,0,.09)}
 .cm-bar{background:var(--accent);padding:10px 14px;display:flex;align-items:center;gap:6px}
 .cm-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35)}
-.cm-title{font-size:12px;font-weight:600;color:rgba(255,255,255,.9);margin-left:4px}
+.cm-title{font-size:12px;font-weight:600;color:rgba(255,255,255,.9);margin-left:4px;text-shadow:0 1px 5px rgba(60,0,120,.5)}
 .cm-sqlbtn{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.05em;background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.25);padding:3px 9px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
 .cm-sqlbtn.hov{background:rgba(255,255,255,.25);color:rgba(255,255,255,.9)}
 .cm-sqlbtn.on{background:#fff;color:var(--accent-h)}
@@ -134,9 +134,9 @@ const CSS = `
 .trust-line{width:24px;height:1px;background:var(--bd);flex-shrink:0}
 .trust-text{font-size:13px;color:var(--fg-3)}
 .cta-sec{background:var(--accent);padding:96px 56px;text-align:center}
-.cta-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:20px}
-.cta-h{font-size:clamp(32px,4vw,52px);font-weight:900;color:#fff;letter-spacing:-.025em;text-wrap:balance;margin-bottom:14px}
-.cta-sub{font-size:15px;color:rgba(255,255,255,.68);margin-bottom:44px}
+.cta-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:20px;text-shadow:0 1px 6px rgba(60,0,120,.55)}
+.cta-h{font-size:clamp(32px,4vw,52px);font-weight:900;color:#fff;letter-spacing:-.025em;text-wrap:balance;margin-bottom:14px;text-shadow:0 2px 12px rgba(60,0,120,.65),0 4px 32px rgba(60,0,120,.4)}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.68);margin-bottom:44px;text-shadow:0 1px 10px rgba(60,0,120,.6)}
 .btn-cta{display:inline-block;background:#fff;color:var(--accent);font-size:16px;font-weight:700;padding:16px 44px;text-decoration:none;border:2px solid #fff;transition:background .15s,color .15s}
 .btn-cta:hover{background:transparent;color:#fff}
 .cta-login{display:block;margin-top:16px;font-size:13px;color:rgba(255,255,255,.42);text-decoration:none}
