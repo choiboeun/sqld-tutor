@@ -813,81 +813,74 @@ export default function HomePage() {
       <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10">
 
         {/* 바로 시작 */}
-        <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
+        <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-3">바로 시작</p>
 
-        <div className="flex flex-col border-t border-stone-200 mt-3">
-          {/* AI 학습 */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {/* AI 학습 — 2행 점유 */}
           <Link
             href="/chat"
-            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
+            className="row-span-2 flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-indigo-50 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                </svg>
-              </div>
-              <div>
-                <p className="text-base font-semibold text-stone-900">AI 학습</p>
-                <p className="text-sm text-stone-400 mt-0.5">{totalAnswered}문제 풀이 중</p>
-              </div>
+            <div className="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:translate-x-0.5 transition-transform">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+            <p className="text-[15px] font-bold text-stone-900">AI 학습</p>
+            <p className="text-sm text-indigo-500 mt-1">{totalAnswered}문제 풀이 중</p>
+            <div className="mt-auto pt-5">
+              <span className="inline-flex items-center bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-full">
+                이어서 학습 →
+              </span>
+            </div>
           </Link>
 
           {/* 오답 회고 */}
           <Link
             href="/wrong-answers"
-            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
+            className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-red-50 flex items-center justify-center shrink-0 relative">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                </svg>
-                {wrongCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[14px] h-3.5 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1">
-                    {wrongCount}
-                  </span>
-                )}
-              </div>
-              <div>
-                <p className="text-base font-semibold text-stone-900">오답 회고</p>
-                <p className={`text-sm mt-0.5 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
-                  {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
-                </p>
-              </div>
+            <div className="w-9 h-9 bg-red-500 rounded-xl flex items-center justify-center mb-3 shrink-0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+            <p className="text-[15px] font-bold text-stone-900">오답 회고</p>
+            <p className={`text-sm mt-1 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
+              {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
+            </p>
+            {wrongCount > 0 && (
+              <div className="mt-auto pt-3">
+                <span className="inline-flex items-center bg-red-50 text-red-600 text-xs font-bold px-3 py-1.5 rounded-full">
+                  {wrongCount}개
+                </span>
+              </div>
+            )}
           </Link>
 
           {/* 모의고사 */}
           <Link
             href="/exam"
-            className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
+            className="flex flex-col bg-white border border-stone-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-stone-100 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="0"/><line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-              </div>
-              <div>
-                <p className="text-base font-semibold text-stone-900">모의고사</p>
-                <p className="text-sm text-stone-400 mt-0.5">50문제 · 90분 · 실전 배점</p>
-              </div>
+            <div className="w-9 h-9 bg-indigo-400 rounded-xl flex items-center justify-center mb-3 shrink-0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
+            <p className="text-[15px] font-bold text-stone-900">모의고사</p>
+            <p className="text-sm text-stone-400 mt-1">50문제 · 90분 · 실전 배점</p>
+            <div className="mt-auto pt-3">
+              <span className="inline-flex items-center bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full">
+                도전
+              </span>
+            </div>
           </Link>
         </div>
 
