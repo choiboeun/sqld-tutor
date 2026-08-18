@@ -220,7 +220,7 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
           key={ri}
           points={ALL_CATEGORIES.map((_, i) => pt(i, r * maxR).join(",")).join(" ")}
           fill="none"
-          stroke="rgba(255,255,255,0.11)"
+          stroke="rgba(99,102,241,0.18)"
           strokeWidth="1"
         />
       ))}
@@ -230,15 +230,15 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
         const [x2, y2] = pt(i, maxR);
         return (
           <line key={i} x1={cx} y1={cy} x2={x2} y2={y2}
-            stroke="rgba(255,255,255,0.11)" strokeWidth="1" />
+            stroke="rgba(99,102,241,0.18)" strokeWidth="1" />
         );
       })}
 
       {/* 데이터 다각형 */}
       <polygon
         points={dataPolygon}
-        fill="rgba(255,255,255,0.18)"
-        stroke={hasAnyData ? "rgba(255,255,255,0.82)" : "transparent"}
+        fill="rgba(99,102,241,0.12)"
+        stroke={hasAnyData ? "#6366f1" : "transparent"}
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
@@ -247,7 +247,7 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
       {points.map((d, i) => {
         if (!d.tried || d.pct === 0) return null;
         const [x, y] = pt(i, d.pct * maxR);
-        return <circle key={i} cx={x} cy={y} r="3" fill="white" />;
+        return <circle key={i} cx={x} cy={y} r="3" fill="#6366f1" />;
       })}
 
       {/* 라벨 */}
@@ -259,7 +259,7 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
             x={x} y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill={d.tried ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.30)"}
+            fill={d.tried ? "#3730a3" : "rgba(99,102,241,0.35)"}
             fontSize="8"
             fontWeight={d.tried ? "600" : "400"}
             fontFamily="system-ui, sans-serif"
@@ -272,7 +272,7 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
       {/* 데이터 없을 때 안내 */}
       {!hasAnyData && (
         <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle"
-          fill="rgba(255,255,255,0.28)" fontSize="9" fontFamily="system-ui, sans-serif">
+          fill="rgba(55,48,163,0.45)" fontSize="9" fontFamily="system-ui, sans-serif">
           문제를 풀면 표시됩니다
         </text>
       )}
@@ -612,27 +612,27 @@ export default function HomePage() {
       )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
-      <div className="text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#818cf8" }}>
+      <div className="md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-7 h-7 bg-white/20 flex items-center justify-center shrink-0">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-7 h-7 bg-indigo-200 flex items-center justify-center shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
                 </svg>
               </div>
               <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
             </div>
-            <p className="text-indigo-200 text-sm pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
+            <p className="text-sm pl-[36px]" style={{ color: "rgba(55,48,163,.6)" }}>SQL 자격증 합격을 위한 AI 튜터</p>
           </div>
 
           {/* 계정 드롭다운 */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowDropdown((v) => !v)}
-              className="flex items-center gap-1.5 text-xs text-indigo-200 hover:text-white transition-colors"
+              className="flex items-center gap-1.5 text-xs text-indigo-500 hover:text-indigo-900 transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -676,19 +676,19 @@ export default function HomePage() {
             <div className="space-y-4 animate-pulse">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="h-2 bg-white/20 w-16 mb-2.5" />
-                  <div className="h-12 bg-white/20 w-20" />
+                  <div className="h-2 bg-indigo-200 w-16 mb-2.5" />
+                  <div className="h-12 bg-indigo-200 w-20" />
                 </div>
                 <div>
-                  <div className="h-2 bg-white/20 w-16 mb-2.5" />
-                  <div className="h-12 bg-white/20 w-16" />
+                  <div className="h-2 bg-indigo-200 w-16 mb-2.5" />
+                  <div className="h-12 bg-indigo-200 w-16" />
                 </div>
               </div>
-              <div className="h-1 bg-white/20 w-full" />
+              <div className="h-1 bg-indigo-200 w-full" />
               <div className="mt-4 space-y-2">
-                <div className="h-2 bg-white/20 w-20" />
-                <div className="h-14 bg-white/20" />
-                <div className="h-14 bg-white/20" />
+                <div className="h-2 bg-indigo-200 w-20" />
+                <div className="h-14 bg-indigo-200" />
+                <div className="h-14 bg-indigo-200" />
               </div>
             </div>
           ) : (
@@ -696,21 +696,21 @@ export default function HomePage() {
               {/* 예상 점수 + D-day 2열 */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                  <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest mb-2">예상 점수</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(55,48,163,.55)" }}>예상 점수</p>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-5xl font-black leading-none tabular-nums">{predictedScore}</span>
-                    <span className="text-sm text-indigo-200">점</span>
+                    <span className="text-sm text-indigo-500">점</span>
                   </div>
-                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-300" : "text-indigo-200/80"}`}>
+                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-700" : "text-indigo-500"}`}>
                     목표 {targetScore}점까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
                   </p>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2 mb-2">
-                    <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest">시험까지</p>
+                    <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "rgba(55,48,163,.55)" }}>시험까지</p>
                     <button
                       onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                      className="text-indigo-200/60 hover:text-indigo-200 transition-colors"
+                      className="text-indigo-400 hover:text-indigo-700 transition-colors"
                       title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -722,18 +722,18 @@ export default function HomePage() {
                   {dDayCount !== null ? (
                     <>
                       <p className={`text-4xl font-black leading-none tabular-nums ${
-                        dDayCount === 0 ? "text-red-200" : dDayCount < 0 ? "text-white/50" : ""
+                        dDayCount === 0 ? "text-red-500" : dDayCount < 0 ? "text-stone-400" : ""
                       }`}>
                         {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
                       </p>
                       {streak > 0 && (
-                        <p className="text-xs text-indigo-200/80 mt-1.5">🔥 {streak}일 연속</p>
+                        <p className="text-xs text-indigo-500 mt-1.5">🔥 {streak}일 연속</p>
                       )}
                     </>
                   ) : (
                     <button
                       onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
-                      className="text-sm font-medium text-indigo-200/70 hover:text-white transition-colors mt-2"
+                      className="text-sm font-medium text-indigo-500 hover:text-indigo-800 transition-colors mt-2"
                     >
                       날짜 설정 +
                     </button>
@@ -744,19 +744,19 @@ export default function HomePage() {
               {/* 진행 바 */}
               <div className="mb-6">
                 <div className="relative h-1 w-full">
-                  <div className="absolute inset-0 bg-white/15" />
+                  <div className="absolute inset-0 bg-indigo-200" />
                   <div
-                    className="absolute top-0 left-0 h-full bg-white transition-all duration-700"
+                    className="absolute top-0 left-0 h-full bg-indigo-600 transition-all duration-700"
                     style={{ width: `${Math.min(predictedScore, 100)}%` }}
                   />
                   {scoreDiff < 0 && (
                     <div
-                      className="absolute top-0 h-full bg-white/30"
+                      className="absolute top-0 h-full bg-indigo-300/60"
                       style={{ left: `${predictedScore}%`, width: `${targetScore - predictedScore}%` }}
                     />
                   )}
                   <div
-                    className="absolute w-px bg-indigo-200/60"
+                    className="absolute w-px bg-indigo-500"
                     style={{ left: `${targetScore}%`, top: "-3px", bottom: "-3px" }}
                   />
                 </div>
@@ -764,25 +764,25 @@ export default function HomePage() {
 
               {/* 오늘 할 일 */}
               <div className="mb-5">
-                <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest mb-3">오늘 할 일</p>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "rgba(55,48,163,.55)" }}>오늘 할 일</p>
                 {todayTasks.length === 0 ? (
-                  <p className="text-xs text-white/40 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
+                  <p className="text-xs text-indigo-400 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
                 ) : (
                   <div className="space-y-2">
                     {todayTasks.map((task) => (
                       <div
                         key={task.id}
-                        className={`flex items-center gap-3 px-3 py-2.5 bg-white/10 border-l-2 ${
-                          task.id === "review" ? "border-red-300/70" : "border-white/25"
+                        className={`flex items-center gap-3 px-3 py-2.5 bg-white/60 border-l-2 ${
+                          task.id === "review" ? "border-red-400" : "border-indigo-300"
                         }`}
                       >
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold leading-snug">{task.title}</p>
-                          <p className="text-xs text-white/55 mt-0.5 leading-relaxed">{task.sub}</p>
+                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: "rgba(55,48,163,.6)" }}>{task.sub}</p>
                         </div>
                         <Link
                           href={task.href}
-                          className="shrink-0 text-[10px] font-bold tracking-wide bg-white/90 text-indigo-700 px-3 py-1.5 hover:bg-white transition-colors whitespace-nowrap"
+                          className="shrink-0 text-[10px] font-bold tracking-wide bg-indigo-600 text-white px-3 py-1.5 hover:bg-indigo-700 transition-colors whitespace-nowrap"
                         >
                           시작
                         </Link>
@@ -793,8 +793,8 @@ export default function HomePage() {
               </div>
 
               {/* 카테고리 정답률 — 레이더 차트 */}
-              <div className="border-t border-white/15 pt-3 flex-1 min-h-0 flex flex-col">
-                <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-2">카테고리 정답률</p>
+              <div className="border-t border-indigo-200 pt-3 flex-1 min-h-0 flex flex-col">
+                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(55,48,163,.55)" }}>카테고리 정답률</p>
                 <div className="relative flex-1 min-h-0" style={{ minHeight: "160px" }}>
                   <RadarChart catMap={catMap} />
                 </div>
@@ -804,7 +804,7 @@ export default function HomePage() {
         </div>
 
         {/* 신뢰 문구 */}
-        <p className="text-xs text-white/40 mt-auto pt-6 leading-relaxed">
+        <p className="text-xs mt-auto pt-6 leading-relaxed" style={{ color: "rgba(55,48,163,.4)" }}>
           SQLD 합격자가 기출 경향을 분석해 제작한 문제은행
         </p>
       </div>
