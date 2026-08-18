@@ -876,9 +876,9 @@ export default function HomePage() {
             </Link>
 
             {/* 카테고리 정답률 — 레이더 차트 */}
-            <div className="border border-stone-100 rounded-none p-5" style={{ background: "#faf9ff" }}>
-              <p className="text-[15px] font-bold text-stone-800 mb-3">카테고리 정답률</p>
-              <div className="relative" style={{ minHeight: "220px" }}>
+            <div className="border border-stone-100 rounded-none p-2" style={{ background: "#faf9ff" }}>
+              <p className="text-[15px] font-bold text-stone-800 mb-1 px-1">카테고리 정답률</p>
+              <div className="relative" style={{ minHeight: "280px" }}>
                 <RadarChart catMap={catMap} />
               </div>
             </div>
