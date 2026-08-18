@@ -453,7 +453,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-[100dvh] flex flex-col md:flex-row">
+    <div className="h-[100dvh] overflow-hidden flex flex-col md:flex-row">
 
       {/* 신규 가입 웰컴 모달 */}
       {showWelcomeModal && (
