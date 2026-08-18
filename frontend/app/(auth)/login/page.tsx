@@ -187,7 +187,7 @@ export default function LoginPage() {
         <div className="login-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#f5f4f3" }}>
+        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#dde1fb" }}>
           <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "#fff", border: "none", boxShadow: "0 12px 48px rgba(49,46,129,.28),0 2px 8px rgba(49,46,129,.12)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
 
             <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
