@@ -106,6 +106,8 @@ export default function LoginPage() {
     <>
       <style>{`
         @keyframes bpulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(139,92,246,.5)}50%{opacity:.4;box-shadow:none}}
+        @keyframes loginCard{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+        @keyframes loginEl{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
         @keyframes cblink{0%,49%{opacity:1}50%,100%{opacity:0}}
         @keyframes rpulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.05);opacity:.55}}
         .login-brand-dot{animation:bpulse 2.2s ease-in-out infinite}
@@ -124,13 +126,14 @@ export default function LoginPage() {
         .login-submit:active:not(:disabled){transform:translateY(0)}
         .login-right::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px 180px;opacity:.042;pointer-events:none;z-index:0}
         .login-eye:hover{color:#78716c}
-        .login-fl-input{width:100%;border:1.5px solid #ede9e4;background:#fafaf9;padding:20px 14px 7px;font-size:13.5px;color:#1c1917;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
-        .login-fl-input:focus{border-color:#8b5cf6;background:#fff;box-shadow:0 0 0 3px rgba(139,92,246,.08)}
-        .login-fl-label{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:#b5b0ab;pointer-events:none;transition:all .18s ease}
-        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8b5cf6}
-        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fafaf9 inset;-webkit-text-fill-color:#1c1917;transition:background-color 5000s ease-in-out 0s}
-        .login-signup-link{color:#8b5cf6;font-weight:700;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
-        .login-signup-link:hover{border-bottom-color:#8b5cf6}
+        .login-fl-input{width:100%;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);padding:20px 14px 7px;font-size:13.5px;color:#fff;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
+        .login-fl-input::placeholder{color:transparent}
+        .login-fl-input:focus{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.18);box-shadow:0 0 0 3px rgba(255,255,255,.1)}
+        .login-fl-label{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:rgba(255,255,255,.5);pointer-events:none;transition:all .18s ease}
+        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px rgba(120,80,220,.3) inset;-webkit-text-fill-color:#fff;transition:background-color 5000s ease-in-out 0s}
+        .login-signup-link{color:rgba(255,255,255,.9);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);transition:border-color .15s}
+        .login-signup-link:hover{border-bottom-color:rgba(255,255,255,.8)}
         @media(max-width:680px){
           .login-page{flex-direction:column!important}
           .login-left{flex:none!important;min-height:auto!important;padding:36px 28px 32px!important}
@@ -184,16 +187,16 @@ export default function LoginPage() {
         <div className="login-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#f7f6f4" }}>
-          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "#fff", border: "1px solid #e8e4df", boxShadow: "0 2px 8px rgba(0,0,0,.04),0 8px 36px rgba(0,0,0,.07)", padding: "36px 32px 30px" }}>
+        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "linear-gradient(140deg,#5b21b6 0%,#7c3aed 38%,#a78bfa 75%,#c4b5fd 100%)" }}>
+          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.14)", border: "1px solid rgba(255,255,255,.28)", boxShadow: "0 8px 40px rgba(40,0,100,.3),inset 0 1px 0 rgba(255,255,255,.35)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
 
-            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "10px" }}>SQLD AI 튜터</p>
-            <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#1c1917", letterSpacing: "-.03em", marginBottom: "5px" }}>로그인</h1>
-            <p style={{ fontSize: "13px", color: "#78716c", marginBottom: "26px" }}>학습을 이어가세요.</p>
+            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,.65)", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
+            <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#fff", letterSpacing: "-.03em", marginBottom: "5px", animation: "loginEl .4s ease .18s both" }}>로그인</h1>
+            <p style={{ fontSize: "13px", color: "rgba(255,255,255,.65)", marginBottom: "26px", animation: "loginEl .4s ease .24s both" }}>학습을 이어가세요.</p>
 
             <form onSubmit={handleLogin}>
               {/* Email */}
-              <div style={{ position: "relative", marginBottom: "13px" }}>
+              <div style={{ position: "relative", marginBottom: "13px", animation: "loginEl .4s ease .32s both" }}>
                 <input
                   className="login-fl-input"
                   type="email"
@@ -206,7 +209,7 @@ export default function LoginPage() {
               </div>
 
               {/* Password */}
-              <div style={{ position: "relative", marginBottom: "13px" }}>
+              <div style={{ position: "relative", marginBottom: "13px", animation: "loginEl .4s ease .4s both" }}>
                 <input
                   className="login-fl-input"
                   type={showPassword ? "text" : "password"}
@@ -221,7 +224,7 @@ export default function LoginPage() {
                   type="button"
                   className="login-eye"
                   onClick={() => setShowPassword((p) => !p)}
-                  style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#c7c3bf", display: "flex", alignItems: "center", transition: "color .15s" }}
+                  style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,.5)", display: "flex", alignItems: "center", transition: "color .15s" }}
                 >
                   {showPassword ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -241,23 +244,23 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className="login-submit"
-                style={{ width: "100%", background: "#8b5cf6", color: "#fff", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1 }}
+                style={{ width: "100%", background: "rgba(255,255,255,.9)", color: "#7c3aed", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1, animation: "loginEl .4s ease .48s both" }}
               >
                 {loading ? "로그인 중..." : "로그인"}
               </button>
             </form>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0" }}>
-              <div style={{ flex: 1, height: "1px", background: "#eae8e5" }} />
-              <span style={{ fontSize: "10px", color: "#c7c3bf", fontWeight: 600, letterSpacing: ".06em" }}>또는</span>
-              <div style={{ flex: 1, height: "1px", background: "#eae8e5" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0", animation: "loginEl .4s ease .56s both" }}>
+              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,.2)" }} />
+              <span style={{ fontSize: "10px", color: "rgba(255,255,255,.45)", fontWeight: 600, letterSpacing: ".06em" }}>또는</span>
+              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,.2)" }} />
             </div>
 
-            <button disabled style={{ width: "100%", background: "#f5f5f4", border: "1.5px solid #e8e4df", color: "#c7c3bf", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed" }}>
+            <button disabled style={{ width: "100%", background: "rgba(255,255,255,.08)", border: "1.5px solid rgba(255,255,255,.18)", color: "rgba(255,255,255,.35)", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed", animation: "loginEl .4s ease .62s both" }}>
               카카오로 로그인 (준비 중)
             </button>
 
-            <p style={{ textAlign: "center", fontSize: "11.5px", color: "#a8a29e", marginTop: "20px" }}>
+            <p style={{ textAlign: "center", fontSize: "11.5px", color: "rgba(255,255,255,.55)", marginTop: "20px", animation: "loginEl .4s ease .68s both" }}>
               계정이 없으신가요?{" "}
               <Link href="/signup" className="login-signup-link">회원가입</Link>
             </p>
