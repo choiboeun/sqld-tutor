@@ -149,30 +149,6 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
 }
 
 /* ── 복습 타이밍 row ── */
-function ReviewRow({
-  label,
-  items,
-  accent,
-}: {
-  label: string;
-  items: ReviewItem[];
-  accent: string;
-}) {
-  const cats = Array.from(new Set(items.map((i) => i.category)));
-  const preview = cats.slice(0, 2).join(" · ") + (cats.length > 2 ? ` 외 ${cats.length - 2}개` : "");
-  return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-stone-100 last:border-0">
-      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${accent}`} />
-      <span className="text-sm font-semibold text-stone-500 w-14 shrink-0">{label}</span>
-      <span className="flex-1 text-sm text-stone-400 truncate">{preview}</span>
-      <span className={`text-sm font-bold tabular-nums shrink-0 ${
-        accent === "bg-red-400" ? "text-red-500" :
-        accent === "bg-indigo-400" ? "text-indigo-600" :
-        "text-stone-400"
-      }`}>{items.length}개</span>
-    </div>
-  );
-}
 
 /* ── 레이더 차트 ── */
 const RADAR_SHORT: Record<string, string> = {
@@ -914,43 +890,6 @@ export default function HomePage() {
               <div className="w-5 h-5 bg-indigo-500" />
               <span className="text-xs text-stone-400">많음</span>
             </div>
-          </div>
-
-          {/* 복습 타이밍 */}
-          <div className="mb-6">
-            <p className="text-sm font-semibold text-stone-500 mb-3">복습 타이밍</p>
-            {reviewTiming === null ? (
-              <div className="space-y-2 animate-pulse">
-                <div className="h-9 bg-stone-100" />
-                <div className="h-9 bg-stone-100" />
-              </div>
-            ) : reviewTotal === 0 ? (
-              <p className="text-xs text-stone-400 py-3">복습할 오답이 없어요</p>
-            ) : (
-              <div>
-                {reviewTiming.overdue.length > 0 && (
-                  <ReviewRow label="기간 지남" items={reviewTiming.overdue} accent="bg-stone-300" />
-                )}
-                {reviewTiming.today.length > 0 && (
-                  <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
-                )}
-                {reviewTiming.tomorrow.length > 0 && (
-                  <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-indigo-400" />
-                )}
-                {reviewTiming.this_week.length > 0 && (
-                  <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
-                )}
-                <Link
-                  href="/wrong-answers"
-                  className="inline-flex items-center gap-1.5 text-sm text-indigo-500 hover:underline mt-3"
-                >
-                  오답 회고 전체 보기
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </Link>
-              </div>
-            )}
           </div>
 
         </div>
