@@ -98,7 +98,7 @@ export default function LoginPage() {
       const mx = ((e.clientX - r.left) / r.width * 100).toFixed(1);
       const my = ((e.clientY - r.top) / r.height * 100).toFixed(1);
       if (rightBgRef.current) {
-        rightBgRef.current.style.background = `radial-gradient(ellipse 460px 340px at ${mx}% ${my}%,rgba(255,255,255,.18) 0%,transparent 60%)`;
+        rightBgRef.current.style.background = `radial-gradient(ellipse 560px 420px at ${mx}% ${my}%,rgba(255,255,255,.35) 0%,transparent 65%)`;
       }
     };
     const onLeave = () => {
