@@ -129,7 +129,7 @@ function parseQuestionHeader(content: string) {
 
 const DIFF_STYLE: Record<string, string> = {
   하: "bg-green-100 text-green-700",
-  중: "bg-amber-100 text-amber-700",
+  중: "bg-indigo-100 text-indigo-700",
   상: "bg-red-100 text-red-700",
 };
 
@@ -251,7 +251,7 @@ const mdComponents = {
     <strong className="font-semibold">{children}</strong>
   ),
   blockquote: ({ children }: { children?: React.ReactNode }) => (
-    <div className="my-2 px-3 py-2.5 rounded-lg bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900">
+    <div className="my-2 px-3 py-2.5 rounded-lg bg-indigo-50 border-l-4 border-indigo-400 text-sm text-indigo-900">
       {children}
     </div>
   ),
@@ -670,7 +670,7 @@ function ChatContent() {
                 <rect y="15" width="20" height="2" rx="1"/>
               </svg>
             </button>
-            <Link href="/home" className="md:hidden text-lg font-semibold text-stone-900 hover:text-amber-600 transition-colors">
+            <Link href="/home" className="md:hidden text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors">
               SQLD AI 튜터
             </Link>
           </div>
@@ -682,8 +682,8 @@ function ChatContent() {
             onClick={() => setSqlPanelOpen((v) => !v)}
             className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
               sqlPanelOpen
-                ? "bg-amber-50 border-amber-300 text-amber-700"
-                : "border-stone-200 text-stone-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50"
+                ? "bg-indigo-50 border-indigo-300 text-indigo-700"
+                : "border-stone-200 text-stone-500 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50"
             }`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -697,14 +697,14 @@ function ChatContent() {
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-stone-50">
           {diagnosticResume && (
-            <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm">
-              <span className="text-amber-800">이전 진단을 <strong>{diagnosticResume.progress}/8</strong> 문제까지 풀었어요. 이어서 마저 풀까요?</span>
+            <div className="flex items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3 text-sm">
+              <span className="text-indigo-800">이전 진단을 <strong>{diagnosticResume.progress}/8</strong> 문제까지 풀었어요. 이어서 마저 풀까요?</span>
               <div className="flex gap-2 ml-4 shrink-0">
                 <button
                   onClick={async () => { setDiagnosticResume(null); resumeDiagnosticFired.current = true; await streamChat("진단 이어서 해줘", false); }}
-                  className="bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-amber-600"
+                  className="bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-600"
                 >이어서 풀기</button>
-                <button onClick={() => setDiagnosticResume(null)} className="text-amber-600 text-xs px-2 py-1.5 hover:underline">닫기</button>
+                <button onClick={() => setDiagnosticResume(null)} className="text-indigo-600 text-xs px-2 py-1.5 hover:underline">닫기</button>
               </div>
             </div>
           )}
@@ -763,7 +763,7 @@ function ChatContent() {
                         return (
                           <>
                             <div className="mb-2">
-                              <span className="text-xs font-bold text-amber-700">💡 개념 보충</span>
+                              <span className="text-xs font-bold text-indigo-700">💡 개념 보충</span>
                             </div>
                             <div className="relative">
                               <div
@@ -786,7 +786,7 @@ function ChatContent() {
                                 {isLong && (
                                   <button
                                     onClick={() => toggleConcept(i)}
-                                    className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 hover:bg-amber-100 transition-colors"
+                                    className="text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 hover:bg-indigo-100 transition-colors"
                                   >
                                     {msg.conceptExpanded ? "접기 ▲" : "더 보기 ▼"}
                                   </button>
@@ -898,7 +898,7 @@ function ChatContent() {
                           </div>
                         )}
                         <div className="flex gap-1.5 mb-3">
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                             {parsed.category}
                           </span>
                           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[parsed.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
@@ -920,12 +920,12 @@ function ChatContent() {
                                     disabled={(isLoading && !hasPendingQuestion) || isAnswered}
                                     className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 transition-colors ${
                                       isSelected
-                                        ? "bg-amber-500 cursor-default"
+                                        ? "bg-indigo-500 cursor-default"
                                         : isAnswered
                                           ? "bg-white cursor-default"
                                           : isLoading && !hasPendingQuestion
                                             ? "bg-stone-50 animate-pulse cursor-not-allowed"
-                                            : "bg-white hover:bg-amber-50"
+                                            : "bg-white hover:bg-indigo-50"
                                     }`}
                                   >
                                     <span className={`shrink-0 text-sm font-bold mt-0.5 ${isSelected ? "text-white" : "text-stone-400"}`}>
@@ -994,25 +994,25 @@ function ChatContent() {
           <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-stone-200 bg-white">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors"
             >
               문제 풀기
             </button>
             <button
               onClick={() => streamChat("약점 분석해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
             >
               약점 분석
             </button>
             <button
               onClick={() => streamChat("오답 복습해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
             >
               오답 복습
             </button>
             <button
               onClick={handleWeakConceptChip}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
             >
               틀린 개념 복습
             </button>
@@ -1023,7 +1023,7 @@ function ChatContent() {
           <div className="flex gap-3 items-end">
             <textarea
               ref={inputRef}
-              className={`flex-1 resize-none border border-stone-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-amber-500 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
+              className={`flex-1 resize-none border border-stone-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
               rows={1}
               placeholder={inputPlaceholder}
               value={input}
@@ -1033,7 +1033,7 @@ function ChatContent() {
             <button
               onClick={sendMessage}
               disabled={isLoading || !input.trim()}
-              className="p-3 bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              className="p-3 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 19V5M5 12l7-7 7 7"/>
@@ -1049,7 +1049,7 @@ function ChatContent() {
           {/* 패널 헤더 */}
           <div className="px-4 py-3 border-b border-stone-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-indigo-600">
                 <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
               </svg>
               <span className="text-sm font-semibold text-stone-700">SQL 플레이그라운드</span>
@@ -1074,14 +1074,14 @@ function ChatContent() {
               value={sqlQuery}
               onChange={(e) => setSqlQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runSql(); } }}
-              className="w-full h-32 resize-none border border-stone-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 placeholder:text-stone-400"
+              className="w-full h-32 resize-none border border-stone-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 placeholder:text-stone-400"
               placeholder="SELECT * FROM EMP;"
               spellCheck={false}
             />
             <button
               onClick={runSql}
               disabled={sqlLoading || !sqlQuery.trim()}
-              className="self-end flex items-center gap-1.5 px-4 py-2 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="self-end flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {sqlLoading ? "실행 중..." : "▶ 실행"}
             </button>

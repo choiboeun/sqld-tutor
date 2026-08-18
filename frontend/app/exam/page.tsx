@@ -303,7 +303,7 @@ export default function ExamPage() {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-stone-500 text-sm">{grading ? "채점하는 중..." : "문제를 준비하는 중..."}</p>
         </div>
       </div>
@@ -347,7 +347,7 @@ export default function ExamPage() {
               onClick={() => selectAnswer(q.num, opt.num)}
               onKeyDown={(e) => e.key === "Enter" && selectAnswer(q.num, opt.num)}
               className={`w-full text-left flex items-start gap-3 px-4 py-3.5 border-b border-stone-100 last:border-b-0 transition-colors cursor-pointer ${
-                selected ? "bg-amber-500" : "bg-white hover:bg-amber-50"
+                selected ? "bg-indigo-500" : "bg-white hover:bg-indigo-50"
               }`}
             >
               <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
@@ -381,7 +381,7 @@ export default function ExamPage() {
             {showGrid ? "닫기" : "문제 목록"}
           </button>
           <span className="text-sm font-semibold text-stone-700">
-            문제 <span className="text-amber-600">{current + 1}</span> / {questions.length}
+            문제 <span className="text-indigo-600">{current + 1}</span> / {questions.length}
           </span>
           <span className="hidden sm:inline text-xs text-stone-400">
             답변 {answeredCount} / {questions.length}
@@ -422,9 +422,9 @@ export default function ExamPage() {
                   onClick={() => { moveTo(q.num - 1); setShowGrid(false); }}
                   className={`h-8 text-xs font-semibold transition-colors ${
                     current === q.num - 1
-                      ? "bg-amber-500 text-white"
+                      ? "bg-indigo-500 text-white"
                       : answers[q.num] !== undefined
-                        ? "bg-amber-100 text-amber-700 border border-amber-200"
+                        ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
                         : "bg-stone-100 text-stone-500 hover:bg-stone-200"
                   }`}
                 >
@@ -441,9 +441,9 @@ export default function ExamPage() {
                   onClick={() => { moveTo(q.num - 1); setShowGrid(false); }}
                   className={`h-8 text-xs font-semibold transition-colors ${
                     current === q.num - 1
-                      ? "bg-amber-500 text-white"
+                      ? "bg-indigo-500 text-white"
                       : answers[q.num] !== undefined
-                        ? "bg-amber-100 text-amber-700 border border-amber-200"
+                        ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
                         : "bg-stone-100 text-stone-500 hover:bg-stone-200"
                   }`}
                 >
@@ -457,10 +457,10 @@ export default function ExamPage() {
                 <span className="w-4 h-4 bg-stone-100 inline-block" />미답변
               </div>
               <div className="flex items-center gap-2 text-[10px] text-stone-400">
-                <span className="w-4 h-4 bg-amber-100 border border-amber-200 inline-block" />답변 완료
+                <span className="w-4 h-4 bg-indigo-100 border border-indigo-200 inline-block" />답변 완료
               </div>
               <div className="flex items-center gap-2 text-[10px] text-stone-400">
-                <span className="w-4 h-4 bg-amber-500 inline-block" />현재 문제
+                <span className="w-4 h-4 bg-indigo-500 inline-block" />현재 문제
               </div>
             </div>
           </aside>
@@ -473,7 +473,7 @@ export default function ExamPage() {
             {/* 문제 헤더 */}
             <div className="flex items-center gap-2 mb-4">
               <span className="text-xs font-bold text-stone-400">{q.num}번</span>
-              <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 font-semibold">{q.category}</span>
+              <span className="text-[11px] px-2 py-0.5 bg-indigo-100 text-indigo-700 font-semibold">{q.category}</span>
               <span className={`text-[11px] px-2 py-0.5 font-semibold ${
                 q.difficulty === "상" ? "bg-red-50 text-red-600"
                 : q.difficulty === "중" ? "bg-stone-100 text-stone-500"
@@ -543,7 +543,7 @@ export default function ExamPage() {
             </div>
             <div className="px-6 py-4">
               {unansweredCount > 0 && (
-                <p className="text-sm text-amber-600 font-medium mb-2">
+                <p className="text-sm text-indigo-600 font-medium mb-2">
                   미답변 문제가 {unansweredCount}개 남아있어요.
                 </p>
               )}

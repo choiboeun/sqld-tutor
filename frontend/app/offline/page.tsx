@@ -3,8 +3,8 @@
 export default function OfflinePage() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-6 text-center">
-      <div className="w-14 h-14 bg-amber-100 flex items-center justify-center mb-5">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div className="w-14 h-14 bg-indigo-100 flex items-center justify-center mb-5">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="1" y1="1" x2="23" y2="23"/>
           <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
           <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
@@ -20,7 +20,7 @@ export default function OfflinePage() {
       </p>
       <button
         onClick={() => window.location.reload()}
-        className="bg-amber-600 text-white text-sm font-semibold px-6 py-2.5 hover:bg-amber-700 transition-colors"
+        className="bg-indigo-600 text-white text-sm font-semibold px-6 py-2.5 hover:bg-indigo-700 transition-colors"
       >
         다시 시도
       </button>

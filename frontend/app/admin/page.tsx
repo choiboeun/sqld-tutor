@@ -21,7 +21,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  new: "bg-amber-100 text-amber-700",
+  new: "bg-indigo-100 text-indigo-700",
   read: "bg-blue-100 text-blue-700",
   resolved: "bg-green-100 text-green-700",
 };
@@ -164,7 +164,7 @@ export default function AdminPage() {
                       onClick={() => updateStatus(q.id, s)}
                       className={`text-xs px-3 py-1 border transition-colors disabled:opacity-40 ${
                         q.status === s
-                          ? "border-amber-400 text-amber-700 bg-amber-50"
+                          ? "border-indigo-400 text-indigo-700 bg-indigo-50"
                           : "border-stone-200 text-stone-500 hover:bg-stone-50"
                       }`}
                     >

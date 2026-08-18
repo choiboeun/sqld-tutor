@@ -59,7 +59,7 @@ const mdComponents = {
 
 const DIFF_STYLE: Record<string, string> = {
   하: "bg-green-100 text-green-700",
-  중: "bg-amber-100 text-amber-700",
+  중: "bg-indigo-100 text-indigo-700",
   상: "bg-red-100 text-red-700",
 };
 
@@ -253,7 +253,7 @@ export default function WrongAnswersPage() {
 
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* 안내 배너 */}
-        <div className="bg-amber-50 border border-amber-100 px-4 py-3 mb-6 text-sm text-amber-800">
+        <div className="bg-indigo-50 border border-indigo-100 px-4 py-3 mb-6 text-sm text-indigo-800">
           오답을 다시 풀고 싶다면 홈 채팅에서 <strong>"오답 복습해줘"</strong>를 입력해보세요.
         </div>
 
@@ -265,7 +265,7 @@ export default function WrongAnswersPage() {
             <p className="text-stone-500 mb-4">오답 기록을 불러오지 못했습니다.</p>
             <button
               onClick={() => setRetryKey((k) => k + 1)}
-              className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 transition-colors"
+              className="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
             >
               다시 시도
             </button>
@@ -279,10 +279,10 @@ export default function WrongAnswersPage() {
                 key={wa.question_id}
                 onClick={() => openModal(wa)}
                 className="w-full text-left bg-white border border-stone-200 px-4 py-3.5 hover:shadow-sm transition-all"
-                style={{ borderLeftWidth: '3px', borderLeftColor: wa.still_wrong ? '#f59e0b' : '#e3e1dc' }}
+                style={{ borderLeftWidth: '3px', borderLeftColor: wa.still_wrong ? '#6366f1' : '#e3e1dc' }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                     {wa.category}
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
@@ -308,7 +308,7 @@ export default function WrongAnswersPage() {
             {/* 모달 헤더 */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 shrink-0">
               <div className="flex gap-2">
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                   {selected.category}
                 </span>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
@@ -373,9 +373,9 @@ export default function WrongAnswersPage() {
               </div>
 
               {/* 해설 */}
-              <div className="bg-amber-50 border border-amber-100 px-4 py-3">
-                <p className="text-xs font-semibold text-amber-700 mb-1">해설</p>
-                <div className="text-sm text-amber-900 leading-relaxed prose prose-sm max-w-none prose-p:text-amber-900">
+              <div className="bg-indigo-50 border border-indigo-100 px-4 py-3">
+                <p className="text-xs font-semibold text-indigo-700 mb-1">해설</p>
+                <div className="text-sm text-indigo-900 leading-relaxed prose prose-sm max-w-none prose-p:text-indigo-900">
                   <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents}>{selected.explanation}</ReactMarkdown>
                 </div>
               </div>
@@ -417,12 +417,12 @@ export default function WrongAnswersPage() {
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMiniMessage(); } }}
                     placeholder="이 문제에 대해 질문하세요"
                     disabled={miniLoading}
-                    className="flex-1 text-xs border border-stone-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 placeholder:text-stone-400"
+                    className="flex-1 text-xs border border-stone-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50 placeholder:text-stone-400"
                   />
                   <button
                     onClick={sendMiniMessage}
                     disabled={miniLoading || !miniInput.trim()}
-                    className="px-3 py-2 bg-amber-600 text-white text-xs font-semibold hover:bg-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-2 bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     전송
                   </button>

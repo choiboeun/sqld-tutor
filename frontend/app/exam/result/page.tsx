@@ -120,7 +120,7 @@ export default function ExamResultPage() {
     <div className="min-h-screen bg-stone-50">
 
       {/* 결과 헤더 */}
-      <div className={`${passed ? "bg-amber-600" : "bg-stone-700"} text-white`}>
+      <div className={`${passed ? "bg-indigo-600" : "bg-stone-700"} text-white`}>
         <div className="max-w-3xl mx-auto px-5 py-10 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest mb-3 opacity-80">SQLD 모의고사 결과</p>
           <div className="flex items-baseline justify-center gap-2 mb-4">
@@ -128,7 +128,7 @@ export default function ExamResultPage() {
             <span className="text-2xl opacity-70">/ 100점</span>
           </div>
           <div className={`inline-block px-4 py-1.5 text-sm font-black tracking-widest mb-6 ${
-            passed ? "bg-white text-amber-600" : "bg-white/20 text-white"
+            passed ? "bg-white text-indigo-600" : "bg-white/20 text-white"
           }`}>
             {passed ? "합격" : "불합격"}
           </div>
@@ -213,9 +213,9 @@ export default function ExamResultPage() {
         </div>
 
         {/* 나가기 경고 배너 */}
-        <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 px-4 py-3 mb-3">
-          <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <p className="text-xs text-amber-800 leading-relaxed">
+        <div className="flex items-start gap-2.5 bg-indigo-50 border border-indigo-200 px-4 py-3 mb-3">
+          <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <p className="text-xs text-indigo-800 leading-relaxed">
             이 페이지를 벗어나면 <span className="font-semibold">오답 기록이 사라집니다.</span> 틀린 문제를 먼저 클릭해 확인하세요.
           </p>
         </div>
@@ -276,7 +276,7 @@ export default function ExamResultPage() {
             <div className="sticky top-0 bg-white border-b border-stone-100 px-5 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-stone-500">{selected.num}번</span>
-                <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 font-semibold">{selected.category}</span>
+                <span className="text-[11px] px-2 py-0.5 bg-indigo-100 text-indigo-700 font-semibold">{selected.category}</span>
                 <span className={`text-[11px] font-bold ${selected.correct ? "text-green-600" : selected.selected === null ? "text-stone-400" : "text-red-500"}`}>
                   {selected.correct ? "정답" : selected.selected === null ? "미답변" : "오답"}
                 </span>
@@ -332,8 +332,8 @@ export default function ExamResultPage() {
               </div>
 
               {/* 해설 */}
-              <div className="bg-amber-50 border border-amber-200 px-4 py-3">
-                <p className="text-xs font-semibold text-amber-700 mb-1.5">해설</p>
+              <div className="bg-indigo-50 border border-indigo-200 px-4 py-3">
+                <p className="text-xs font-semibold text-indigo-700 mb-1.5">해설</p>
                 <div className="text-sm text-stone-700 leading-relaxed">
                   <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>{selected.explanation}</ReactMarkdown>
                 </div>

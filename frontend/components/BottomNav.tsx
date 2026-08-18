@@ -54,11 +54,11 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors ${
-                active ? "text-amber-600" : "text-stone-400"
+                active ? "text-indigo-600" : "text-stone-400"
               }`}
             >
               {tab.icon(active)}
-              <span className={`text-[10px] font-semibold tracking-wide ${active ? "text-amber-600" : "text-stone-400"}`}>
+              <span className={`text-[10px] font-semibold tracking-wide ${active ? "text-indigo-600" : "text-stone-400"}`}>
                 {tab.label}
               </span>
             </Link>
