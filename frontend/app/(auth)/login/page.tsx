@@ -187,8 +187,8 @@ export default function LoginPage() {
         <div className="login-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "linear-gradient(140deg,#5b21b6 0%,#7c3aed 38%,#a78bfa 75%,#c4b5fd 100%)" }}>
-          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.14)", border: "1px solid rgba(255,255,255,.28)", boxShadow: "0 8px 40px rgba(40,0,100,.3),inset 0 1px 0 rgba(255,255,255,.35)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
+        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "linear-gradient(140deg,#0f0820 0%,#1e1040 45%,#3b1a7a 100%)" }}>
+          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.1)", border: "1px solid rgba(255,255,255,.2)", boxShadow: "0 8px 48px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.25)", backdropFilter: "blur(24px) saturate(160%)", WebkitBackdropFilter: "blur(24px) saturate(160%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
 
             <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,.65)", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
             <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#fff", letterSpacing: "-.03em", marginBottom: "5px", animation: "loginEl .4s ease .18s both" }}>로그인</h1>
