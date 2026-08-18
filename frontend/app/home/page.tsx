@@ -812,7 +812,7 @@ export default function HomePage() {
               href="/wrong-answers"
               className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <div className="w-9 h-9 bg-red-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
+              <div className="w-9 h-9 bg-amber-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                   <polyline points="14 2 14 8 20 8"/>
@@ -821,12 +821,12 @@ export default function HomePage() {
                 </svg>
               </div>
               <p className="text-[15px] font-bold text-stone-900">오답 회고</p>
-              <p className={`text-sm mt-1 ${wrongCount > 0 ? "text-red-500 font-medium" : "text-stone-400"}`}>
+              <p className={`text-sm mt-1 ${wrongCount > 0 ? "text-amber-600 font-medium" : "text-stone-400"}`}>
                 {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
               </p>
               {wrongCount > 0 && (
                 <div className="mt-2">
-                  <span className="inline-flex items-center bg-red-50 text-red-600 text-xs font-bold px-3 py-1.5 rounded-full">
+                  <span className="inline-flex items-center bg-amber-50 text-amber-600 text-xs font-bold px-3 py-1.5 rounded-full">
                     {wrongCount}개
                   </span>
                 </div>
