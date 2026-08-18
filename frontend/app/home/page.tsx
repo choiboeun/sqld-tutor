@@ -802,7 +802,7 @@ export default function HomePage() {
       <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10 md:overflow-y-auto">
 
         {/* ── 전체 2열 레이아웃 ── */}
-        <div className="grid grid-cols-2 gap-8 flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 flex-1">
 
           {/* ── 왼쪽: 바로 시작 ── */}
           <div className="flex flex-col gap-2.5">
