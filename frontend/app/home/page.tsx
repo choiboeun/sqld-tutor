@@ -825,7 +825,6 @@ export default function HomePage() {
                 </svg>
               </div>
               <p className="text-xs font-bold text-stone-900 text-center leading-tight">오답 회고</p>
-              {wrongCount > 0 && <span className="text-[10px] text-amber-600 font-bold">{wrongCount}개</span>}
             </Link>
 
             <Link href="/exam" className="flex flex-col items-center bg-white border border-stone-100 p-3 gap-2 hover:shadow-md transition-all">
@@ -887,8 +886,8 @@ export default function HomePage() {
             <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
             {streak > 0 && (
               <div className="flex items-center gap-3 mb-4">
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "linear-gradient(135deg,#4f46e5,#818cf8)", color: "#fff", fontSize: "12px", fontWeight: 800, letterSpacing: ".04em", padding: "5px 14px", borderRadius: "999px" }}>
-                  🔥 <span style={{ fontSize: "17px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,.12)", color: "#6366f1", fontSize: "12px", fontWeight: 700, letterSpacing: ".04em", padding: "5px 14px", borderRadius: "999px" }}>
+                  🔥 <span style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-.5px" }}>{streak}</span>일 연속
                 </span>
                 <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
               </div>
@@ -941,11 +940,6 @@ export default function HomePage() {
               <p className={`text-sm mt-1 ${wrongCount > 0 ? "text-amber-600 font-medium" : "text-stone-400"}`}>
                 {wrongCount > 0 ? `${wrongCount}개 복습 필요` : "오답 없음"}
               </p>
-              {wrongCount > 0 && (
-                <div className="mt-2">
-                  <span className="inline-flex items-center bg-amber-50 text-amber-600 text-xs font-bold px-3 py-1.5 rounded-full">{wrongCount}개</span>
-                </div>
-              )}
             </Link>
 
             {/* 모의고사 */}
@@ -960,9 +954,6 @@ export default function HomePage() {
               </div>
               <p className="text-[15px] font-bold text-stone-900">모의고사</p>
               <p className="text-sm text-stone-400 mt-1">50문제 · 90분 · 실전 배점</p>
-              <div className="mt-2">
-                <span className="inline-flex items-center bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full">도전</span>
-              </div>
             </Link>
 
             {/* 카테고리 정답률 — 레이더 차트 */}
@@ -982,8 +973,8 @@ export default function HomePage() {
               <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
               {streak > 0 && (
                 <div className="flex items-center gap-3 mb-4">
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "linear-gradient(135deg,#4f46e5,#818cf8)", color: "#fff", fontSize: "12px", fontWeight: 800, letterSpacing: ".04em", padding: "5px 14px", borderRadius: "999px" }}>
-                    🔥 <span style={{ fontSize: "17px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,.12)", color: "#6366f1", fontSize: "12px", fontWeight: 700, letterSpacing: ".04em", padding: "5px 14px", borderRadius: "999px" }}>
+                    🔥 <span style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-.5px" }}>{streak}</span>일 연속
                   </span>
                   <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
                 </div>
