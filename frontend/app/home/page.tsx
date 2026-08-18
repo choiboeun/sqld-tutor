@@ -920,13 +920,6 @@ export default function HomePage() {
                   ))}
                 </div>
               )}
-              <div className="flex items-center gap-1.5 mt-3">
-                <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>적음</span>
-                {["#f0edfb","#c7d2fe","#818cf8","#4f46e5"].map((c) => (
-                  <div key={c} style={{ width: "11px", height: "11px", borderRadius: "2px", background: c }} />
-                ))}
-                <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>많음</span>
-              </div>
             </div>
 
             {/* 오늘 할 일 카드 — flex-1으로 남은 공간 채움 */}
