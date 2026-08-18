@@ -834,7 +834,7 @@ export default function HomePage() {
         <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-2 gap-0">
           {/* 학습 캘린더 */}
           <div className="pr-10 border-r border-[#ede9fe]">
-            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
+            <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
               학습 캘린더
             </p>
 
@@ -845,13 +845,13 @@ export default function HomePage() {
                   style={{
                     display: "inline-flex", alignItems: "center", gap: "6px",
                     background: "linear-gradient(135deg,#4f46e5,#818cf8)",
-                    color: "#fff", fontSize: "11px", fontWeight: 800, letterSpacing: ".04em",
+                    color: "#fff", fontSize: "12px", fontWeight: 800, letterSpacing: ".04em",
                     padding: "5px 14px", borderRadius: "999px",
                   }}
                 >
-                  🔥 <span style={{ fontSize: "16px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
+                  🔥 <span style={{ fontSize: "17px", fontWeight: 900, letterSpacing: "-.5px" }}>{streak}</span>일 연속
                 </span>
-                <span className="text-[10px] text-stone-400 font-medium">어제도 학습했어요</span>
+                <span className="text-xs text-stone-400 font-medium">어제도 학습했어요</span>
               </div>
             )}
 
@@ -869,31 +869,31 @@ export default function HomePage() {
               </div>
             )}
             <div className="flex items-center gap-1.5 mt-3">
-              <span style={{ fontSize: "9px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>적음</span>
+              <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>적음</span>
               {["#f0edfb","#c7d2fe","#818cf8","#4f46e5"].map((c) => (
-                <div key={c} style={{ width: "10px", height: "10px", borderRadius: "2px", background: c }} />
+                <div key={c} style={{ width: "11px", height: "11px", borderRadius: "2px", background: c }} />
               ))}
-              <span style={{ fontSize: "9px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>많음</span>
+              <span style={{ fontSize: "10px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".03em" }}>많음</span>
             </div>
           </div>
 
           {/* 오늘 할 일 */}
           <div className="pl-10">
-            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
+            <p style={{ fontSize: "10px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
               오늘 할 일
             </p>
 
             {todayTasks.length > 0 && (
               <div className="flex items-baseline gap-2 mb-5">
-                <span style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>
+                <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>
                   {todayTasks.length}
                 </span>
-                <span style={{ fontSize: "11px", color: "#a8a29e", fontWeight: 500 }}>가지 남았어요</span>
+                <span style={{ fontSize: "12px", color: "#a8a29e", fontWeight: 500 }}>가지 남았어요</span>
               </div>
             )}
 
             {todayTasks.length === 0 ? (
-              <p style={{ fontSize: "12px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".01em", padding: "16px 0" }}>
+              <p style={{ fontSize: "13px", color: "#c4bfbb", fontWeight: 500, letterSpacing: ".01em", padding: "16px 0" }}>
                 문제를 풀면 맞춤 목표가 생성됩니다.
               </p>
             ) : (
@@ -907,7 +907,7 @@ export default function HomePage() {
                     <div
                       style={{
                         width: "20px", height: "20px", borderRadius: "6px", flexShrink: 0,
-                        marginTop: "1px", fontSize: "8.5px", fontWeight: 800, letterSpacing: ".04em",
+                        marginTop: "1px", fontSize: "10px", fontWeight: 800, letterSpacing: ".04em",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         background: task.id === "review" ? "#fff1f1" : "#eef2ff",
                         color: task.id === "review" ? "#f87171" : "#818cf8",
@@ -916,17 +916,17 @@ export default function HomePage() {
                       {task.id === "review" ? "!" : String(i).padStart(2, "0")}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p style={{ fontSize: "13px", fontWeight: 700, color: "#1c1917", letterSpacing: "-.01em", marginBottom: "2px" }}>
+                      <p style={{ fontSize: "14px", fontWeight: 700, color: "#1c1917", letterSpacing: "-.01em", marginBottom: "2px" }}>
                         {task.title}
                       </p>
-                      <p style={{ fontSize: "10.5px", color: "#a8a29e", fontWeight: 500 }}>{task.sub}</p>
+                      <p style={{ fontSize: "12px", color: "#a8a29e", fontWeight: 500 }}>{task.sub}</p>
                     </div>
                     <Link
                       href={task.href}
                       className="shrink-0 relative overflow-hidden group"
                       style={{
                         padding: "6px 14px",
-                        fontSize: "9px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase",
+                        fontSize: "10px", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase",
                         color: "#fff",
                         background: task.id === "review" ? "#ef4444" : "#4f46e5",
                         display: "inline-block",
