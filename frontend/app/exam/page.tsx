@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 
 const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
   ssr: false,
-  loading: () => <div className="bg-stone-100 p-3 text-xs text-stone-400 my-2">다이어그램 로딩 중...</div>,
+  loading: () => <div className="bg-violet-50 p-3 text-xs text-indigo-300 my-2">다이어그램 로딩 중...</div>,
 });
 
 interface ExamQuestion {
@@ -44,13 +44,13 @@ function preprocessContext(ctx: string): string {
 const contextMdComponents = {
   // 섹션 헤더: ### 섹션명 → 배경색 구분 배너
   h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <div className="text-[11px] font-bold text-stone-500 bg-stone-200 px-4 py-1.5 -mx-4 mt-5 mb-2 uppercase tracking-widest border-l-2 border-stone-400">
+    <div className="text-[11px] font-bold text-indigo-400 bg-violet-100 px-4 py-1.5 -mx-4 mt-5 mb-2 uppercase tracking-widest border-l-2 border-indigo-300">
       {children}
     </div>
   ),
   // 테이블명 서브헤더: #### TABLE명 → 작은 레이블 (계층 구분)
   h4: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <div className="text-[10px] font-semibold text-stone-400 mt-3 mb-0.5 tracking-wider uppercase">
+    <div className="text-[10px] font-semibold text-indigo-300 mt-3 mb-0.5 tracking-wider uppercase">
       {children}
     </div>
   ),
@@ -61,10 +61,10 @@ const contextMdComponents = {
     </div>
   ),
   th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <th className="border border-stone-300 px-2 py-0.5 bg-stone-200 font-semibold text-left text-xs whitespace-nowrap" {...props} />
+    <th className="border border-violet-100 px-2 py-0.5 bg-violet-50 font-semibold text-left text-xs whitespace-nowrap" {...props} />
   ),
   td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <td className="border border-stone-300 px-2 py-0.5 text-left text-xs" {...props} />
+    <td className="border border-violet-100 px-2 py-0.5 text-left text-xs" {...props} />
   ),
   // 스키마 정의 리스트: 줄 전체 코드 폰트
   li: ({ children }: React.HTMLAttributes<HTMLLIElement>) => (
@@ -83,12 +83,12 @@ const contextMdComponents = {
     const isBlock = className?.includes("language-");
     return isBlock ? (
       // SQL 코드블록: 약간 밝은 배경
-      <pre className="bg-stone-700 text-stone-100 rounded p-2.5 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap">
+      <pre className="bg-indigo-950 text-indigo-50 rounded p-2.5 overflow-x-auto text-xs my-2 font-mono whitespace-pre-wrap">
         <code {...props}>{children}</code>
       </pre>
     ) : (
       // 인라인 코드: 테이블명, 컬럼명 등
-      <code className="bg-stone-300 text-stone-800 px-1 py-0.5 rounded text-xs font-mono font-semibold" {...props}>
+      <code className="bg-violet-100 text-indigo-800 px-1 py-0.5 rounded text-xs font-mono font-semibold" {...props}>
         {children}
       </code>
     );
@@ -98,7 +98,7 @@ const contextMdComponents = {
 // ── 문제 본문 + 보기 전용 마크다운 컴포넌트 ──
 const mdComponents = {
   h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <div className="text-[11px] font-bold text-stone-500 border-l-2 border-stone-400 pl-2 mt-4 mb-1.5">
+    <div className="text-[11px] font-bold text-indigo-400 border-l-2 border-indigo-300 pl-2 mt-4 mb-1.5">
       {children}
     </div>
   ),
@@ -108,10 +108,10 @@ const mdComponents = {
     </div>
   ),
   th: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <th className="border border-stone-300 px-2 py-1 bg-stone-100 font-semibold text-left" {...props} />
+    <th className="border border-violet-100 px-2 py-1 bg-violet-50 font-semibold text-left" {...props} />
   ),
   td: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-    <td className="border border-stone-300 px-2 py-1 text-left" {...props} />
+    <td className="border border-violet-100 px-2 py-1 text-left" {...props} />
   ),
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement> & { className?: string }) => {
     if (className === "language-mermaid") {
@@ -120,11 +120,11 @@ const mdComponents = {
     const isBlock = className?.includes("language-");
     return isBlock ? (
       // SQL 코드블록: bg-stone-700 (약간 밝게)
-      <pre className="bg-stone-700 text-stone-100 rounded p-3 overflow-x-auto text-sm my-3 font-mono whitespace-pre-wrap">
+      <pre className="bg-indigo-950 text-indigo-50 rounded p-3 overflow-x-auto text-sm my-3 font-mono whitespace-pre-wrap">
         <code {...props}>{children}</code>
       </pre>
     ) : (
-      <code className="bg-stone-200 text-stone-800 px-1.5 py-0.5 rounded text-sm font-mono font-semibold" {...props}>
+      <code className="bg-violet-100 text-indigo-800 px-1.5 py-0.5 rounded text-sm font-mono font-semibold" {...props}>
         {children}
       </code>
     );
@@ -301,10 +301,10 @@ export default function ExamPage() {
 
   if (loading || grading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-violet-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-stone-500 text-sm">{grading ? "채점하는 중..." : "문제를 준비하는 중..."}</p>
+          <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-indigo-400 text-sm">{grading ? "채점하는 중..." : "문제를 준비하는 중..."}</p>
         </div>
       </div>
     );
@@ -312,10 +312,10 @@ export default function ExamPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-violet-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-stone-600 mb-4">{error}</p>
-          <button onClick={() => router.push("/home")} className="px-4 py-2 bg-stone-800 text-white text-sm">홈으로</button>
+          <p className="text-indigo-700 mb-4">{error}</p>
+          <button onClick={() => router.push("/home")} className="px-4 py-2 bg-indigo-900 text-white text-sm">홈으로</button>
         </div>
       </div>
     );
@@ -329,14 +329,14 @@ export default function ExamPage() {
   const questionBlock = (
     <>
       {/* 문제 본문: 15px, 줄간격 1.75 */}
-      <div className="text-[15px] font-medium text-stone-800 leading-7 mb-5">
+      <div className="text-[15px] font-medium text-indigo-900 leading-7 mb-5">
         <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={mdComponents}>
           {q.question}
         </ReactMarkdown>
       </div>
 
       {/* 보기 */}
-      <div className="border border-stone-200 overflow-hidden mb-8">
+      <div className="border border-violet-100 overflow-hidden mb-8">
         {opts.map((opt) => {
           const selected = answers[q.num] === opt.num;
           return (
@@ -346,14 +346,14 @@ export default function ExamPage() {
               tabIndex={0}
               onClick={() => selectAnswer(q.num, opt.num)}
               onKeyDown={(e) => e.key === "Enter" && selectAnswer(q.num, opt.num)}
-              className={`w-full text-left flex items-start gap-3 px-4 py-3.5 border-b border-stone-100 last:border-b-0 transition-colors cursor-pointer ${
-                selected ? "bg-amber-500" : "bg-white hover:bg-amber-50"
+              className={`w-full text-left flex items-start gap-3 px-4 py-3.5 border-b border-violet-50 last:border-b-0 transition-colors cursor-pointer ${
+                selected ? "bg-indigo-500" : "bg-white hover:bg-violet-50"
               }`}
             >
-              <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-stone-400"}`}>
+              <span className={`shrink-0 text-sm font-bold mt-0.5 ${selected ? "text-white" : "text-indigo-300"}`}>
                 {["①", "②", "③", "④"][opt.num - 1]}
               </span>
-              <div className={`flex-1 min-w-0 overflow-x-auto text-sm leading-relaxed ${selected ? "text-white" : "text-stone-800"}`}>
+              <div className={`flex-1 min-w-0 overflow-x-auto text-sm leading-relaxed ${selected ? "text-white" : "text-indigo-900"}`}>
                 <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={{
                   ...mdComponents,
                   p: ({ children }) => <span>{children}</span>,
@@ -369,32 +369,32 @@ export default function ExamPage() {
   );
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
+    <div className="min-h-screen bg-violet-50 flex flex-col">
 
       {/* 상단 바 */}
-      <header className="bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
+      <header className="bg-white border-b border-violet-100 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowGrid((v) => !v)}
-            className="md:hidden text-xs px-2 py-1.5 border border-stone-200 text-stone-600 bg-stone-50"
+            className="md:hidden text-xs px-2 py-1.5 border border-violet-100 text-indigo-600 bg-violet-50"
           >
             {showGrid ? "닫기" : "문제 목록"}
           </button>
-          <span className="text-sm font-semibold text-stone-700">
-            문제 <span className="text-amber-600">{current + 1}</span> / {questions.length}
+          <span className="text-sm font-semibold text-indigo-800">
+            문제 <span className="text-indigo-500">{current + 1}</span> / {questions.length}
           </span>
-          <span className="hidden sm:inline text-xs text-stone-400">
+          <span className="hidden sm:inline text-xs text-indigo-300">
             답변 {answeredCount} / {questions.length}
           </span>
         </div>
 
-        <div className={`text-base font-black tabular-nums tracking-wider ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
+        <div className={`text-base font-black tabular-nums tracking-wider ${timerUrgent ? "text-red-500" : "text-indigo-800"}`}>
           ⏱ {mm}:{ss}
         </div>
 
         <button
           onClick={() => setShowSubmitConfirm(true)}
-          className="px-4 py-1.5 bg-stone-900 text-white text-sm font-semibold hover:bg-stone-700 transition-colors"
+          className="px-4 py-1.5 bg-indigo-900 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
         >
           제출하기
         </button>
@@ -410,11 +410,11 @@ export default function ExamPage() {
           <aside className={`
             ${showGrid ? "fixed inset-y-0 left-0 z-30 w-64" : "hidden"}
             md:relative md:flex md:flex-col md:w-52 md:shrink-0
-            bg-white border-r border-stone-200 p-4 overflow-y-auto
+            bg-white border-r border-violet-100 p-4 overflow-y-auto
           `}>
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">문제 번호</p>
+            <p className="text-xs font-semibold text-indigo-300 uppercase tracking-widest mb-3">문제 번호</p>
 
-            <p className="text-[10px] text-stone-400 mb-1.5">1과목 (1~10)</p>
+            <p className="text-[10px] text-indigo-300 mb-1.5">1과목 (1~10)</p>
             <div className="grid grid-cols-5 gap-1.5 mb-4">
               {questions.filter(q => q.subject === 1).map((q) => (
                 <button
@@ -422,10 +422,10 @@ export default function ExamPage() {
                   onClick={() => { moveTo(q.num - 1); setShowGrid(false); }}
                   className={`h-8 text-xs font-semibold transition-colors ${
                     current === q.num - 1
-                      ? "bg-amber-500 text-white"
+                      ? "bg-indigo-500 text-white"
                       : answers[q.num] !== undefined
-                        ? "bg-amber-100 text-amber-700 border border-amber-200"
-                        : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                        ? "bg-violet-100 text-indigo-600 border border-violet-200"
+                        : "bg-violet-50 text-indigo-400 hover:bg-violet-100"
                   }`}
                 >
                   {q.num}
@@ -433,7 +433,7 @@ export default function ExamPage() {
               ))}
             </div>
 
-            <p className="text-[10px] text-stone-400 mb-1.5">2과목 (11~50)</p>
+            <p className="text-[10px] text-indigo-300 mb-1.5">2과목 (11~50)</p>
             <div className="grid grid-cols-5 gap-1.5">
               {questions.filter(q => q.subject === 2).map((q) => (
                 <button
@@ -441,10 +441,10 @@ export default function ExamPage() {
                   onClick={() => { moveTo(q.num - 1); setShowGrid(false); }}
                   className={`h-8 text-xs font-semibold transition-colors ${
                     current === q.num - 1
-                      ? "bg-amber-500 text-white"
+                      ? "bg-indigo-500 text-white"
                       : answers[q.num] !== undefined
-                        ? "bg-amber-100 text-amber-700 border border-amber-200"
-                        : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                        ? "bg-violet-100 text-indigo-600 border border-violet-200"
+                        : "bg-violet-50 text-indigo-400 hover:bg-violet-100"
                   }`}
                 >
                   {q.num}
@@ -452,15 +452,15 @@ export default function ExamPage() {
               ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-stone-100 space-y-1.5">
-              <div className="flex items-center gap-2 text-[10px] text-stone-400">
-                <span className="w-4 h-4 bg-stone-100 inline-block" />미답변
+            <div className="mt-4 pt-3 border-t border-violet-100 space-y-1.5">
+              <div className="flex items-center gap-2 text-[10px] text-indigo-300">
+                <span className="w-4 h-4 bg-violet-50 inline-block" />미답변
               </div>
-              <div className="flex items-center gap-2 text-[10px] text-stone-400">
-                <span className="w-4 h-4 bg-amber-100 border border-amber-200 inline-block" />답변 완료
+              <div className="flex items-center gap-2 text-[10px] text-indigo-300">
+                <span className="w-4 h-4 bg-violet-100 border border-violet-200 inline-block" />답변 완료
               </div>
-              <div className="flex items-center gap-2 text-[10px] text-stone-400">
-                <span className="w-4 h-4 bg-amber-500 inline-block" />현재 문제
+              <div className="flex items-center gap-2 text-[10px] text-indigo-300">
+                <span className="w-4 h-4 bg-indigo-500 inline-block" />현재 문제
               </div>
             </div>
           </aside>
@@ -472,11 +472,11 @@ export default function ExamPage() {
 
             {/* 문제 헤더 */}
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-xs font-bold text-stone-400">{q.num}번</span>
-              <span className="text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 font-semibold">{q.category}</span>
+              <span className="text-xs font-bold text-indigo-300">{q.num}번</span>
+              <span className="text-[11px] px-2 py-0.5 bg-violet-100 text-indigo-600 font-semibold">{q.category}</span>
               <span className={`text-[11px] px-2 py-0.5 font-semibold ${
                 q.difficulty === "상" ? "bg-red-50 text-red-600"
-                : q.difficulty === "중" ? "bg-stone-100 text-stone-500"
+                : q.difficulty === "중" ? "bg-violet-50 text-indigo-400"
                 : "bg-green-50 text-green-600"
               }`}>{q.difficulty}</span>
             </div>
@@ -486,8 +486,8 @@ export default function ExamPage() {
               <div className="flex flex-col md:flex-row gap-5 items-start">
 
                 {/* 왼쪽: 배경 정보 */}
-                <div className="w-full md:w-[42%] md:shrink-0 border border-stone-200 bg-stone-50 overflow-hidden">
-                  <div className="px-4 py-3 text-stone-700">
+                <div className="w-full md:w-[42%] md:shrink-0 border border-violet-100 bg-violet-50 overflow-hidden">
+                  <div className="px-4 py-3 text-indigo-800">
                     <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={contextMdComponents}>
                       {preprocessContext(q.context)}
                     </ReactMarkdown>
@@ -509,22 +509,22 @@ export default function ExamPage() {
               <button
                 onClick={() => moveTo(Math.max(0, current - 1))}
                 disabled={current === 0}
-                className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium disabled:opacity-30 hover:bg-stone-50 transition-colors"
+                className="px-5 py-2 border border-violet-100 text-indigo-600 text-sm font-medium disabled:opacity-30 hover:bg-violet-50 transition-colors"
               >
                 ← 이전
               </button>
-              <span className="text-xs text-stone-400">미답변 {unansweredCount}문제</span>
+              <span className="text-xs text-indigo-300">미답변 {unansweredCount}문제</span>
               {current < questions.length - 1 ? (
                 <button
                   onClick={() => moveTo(Math.min(questions.length - 1, current + 1))}
-                  className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium hover:bg-stone-50 transition-colors"
+                  className="px-5 py-2 border border-violet-100 text-indigo-600 text-sm font-medium hover:bg-violet-50 transition-colors"
                 >
                   다음 →
                 </button>
               ) : (
                 <button
                   onClick={() => setShowSubmitConfirm(true)}
-                  className="px-5 py-2 bg-stone-900 text-white text-sm font-semibold hover:bg-stone-700 transition-colors"
+                  className="px-5 py-2 bg-indigo-900 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
                 >
                   제출하기
                 </button>
@@ -538,28 +538,28 @@ export default function ExamPage() {
       {showSubmitConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white w-full max-w-sm mx-4 shadow-xl">
-            <div className="px-6 py-5 border-b border-stone-100">
-              <h2 className="text-base font-semibold text-stone-800">시험을 제출할까요?</h2>
+            <div className="px-6 py-5 border-b border-violet-100">
+              <h2 className="text-base font-semibold text-indigo-900">시험을 제출할까요?</h2>
             </div>
             <div className="px-6 py-4">
               {unansweredCount > 0 && (
-                <p className="text-sm text-amber-600 font-medium mb-2">
+                <p className="text-sm text-rose-500 font-medium mb-2">
                   미답변 문제가 {unansweredCount}개 남아있어요.
                 </p>
               )}
-              <p className="text-sm text-stone-500">답변 완료: {answeredCount} / {questions.length}문제</p>
-              <p className="text-sm text-stone-500">남은 시간: {mm}:{ss}</p>
+              <p className="text-sm text-indigo-400">답변 완료: {answeredCount} / {questions.length}문제</p>
+              <p className="text-sm text-indigo-400">남은 시간: {mm}:{ss}</p>
             </div>
             <div className="px-6 py-4 flex gap-3">
               <button
                 onClick={() => setShowSubmitConfirm(false)}
-                className="flex-1 py-2 border border-stone-200 text-stone-600 text-sm hover:bg-stone-50"
+                className="flex-1 py-2 border border-violet-100 text-indigo-600 text-sm hover:bg-violet-50"
               >
                 계속 풀기
               </button>
               <button
                 onClick={() => submit(questionsRef.current, answersRef.current)}
-                className="flex-1 py-2 bg-stone-900 text-white text-sm font-semibold hover:bg-stone-700"
+                className="flex-1 py-2 bg-indigo-900 text-white text-sm font-semibold hover:bg-indigo-700"
               >
                 제출하기
               </button>

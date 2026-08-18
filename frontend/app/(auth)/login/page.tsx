@@ -69,13 +69,13 @@ export default function LoginPage() {
         el.style.transform = `translate(${(mx - 0.5) * spd * 24}px,${(my - 0.5) * spd * 15}px) rotate(${rot}deg)`;
       });
       if (leftBgRef.current) {
-        leftBgRef.current.style.background = `radial-gradient(ellipse 600px 420px at ${(mx * 100).toFixed(1)}% ${(my * 100).toFixed(1)}%,rgba(251,191,36,.1) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at ${(mx * 40 + 55).toFixed(1)}% ${(my * 40 + 55).toFixed(1)}%,rgba(168,162,158,.05) 0%,transparent 58%)`;
+        leftBgRef.current.style.background = `radial-gradient(ellipse 600px 420px at ${(mx * 100).toFixed(1)}% ${(my * 100).toFixed(1)}%,rgba(99,102,241,.1) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at ${(mx * 40 + 55).toFixed(1)}% ${(my * 40 + 55).toFixed(1)}%,rgba(167,139,250,.05) 0%,transparent 58%)`;
       }
     };
     const onLeave = () => {
       frags.forEach(({ el, rot }) => { el.style.transform = `rotate(${rot}deg)`; });
       if (leftBgRef.current) {
-        leftBgRef.current.style.background = "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(251,191,36,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)";
+        leftBgRef.current.style.background = "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(99,102,241,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(167,139,250,.05) 0%,transparent 58%)";
       }
     };
     leftEl.addEventListener("mousemove", onMove);
@@ -105,32 +105,32 @@ export default function LoginPage() {
   return (
     <>
       <style>{`
-        @keyframes bpulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(217,119,6,.5)}50%{opacity:.4;box-shadow:none}}
+        @keyframes bpulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(99,102,241,.5)}50%{opacity:.4;box-shadow:none}}
         @keyframes cblink{0%,49%{opacity:1}50%,100%{opacity:0}}
         @keyframes rpulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.05);opacity:.55}}
         .login-brand-dot{animation:bpulse 2.2s ease-in-out infinite}
-        .login-cursor{display:inline-block;width:3px;height:.82em;background:#d97706;margin-left:3px;vertical-align:middle;animation:cblink .9s infinite;-webkit-text-fill-color:#d97706}
+        .login-cursor{display:inline-block;width:3px;height:.82em;background:#6366f1;margin-left:3px;vertical-align:middle;animation:cblink .9s infinite;-webkit-text-fill-color:#6366f1}
         .login-ring{position:absolute;border-radius:50%;border:1px solid;top:50%;left:50%;transform:translate(-50%,-50%);animation:rpulse 3.4s ease-in-out infinite}
-        .login-ring:nth-child(1){width:68px;height:68px;border-color:rgba(217,119,6,.24);animation-delay:0s}
-        .login-ring:nth-child(2){width:126px;height:126px;border-color:rgba(217,119,6,.13);animation-delay:.5s}
-        .login-ring:nth-child(3){width:194px;height:194px;border-color:rgba(217,119,6,.07);animation-delay:1s}
-        .login-ring:nth-child(4){width:268px;height:268px;border-color:rgba(217,119,6,.035);animation-delay:1.5s}
-        .login-chip{font-size:12px;font-weight:600;color:#57534e;background:#eae8e5;padding:6px 14px;border:1px solid #d6d3d1;letter-spacing:.03em;cursor:default;transition:background .15s,color .15s,transform .15s,box-shadow .15s,border-color .15s}
-        .login-chip:hover{background:#d97706;color:#fff;border-color:#d97706;transform:translateY(-2px);box-shadow:0 4px 14px rgba(217,119,6,.28)}
+        .login-ring:nth-child(1){width:68px;height:68px;border-color:rgba(99,102,241,.24);animation-delay:0s}
+        .login-ring:nth-child(2){width:126px;height:126px;border-color:rgba(99,102,241,.13);animation-delay:.5s}
+        .login-ring:nth-child(3){width:194px;height:194px;border-color:rgba(99,102,241,.07);animation-delay:1s}
+        .login-ring:nth-child(4){width:268px;height:268px;border-color:rgba(99,102,241,.035);animation-delay:1.5s}
+        .login-chip{font-size:12px;font-weight:600;color:#4338ca;background:#ede9ff;padding:6px 14px;border:1px solid #c7d2fe;letter-spacing:.03em;cursor:default;transition:background .15s,color .15s,transform .15s,box-shadow .15s,border-color .15s}
+        .login-chip:hover{background:#6366f1;color:#fff;border-color:#6366f1;transform:translateY(-2px);box-shadow:0 4px 14px rgba(99,102,241,.28)}
         .login-submit{position:relative;overflow:hidden;transition:background .15s,transform .15s,box-shadow .15s}
         .login-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform .48s ease}
-        .login-submit:hover:not(:disabled){background:#b45309!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(217,119,6,.32)}
+        .login-submit:hover:not(:disabled){background:#4f46e5!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.32)}
         .login-submit:hover:not(:disabled)::after{transform:translateX(100%)}
         .login-submit:active:not(:disabled){transform:translateY(0)}
         .login-right::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px 180px;opacity:.042;pointer-events:none;z-index:0}
-        .login-eye:hover{color:#78716c}
-        .login-fl-input{width:100%;border:1.5px solid #ede9e4;background:#fafaf9;padding:20px 14px 7px;font-size:13.5px;color:#1c1917;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
-        .login-fl-input:focus{border-color:#d97706;background:#fff;box-shadow:0 0 0 3px rgba(217,119,6,.08)}
+        .login-eye:hover{color:#6d65b0}
+        .login-fl-input{width:100%;border:1.5px solid #e0d9ff;background:#fafaf9;padding:20px 14px 7px;font-size:13.5px;color:#1e1b4b;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;display:block}
+        .login-fl-input:focus{border-color:#6366f1;background:#fff;box-shadow:0 0 0 3px rgba(99,102,241,.08)}
         .login-fl-label{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13.5px;color:#b5b0ab;pointer-events:none;transition:all .18s ease}
-        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#d97706}
-        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fafaf9 inset;-webkit-text-fill-color:#1c1917;transition:background-color 5000s ease-in-out 0s}
-        .login-signup-link{color:#d97706;font-weight:700;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
-        .login-signup-link:hover{border-bottom-color:#d97706}
+        .login-fl-input:focus~.login-fl-label,.login-fl-input:not(:placeholder-shown)~.login-fl-label,.login-fl-input:-webkit-autofill~.login-fl-label{top:10px;transform:none;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6366f1}
+        .login-fl-input:-webkit-autofill{-webkit-box-shadow:0 0 0 1000px #fafaf9 inset;-webkit-text-fill-color:#1e1b4b;transition:background-color 5000s ease-in-out 0s}
+        .login-signup-link{color:#6366f1;font-weight:700;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s}
+        .login-signup-link:hover{border-bottom-color:#6366f1}
         @media(max-width:680px){
           .login-page{flex-direction:column!important}
           .login-left{flex:none!important;min-height:auto!important;padding:36px 28px 32px!important}
@@ -146,29 +146,29 @@ export default function LoginPage() {
         <div
           className="login-left"
           ref={leftElRef}
-          style={{ flex: "0 0 52%", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "56px 52px", background: "#f5f5f4" }}
+          style={{ flex: "0 0 52%", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "56px 52px", background: "#f0eeff" }}
         >
-          <div ref={leftBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(251,191,36,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)", transition: "background .28s ease" }} />
+          <div ref={leftBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(99,102,241,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(167,139,250,.05) 0%,transparent 58%)", transition: "background .28s ease" }} />
           <div style={{ position: "absolute", bottom: "-55px", right: "-55px", width: "310px", height: "310px", pointerEvents: "none", zIndex: 1 }}>
             <div className="login-ring" /><div className="login-ring" /><div className="login-ring" /><div className="login-ring" />
           </div>
 
           {/* Brand */}
           <div style={{ position: "relative", zIndex: 5, display: "flex", alignItems: "center", gap: "7px", marginBottom: "20px" }}>
-            <div className="login-brand-dot" style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#d97706" }} />
-            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#d97706" }}>SQLD AI Tutor</span>
+            <div className="login-brand-dot" style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#6366f1" }} />
+            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#6366f1" }}>SQLD AI Tutor</span>
           </div>
 
           {/* Typewriter headline */}
           <div style={{ position: "relative", zIndex: 5, fontSize: "clamp(34px,5.2vw,54px)", fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.06, marginBottom: "18px", minHeight: "2.2em" }}>
-            <span style={{ whiteSpace: "pre-line", background: "linear-gradient(132deg,#d97706 0%,#92400e 42%,#44403c 82%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ whiteSpace: "pre-line", background: "linear-gradient(132deg,#6366f1 0%,#4338ca 42%,#312e81 82%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               {typerText}
             </span>
             <span className="login-cursor" />
           </div>
 
           {/* Description */}
-          <p style={{ position: "relative", zIndex: 5, fontSize: "15.5px", color: "#78716c", lineHeight: 1.65, marginBottom: "22px", maxWidth: "380px" }}>
+          <p style={{ position: "relative", zIndex: 5, fontSize: "15.5px", color: "#6d65b0", lineHeight: 1.65, marginBottom: "22px", maxWidth: "380px" }}>
             AI가 나의 약점을 분석하고, 맞춤 문제를 출제해요.<br />오답은 자동으로 기록되고 반복 출제됩니다.
           </p>
 
@@ -181,15 +181,15 @@ export default function LoginPage() {
         </div>
 
         {/* Divider */}
-        <div className="login-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
+        <div className="login-vdiv" style={{ width: "1px", background: "#e8e3ff", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#f7f6f4" }}>
-          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "#fff", border: "1px solid #e8e4df", boxShadow: "0 2px 8px rgba(0,0,0,.04),0 8px 36px rgba(0,0,0,.07)", padding: "36px 32px 30px" }}>
+        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#f5f3ff" }}>
+          <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "#fff", border: "1px solid #e0d9ff", boxShadow: "0 2px 8px rgba(0,0,0,.04),0 8px 36px rgba(0,0,0,.07)", padding: "36px 32px 30px" }}>
 
-            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#d97706", marginBottom: "10px" }}>SQLD AI 튜터</p>
-            <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#1c1917", letterSpacing: "-.03em", marginBottom: "5px" }}>로그인</h1>
-            <p style={{ fontSize: "13px", color: "#78716c", marginBottom: "26px" }}>학습을 이어가세요.</p>
+            <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#6366f1", marginBottom: "10px" }}>SQLD AI 튜터</p>
+            <h1 style={{ fontSize: "26px", fontWeight: 900, color: "#1e1b4b", letterSpacing: "-.03em", marginBottom: "5px" }}>로그인</h1>
+            <p style={{ fontSize: "13px", color: "#6d65b0", marginBottom: "26px" }}>학습을 이어가세요.</p>
 
             <form onSubmit={handleLogin}>
               {/* Email */}
@@ -221,7 +221,7 @@ export default function LoginPage() {
                   type="button"
                   className="login-eye"
                   onClick={() => setShowPassword((p) => !p)}
-                  style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#c7c3bf", display: "flex", alignItems: "center", transition: "color .15s" }}
+                  style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#a8a2d4", display: "flex", alignItems: "center", transition: "color .15s" }}
                 >
                   {showPassword ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -241,23 +241,23 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className="login-submit"
-                style={{ width: "100%", background: "#d97706", color: "#fff", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1 }}
+                style={{ width: "100%", background: "#6366f1", color: "#fff", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1 }}
               >
                 {loading ? "로그인 중..." : "로그인"}
               </button>
             </form>
 
             <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0" }}>
-              <div style={{ flex: 1, height: "1px", background: "#eae8e5" }} />
-              <span style={{ fontSize: "10px", color: "#c7c3bf", fontWeight: 600, letterSpacing: ".06em" }}>또는</span>
-              <div style={{ flex: 1, height: "1px", background: "#eae8e5" }} />
+              <div style={{ flex: 1, height: "1px", background: "#e8e3ff" }} />
+              <span style={{ fontSize: "10px", color: "#a8a2d4", fontWeight: 600, letterSpacing: ".06em" }}>또는</span>
+              <div style={{ flex: 1, height: "1px", background: "#e8e3ff" }} />
             </div>
 
-            <button disabled style={{ width: "100%", background: "#f5f5f4", border: "1.5px solid #e8e4df", color: "#c7c3bf", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed" }}>
+            <button disabled style={{ width: "100%", background: "#f0eeff", border: "1.5px solid #e0d9ff", color: "#a8a2d4", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed" }}>
               카카오로 로그인 (준비 중)
             </button>
 
-            <p style={{ textAlign: "center", fontSize: "11.5px", color: "#a8a29e", marginTop: "20px" }}>
+            <p style={{ textAlign: "center", fontSize: "11.5px", color: "#9490cc", marginTop: "20px" }}>
               계정이 없으신가요?{" "}
               <Link href="/signup" className="login-signup-link">회원가입</Link>
             </p>

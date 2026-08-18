@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 
 const CSS = `
-:root{--accent:#d97706;--accent-h:#b45309;--fg:#1c1917;--fg-2:#57534e;--fg-3:#a8a29e;--bg:#fafaf9;--bg-2:#eeece9;--bd:#e2e0dd;--badge-cat-bg:#fef3c7;--badge-cat-fg:#92400e;--badge-dif-bg:#dcfce7;--badge-dif-fg:#166534;--ok-bg:#f0fdf4;--ok-bd:#16a34a;--ok-fg:#15803d}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--fg:#f5f4f3;--fg-2:#a8a29e;--fg-3:#78716c;--bg:#1c1917;--bg-2:#252220;--bd:#3a3330;--badge-cat-bg:rgba(217,119,6,.18);--badge-cat-fg:#fcd34d;--badge-dif-bg:rgba(22,163,74,.15);--badge-dif-fg:#4ade80;--ok-bg:rgba(22,163,74,.12);--ok-bd:#22c55e;--ok-fg:#4ade80}}
-:root[data-theme="dark"]{--fg:#f5f4f3;--fg-2:#a8a29e;--fg-3:#78716c;--bg:#1c1917;--bg-2:#252220;--bd:#3a3330;--badge-cat-bg:rgba(217,119,6,.18);--badge-cat-fg:#fcd34d;--badge-dif-bg:rgba(22,163,74,.15);--badge-dif-fg:#4ade80;--ok-bg:rgba(22,163,74,.12);--ok-bd:#22c55e;--ok-fg:#4ade80}
+:root{--accent:#6366f1;--accent-h:#4f46e5;--fg:#1e1b4b;--fg-2:#4b4b80;--fg-3:#9490cc;--bg:#fafaff;--bg-2:#f0eeff;--bd:#e8e3ff;--badge-cat-bg:#ede9ff;--badge-cat-fg:#4338ca;--badge-dif-bg:#dcfce7;--badge-dif-fg:#166534;--ok-bg:#f0fdf4;--ok-bd:#16a34a;--ok-fg:#15803d}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--fg:#ede9ff;--fg-2:#9490cc;--fg-3:#6d65b0;--bg:#1c1a2e;--bg-2:#1e1b35;--bd:#3f3d6a;--badge-cat-bg:rgba(99,102,241,.18);--badge-cat-fg:#a5b4fc;--badge-dif-bg:rgba(22,163,74,.15);--badge-dif-fg:#4ade80;--ok-bg:rgba(22,163,74,.12);--ok-bd:#22c55e;--ok-fg:#4ade80}}
+:root[data-theme="dark"]{--fg:#ede9ff;--fg-2:#9490cc;--fg-3:#6d65b0;--bg:#1c1a2e;--bg-2:#1e1b35;--bd:#3f3d6a;--badge-cat-bg:rgba(99,102,241,.18);--badge-cat-fg:#a5b4fc;--badge-dif-bg:rgba(22,163,74,.15);--badge-dif-fg:#4ade80;--ok-bg:rgba(22,163,74,.12);--ok-bd:#22c55e;--ok-fg:#4ade80}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 .lp-root{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
 .nav{position:sticky;top:0;z-index:100;height:52px;background:var(--accent);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
@@ -78,10 +78,10 @@ const CSS = `
 .cm-opt em{font-style:normal;font-weight:700;font-size:10px;min-width:12px;flex-shrink:0;margin-top:1px}
 .cm-opt.hov{background:var(--bg-2);border-color:var(--accent)}
 .cm-opt.chosen{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok-fg);font-weight:600}
-.rpl{position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(217,119,6,.3);transform:scale(0);top:50%;left:12px;margin-top:-8px;pointer-events:none;transition:transform .4s ease-out,opacity .4s ease-out;opacity:1}
+.rpl{position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(99,102,241,.3);transform:scale(0);top:50%;left:12px;margin-top:-8px;pointer-events:none;transition:transform .4s ease-out,opacity .4s ease-out;opacity:1}
 .rpl.go{transform:scale(9);opacity:0}
 .cm-ok{font-size:12px;font-weight:600;color:var(--ok-fg);background:var(--ok-bg);border:1px solid var(--ok-bd);padding:7px 11px;display:flex;align-items:center;gap:5px}
-.cm-exp{border:1px solid rgba(217,119,6,.28);background:rgba(217,119,6,.07);padding:10px 12px;margin-top:6px}
+.cm-exp{border:1px solid rgba(99,102,241,.28);background:rgba(99,102,241,.07);padding:10px 12px;margin-top:6px}
 .cm-exp-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:5px}
 .cm-exp-txt{font-size:12px;line-height:1.7;color:var(--fg)}
 .cm-txt{background:var(--bg-2);border:1px solid var(--bd);padding:10px 12px;font-size:12px;line-height:1.7;color:var(--fg)}
@@ -120,7 +120,7 @@ const CSS = `
 .feat-d{font-size:13px;line-height:1.6;color:var(--fg-2)}
 .xfeat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-top:none}
 .xfeat-card{background:var(--bg-2);padding:32px 36px;display:flex;flex-direction:column;gap:14px}
-.xfeat-icon{width:36px;height:36px;background:rgba(217,119,6,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.xfeat-icon{width:36px;height:36px;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .xfeat-t{font-size:15px;font-weight:700}
 .xfeat-d{font-size:13px;line-height:1.65;color:var(--fg-2)}
 .trust{border-top:1px solid var(--bd);max-width:1100px;margin:0 auto;padding:28px 56px;display:flex;align-items:center;gap:12px}
@@ -601,7 +601,7 @@ export default function LandingPage() {
         <div className="xfeat-grid">
           <div className="xfeat-card">
             <div className="xfeat-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" />
               </svg>
             </div>
@@ -610,7 +610,7 @@ export default function LandingPage() {
           </div>
           <div className="xfeat-card">
             <div className="xfeat-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="18" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
               </svg>
             </div>
@@ -619,7 +619,7 @@ export default function LandingPage() {
           </div>
           <div className="xfeat-card">
             <div className="xfeat-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
               </svg>
             </div>
@@ -628,7 +628,7 @@ export default function LandingPage() {
           </div>
           <div className="xfeat-card">
             <div className="xfeat-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>
             </div>
