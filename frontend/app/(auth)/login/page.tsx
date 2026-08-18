@@ -69,13 +69,13 @@ export default function LoginPage() {
         el.style.transform = `translate(${(mx - 0.5) * spd * 24}px,${(my - 0.5) * spd * 15}px) rotate(${rot}deg)`;
       });
       if (leftBgRef.current) {
-        leftBgRef.current.style.background = `radial-gradient(ellipse 600px 420px at ${(mx * 100).toFixed(1)}% ${(my * 100).toFixed(1)}%,rgba(167,139,250,.1) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at ${(mx * 40 + 55).toFixed(1)}% ${(my * 40 + 55).toFixed(1)}%,rgba(168,162,158,.05) 0%,transparent 58%)`;
+        leftBgRef.current.style.background = `radial-gradient(ellipse 600px 420px at ${(mx * 100).toFixed(1)}% ${(my * 100).toFixed(1)}%,rgba(129,140,248,.1) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at ${(mx * 40 + 55).toFixed(1)}% ${(my * 40 + 55).toFixed(1)}%,rgba(168,162,158,.05) 0%,transparent 58%)`;
       }
     };
     const onLeave = () => {
       frags.forEach(({ el, rot }) => { el.style.transform = `rotate(${rot}deg)`; });
       if (leftBgRef.current) {
-        leftBgRef.current.style.background = "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(167,139,250,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)";
+        leftBgRef.current.style.background = "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(129,140,248,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)";
       }
     };
     leftEl.addEventListener("mousemove", onMove);
@@ -105,23 +105,23 @@ export default function LoginPage() {
   return (
     <>
       <style>{`
-        @keyframes bpulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(139,92,246,.5)}50%{opacity:.4;box-shadow:none}}
+        @keyframes bpulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(99,102,241,.5)}50%{opacity:.4;box-shadow:none}}
         @keyframes loginCard{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
         @keyframes loginEl{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
         @keyframes cblink{0%,49%{opacity:1}50%,100%{opacity:0}}
         @keyframes rpulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.05);opacity:.55}}
         .login-brand-dot{animation:bpulse 2.2s ease-in-out infinite}
-        .login-cursor{display:inline-block;width:3px;height:.82em;background:#8b5cf6;margin-left:3px;vertical-align:middle;animation:cblink .9s infinite;-webkit-text-fill-color:#8b5cf6}
+        .login-cursor{display:inline-block;width:3px;height:.82em;background:#6366f1;margin-left:3px;vertical-align:middle;animation:cblink .9s infinite;-webkit-text-fill-color:#6366f1}
         .login-ring{position:absolute;border-radius:50%;border:1px solid;top:50%;left:50%;transform:translate(-50%,-50%);animation:rpulse 3.4s ease-in-out infinite}
-        .login-ring:nth-child(1){width:68px;height:68px;border-color:rgba(139,92,246,.24);animation-delay:0s}
-        .login-ring:nth-child(2){width:126px;height:126px;border-color:rgba(139,92,246,.13);animation-delay:.5s}
-        .login-ring:nth-child(3){width:194px;height:194px;border-color:rgba(139,92,246,.07);animation-delay:1s}
-        .login-ring:nth-child(4){width:268px;height:268px;border-color:rgba(139,92,246,.035);animation-delay:1.5s}
+        .login-ring:nth-child(1){width:68px;height:68px;border-color:rgba(99,102,241,.24);animation-delay:0s}
+        .login-ring:nth-child(2){width:126px;height:126px;border-color:rgba(99,102,241,.13);animation-delay:.5s}
+        .login-ring:nth-child(3){width:194px;height:194px;border-color:rgba(99,102,241,.07);animation-delay:1s}
+        .login-ring:nth-child(4){width:268px;height:268px;border-color:rgba(99,102,241,.035);animation-delay:1.5s}
         .login-chip{font-size:12px;font-weight:600;color:#57534e;background:#eae8e5;padding:6px 14px;border:1px solid #d6d3d1;letter-spacing:.03em;cursor:default;transition:background .15s,color .15s,transform .15s,box-shadow .15s,border-color .15s}
-        .login-chip:hover{background:#8b5cf6;color:#fff;border-color:#8b5cf6;transform:translateY(-2px);box-shadow:0 4px 14px rgba(139,92,246,.28)}
+        .login-chip:hover{background:#6366f1;color:#fff;border-color:#6366f1;transform:translateY(-2px);box-shadow:0 4px 14px rgba(99,102,241,.28)}
         .login-submit{position:relative;overflow:hidden;transition:background .15s,transform .15s,box-shadow .15s}
         .login-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.15) 50%,transparent 70%);transform:translateX(-100%);transition:transform .48s ease}
-        .login-submit:hover:not(:disabled){background:#7c3aed!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(139,92,246,.32)}
+        .login-submit:hover:not(:disabled){background:#4f46e5!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.32)}
         .login-submit:hover:not(:disabled)::after{transform:translateX(100%)}
         .login-submit:active:not(:disabled){transform:translateY(0)}
         .login-right::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 85% 15%,rgba(255,255,255,.26) 0%,transparent 55%),radial-gradient(circle,rgba(255,255,255,.14) 1.2px,transparent 1.2px);background-size:100% 100%,22px 22px}
@@ -151,20 +151,20 @@ export default function LoginPage() {
           ref={leftElRef}
           style={{ flex: "0 0 52%", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "center", padding: "56px 52px", background: "#f5f5f4" }}
         >
-          <div ref={leftBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(167,139,250,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)", transition: "background .28s ease" }} />
+          <div ref={leftBgRef} style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", background: "radial-gradient(ellipse 600px 420px at 22% 32%,rgba(129,140,248,.08) 0%,transparent 62%),radial-gradient(ellipse 460px 320px at 80% 72%,rgba(168,162,158,.05) 0%,transparent 58%)", transition: "background .28s ease" }} />
           <div style={{ position: "absolute", bottom: "-55px", right: "-55px", width: "310px", height: "310px", pointerEvents: "none", zIndex: 1 }}>
             <div className="login-ring" /><div className="login-ring" /><div className="login-ring" /><div className="login-ring" />
           </div>
 
           {/* Brand */}
           <div style={{ position: "relative", zIndex: 5, display: "flex", alignItems: "center", gap: "7px", marginBottom: "20px" }}>
-            <div className="login-brand-dot" style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#8b5cf6" }} />
-            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#8b5cf6" }}>SQLD AI Tutor</span>
+            <div className="login-brand-dot" style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#6366f1" }} />
+            <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#6366f1" }}>SQLD AI Tutor</span>
           </div>
 
           {/* Typewriter headline */}
           <div style={{ position: "relative", zIndex: 5, fontSize: "clamp(34px,5.2vw,54px)", fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.06, marginBottom: "18px", minHeight: "2.2em" }}>
-            <span style={{ whiteSpace: "pre-line", background: "linear-gradient(132deg,#a78bfa 0%,#7c3aed 42%,#4c1d95 82%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+            <span style={{ whiteSpace: "pre-line", background: "linear-gradient(132deg,#818cf8 0%,#6366f1 42%,#3730a3 82%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
               {typerText}
             </span>
             <span className="login-cursor" />
@@ -187,7 +187,7 @@ export default function LoginPage() {
         <div className="login-vdiv" style={{ width: "1px", background: "#e7e5e4", flexShrink: 0, zIndex: 2 }} />
 
         {/* RIGHT */}
-        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#a78bfa" }}>
+        <div className="login-right" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "52px 48px", position: "relative", overflow: "hidden", background: "#818cf8" }}>
           <div className="login-form-card" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "330px", background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.35)", boxShadow: "0 8px 40px rgba(60,0,120,.2),inset 0 1px 0 rgba(255,255,255,.45)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", padding: "36px 32px 30px", animation: "loginCard .65s cubic-bezier(0.22,1,0.36,1) both" }}>
 
             <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,.65)", marginBottom: "10px", animation: "loginEl .4s ease .1s both" }}>SQLD AI 튜터</p>
@@ -244,7 +244,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className="login-submit"
-                style={{ width: "100%", background: "rgba(255,255,255,.9)", color: "#7c3aed", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1, animation: "loginEl .4s ease .48s both" }}
+                style={{ width: "100%", background: "rgba(255,255,255,.9)", color: "#4f46e5", border: "none", padding: "13px", fontSize: "13px", fontWeight: 800, letterSpacing: ".07em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", marginTop: "6px", opacity: loading ? 0.6 : 1, animation: "loginEl .4s ease .48s both" }}
               >
                 {loading ? "로그인 중..." : "로그인"}
               </button>
