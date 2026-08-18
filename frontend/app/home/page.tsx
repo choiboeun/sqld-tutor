@@ -679,7 +679,7 @@ export default function HomePage() {
                       <span className="font-black leading-[.85] tabular-nums" style={{ fontSize: "62px", letterSpacing: "-.07em", color: "#1e1b4b" }}>{predictedScore}</span>
                       <span className="text-lg font-semibold" style={{ color: "rgba(55,48,163,.38)" }}>점</span>
                     </div>
-                    <p className={`text-xs font-bold mt-2 ${scoreDiff >= 0 ? "text-green-700" : "text-red-500"}`}>
+                    <p className="text-xs font-bold mt-2" style={{ color: scoreDiff >= 0 ? "#15803d" : "rgba(55,48,163,.5)" }}>
                       목표까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
                     </p>
                   </div>
@@ -757,7 +757,7 @@ export default function HomePage() {
                         style={{
                           height: "9px",
                           ...(isFilled
-                            ? { background: "linear-gradient(90deg, #3730a3, #818cf8)" }
+                            ? { background: "linear-gradient(90deg, #3730a3, #818cf8)", boxShadow: "0 0 8px rgba(99,102,241,.5), 0 0 16px rgba(99,102,241,.22)" }
                             : isTarget
                             ? { background: "transparent", outline: "2px solid rgba(55,48,163,.45)", outlineOffset: "2px" }
                             : { background: "rgba(99,102,241,.16)" }),
