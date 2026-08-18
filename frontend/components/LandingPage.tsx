@@ -17,8 +17,8 @@ const CSS = `
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 52px)}
 .hero-l{background:var(--accent);padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:28px}
-.hero-h1{font-size:clamp(38px,4.5vw,60px);font-weight:900;line-height:1.1;letter-spacing:-.025em;color:#fff;text-wrap:balance;margin-bottom:24px}
-.hero-sub{font-size:15px;line-height:1.8;color:rgba(255,255,255,.72);max-width:360px;margin-bottom:44px}
+.hero-h1{font-size:clamp(38px,4.5vw,60px);font-weight:900;line-height:1.1;letter-spacing:-.025em;color:#fff;text-wrap:balance;margin-bottom:24px;text-shadow:0 1px 8px rgba(60,0,120,.35),0 2px 24px rgba(60,0,120,.2)}
+.hero-sub{font-size:15px;line-height:1.8;color:rgba(255,255,255,.72);max-width:360px;margin-bottom:44px;text-shadow:0 1px 6px rgba(60,0,120,.3)}
 .hero-sub strong{color:#fff;font-weight:700}
 .btn-primary{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;padding:14px 32px;text-decoration:none;border:2px solid #fff;align-self:flex-start;transition:background .15s,color .15s}
 .btn-primary:hover{background:transparent;color:#fff}
