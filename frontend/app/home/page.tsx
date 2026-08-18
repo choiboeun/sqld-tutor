@@ -831,12 +831,9 @@ export default function HomePage() {
         </div>
 
         {/* ── 학습 캘린더 + 오늘 할 일 ── */}
-        <div
-          className="mt-8 pt-6 border-t border-stone-200 grid gap-0"
-          style={{ gridTemplateColumns: "1fr 1px 1fr" }}
-        >
+        <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-2 gap-0">
           {/* 학습 캘린더 */}
-          <div className="pr-10">
+          <div className="pr-10 border-r border-[#ede9fe]">
             <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
               학습 캘린더
             </p>
@@ -880,11 +877,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* 세로 구분선 */}
-          <div style={{ background: "#ede9fe", margin: "0 40px" }} />
-
           {/* 오늘 할 일 */}
-          <div>
+          <div className="pl-10">
             <p style={{ fontSize: "9px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#818cf8", marginBottom: "14px" }}>
               오늘 할 일
             </p>
