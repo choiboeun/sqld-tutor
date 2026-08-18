@@ -647,7 +647,7 @@ export default function HomePage() {
         </div>
 
         {/* 예상 점수 + D-day + 오늘 할 일 + 카테고리 */}
-        <div className="mt-6 md:mt-8 flex flex-col flex-1">
+        <div className="flex flex-col flex-1 justify-center">
           {loading ? (
             <div className="space-y-4 animate-pulse">
               <div className="grid grid-cols-2 gap-4">
@@ -669,72 +669,89 @@ export default function HomePage() {
             </div>
           ) : (
             <>
-              {/* 예상 점수 + D-day 2열 */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "rgba(55,48,163,.55)" }}>예상 점수</p>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-5xl font-black leading-none tabular-nums">{predictedScore}</span>
-                    <span className="text-sm text-indigo-500">점</span>
+              {/* ── V2: 빅타입 + 도트 세그먼트 ── */}
+              <div className="w-full">
+                {/* 점수 + D-day */}
+                <div className="flex items-end justify-between mb-5">
+                  <div>
+                    <p className="font-bold uppercase mb-2" style={{ fontSize: "9px", letterSpacing: ".2em", color: "rgba(55,48,163,.45)" }}>예상 점수</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-black leading-[.85] tabular-nums" style={{ fontSize: "62px", letterSpacing: "-.07em", color: "#1e1b4b" }}>{predictedScore}</span>
+                      <span className="text-lg font-semibold" style={{ color: "rgba(55,48,163,.38)" }}>점</span>
+                    </div>
+                    <p className={`text-xs font-bold mt-2 ${scoreDiff >= 0 ? "text-green-700" : "text-red-500"}`}>
+                      목표까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
+                    </p>
                   </div>
-                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-700" : "text-indigo-500"}`}>
-                    목표 {targetScore}점까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="flex items-center justify-end gap-2 mb-2">
-                    <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "rgba(55,48,163,.55)" }}>시험까지</p>
-                    <button
-                      onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                      className="text-indigo-400 hover:text-indigo-700 transition-colors"
-                      title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                      </svg>
-                    </button>
+                  <div className="text-right pb-1">
+                    <div className="flex items-center justify-end gap-2 mb-1.5">
+                      <p className="font-bold uppercase" style={{ fontSize: "9px", letterSpacing: ".14em", color: "rgba(55,48,163,.45)" }}>시험까지</p>
+                      <button
+                        onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
+                        className="text-indigo-400 hover:text-indigo-700 transition-colors"
+                        title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                      </button>
+                    </div>
+                    {dDayCount !== null ? (
+                      <>
+                        <p
+                          className={`font-black leading-none tabular-nums ${
+                            dDayCount === 0 ? "text-red-500" : dDayCount < 0 ? "text-stone-400" : "text-indigo-600"
+                          }`}
+                          style={{ fontSize: "38px", letterSpacing: "-.05em" }}
+                        >
+                          {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
+                        </p>
+                        {streak > 0 && (
+                          <p className="text-xs text-indigo-500 mt-1">🔥 {streak}일 연속</p>
+                        )}
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
+                        className="text-sm font-medium text-indigo-500 hover:text-indigo-800 transition-colors mt-2"
+                      >
+                        날짜 설정 +
+                      </button>
+                    )}
                   </div>
-                  {dDayCount !== null ? (
-                    <>
-                      <p className={`text-4xl font-black leading-none tabular-nums ${
-                        dDayCount === 0 ? "text-red-500" : dDayCount < 0 ? "text-stone-400" : ""
-                      }`}>
-                        {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
-                      </p>
-                      {streak > 0 && (
-                        <p className="text-xs text-indigo-500 mt-1.5">🔥 {streak}일 연속</p>
-                      )}
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
-                      className="text-sm font-medium text-indigo-500 hover:text-indigo-800 transition-colors mt-2"
-                    >
-                      날짜 설정 +
-                    </button>
-                  )}
                 </div>
-              </div>
 
-              {/* 진행 바 */}
-              <div className="mb-6">
-                <div className="relative h-1 w-full">
-                  <div className="absolute inset-0 bg-indigo-200" />
-                  <div
-                    className="absolute top-0 left-0 h-full bg-indigo-600 transition-all duration-700"
-                    style={{ width: `${Math.min(predictedScore, 100)}%` }}
-                  />
-                  {scoreDiff < 0 && (
-                    <div
-                      className="absolute top-0 h-full bg-indigo-300/60"
-                      style={{ left: `${predictedScore}%`, width: `${targetScore - predictedScore}%` }}
-                    />
-                  )}
-                  <div
-                    className="absolute w-px bg-indigo-500"
-                    style={{ left: `${targetScore}%`, top: "-3px", bottom: "-3px" }}
-                  />
+                {/* 구분선 */}
+                <div className="h-px mb-4" style={{ background: "rgba(99,102,241,.18)" }} />
+
+                {/* 도트 세그먼트 바 */}
+                <div className="flex justify-between mb-2">
+                  <span style={{ fontSize: "8.5px", fontWeight: 600, color: "rgba(55,48,163,.4)" }}>0점</span>
+                  <span style={{ fontSize: "8.5px", fontWeight: 600, color: "rgba(55,48,163,.4)" }}>목표 {targetScore}점 ↓</span>
+                  <span style={{ fontSize: "8.5px", fontWeight: 600, color: "rgba(55,48,163,.4)" }}>100점</span>
+                </div>
+                <div className="flex gap-[5px]">
+                  {Array.from({ length: 10 }, (_, i) => {
+                    const dotVal = (i + 1) * 10;
+                    const isFilled = predictedScore >= dotVal;
+                    const targetDot = Math.round(targetScore / 10);
+                    const isTarget = i + 1 === targetDot && !isFilled;
+                    return (
+                      <div
+                        key={i}
+                        className="flex-1 rounded-full transition-all duration-500"
+                        style={{
+                          height: "9px",
+                          ...(isFilled
+                            ? { background: "linear-gradient(90deg, #3730a3, #818cf8)" }
+                            : isTarget
+                            ? { background: "transparent", outline: "2px solid rgba(55,48,163,.45)", outlineOffset: "2px" }
+                            : { background: "rgba(99,102,241,.16)" }),
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
 
