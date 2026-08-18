@@ -101,9 +101,9 @@ function CalendarHeatmap({ dates }: { dates: Record<string, number> }) {
 
   const cellColor = (count: number, isFuture: boolean) => {
     if (isFuture || count === 0) return "bg-stone-100";
-    if (count <= 2) return "bg-amber-200";
-    if (count <= 5) return "bg-amber-400";
-    return "bg-amber-600";
+    if (count <= 2) return "bg-indigo-200";
+    if (count <= 5) return "bg-indigo-400";
+    return "bg-indigo-500";
   };
 
   return (
@@ -167,7 +167,7 @@ function ReviewRow({
       <span className="flex-1 text-sm text-stone-400 truncate">{preview}</span>
       <span className={`text-sm font-bold tabular-nums shrink-0 ${
         accent === "bg-red-400" ? "text-red-500" :
-        accent === "bg-amber-400" ? "text-amber-600" :
+        accent === "bg-indigo-400" ? "text-indigo-600" :
         "text-stone-400"
       }`}>{items.length}개</span>
     </div>
@@ -483,10 +483,10 @@ export default function HomePage() {
       {showWelcomeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="bg-amber-600 px-7 py-6">
-              <p className="text-xs font-bold text-amber-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
+            <div className="bg-indigo-500 px-7 py-6">
+              <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
               <h2 className="text-2xl font-black text-white leading-snug">가입을 환영해요!</h2>
-              <p className="text-sm text-amber-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
+              <p className="text-sm text-indigo-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
             </div>
             <div className="px-7 py-6 space-y-4">
               <div className="space-y-2.5">
@@ -496,14 +496,14 @@ export default function HomePage() {
                   { icon: "③", text: "취약한 부분은 AI가 개념까지 설명해줘요" },
                 ].map(({ icon, text }) => (
                   <div key={icon} className="flex items-start gap-3">
-                    <span className="text-amber-600 font-bold text-sm shrink-0 w-5">{icon}</span>
+                    <span className="text-indigo-500 font-bold text-sm shrink-0 w-5">{icon}</span>
                     <p className="text-sm text-stone-600 leading-relaxed">{text}</p>
                   </div>
                 ))}
               </div>
               <Link
                 href="/chat?new=true"
-                className="block w-full bg-amber-600 text-white text-center py-3 text-sm font-bold tracking-wide hover:bg-amber-700 transition-colors"
+                className="block w-full bg-indigo-500 text-white text-center py-3 text-sm font-bold tracking-wide hover:bg-indigo-600 transition-colors"
               >
                 진단 시작하기
               </Link>
@@ -533,14 +533,14 @@ export default function HomePage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="새 비밀번호 (6자 이상)"
-                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="비밀번호 확인"
-                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               {pwMsg && (
                 <p className={`text-xs ${pwMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>{pwMsg.text}</p>
@@ -548,7 +548,7 @@ export default function HomePage() {
               <button
                 onClick={handlePasswordChange}
                 disabled={pwLoading}
-                className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
+                className="w-full bg-indigo-500 text-white py-2 text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 transition-colors"
               >
                 {pwLoading ? "변경 중..." : "비밀번호 변경"}
               </button>
@@ -597,12 +597,12 @@ export default function HomePage() {
                 type="date"
                 value={examDateInput}
                 onChange={(e) => setExamDateInput(e.target.value)}
-                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               <button
                 onClick={handleSaveExamDate}
                 disabled={examSaving || !examDateInput}
-                className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
+                className="w-full bg-indigo-500 text-white py-2 text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 transition-colors"
               >
                 {examSaving ? "저장 중..." : "저장"}
               </button>
@@ -612,7 +612,7 @@ export default function HomePage() {
       )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
-      <div className="bg-amber-600 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10">
+      <div className="bg-indigo-500 text-white md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10">
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
@@ -625,14 +625,14 @@ export default function HomePage() {
               </div>
               <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
             </div>
-            <p className="text-amber-200 text-sm pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
+            <p className="text-indigo-200 text-sm pl-[36px]">SQL 자격증 합격을 위한 AI 튜터</p>
           </div>
 
           {/* 계정 드롭다운 */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowDropdown((v) => !v)}
-              className="flex items-center gap-1.5 text-xs text-amber-200 hover:text-white transition-colors"
+              className="flex items-center gap-1.5 text-xs text-indigo-200 hover:text-white transition-colors"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -696,21 +696,21 @@ export default function HomePage() {
               {/* 예상 점수 + D-day 2열 */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
-                  <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest mb-2">예상 점수</p>
+                  <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest mb-2">예상 점수</p>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-5xl font-black leading-none tabular-nums">{predictedScore}</span>
-                    <span className="text-sm text-amber-300">점</span>
+                    <span className="text-sm text-indigo-200">점</span>
                   </div>
-                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-300" : "text-amber-200/80"}`}>
+                  <p className={`text-xs mt-1.5 font-medium ${scoreDiff >= 0 ? "text-green-300" : "text-indigo-200/80"}`}>
                     목표 {targetScore}점까지 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
                   </p>
                 </div>
                 <div className="text-right">
                   <div className="flex items-center justify-end gap-2 mb-2">
-                    <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest">시험까지</p>
+                    <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest">시험까지</p>
                     <button
                       onClick={() => { setExamDateInput(examDate); setShowExamModal(true); }}
-                      className="text-amber-300/60 hover:text-amber-200 transition-colors"
+                      className="text-indigo-200/60 hover:text-indigo-200 transition-colors"
                       title={dDayCount !== null ? "날짜 변경" : "날짜 설정"}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -727,13 +727,13 @@ export default function HomePage() {
                         {dDayCount > 0 ? `D-${dDayCount}` : dDayCount === 0 ? "D-Day" : `D+${Math.abs(dDayCount)}`}
                       </p>
                       {streak > 0 && (
-                        <p className="text-xs text-amber-200/80 mt-1.5">🔥 {streak}일 연속</p>
+                        <p className="text-xs text-indigo-200/80 mt-1.5">🔥 {streak}일 연속</p>
                       )}
                     </>
                   ) : (
                     <button
                       onClick={() => { setExamDateInput(""); setShowExamModal(true); }}
-                      className="text-sm font-medium text-amber-200/70 hover:text-amber-100 transition-colors mt-2"
+                      className="text-sm font-medium text-indigo-200/70 hover:text-white transition-colors mt-2"
                     >
                       날짜 설정 +
                     </button>
@@ -756,7 +756,7 @@ export default function HomePage() {
                     />
                   )}
                   <div
-                    className="absolute w-px bg-amber-200/60"
+                    className="absolute w-px bg-indigo-200/60"
                     style={{ left: `${targetScore}%`, top: "-3px", bottom: "-3px" }}
                   />
                 </div>
@@ -764,7 +764,7 @@ export default function HomePage() {
 
               {/* 오늘 할 일 */}
               <div className="mb-5">
-                <p className="text-xs font-bold text-amber-300/70 uppercase tracking-widest mb-3">오늘 할 일</p>
+                <p className="text-xs font-bold text-indigo-200/70 uppercase tracking-widest mb-3">오늘 할 일</p>
                 {todayTasks.length === 0 ? (
                   <p className="text-xs text-white/40 py-1">문제를 풀면 맞춤 목표가 생성됩니다.</p>
                 ) : (
@@ -782,7 +782,7 @@ export default function HomePage() {
                         </div>
                         <Link
                           href={task.href}
-                          className="shrink-0 text-[10px] font-bold tracking-wide bg-white/90 text-amber-700 px-3 py-1.5 hover:bg-white transition-colors whitespace-nowrap"
+                          className="shrink-0 text-[10px] font-bold tracking-wide bg-white/90 text-indigo-700 px-3 py-1.5 hover:bg-white transition-colors whitespace-nowrap"
                         >
                           시작
                         </Link>
@@ -822,8 +822,8 @@ export default function HomePage() {
             className="flex items-center justify-between py-5 border-b border-stone-200 hover:bg-stone-100 -mx-2 px-2 transition-colors group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-amber-50 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-9 h-9 bg-indigo-50 flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
               </div>
@@ -832,7 +832,7 @@ export default function HomePage() {
                 <p className="text-sm text-stone-400 mt-0.5">{totalAnswered}문제 풀이 중</p>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:translate-x-0.5 transition-transform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 group-hover:translate-x-0.5 transition-transform">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
@@ -916,9 +916,9 @@ export default function HomePage() {
             <div className="flex items-center gap-2 mt-3">
               <span className="text-xs text-stone-400">적음</span>
               <div className="w-5 h-5 bg-stone-100" />
-              <div className="w-5 h-5 bg-amber-200" />
-              <div className="w-5 h-5 bg-amber-400" />
-              <div className="w-5 h-5 bg-amber-600" />
+              <div className="w-5 h-5 bg-indigo-200" />
+              <div className="w-5 h-5 bg-indigo-400" />
+              <div className="w-5 h-5 bg-indigo-500" />
               <span className="text-xs text-stone-400">많음</span>
             </div>
           </div>
@@ -942,14 +942,14 @@ export default function HomePage() {
                   <ReviewRow label="오늘" items={reviewTiming.today} accent="bg-red-400" />
                 )}
                 {reviewTiming.tomorrow.length > 0 && (
-                  <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-amber-400" />
+                  <ReviewRow label="내일" items={reviewTiming.tomorrow} accent="bg-indigo-400" />
                 )}
                 {reviewTiming.this_week.length > 0 && (
                   <ReviewRow label="이번 주" items={reviewTiming.this_week} accent="bg-stone-300" />
                 )}
                 <Link
                   href="/wrong-answers"
-                  className="inline-flex items-center gap-1.5 text-sm text-amber-600 hover:underline mt-3"
+                  className="inline-flex items-center gap-1.5 text-sm text-indigo-500 hover:underline mt-3"
                 >
                   오답 회고 전체 보기
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -991,7 +991,7 @@ export default function HomePage() {
                   onChange={(e) => setInquiryMsg(e.target.value)}
                   placeholder="문의 내용을 입력해주세요."
                   rows={5}
-                  className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+                  className="w-full border border-stone-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                 />
               )}
               {inquiryResult?.type === "success" ? (
@@ -1005,7 +1005,7 @@ export default function HomePage() {
                 <button
                   onClick={handleInquirySubmit}
                   disabled={inquiryLoading || !inquiryMsg.trim()}
-                  className="w-full bg-amber-600 text-white py-2 text-sm font-semibold hover:bg-amber-700 disabled:opacity-40 transition-colors"
+                  className="w-full bg-indigo-500 text-white py-2 text-sm font-semibold hover:bg-indigo-600 disabled:opacity-40 transition-colors"
                 >
                   {inquiryLoading ? "제출 중..." : "제출하기"}
                 </button>
