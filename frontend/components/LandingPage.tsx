@@ -171,12 +171,19 @@ const CSS = `
 @keyframes shWave{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 @media(max-width:820px){
   .hero{grid-template-columns:1fr}.hero-l{padding:60px 28px 80px}.hero-r{display:none}
-  .wrap{padding:72px 28px}.pain-grid,.steps-grid{grid-template-columns:1fr}
-  .pain-item{padding:28px 0;border-right:none;border-bottom:1px solid var(--bd)}.pain-item:last-child{border-bottom:none}.pain-item+.pain-item{padding-left:0}
-  .step{padding:28px 0;border-right:none;border-bottom:1px solid var(--bd)}.step:last-child{border-bottom:none}.step+.step{padding-left:0}
+  .wrap{padding:72px 28px}
+  .pain-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:2px solid var(--bd)}
+  .pain-grid::-webkit-scrollbar{display:none}
+  .pain-item{min-width:78vw;scroll-snap-align:start;flex-shrink:0;padding:28px 24px;border-right:1px solid var(--bd);border-bottom:none}.pain-item:last-child{border-right:none}.pain-item+.pain-item{padding-left:24px}
+  .steps-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:2px solid var(--bd);margin-top:56px}
+  .steps-grid::-webkit-scrollbar{display:none}
+  .step{min-width:78vw;scroll-snap-align:start;flex-shrink:0;padding:28px 24px;border-right:1px solid var(--bd);border-bottom:none}.step:last-child{border-right:none}.step+.step{padding-left:24px}
   .feat-grid,.xfeat-grid{grid-template-columns:1fr}.cta-sec{padding:72px 28px}.trust{padding:24px 28px}
   .lp-footer{padding:20px 28px;flex-direction:column;gap:10px;text-align:center}.nav{padding:0 24px}
-  .reviews{grid-template-columns:1fr}.faq-item{grid-template-columns:auto 1fr}
+  .reviews{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border:1px solid var(--bd);margin-top:56px;background:var(--bd);gap:1px}
+  .reviews::-webkit-scrollbar{display:none}
+  .review-card{min-width:78vw;scroll-snap-align:start;flex-shrink:0;background:var(--bg)}
+  .faq-item{grid-template-columns:auto 1fr}
 }
 @media(prefers-reduced-motion:reduce){
   .cm-ai,.rpl,.cm-tbl-wrap,.pg-results{transition:none}
