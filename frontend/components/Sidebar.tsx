@@ -69,6 +69,9 @@ function shortName(cat: string): string {
   return SHORT_NAMES[cat] ?? cat;
 }
 
+const RING_R = 28;
+const CIRCUMFERENCE = 2 * Math.PI * RING_R;
+
 export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false }: Props) {
   const [data, setData] = useState<ProgressData | null>(null);
 
@@ -95,7 +98,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         ])
       )
     : (data?.accuracy_by_category ?? {});
-  const attemptedCount = ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) > 0).length;
+
   const totalAnswered = Math.max(liveStats?.total_answered ?? 0, data?.total_answered ?? 0);
   const streak = liveStats?.streak ?? data?.streak ?? 0;
   const targetScore = data?.target_score ?? 70;
@@ -107,6 +110,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
     }, 0) * 100
   );
   const scoreDiff = predictedScore - targetScore;
+  const dashOffset = CIRCUMFERENCE * (1 - Math.min(predictedScore, 100) / 100);
 
   const sortedCats = [
     ...ALL_CATEGORIES
@@ -115,7 +119,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
     ...ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) === 0),
   ];
 
-  const asideClass = "flex flex-col bg-stone-50 border-r border-stone-200 p-5 gap-5 overflow-y-auto";
+  const asideClass = "flex flex-col bg-[#fafafa] border-r border-violet-100 overflow-y-auto";
 
   return (
     <>
@@ -131,8 +135,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           : `hidden md:flex md:flex-col md:w-64 md:shrink-0 ${asideClass}`
       }>
 
-        {/* Logo + 홈으로 */}
-        <div className="pb-4 border-b border-stone-200">
+        {/* Logo */}
+        <div className="px-5 pt-4 pb-3 border-b border-violet-100 bg-violet-50">
           <Link
             href="/home"
             onClick={onClose}
@@ -164,70 +168,74 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           </div>
         </div>
 
-        {/* 학습 현황 */}
-        <div>
-          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">학습 현황</h2>
-
-          {/* 예상 점수 */}
-          <div className="bg-white px-4 py-3 mb-3 border border-stone-200">
-            <div className="flex items-baseline justify-between mb-1.5">
-              <span className="text-xs text-stone-500 font-semibold">예상 점수</span>
-              <span className="text-xs font-semibold text-indigo-600">
-                목표 {targetScore}점 {scoreDiff >= 0 ? `+${scoreDiff}` : scoreDiff}점
-              </span>
-            </div>
-            <div className="flex items-end gap-1.5">
-              <span className="text-3xl font-bold text-stone-900 leading-none">{predictedScore}</span>
-              <span className="text-sm text-stone-400 mb-0.5">/ 100점</span>
-            </div>
-            <div className="mt-2 h-1.5 bg-indigo-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-indigo-500 rounded-full transition-all"
-                style={{ width: `${Math.min(predictedScore, 100)}%` }}
+        {/* 예상 점수 — 링 게이지 */}
+        <div className="flex items-center gap-3 px-5 py-4 bg-white border-b border-violet-100">
+          <div className="relative flex-shrink-0">
+            <svg width="76" height="76" viewBox="0 0 76 76">
+              {/* track */}
+              <circle
+                cx="38" cy="38" r={RING_R}
+                fill="none" stroke="#ede9fe" strokeWidth="6"
+                strokeDasharray={CIRCUMFERENCE}
               />
+              {/* fill */}
+              <circle
+                cx="38" cy="38" r={RING_R}
+                fill="none"
+                stroke="url(#scoreGrad)"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeDasharray={CIRCUMFERENCE}
+                strokeDashoffset={dashOffset}
+                transform="rotate(-90 38 38)"
+              />
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#a5b4fc" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-xl font-black text-stone-900 leading-none">{predictedScore}</span>
+              <span className="text-[7px] font-semibold text-violet-300 tracking-wide">/ 100</span>
             </div>
+          </div>
+          <div>
+            <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest mb-1">예상 점수</p>
+            <p className="text-sm font-bold text-indigo-600 mb-1.5">목표 {targetScore}점</p>
+            <p className={`text-[9px] font-bold ${scoreDiff >= 0 ? "text-indigo-500" : "text-amber-500"}`}>
+              {scoreDiff >= 0 ? `+${scoreDiff}점 달성` : `${Math.abs(scoreDiff)}점 부족`}
+            </p>
             {totalAnswered === 0 && (
-              <p className="text-xs text-stone-400 mt-1.5">문제를 풀면 점수가 계산됩니다</p>
+              <p className="text-[8px] text-stone-400 mt-1">문제를 풀면 계산됩니다</p>
             )}
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="bg-white px-3 py-2 text-center border border-stone-200">
-              <p className="text-lg font-bold text-stone-800">{totalAnswered}문제</p>
-              <p className="text-xs text-stone-400 mt-0.5">풀이 수</p>
-            </div>
-            <div className="bg-white px-3 py-2 text-center border border-stone-200">
-              <p className={`text-lg font-bold ${streak > 0 ? "text-indigo-600" : "text-stone-800"}`}>{streak}개</p>
-              <p className="text-xs text-stone-400 mt-0.5">연속 정답</p>
-            </div>
+        {/* 풀이수 + 연속정답 */}
+        <div className="grid grid-cols-2 border-b border-violet-100">
+          <div className="px-3 py-3 text-center border-r border-violet-100">
+            <p className="text-lg font-bold text-stone-800">{totalAnswered}문제</p>
+            <p className="text-xs text-stone-400 mt-0.5">풀이 수</p>
           </div>
-
-          {/* 전체 진행률 */}
-          <div className="bg-white px-3 py-2 border border-stone-200">
-            <div className="flex justify-between text-xs text-stone-500 mb-1">
-              <span>학습 진행</span>
-              <span className="font-medium">{attemptedCount} / 11 카테고리</span>
-            </div>
-            <div className="h-1.5 bg-indigo-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-indigo-500 rounded-full transition-all"
-                style={{ width: `${(attemptedCount / 11) * 100}%` }}
-              />
-            </div>
+          <div className="px-3 py-3 text-center">
+            <p className={`text-lg font-bold ${streak > 0 ? "text-indigo-600" : "text-stone-800"}`}>{streak}개</p>
+            <p className="text-xs text-stone-400 mt-0.5">연속 정답</p>
           </div>
         </div>
 
         {/* 카테고리별 정답률 */}
-        <div>
-          <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">
-            카테고리별 정답률
+        <div className="px-5 py-4 flex-1">
+          <h3 className="text-[8px] font-bold text-violet-300 uppercase tracking-widest mb-3">
+            카테고리 정답률
           </h3>
           <div className="space-y-3">
             {sortedCats.map((cat) => {
               const stat = catMap[cat];
               const tried = (stat?.attempts ?? 0) > 0;
               const acc = stat?.accuracy ?? 0;
-              const dotColor = !tried ? "bg-stone-300"
+              const dotColor = !tried ? "bg-stone-200"
                 : acc < 0.4 ? "bg-amber-400"
                 : acc < 0.7 ? "bg-amber-300"
                 : "bg-indigo-500";
@@ -235,6 +243,11 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                 : acc < 0.4 ? "text-amber-600 font-semibold"
                 : acc < 0.7 ? "text-amber-500 font-semibold"
                 : "text-indigo-600 font-semibold";
+              const barColor = acc < 0.4
+                ? "bg-gradient-to-r from-amber-400 to-amber-300"
+                : acc < 0.7
+                ? "bg-gradient-to-r from-amber-300 to-yellow-200"
+                : "bg-gradient-to-r from-indigo-500 to-indigo-400";
               return (
                 <div key={cat} title={cat}>
                   <div className="flex items-center gap-1.5 mb-1">
@@ -246,13 +259,10 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                       {tried ? `${Math.round(acc * 100)}%` : "—"}
                     </span>
                   </div>
-                  <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
+                  <div className="h-1 bg-violet-50 rounded-full overflow-hidden">
                     {tried && acc > 0 && (
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          acc < 0.4 ? "bg-amber-400" :
-                          acc < 0.7 ? "bg-amber-300" : "bg-indigo-500"
-                        }`}
+                        className={`h-full rounded-full transition-all ${barColor}`}
                         style={{ width: `${acc * 100}%` }}
                       />
                     )}
@@ -266,7 +276,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         {/* 오답 회고 */}
         <Link
           href="/wrong-answers"
-          className="flex items-center justify-between w-full px-4 py-2.5 bg-white hover:bg-indigo-50 transition-colors text-stone-700 border border-stone-200 hover:border-indigo-200 hover:text-indigo-700"
+          className="flex items-center justify-between w-full px-5 py-3 bg-white hover:bg-indigo-50 transition-colors text-stone-700 border-t border-violet-100 hover:text-indigo-700"
           onClick={onClose}
         >
           <span className="text-sm font-medium">오답 회고</span>
@@ -278,7 +288,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         </Link>
 
         {totalAnswered === 0 && (
-          <p className="text-xs text-stone-400 text-center mt-2">
+          <p className="text-xs text-stone-400 text-center py-3">
             문제를 풀면<br />통계가 표시됩니다.
           </p>
         )}
