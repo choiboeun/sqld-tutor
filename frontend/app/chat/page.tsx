@@ -736,17 +736,19 @@ function ChatContent() {
               }
             }
             if (msg.role === "user" && /^[1-4]번?\s*$/.test(msg.content.trim())) return null;
+            const isCorrect = msg.role === "ai" && /^정답입니다|^정답이에요/.test(msg.content);
+            const isWrong   = msg.role === "ai" && /^오답입니다|^아직 틀렸어요/.test(msg.content);
             return (
             <React.Fragment key={i}>
             <div
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex animate-msg-in ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "max-w-[75%] bg-stone-600 text-white rounded-lg"
                     : `max-w-[90%] border text-stone-800 ${isQuestionMsg ? "bg-white border-violet-200" : "bg-white border-indigo-100"}`
-                }`}
+                } ${isCorrect ? "animate-flash-correct" : isWrong ? "animate-flash-wrong" : ""}`}
               >
                 {msg.role === "ai" ? (
                   msg.content === "" && isLoading ? (
