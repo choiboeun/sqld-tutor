@@ -69,7 +69,7 @@ function shortName(cat: string): string {
   return SHORT_NAMES[cat] ?? cat;
 }
 
-const RING_R = 36;
+const RING_R = 44;
 const CIRCUMFERENCE = 2 * Math.PI * RING_R;
 
 export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false }: Props) {
@@ -169,25 +169,25 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         </div>
 
         {/* 예상 점수 — 링 게이지 */}
-        <div className="flex items-center gap-3 px-5 py-4 bg-white border-b border-violet-100">
+        <div className="flex items-center gap-4 px-5 py-5 bg-white border-b border-violet-100">
           <div className="relative flex-shrink-0">
-            <svg width="96" height="96" viewBox="0 0 96 96">
+            <svg width="116" height="116" viewBox="0 0 116 116">
               {/* track */}
               <circle
-                cx="48" cy="48" r={RING_R}
-                fill="none" stroke="#ede9fe" strokeWidth="7"
+                cx="58" cy="58" r={RING_R}
+                fill="none" stroke="#ede9fe" strokeWidth="8"
                 strokeDasharray={CIRCUMFERENCE}
               />
               {/* fill */}
               <circle
-                cx="48" cy="48" r={RING_R}
+                cx="58" cy="58" r={RING_R}
                 fill="none"
                 stroke="url(#scoreGrad)"
-                strokeWidth="7"
+                strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={CIRCUMFERENCE}
                 strokeDashoffset={dashOffset}
-                transform="rotate(-90 48 48)"
+                transform="rotate(-90 58 58)"
               />
               <defs>
                 <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -197,8 +197,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-2xl font-black text-stone-900 leading-none">{predictedScore}</span>
-              <span className="text-[8px] font-semibold text-violet-300 tracking-wide">/ 100</span>
+              <span className="text-3xl font-black text-stone-900 leading-none">{predictedScore}</span>
+              <span className="text-[9px] font-semibold text-violet-300 tracking-wide">/ 100</span>
             </div>
           </div>
           <div>
