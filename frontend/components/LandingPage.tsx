@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const CSS = `
 :root{--accent:#dde1fb;--accent-h:#6366f1;--fg:#1c1917;--fg-2:#57534e;--fg-3:#a8a29e;--bg:#fafaf9;--bg-2:#eeece9;--bd:#e2e0dd;--badge-cat-bg:#e0e7ff;--badge-cat-fg:#3730a3;--badge-dif-bg:#dcfce7;--badge-dif-fg:#166534;--ok-bg:#f0fdf4;--ok-bd:#16a34a;--ok-fg:#15803d}
@@ -508,11 +509,7 @@ export default function LandingPage() {
       {/* NAV */}
       <nav className="nav">
         <Link className="nav-brand" href="/">
-          <div className="nav-icon">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-            </svg>
-          </div>
+          <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} style={{ flexShrink: 0 }} />
           <span className="nav-name">SQLD AI 튜터</span>
         </Link>
         <Link className="nav-login" href="/login">로그인</Link>
