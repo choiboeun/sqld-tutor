@@ -119,7 +119,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
     ...ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) === 0),
   ];
 
-  const asideClass = "flex flex-col bg-[#fafafa] border-r border-violet-100 overflow-y-auto";
+  const asideClass = "flex flex-col bg-[#fafafa] border-r border-violet-200 overflow-y-auto";
 
   return (
     <>
@@ -136,7 +136,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       }>
 
         {/* Logo */}
-        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-100 bg-[#faf9ff]">
+        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-200 bg-[#faf9ff]">
           <Link
             href="/home"
             onClick={onClose}
@@ -169,7 +169,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         </div>
 
         {/* 예상 점수 — 링 게이지 */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-violet-100">
+        <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-violet-200">
           <div className="relative flex-shrink-0">
             <svg width="120" height="120" viewBox="0 0 120 120">
               {/* track */}
@@ -214,8 +214,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         </div>
 
         {/* 풀이수 + 연속정답 */}
-        <div className="grid grid-cols-2 border-b border-violet-100">
-          <div className="px-3 py-3 text-center border-r border-violet-100">
+        <div className="grid grid-cols-2 border-b border-violet-200">
+          <div className="px-3 py-3 text-center border-r border-violet-200">
             <p className="text-lg font-bold text-stone-800">{totalAnswered}문제</p>
             <p className="text-xs text-stone-400 mt-0.5">풀이 수</p>
           </div>
@@ -276,7 +276,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         {/* 오답 회고 */}
         <Link
           href="/wrong-answers"
-          className="flex items-center justify-between w-full px-5 py-3 bg-white hover:bg-indigo-50 transition-colors text-stone-700 border-t border-violet-100 hover:text-indigo-700"
+          className="flex items-center justify-between w-full px-5 py-3 bg-white hover:bg-indigo-50 transition-colors text-stone-700 border-t border-violet-200 hover:text-indigo-700"
           onClick={onClose}
         >
           <span className="text-sm font-medium">오답 회고</span>
