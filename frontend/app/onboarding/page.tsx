@@ -35,15 +35,15 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
-      {/* 상단 인디고 브랜드 바 */}
-      <div className="px-6 py-3.5 flex items-center gap-3" style={{ background: "#6366f1" }}>
-        <div className="w-6 h-6 bg-white/20 flex items-center justify-center shrink-0">
+    <div className="min-h-screen bg-[#fafaf9] flex flex-col">
+      {/* 상단 헤더 */}
+      <div className="px-6 py-3.5 flex items-center gap-3 border-b border-violet-200" style={{ background: "#dde1fb" }}>
+        <div className="w-6 h-6 bg-indigo-600 flex items-center justify-center shrink-0">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
           </svg>
         </div>
-        <span className="text-sm font-bold tracking-wider text-white/85">SQLD AI 튜터</span>
+        <span className="text-sm font-bold tracking-wider text-indigo-800">SQLD AI 튜터</span>
       </div>
 
       {/* 중앙 콘텐츠 */}
@@ -60,15 +60,19 @@ export default function OnboardingPage() {
           </p>
 
           <div className="grid grid-cols-2 gap-3 mb-6">
-            {SCORES.map(({ value, badge, desc }) => (
+            {SCORES.map(({ value, badge, desc }, idx) => (
               <button
                 key={value}
                 onClick={() => setTargetScore(value)}
-                className={`text-left p-5 border-[1.5px] transition-all duration-150 ${
+                className={`animate-card-in text-left p-5 border-[1.5px] transition-all duration-200 ${
                   targetScore === value
                     ? "border-indigo-500 bg-indigo-500"
                     : "border-stone-200 bg-white hover:border-indigo-400 hover:-translate-y-0.5 hover:shadow-md"
                 }`}
+                style={{
+                  animationDelay: `${idx * 80}ms`,
+                  boxShadow: targetScore === value ? "0 0 0 4px rgba(99,102,241,0.2), 0 8px 24px rgba(99,102,241,0.25)" : undefined,
+                }}
               >
                 <span className={`text-[9px] font-bold tracking-widest uppercase block mb-2 ${
                   targetScore === value ? "text-white/70" : "text-stone-400"
