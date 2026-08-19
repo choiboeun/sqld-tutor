@@ -388,11 +388,28 @@ export default function ExamPage() {
           </span>
         </div>
 
-        <div className={`flex items-center gap-1.5 text-base font-black tabular-nums tracking-wider ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-          </svg>
-          {mm}:{ss}
+        <div className="flex items-center gap-2">
+          {/* 링 게이지 */}
+          <div className="relative w-9 h-9 shrink-0">
+            <svg width="36" height="36" viewBox="0 0 36 36" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="18" cy="18" r="14" fill="none" stroke="#e7e5e0" strokeWidth="3"/>
+              <circle
+                cx="18" cy="18" r="14" fill="none"
+                stroke={timerUrgent ? "#ef4444" : "#292524"}
+                strokeWidth="3"
+                strokeDasharray={`${2 * Math.PI * 14}`}
+                strokeDashoffset={`${2 * Math.PI * 14 * (1 - secsLeft / TOTAL_SECS)}`}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className={`absolute inset-0 flex items-center justify-center text-[9px] font-black ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
+              {Math.round((secsLeft / TOTAL_SECS) * 100)}%
+            </div>
+          </div>
+          {/* 숫자 타이머 */}
+          <span className={`text-base font-black tabular-nums tracking-wider ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
+            {mm}:{ss}
+          </span>
         </div>
 
         <button
