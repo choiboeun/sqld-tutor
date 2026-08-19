@@ -360,7 +360,7 @@ export default function WrongAnswersPage() {
                         key={opt.num}
                         className={`flex items-start gap-2.5 px-3 py-2 text-sm ${
                           isCorrect
-                            ? "bg-green-50 text-green-800"
+                            ? "bg-teal-50 text-teal-800"
                             : isStudentAnswer
                             ? "bg-red-50 text-red-700"
                             : "text-stone-600"
@@ -368,7 +368,7 @@ export default function WrongAnswersPage() {
                       >
                         <span className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold mt-0.5 ${
                           isCorrect
-                            ? "bg-green-200 text-green-700"
+                            ? "bg-teal-200 text-teal-700"
                             : isStudentAnswer
                             ? "bg-red-200 text-red-600"
                             : "bg-stone-100 text-stone-500"
@@ -381,7 +381,7 @@ export default function WrongAnswersPage() {
                             p: ({ children }) => <p className="leading-relaxed">{children}</p>,
                           }}>{opt.text}</ReactMarkdown>
                         </div>
-                        {isCorrect && <span className="ml-auto text-xs font-semibold text-green-600 shrink-0">정답</span>}
+                        {isCorrect && <span className="ml-auto text-xs font-semibold text-teal-600 shrink-0">정답</span>}
                         {isStudentAnswer && !isCorrect && <span className="ml-auto text-xs font-semibold text-red-500 shrink-0">내 답</span>}
                       </div>
                     );
