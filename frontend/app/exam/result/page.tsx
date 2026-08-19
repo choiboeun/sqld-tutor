@@ -87,7 +87,7 @@ export default function ExamResultPage() {
   }, [router]);
 
   if (loading) return (
-    <div className="flex h-[100dvh] items-center justify-center bg-stone-50">
+    <div className="flex h-[100dvh] items-center justify-center bg-[#fafaf9]">
       <p className="text-sm text-stone-400">결과를 불러오는 중...</p>
     </div>
   );
@@ -107,6 +107,17 @@ export default function ExamResultPage() {
   const totalPass = totalScore >= 60;
   const passed = totalPass && s1Pass && s2Pass;
 
+  // 카테고리별 정답률
+  const categoryMap: Record<string, { correct: number; total: number }> = {};
+  for (const r of results) {
+    if (!categoryMap[r.category]) categoryMap[r.category] = { correct: 0, total: 0 };
+    categoryMap[r.category].total++;
+    if (r.correct) categoryMap[r.category].correct++;
+  }
+  const categoryStats = Object.entries(categoryMap)
+    .map(([cat, s]) => ({ cat, pct: Math.round((s.correct / s.total) * 100) }))
+    .sort((a, b) => a.pct - b.pct);
+
   // 불합격 사유
   const failReasons: string[] = [];
   if (!totalPass) failReasons.push(`총점 ${totalScore}점 (60점 미달)`);
@@ -117,10 +128,10 @@ export default function ExamResultPage() {
     [1, 2, 3, 4].map((n) => ({ num: n, text: r.options[String(n)] ?? "" }));
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[#fafaf9]">
 
       {/* 결과 헤더 */}
-      <div className={`${passed ? "bg-indigo-600" : "bg-stone-700"} text-white`}>
+      <div className={`${passed ? "bg-[#14b8a6]" : "bg-[#292524]"} text-white`}>
         <div className="max-w-3xl mx-auto px-5 py-10 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest mb-3 opacity-80">SQLD 모의고사 결과</p>
           <div className="flex items-baseline justify-center gap-2 mb-4">
@@ -128,7 +139,7 @@ export default function ExamResultPage() {
             <span className="text-2xl opacity-70">/ 100점</span>
           </div>
           <div className={`inline-block px-4 py-1.5 text-sm font-black tracking-widest mb-6 ${
-            passed ? "bg-white text-indigo-600" : "bg-white/20 text-white"
+            passed ? "bg-white/25 text-white" : "bg-white/15 text-white/80"
           }`}>
             {passed ? "합격" : "불합격"}
           </div>
@@ -147,19 +158,39 @@ export default function ExamResultPage() {
             <div className={`px-4 py-3 ${s1Pass ? "bg-white/15" : "bg-red-900/40"}`}>
               <p className="text-xs opacity-70 mb-1">1과목</p>
               <p className="text-2xl font-black tabular-nums">{s1Score}<span className="text-sm font-normal opacity-60"> / 20점</span></p>
-              <p className="text-xs mt-1 opacity-70">{s1Correct}/{s1.length}개 정답 {s1Pass ? "✅" : "❌"}</p>
+              <p className="text-xs mt-1 opacity-70">{s1Correct}/{s1.length}개 정답 · {s1Pass ? "통과" : "미달"}</p>
             </div>
             <div className={`px-4 py-3 ${s2Pass ? "bg-white/15" : "bg-red-900/40"}`}>
               <p className="text-xs opacity-70 mb-1">2과목</p>
               <p className="text-2xl font-black tabular-nums">{s2Score}<span className="text-sm font-normal opacity-60"> / 80점</span></p>
-              <p className="text-xs mt-1 opacity-70">{s2Correct}/{s2.length}개 정답 {s2Pass ? "✅" : "❌"}</p>
+              <p className="text-xs mt-1 opacity-70">{s2Correct}/{s2.length}개 정답 · {s2Pass ? "통과" : "미달"}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 문제별 정오표 */}
+      {/* 본문 */}
       <div className="max-w-3xl mx-auto px-5 py-8">
+
+        {/* 카테고리별 정답률 */}
+        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-widest mb-4">카테고리별 정답률</h2>
+        <div className="space-y-3 mb-8">
+          {categoryStats.map(({ cat, pct }) => {
+            const barColor = pct >= 70 ? "#14b8a6" : pct >= 40 ? "#f59e0b" : "#ef4444";
+            const textColor = pct >= 70 ? "#0d9488" : pct >= 40 ? "#b45309" : "#b91c1c";
+            return (
+              <div key={cat} className="flex items-center gap-3">
+                <span className="text-xs text-stone-500 w-28 text-right shrink-0 leading-tight">{cat}</span>
+                <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${pct}%`, background: barColor }} />
+                </div>
+                <span className="text-xs font-bold w-8 shrink-0 tabular-nums" style={{ color: textColor }}>{pct}%</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 문제별 정오표 */}
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-widest mb-4">문제별 정오표</h2>
         <p className="text-xs text-stone-400 mb-4">문제를 클릭하면 내 답변과 해설을 볼 수 있어요.</p>
 
@@ -173,7 +204,7 @@ export default function ExamResultPage() {
               title={`${r.num}번 — ${r.category}`}
               className={`h-9 text-xs font-bold transition-colors ${
                 r.correct
-                  ? "bg-green-100 text-green-700 border border-green-200 hover:bg-green-200"
+                  ? "bg-teal-100 text-teal-700 border border-teal-200 hover:bg-teal-200"
                   : r.selected === null
                     ? "bg-stone-100 text-stone-400 border border-stone-200 hover:bg-stone-200"
                     : "bg-red-100 text-red-600 border border-red-200 hover:bg-red-200"
@@ -194,7 +225,7 @@ export default function ExamResultPage() {
               title={`${r.num}번 — ${r.category}`}
               className={`h-9 text-xs font-bold transition-colors ${
                 r.correct
-                  ? "bg-green-100 text-green-700 border border-green-200 hover:bg-green-200"
+                  ? "bg-teal-100 text-teal-700 border border-teal-200 hover:bg-teal-200"
                   : r.selected === null
                     ? "bg-stone-100 text-stone-400 border border-stone-200 hover:bg-stone-200"
                     : "bg-red-100 text-red-600 border border-red-200 hover:bg-red-200"
@@ -207,7 +238,7 @@ export default function ExamResultPage() {
 
         {/* 범례 */}
         <div className="flex gap-4 text-xs text-stone-400 mb-8">
-          <span><span className="inline-block w-3 h-3 bg-green-100 border border-green-200 mr-1" />정답</span>
+          <span><span className="inline-block w-3 h-3 bg-teal-100 border border-teal-200 mr-1" />정답</span>
           <span><span className="inline-block w-3 h-3 bg-red-100 border border-red-200 mr-1" />오답</span>
           <span><span className="inline-block w-3 h-3 bg-stone-100 border border-stone-200 mr-1" />미답변</span>
         </div>
@@ -250,7 +281,7 @@ export default function ExamResultPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setExitTarget(null)}
-                className="flex-1 py-2.5 border border-stone-200 text-stone-600 text-sm hover:bg-stone-50 transition-colors"
+                className="flex-1 py-2.5 border border-stone-200 text-stone-600 text-sm hover:bg-[#fafaf9] transition-colors"
               >
                 계속 보기
               </button>
@@ -277,7 +308,7 @@ export default function ExamResultPage() {
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-stone-500">{selected.num}번</span>
                 <span className="text-[11px] px-2 py-0.5 bg-indigo-100 text-indigo-700 font-semibold">{selected.category}</span>
-                <span className={`text-[11px] font-bold ${selected.correct ? "text-green-600" : selected.selected === null ? "text-stone-400" : "text-red-500"}`}>
+                <span className={`text-[11px] font-bold ${selected.correct ? "text-teal-600" : selected.selected === null ? "text-stone-400" : "text-red-500"}`}>
                   {selected.correct ? "정답" : selected.selected === null ? "미답변" : "오답"}
                 </span>
               </div>
@@ -307,14 +338,14 @@ export default function ExamResultPage() {
                   const isCorrect = opt.num === selected.answer;
                   const isSelected = opt.num === selected.selected;
                   const bg = isCorrect
-                    ? "bg-green-50 border-l-4 border-l-green-400"
+                    ? "bg-teal-50 border-l-4 border-l-teal-400"
                     : isSelected && !isCorrect
                       ? "bg-red-50 border-l-4 border-l-red-400"
                       : "bg-white";
                   return (
                     <div key={opt.num} className={`flex items-start gap-3 px-4 py-3 border-b border-stone-100 last:border-b-0 ${bg}`}>
                       <span className={`shrink-0 text-sm font-bold mt-0.5 ${
-                        isCorrect ? "text-green-600" : isSelected ? "text-red-500" : "text-stone-300"
+                        isCorrect ? "text-teal-600" : isSelected ? "text-red-500" : "text-stone-300"
                       }`}>
                         {["①", "②", "③", "④"][opt.num - 1]}
                       </span>
@@ -324,7 +355,7 @@ export default function ExamResultPage() {
                           p: ({ children }) => <span>{children}</span>,
                         }}>{opt.text}</ReactMarkdown>
                       </div>
-                      {isCorrect && <span className="shrink-0 text-xs font-bold text-green-600">정답</span>}
+                      {isCorrect && <span className="shrink-0 text-xs font-bold text-teal-600">정답</span>}
                       {isSelected && !isCorrect && <span className="shrink-0 text-xs font-bold text-red-500">내 답</span>}
                     </div>
                   );
@@ -347,7 +378,7 @@ export default function ExamResultPage() {
                     if (idx > 0) setSelected(results[idx - 1]);
                   }}
                   disabled={results[0].num === selected.num}
-                  className="flex-1 py-2 border border-stone-200 text-stone-500 text-sm disabled:opacity-30 hover:bg-stone-50"
+                  className="flex-1 py-2 border border-stone-200 text-stone-500 text-sm disabled:opacity-30 hover:bg-[#fafaf9]"
                 >
                   ← 이전
                 </button>
@@ -357,7 +388,7 @@ export default function ExamResultPage() {
                     if (idx < results.length - 1) setSelected(results[idx + 1]);
                   }}
                   disabled={results[results.length - 1].num === selected.num}
-                  className="flex-1 py-2 border border-stone-200 text-stone-500 text-sm disabled:opacity-30 hover:bg-stone-50"
+                  className="flex-1 py-2 border border-stone-200 text-stone-500 text-sm disabled:opacity-30 hover:bg-[#fafaf9]"
                 >
                   다음 →
                 </button>

@@ -301,7 +301,7 @@ export default function ExamPage() {
 
   if (loading || grading) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-stone-500 text-sm">{grading ? "채점하는 중..." : "문제를 준비하는 중..."}</p>
@@ -312,7 +312,7 @@ export default function ExamPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center">
         <div className="text-center">
           <p className="text-stone-600 mb-4">{error}</p>
           <button onClick={() => router.push("/home")} className="px-4 py-2 bg-stone-800 text-white text-sm">홈으로</button>
@@ -369,14 +369,14 @@ export default function ExamPage() {
   );
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col">
+    <div className="min-h-screen bg-[#fafaf9] flex flex-col">
 
       {/* 상단 바 */}
       <header className="bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowGrid((v) => !v)}
-            className="md:hidden text-xs px-2 py-1.5 border border-stone-200 text-stone-600 bg-stone-50"
+            className="md:hidden text-xs px-2 py-1.5 border border-stone-200 text-stone-600 bg-[#fafaf9]"
           >
             {showGrid ? "닫기" : "문제 목록"}
           </button>
@@ -389,7 +389,7 @@ export default function ExamPage() {
         </div>
 
         <div className={`text-base font-black tabular-nums tracking-wider ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
-          ⏱ {mm}:{ss}
+          {mm}:{ss}
         </div>
 
         <button
@@ -399,6 +399,13 @@ export default function ExamPage() {
           제출하기
         </button>
       </header>
+      {/* 진행 바 */}
+      <div className="h-[3px] bg-stone-100">
+        <div
+          className="h-full bg-[#7577f3] transition-all duration-300"
+          style={{ width: questions.length > 0 ? `${(answeredCount / questions.length) * 100}%` : "0%" }}
+        />
+      </div>
 
       <div className="flex flex-1 overflow-hidden">
 
@@ -486,7 +493,7 @@ export default function ExamPage() {
               <div className="flex flex-col md:flex-row gap-5 items-start">
 
                 {/* 왼쪽: 배경 정보 */}
-                <div className="w-full md:w-[42%] md:shrink-0 border border-stone-200 bg-stone-50 overflow-hidden">
+                <div className="w-full md:w-[42%] md:shrink-0 border border-stone-200 bg-[#fafaf9] overflow-hidden">
                   <div className="px-4 py-3 text-stone-700">
                     <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={contextMdComponents}>
                       {preprocessContext(q.context)}
@@ -509,7 +516,7 @@ export default function ExamPage() {
               <button
                 onClick={() => moveTo(Math.max(0, current - 1))}
                 disabled={current === 0}
-                className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium disabled:opacity-30 hover:bg-stone-50 transition-colors"
+                className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium disabled:opacity-30 hover:bg-[#fafaf9] transition-colors"
               >
                 ← 이전
               </button>
@@ -517,7 +524,7 @@ export default function ExamPage() {
               {current < questions.length - 1 ? (
                 <button
                   onClick={() => moveTo(Math.min(questions.length - 1, current + 1))}
-                  className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium hover:bg-stone-50 transition-colors"
+                  className="px-5 py-2 border border-stone-200 text-stone-600 text-sm font-medium hover:bg-[#fafaf9] transition-colors"
                 >
                   다음 →
                 </button>
@@ -553,7 +560,7 @@ export default function ExamPage() {
             <div className="px-6 py-4 flex gap-3">
               <button
                 onClick={() => setShowSubmitConfirm(false)}
-                className="flex-1 py-2 border border-stone-200 text-stone-600 text-sm hover:bg-stone-50"
+                className="flex-1 py-2 border border-stone-200 text-stone-600 text-sm hover:bg-[#fafaf9]"
               >
                 계속 풀기
               </button>
