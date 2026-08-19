@@ -115,14 +115,6 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
     ...ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) === 0),
   ];
 
-  const weakCategories = liveStats
-    ? ALL_CATEGORIES
-        .filter((cat) => (liveStats.attempts_by_category[cat] ?? 0) >= 1 && (liveStats.accuracy_by_category[cat] ?? 1) < 0.6)
-        .map((cat) => ({ category: cat, accuracy: liveStats.accuracy_by_category[cat] ?? 0 }))
-        .sort((a, b) => a.accuracy - b.accuracy)
-        .slice(0, 3)
-    : (data?.weak_categories ?? []);
-
   const asideClass = "flex flex-col bg-stone-50 border-r border-stone-200 p-5 gap-5 overflow-y-auto";
 
   return (
@@ -236,10 +228,13 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               const tried = (stat?.attempts ?? 0) > 0;
               const acc = stat?.accuracy ?? 0;
               const dotColor = !tried ? "bg-stone-300"
-                : acc === 0 ? "bg-indigo-300"
-                : acc < 0.4 ? "bg-indigo-400"
-                : acc < 0.7 ? "bg-indigo-500"
-                : "bg-indigo-700";
+                : acc < 0.4 ? "bg-amber-400"
+                : acc < 0.7 ? "bg-amber-300"
+                : "bg-indigo-500";
+              const pctColor = !tried ? "text-stone-300"
+                : acc < 0.4 ? "text-amber-600 font-semibold"
+                : acc < 0.7 ? "text-amber-500 font-semibold"
+                : "text-indigo-600 font-semibold";
               return (
                 <div key={cat} title={cat}>
                   <div className="flex items-center gap-1.5 mb-1">
@@ -247,7 +242,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                     <span className={`truncate text-xs font-medium flex-1 ${tried ? "text-stone-700" : "text-stone-400"}`}>
                       {shortName(cat)}
                     </span>
-                    <span className={`text-xs shrink-0 tabular-nums ${tried ? "text-stone-500 font-semibold" : "text-stone-300"}`}>
+                    <span className={`text-xs shrink-0 tabular-nums ${pctColor}`}>
                       {tried ? `${Math.round(acc * 100)}%` : "—"}
                     </span>
                   </div>
@@ -255,8 +250,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                     {tried && acc > 0 && (
                       <div
                         className={`h-full rounded-full transition-all ${
-                          acc < 0.4 ? "bg-indigo-400" :
-                          acc < 0.7 ? "bg-indigo-500" : "bg-indigo-700"
+                          acc < 0.4 ? "bg-amber-400" :
+                          acc < 0.7 ? "bg-amber-300" : "bg-indigo-500"
                         }`}
                         style={{ width: `${acc * 100}%` }}
                       />
@@ -267,24 +262,6 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
             })}
           </div>
         </div>
-
-        {/* 집중 복습 필요 */}
-        {weakCategories.length > 0 && (
-          <div>
-            <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">
-              집중 복습 필요
-            </h3>
-            <ul className="space-y-1.5">
-              {weakCategories.map(({ category, accuracy }) => (
-                <li key={category} className="flex items-center gap-2 text-xs">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
-                  <span className="truncate text-stone-700" title={category}>{shortName(category)}</span>
-                  <span className="ml-auto shrink-0 font-semibold text-indigo-700">{Math.round(accuracy * 100)}%</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         {/* 오답 회고 */}
         <Link
