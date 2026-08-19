@@ -745,7 +745,7 @@ function ChatContent() {
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "max-w-[75%] bg-stone-600 text-white rounded-lg"
-                    : `max-w-[90%] border text-stone-800 ${isQuestionMsg ? "bg-[#faf9ff] border-violet-200" : "bg-white border-indigo-100"}`
+                    : `max-w-[90%] border text-stone-800 ${isQuestionMsg ? "bg-white border-violet-200" : "bg-white border-indigo-100"}`
                 }`}
               >
                 {msg.role === "ai" ? (

@@ -283,7 +283,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         >
           <span className="text-sm font-medium">오답 회고</span>
           {data?.wrong_count != null && data.wrong_count > 0 && (
-            <span className="text-xs bg-red-500 text-white px-2 py-0.5 font-semibold">
+            <span className="text-xs bg-amber-500 text-white px-2 py-0.5 font-semibold">
               {data.wrong_count}개
             </span>
           )}
