@@ -4,8 +4,8 @@
   "description": "SQL 자격증 합격을 위한 AI 튜터",
   "start_url": "/home",
   "display": "standalone",
-  "background_color": "#d97706",
-  "theme_color": "#d97706",
+  "background_color": "#7577f3",
+  "theme_color": "#7577f3",
   "orientation": "portrait",
   "icons": [
     {
