@@ -170,20 +170,23 @@ const CSS = `
 @keyframes shAppear{to{opacity:1}}
 @keyframes shWave{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 @media(max-width:820px){
-  .hero{grid-template-columns:1fr}.hero-l{padding:60px 28px 80px}.hero-r{display:none}
-  .wrap{padding:72px 28px}
-  .pain-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:2px solid var(--bd)}
-  .pain-grid::-webkit-scrollbar{display:none}
-  .pain-item{min-width:78vw;scroll-snap-align:start;flex-shrink:0;padding:28px 24px;border-right:1px solid var(--bd);border-bottom:none}.pain-item:last-child{border-right:none}.pain-item+.pain-item{padding-left:24px}
-  .steps-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:2px solid var(--bd);margin-top:56px}
-  .steps-grid::-webkit-scrollbar{display:none}
-  .step{min-width:78vw;scroll-snap-align:start;flex-shrink:0;padding:28px 24px;border-right:1px solid var(--bd);border-bottom:none}.step:last-child{border-right:none}.step+.step{padding-left:24px}
-  .feat-grid,.xfeat-grid{grid-template-columns:1fr}.cta-sec{padding:72px 28px}.trust{padding:24px 28px}
-  .lp-footer{padding:20px 28px;flex-direction:column;gap:10px;text-align:center}.nav{padding:0 24px}
-  .reviews{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;border:1px solid var(--bd);margin-top:56px;background:var(--bd);gap:1px}
-  .reviews::-webkit-scrollbar{display:none}
-  .review-card{min-width:78vw;scroll-snap-align:start;flex-shrink:0;background:var(--bg)}
-  .faq-item{grid-template-columns:auto 1fr}
+  .hero{grid-template-columns:1fr}.hero-l{padding:48px 24px 64px}.hero-r{display:none}
+  .wrap{padding:52px 20px}.sec-title{font-size:clamp(26px,6vw,36px)}
+  .pain-grid,.steps-grid{grid-template-columns:1fr}
+  .pain-item{padding:20px 0;border-right:none;border-bottom:1px solid var(--bd)}.pain-item:last-child{border-bottom:none}.pain-item+.pain-item{padding-left:0}
+  .pain-q{font-size:16px}.pain-desc{font-size:14px}
+  .step{padding:20px 0;border-right:none;border-bottom:1px solid var(--bd)}.step:last-child{border-bottom:none}.step+.step{padding-left:0}
+  .step-n{font-size:36px;margin-bottom:12px}.step-t{font-size:16px}.step-d{font-size:14px}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}.feat-card{padding:24px 20px}
+  .feat-big{font-size:36px}.feat-t{font-size:15px;margin:10px 0 6px}.feat-d{font-size:13px}
+  .xfeat-grid{grid-template-columns:repeat(2,1fr)}.xfeat-card{padding:20px}
+  .xfeat-t{font-size:14px}.xfeat-d{font-size:13px}
+  .reviews{grid-template-columns:repeat(2,1fr)}.review-card{padding:24px 20px}
+  .review-q{font-size:13px;margin-bottom:16px}
+  .cta-sec{padding:56px 24px}.trust{padding:20px 24px}
+  .lp-footer{padding:20px 24px;flex-direction:column;gap:10px;text-align:center}.nav{padding:0 20px}
+  .faq-item{grid-template-columns:auto 1fr}.faq-q{font-size:15px}.faq-a{font-size:14px}
+  .steps-grid{margin-top:36px}
 }
 @media(prefers-reduced-motion:reduce){
   .cm-ai,.rpl,.cm-tbl-wrap,.pg-results{transition:none}
