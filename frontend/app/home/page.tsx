@@ -211,14 +211,24 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
 
   return (
     <svg viewBox="0 0 280 190" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", overflow: "visible" }}>
+      <defs>
+        <filter id="radarGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
       {/* 배경 링 */}
       {[0.2, 0.4, 0.6, 0.8, 1].map((r, ri) => (
         <polygon
           key={ri}
           points={ALL_CATEGORIES.map((_, i) => pt(i, r * maxR).join(",")).join(" ")}
           fill="none"
-          stroke="rgba(99,102,241,0.18)"
-          strokeWidth="1"
+          stroke="rgba(99,102,241,0.15)"
+          strokeWidth="0.5"
         />
       ))}
 
@@ -227,24 +237,25 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
         const [x2, y2] = pt(i, maxR);
         return (
           <line key={i} x1={cx} y1={cy} x2={x2} y2={y2}
-            stroke="rgba(99,102,241,0.18)" strokeWidth="1" />
+            stroke="rgba(99,102,241,0.15)" strokeWidth="0.5" />
         );
       })}
 
       {/* 데이터 다각형 */}
       <polygon
         points={dataPolygon}
-        fill="rgba(99,102,241,0.12)"
-        stroke={hasAnyData ? "#6366f1" : "transparent"}
-        strokeWidth="2.5"
+        fill="rgba(99,102,241,0.08)"
+        stroke={hasAnyData ? "#7577f3" : "transparent"}
+        strokeWidth="1"
         strokeLinejoin="round"
+        filter="url(#radarGlow)"
       />
 
       {/* 꼭짓점 점 */}
       {points.map((d, i) => {
         if (!d.tried || d.pct === 0) return null;
         const [x, y] = pt(i, d.pct * maxR);
-        return <circle key={i} cx={x} cy={y} r="3" fill="#6366f1" />;
+        return <circle key={i} cx={x} cy={y} r="2.5" fill="#7577f3" filter="url(#radarGlow)" />;
       })}
 
       {/* 라벨 */}
