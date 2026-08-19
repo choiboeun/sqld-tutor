@@ -995,25 +995,25 @@ function ChatContent() {
           <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-violet-200 bg-[#faf9ff]">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors"
             >
               문제 풀기
             </button>
             <button
               onClick={() => streamChat("약점 분석해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
             >
               약점 분석
             </button>
             <button
               onClick={() => streamChat("오답 복습해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
             >
               오답 복습
             </button>
             <button
               onClick={handleWeakConceptChip}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
             >
               틀린 개념 복습
             </button>
