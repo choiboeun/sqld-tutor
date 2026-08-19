@@ -672,7 +672,7 @@ function ChatContent() {
               </svg>
             </button>
             <Link href="/home" className="md:hidden flex items-center gap-2 text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors">
-              <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0 rounded-md" />
+              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
               SQLD AI 튜터
             </Link>
           </div>

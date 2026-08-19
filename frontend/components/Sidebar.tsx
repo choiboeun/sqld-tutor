@@ -152,7 +152,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           </Link>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0 rounded-md" />
+              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
               <span className="text-sm font-bold text-stone-800">SQLD AI 튜터</span>
             </div>
             <button

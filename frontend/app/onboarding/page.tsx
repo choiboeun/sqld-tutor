@@ -39,7 +39,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-[#fafaf9] flex flex-col">
       {/* 상단 헤더 */}
       <div className="px-6 py-3.5 flex items-center gap-3 border-b border-violet-200" style={{ background: "#dde1fb" }}>
-        <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0 rounded-md" />
+        <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
         <span className="text-sm font-bold tracking-wider text-indigo-800">SQLD AI 튜터</span>
       </div>
 

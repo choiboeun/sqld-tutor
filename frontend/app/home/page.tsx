@@ -615,7 +615,7 @@ export default function HomePage() {
         <div className="flex items-start justify-between mb-6 md:mb-0">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={28} height={28} className="shrink-0 rounded-md" />
+              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={28} height={28} className="shrink-0" />
               <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
             </div>
             <p className="text-sm pl-[36px]" style={{ color: "rgba(55,48,163,.6)" }}>SQL 자격증 합격을 위한 AI 튜터</p>
