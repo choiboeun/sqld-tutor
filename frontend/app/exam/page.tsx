@@ -402,9 +402,6 @@ export default function ExamPage() {
                 strokeLinecap="round"
               />
             </svg>
-            <div className={`absolute inset-0 flex items-center justify-center text-[9px] font-black ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
-              {Math.round((secsLeft / TOTAL_SECS) * 100)}%
-            </div>
           </div>
           {/* 숫자 타이머 */}
           <span className={`text-base font-black tabular-nums tracking-wider ${timerUrgent ? "text-red-500" : "text-stone-700"}`}>
