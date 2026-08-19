@@ -613,12 +613,12 @@ export default function HomePage() {
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={28} height={28} className="shrink-0" />
-              <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
+          <div className="flex items-center gap-3">
+            <Image src="/icons/logo-mark-256.png" alt="SQLD AI 튜터" width={48} height={48} className="shrink-0" />
+            <div>
+              <div className="text-lg font-bold tracking-tight leading-tight">SQLD AI 튜터</div>
+              <p className="text-sm mt-0.5" style={{ color: "rgba(55,48,163,.6)" }}>SQL 자격증 합격을 위한 AI 튜터</p>
             </div>
-            <p className="text-sm pl-[36px]" style={{ color: "rgba(55,48,163,.6)" }}>SQL 자격증 합격을 위한 AI 튜터</p>
           </div>
 
           {/* 계정 드롭다운 */}
