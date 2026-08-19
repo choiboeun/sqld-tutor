@@ -657,7 +657,7 @@ function ChatContent() {
       />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-6 py-4 border-b border-violet-100 bg-violet-50 flex items-center justify-between">
+        <div className="px-6 h-[80px] border-b border-violet-100 bg-violet-50 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}

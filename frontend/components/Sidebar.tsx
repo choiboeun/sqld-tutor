@@ -69,7 +69,7 @@ function shortName(cat: string): string {
   return SHORT_NAMES[cat] ?? cat;
 }
 
-const RING_R = 28;
+const RING_R = 36;
 const CIRCUMFERENCE = 2 * Math.PI * RING_R;
 
 export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false }: Props) {
@@ -136,11 +136,11 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       }>
 
         {/* Logo */}
-        <div className="px-5 pt-4 pb-3 border-b border-violet-100 bg-violet-50">
+        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-100 bg-violet-50">
           <Link
             href="/home"
             onClick={onClose}
-            className={`inline-flex items-center gap-1 text-xs transition-colors mb-3 ${
+            className={`inline-flex items-center gap-1 text-xs transition-colors ${
               highlightHome
                 ? "text-indigo-700 font-semibold"
                 : "text-indigo-500 hover:text-indigo-600"
@@ -171,23 +171,23 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         {/* 예상 점수 — 링 게이지 */}
         <div className="flex items-center gap-3 px-5 py-4 bg-white border-b border-violet-100">
           <div className="relative flex-shrink-0">
-            <svg width="76" height="76" viewBox="0 0 76 76">
+            <svg width="96" height="96" viewBox="0 0 96 96">
               {/* track */}
               <circle
-                cx="38" cy="38" r={RING_R}
-                fill="none" stroke="#ede9fe" strokeWidth="6"
+                cx="48" cy="48" r={RING_R}
+                fill="none" stroke="#ede9fe" strokeWidth="7"
                 strokeDasharray={CIRCUMFERENCE}
               />
               {/* fill */}
               <circle
-                cx="38" cy="38" r={RING_R}
+                cx="48" cy="48" r={RING_R}
                 fill="none"
                 stroke="url(#scoreGrad)"
-                strokeWidth="6"
+                strokeWidth="7"
                 strokeLinecap="round"
                 strokeDasharray={CIRCUMFERENCE}
                 strokeDashoffset={dashOffset}
-                transform="rotate(-90 38 38)"
+                transform="rotate(-90 48 48)"
               />
               <defs>
                 <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -197,8 +197,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-xl font-black text-stone-900 leading-none">{predictedScore}</span>
-              <span className="text-[7px] font-semibold text-violet-300 tracking-wide">/ 100</span>
+              <span className="text-2xl font-black text-stone-900 leading-none">{predictedScore}</span>
+              <span className="text-[8px] font-semibold text-violet-300 tracking-wide">/ 100</span>
             </div>
           </div>
           <div>
