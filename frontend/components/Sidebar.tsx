@@ -168,6 +168,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           </div>
         </div>
 
+        <div className="flex flex-col flex-1 border-r border-violet-200 overflow-y-auto">
+
         {/* 예상 점수 — 링 게이지 */}
         <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-violet-200">
           <div className="relative flex-shrink-0">
@@ -292,6 +294,8 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
             문제를 풀면<br />통계가 표시됩니다.
           </p>
         )}
+
+        </div>
       </aside>
     </>
   );
