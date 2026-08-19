@@ -682,8 +682,8 @@ function ChatContent() {
             onClick={() => setSqlPanelOpen((v) => !v)}
             className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
               sqlPanelOpen
-                ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                : "border-stone-200 text-stone-500 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50"
+                ? "bg-white border-white text-indigo-700"
+                : "bg-white/70 border-white/60 text-indigo-600 hover:bg-white hover:text-indigo-700"
             }`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
