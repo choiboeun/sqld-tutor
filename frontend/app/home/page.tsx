@@ -874,7 +874,7 @@ export default function HomePage() {
           </div>
 
           {/* 카테고리 정답률 */}
-          <div className="border border-indigo-200 p-2" style={{ background: "#faf9ff" }}>
+          <div className="border border-indigo-200 p-2" style={{ background: "#fafaf9" }}>
             <p className="text-[15px] font-bold text-stone-800 mb-1 px-1">카테고리 정답률</p>
             <div className="relative" style={{ minHeight: "280px" }}>
               <RadarChart catMap={catMap} />
@@ -882,7 +882,7 @@ export default function HomePage() {
           </div>
 
           {/* 학습 캘린더 */}
-          <div className="border border-indigo-200 p-5" style={{ background: "#faf9ff" }}>
+          <div className="border border-indigo-200 p-5" style={{ background: "#fafaf9" }}>
             <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
             {calendarData ? <CalendarHeatmap dates={calendarData.dates} /> : (
               <div className="flex gap-2 animate-pulse">
@@ -949,7 +949,7 @@ export default function HomePage() {
             </Link>
 
             {/* 카테고리 정답률 — 레이더 차트 */}
-            <div className="border border-indigo-200 rounded-none p-2" style={{ background: "#faf9ff" }}>
+            <div className="border border-indigo-200 rounded-none p-2" style={{ background: "#fafaf9" }}>
               <p className="text-[15px] font-bold text-stone-800 mb-1 px-1">카테고리 정답률</p>
               <div className="relative" style={{ minHeight: "280px" }}>
                 <RadarChart catMap={catMap} />
@@ -961,7 +961,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-4">
 
             {/* 학습 캘린더 카드 */}
-            <div className="border border-indigo-200 rounded-none p-5" style={{ background: "#faf9ff" }}>
+            <div className="border border-indigo-200 rounded-none p-5" style={{ background: "#fafaf9" }}>
               <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
               {calendarData ? (
                 <CalendarHeatmap dates={calendarData.dates} />

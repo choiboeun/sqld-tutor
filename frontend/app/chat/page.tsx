@@ -657,7 +657,7 @@ function ChatContent() {
       />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-6 h-[80px] border-b border-violet-200 bg-[#faf9ff] flex items-center justify-between">
+        <div className="px-6 h-[80px] border-b border-violet-200 bg-[#fafaf9] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -994,7 +994,7 @@ function ChatContent() {
         {chipsVisible && sessionReady && !isLoading && !parseQuestionHeader(
           [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? ""
         ) && (
-          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-violet-200 bg-[#faf9ff]">
+          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-violet-200 bg-[#fafaf9]">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors"
@@ -1022,7 +1022,7 @@ function ChatContent() {
           </div>
         )}
 
-        <div className="px-6 py-4 border-t border-violet-200 bg-[#faf9ff]">
+        <div className="px-6 py-4 border-t border-violet-200 bg-[#fafaf9]">
           <div className="flex gap-3 items-end">
             <textarea
               ref={inputRef}

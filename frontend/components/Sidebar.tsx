@@ -136,7 +136,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       }>
 
         {/* Logo */}
-        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-200 bg-[#faf9ff]">
+        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-200 bg-[#fafaf9]">
           <Link
             href="/home"
             onClick={onClose}
