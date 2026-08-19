@@ -119,7 +119,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
     ...ALL_CATEGORIES.filter((c) => (catMap[c]?.attempts ?? 0) === 0),
   ];
 
-  const asideClass = "flex flex-col bg-[#fafafa] border-r border-violet-200 overflow-y-auto";
+  const asideClass = "flex flex-col bg-[#fafafa] overflow-y-auto";
 
   return (
     <>
