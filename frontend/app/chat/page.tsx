@@ -744,7 +744,7 @@ function ChatContent() {
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "max-w-[75%] bg-stone-600 text-white rounded-lg"
-                    : "max-w-[90%] bg-white border border-stone-200 text-stone-800"
+                    : "max-w-[90%] bg-white border border-indigo-100 text-stone-800"
                 }`}
               >
                 {msg.role === "ai" ? (
@@ -959,7 +959,7 @@ function ChatContent() {
             </div>
             {isQuestionLoadingBubble && (
               <div className="flex justify-start">
-                <div className="px-4 py-3 text-sm leading-relaxed max-w-[90%] bg-white border border-stone-200 text-stone-800">
+                <div className="px-4 py-3 text-sm leading-relaxed max-w-[90%] bg-white border border-indigo-100 text-stone-800">
                   <span className="inline-flex gap-1">
                     <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                     <span className="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -1000,19 +1000,19 @@ function ChatContent() {
             </button>
             <button
               onClick={() => streamChat("약점 분석해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
             >
               약점 분석
             </button>
             <button
               onClick={() => streamChat("오답 복습해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
             >
               오답 복습
             </button>
             <button
               onClick={handleWeakConceptChip}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-600 bg-white border border-stone-200 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
             >
               틀린 개념 복습
             </button>
