@@ -81,6 +81,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
     (async () => {
       try {
         const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
+        if (!res.ok) return;
         const d = await res.json();
         setData(d);
         onStatsRefreshed?.();

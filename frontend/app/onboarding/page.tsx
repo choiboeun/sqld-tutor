@@ -28,6 +28,7 @@ export default function OnboardingPage() {
         data: { onboarding_completed: true, target_score: targetScore },
       });
       if (updateError) throw updateError;
+      router.refresh();
       router.push("/home?welcome=true");
     } catch {
       setError("설정 저장에 실패했어요. 다시 시도해주세요.");

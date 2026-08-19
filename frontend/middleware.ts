@@ -35,8 +35,8 @@ export async function middleware(request: NextRequest) {
   if (user) {
     const onboardingDone = user.user_metadata?.onboarding_completed === true;
 
-    // 인증됨 + 온보딩 미완료: /home, /chat, /wrong-answers, /exam → /onboarding
-    if (!onboardingDone && (path.startsWith("/home") || path.startsWith("/chat") || path.startsWith("/wrong-answers") || path.startsWith("/exam"))) {
+    // 인증됨 + 온보딩 미완료: /home, /chat, /wrong-answers, /exam, /admin → /onboarding
+    if (!onboardingDone && (path.startsWith("/home") || path.startsWith("/chat") || path.startsWith("/wrong-answers") || path.startsWith("/exam") || path.startsWith("/admin"))) {
       return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 

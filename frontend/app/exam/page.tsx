@@ -150,9 +150,11 @@ export default function ExamPage() {
 
   const questionsRef = useRef<ExamQuestion[]>([]);
   const answersRef = useRef<Record<number, number>>({});
+  const currentRef = useRef<number>(0);
   const startTimestampRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const submittedRef = useRef(false);
+  const [timerToast, setTimerToast] = useState(false);
 
   const persist = useCallback((
     qs: ExamQuestion[],
@@ -220,7 +222,8 @@ export default function ExamPage() {
       setSecsLeft(left);
       if (left <= 0) {
         clearInterval(timerRef.current!);
-        submit(questionsRef.current, answersRef.current);
+        setTimerToast(true);
+        setTimeout(() => submit(questionsRef.current, answersRef.current), 2000);
       }
     }, 1000);
   }, [submit]);
@@ -282,12 +285,13 @@ export default function ExamPage() {
     setAnswers((prev) => {
       const next = { ...prev, [questionNum]: optNum };
       answersRef.current = next;
-      persist(questionsRef.current, next, current, startTimestampRef.current);
+      persist(questionsRef.current, next, currentRef.current, startTimestampRef.current);
       return next;
     });
-  }, [current, persist]);
+  }, [persist]);
 
   const moveTo = useCallback((idx: number) => {
+    currentRef.current = idx;
     setCurrent(idx);
     persist(questionsRef.current, answersRef.current, idx, startTimestampRef.current);
   }, [persist]);
@@ -370,6 +374,13 @@ export default function ExamPage() {
 
   return (
     <div className="min-h-screen bg-[#fafaf9] flex flex-col">
+
+      {/* 타이머 만료 토스트 */}
+      {timerToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-stone-800 text-white text-sm font-semibold px-5 py-2.5 shadow-lg">
+          시간이 종료되었습니다. 자동 제출합니다...
+        </div>
+      )}
 
       {/* 상단 바 */}
       <header className="bg-white border-b border-stone-200 px-4 py-3 flex items-center justify-between gap-4 sticky top-0 z-30">

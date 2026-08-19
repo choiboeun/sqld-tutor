@@ -337,13 +337,16 @@ function ChatContent() {
       });
   }, []);
 
-  // 메시지 변경 시 sessionStorage 저장 (스트리밍 중 빈 슬롯은 제외)
+  // 메시지 변경 시 sessionStorage 저장 (스트리밍 중 빈 슬롯 제외, 300ms debounce)
   useEffect(() => {
     if (!sessionReady || !threadId) return;
-    try {
-      const toSave = messages.filter(m => !(m.role === "ai" && m.content === ""));
-      sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave));
-    } catch {}
+    const timer = setTimeout(() => {
+      try {
+        const toSave = messages.filter(m => !(m.role === "ai" && m.content === ""));
+        sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave));
+      } catch {}
+    }, 300);
+    return () => clearTimeout(timer);
   }, [messages, sessionReady, threadId]);
 
   useEffect(() => {
@@ -487,12 +490,14 @@ function ChatContent() {
             } else if (event.type === "stats_updated") {
               setLiveStats(event.content as LiveStats);
             } else if (event.type === "done") {
-              if (myStreamId !== streamIdRef.current) break;
+              if (myStreamId !== streamIdRef.current) { await reader.cancel(); break; }
               setMessages((prev) =>
                 prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
               );
               setIsLoading(false);
               setRefreshSidebar((n) => n + 1);
+              await reader.cancel();
+              break;
             } else if (event.type === "pending_question") {
               const pq = event.content as Record<string, unknown>;
               setPendingQuestionCache(pq);
@@ -559,16 +564,18 @@ function ChatContent() {
     if (!sessionReady || !threadId || resumeDiagnosticFired.current) return;
     if (searchParams.get("new") === "true") return;
     if (messages.length > 1) return;
+    resumeDiagnosticFired.current = true;
     (async () => {
       try {
         const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
+        if (!res.ok) return;
         const data = await res.json();
         if (data.is_diagnostic_in_progress) {
           setDiagnosticResume({ progress: data.diagnostic_progress });
         }
       } catch {}
     })();
-  }, [sessionReady, threadId, searchParams, messages.length]);
+  }, [sessionReady, threadId, searchParams]);
 
   const sendMessage = async () => {
     const text = input.trim();
@@ -591,7 +598,7 @@ function ChatContent() {
       const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
       if (!res.ok) throw new Error(`${res.status}`);
       const data = await res.json();
-      const cats = data.accuracy_by_category as Record<string, { accuracy: number; attempts: number }>;
+      const cats = (data.accuracy_by_category ?? {}) as Record<string, { accuracy: number; attempts: number }>;
       const entries = Object.entries(cats).filter(([, v]) => v.attempts > 0);
       if (entries.length === 0) {
         await streamChat("문제 줘", true, true);

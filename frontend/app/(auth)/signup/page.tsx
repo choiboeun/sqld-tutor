@@ -140,7 +140,12 @@ export default function SignupPage() {
     });
 
     if (error) {
-      setError(error.message);
+      const msg = error.message.includes("User already registered") ? "이미 등록된 이메일입니다."
+        : error.message.includes("Invalid email") ? "유효하지 않은 이메일 형식입니다."
+        : error.message.includes("Password should be at least") ? "비밀번호는 6자 이상이어야 합니다."
+        : error.message.includes("rate limit") || error.message.includes("too many") ? "잠시 후 다시 시도해주세요."
+        : "회원가입 중 오류가 발생했습니다.";
+      setError(msg);
       setLoading(false);
       return;
     }

@@ -125,6 +125,7 @@ export default function LoginPage() {
     } else {
       router.push("/home");
       router.refresh();
+      return;
     }
     setLoading(false);
   };

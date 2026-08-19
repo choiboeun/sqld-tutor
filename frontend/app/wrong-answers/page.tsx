@@ -228,6 +228,7 @@ export default function WrongAnswersPage() {
         }
       }
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
       const msg = err instanceof Error ? err.message : "오류가 발생했습니다. 다시 시도해주세요.";
       setMiniMessages((prev) => {
         const next = [...prev];
@@ -307,7 +308,13 @@ export default function WrongAnswersPage() {
                         )}
                       </div>
                       <p className="text-sm text-stone-700 line-clamp-2 min-h-[2.5rem]">
-                        {wa.question.replace(/```[\s\S]*?```/g, "[SQL]").replace(/`[^`]+`/g, "").trim()}
+                        {wa.question
+                          .replace(/```[\s\S]*?```/g, "[SQL]")
+                          .replace(/`[^`]+`/g, "")
+                          .replace(/#{1,6}\s+/g, "")
+                          .replace(/\*\*([\s\S]*?)\*\*/g, "$1")
+                          .replace(/\*([\s\S]*?)\*/g, "$1")
+                          .trim()}
                       </p>
                     </button>
                   ))}

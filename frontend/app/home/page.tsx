@@ -367,11 +367,11 @@ export default function HomePage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const dDayCount = examDate
-    ? Math.ceil((new Date(examDate).getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    ? Math.ceil((new Date(examDate + "T00:00:00").getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
   const handleLogout = async () => {
-    await createClient().auth.signOut();
+    try { await createClient().auth.signOut(); } catch {}
     window.location.href = "/login";
   };
 
@@ -431,6 +431,8 @@ export default function HomePage() {
     if (!error) {
       setExamDate(examDateInput);
       setShowExamModal(false);
+    } else {
+      alert("저장에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
