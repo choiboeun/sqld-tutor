@@ -60,7 +60,7 @@ const mdComponents = {
 const DIFF_STYLE: Record<string, string> = {
   하: "bg-green-100 text-green-700",
   중: "bg-indigo-100 text-indigo-700",
-  상: "bg-red-100 text-red-700",
+  상: "bg-amber-100 text-amber-700",
 };
 
 export default function WrongAnswersPage() {
@@ -239,10 +239,18 @@ export default function WrongAnswersPage() {
     }
   }, [miniInput, miniLoading, miniMessages, selected]);
 
+  // 카테고리별 그룹핑
+  const grouped = wrongAnswers.reduce<Record<string, WrongAnswer[]>>((acc, wa) => {
+    if (!acc[wa.category]) acc[wa.category] = [];
+    acc[wa.category].push(wa);
+    return acc;
+  }, {});
+  const groupedEntries = Object.entries(grouped);
+
   return (
-    <div className="min-h-screen bg-stone-50 pb-20 md:pb-0">
+    <div className="min-h-screen bg-[#fafaf9] pb-20 md:pb-0">
       {/* 헤더 */}
-      <div className="bg-white border-b border-stone-200 px-6 py-4 flex items-center gap-3 sticky top-0 z-20">
+      <div className="bg-[#dde1fb] border-b border-violet-200 px-6 py-4 flex items-center gap-3 sticky top-0 z-20">
         <button onClick={() => router.back()} className="text-stone-400 hover:text-stone-600 transition-colors">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -273,29 +281,38 @@ export default function WrongAnswersPage() {
         ) : wrongAnswers.length === 0 ? (
           <p className="text-center text-stone-400 py-12">아직 오답 기록이 없습니다.</p>
         ) : (
-          <div className="space-y-3">
-            {wrongAnswers.map((wa) => (
-              <button
-                key={wa.question_id}
-                onClick={() => openModal(wa)}
-                className="w-full text-left bg-white border border-stone-200 px-4 py-3.5 hover:shadow-sm transition-all"
-                style={{ borderLeftWidth: '3px', borderLeftColor: wa.still_wrong ? '#6366f1' : '#e3e1dc' }}
-              >
+          <div className="space-y-6">
+            {groupedEntries.map(([cat, items]) => (
+              <div key={cat}>
+                {/* 카테고리 헤더 */}
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
-                    {wa.category}
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
-                    난이도 {wa.difficulty}
-                  </span>
-                  {wa.still_wrong && (
-                    <span className="ml-auto text-xs text-red-500 font-semibold">복습 필요</span>
-                  )}
+                  <span className="text-xs font-bold text-stone-400 uppercase tracking-widest">{cat}</span>
+                  <span className="text-xs text-stone-300">({items.length})</span>
+                  <div className="flex-1 h-px bg-stone-200" />
                 </div>
-                <p className="text-sm text-stone-700 line-clamp-2 min-h-[2.5rem]">
-                  {wa.question.replace(/```[\s\S]*?```/g, "[SQL]").replace(/`[^`]+`/g, "").trim()}
-                </p>
-              </button>
+                <div className="space-y-2">
+                  {items.map((wa) => (
+                    <button
+                      key={wa.question_id}
+                      onClick={() => openModal(wa)}
+                      className="w-full text-left bg-white border border-stone-200 px-4 py-3.5 hover:shadow-sm transition-all"
+                      style={{ borderLeftWidth: '3px', borderLeftColor: wa.still_wrong ? '#f59e0b' : '#e3e1dc' }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`px-2 py-0.5 text-xs font-semibold ${DIFF_STYLE[wa.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
+                          난이도 {wa.difficulty}
+                        </span>
+                        {wa.still_wrong && (
+                          <span className="ml-auto text-xs text-amber-600 font-semibold">복습 필요</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-stone-700 line-clamp-2 min-h-[2.5rem]">
+                        {wa.question.replace(/```[\s\S]*?```/g, "[SQL]").replace(/`[^`]+`/g, "").trim()}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -308,10 +325,10 @@ export default function WrongAnswersPage() {
             {/* 모달 헤더 */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 shrink-0">
               <div className="flex gap-2">
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                <span className="px-2 py-0.5 text-xs font-semibold bg-indigo-100 text-indigo-700">
                   {selected.category}
                 </span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
+                <span className={`px-2 py-0.5 text-xs font-semibold ${DIFF_STYLE[selected.difficulty] ?? "bg-stone-100 text-stone-600"}`}>
                   난이도 {selected.difficulty}
                 </span>
               </div>
