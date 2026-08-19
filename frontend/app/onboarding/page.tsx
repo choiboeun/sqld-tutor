@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -38,11 +39,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-[#fafaf9] flex flex-col">
       {/* 상단 헤더 */}
       <div className="px-6 py-3.5 flex items-center gap-3 border-b border-violet-200" style={{ background: "#dde1fb" }}>
-        <div className="w-6 h-6 bg-indigo-600 flex items-center justify-center shrink-0">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-          </svg>
-        </div>
+        <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0 rounded-md" />
         <span className="text-sm font-bold tracking-wider text-indigo-800">SQLD AI 튜터</span>
       </div>
 

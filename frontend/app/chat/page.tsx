@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import dynamic from "next/dynamic";
@@ -670,7 +671,8 @@ function ChatContent() {
                 <rect y="15" width="20" height="2" rx="1"/>
               </svg>
             </button>
-            <Link href="/home" className="md:hidden text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors">
+            <Link href="/home" className="md:hidden flex items-center gap-2 text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors">
+              <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0 rounded-md" />
               SQLD AI 튜터
             </Link>
           </div>

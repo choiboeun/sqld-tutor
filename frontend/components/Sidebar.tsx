@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getAuthHeaders } from "@/lib/api";
 
 interface CategoryStat {
@@ -151,9 +152,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           </Link>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-indigo-600 flex items-center justify-center text-xs font-black text-white shrink-0">
-                ◇
-              </div>
+              <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0 rounded-md" />
               <span className="text-sm font-bold text-stone-800">SQLD AI 튜터</span>
             </div>
             <button

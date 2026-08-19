@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
@@ -614,11 +615,7 @@ export default function HomePage() {
         <div className="flex items-start justify-between mb-6 md:mb-0">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-7 h-7 bg-indigo-200 flex items-center justify-center shrink-0">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-                </svg>
-              </div>
+              <Image src="/icons/icon-192.png" alt="SQLD AI 튜터" width={28} height={28} className="shrink-0 rounded-md" />
               <span className="text-lg font-bold tracking-tight">SQLD AI 튜터</span>
             </div>
             <p className="text-sm pl-[36px]" style={{ color: "rgba(55,48,163,.6)" }}>SQL 자격증 합격을 위한 AI 튜터</p>
