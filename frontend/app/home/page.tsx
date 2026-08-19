@@ -907,8 +907,8 @@ export default function HomePage() {
 
         </div>
 
-        {/* ── 데스크탑 2열 레이아웃 ── */}
-        <div className="hidden md:grid md:grid-cols-2 gap-8 flex-1">
+        {/* ── 데스크탑 레이아웃: md는 1열, lg부터 2열 ── */}
+        <div className="hidden md:grid md:grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 flex-1">
 
           {/* ── 왼쪽: 바로 시작 ── */}
           <div className="flex flex-col gap-2.5">
