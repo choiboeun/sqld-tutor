@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 
 const LINES = ["SQLD 합격,\n여기서 시작해.", "AI 튜터가\n약점을 찾아줘.", "오늘부터\n달라진다."];
@@ -206,8 +207,8 @@ export default function SignupPage() {
           </div>
 
           {/* Brand */}
-          <div style={{ position: "relative", zIndex: 5, display: "flex", alignItems: "center", gap: "7px", marginBottom: "20px" }}>
-            <div className="su-brand-dot" style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#6366f1" }} />
+          <div style={{ position: "relative", zIndex: 5, display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
+            <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={20} height={20} style={{ flexShrink: 0 }} />
             <span style={{ fontSize: "11px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", color: "#6366f1" }}>SQLD AI Tutor</span>
           </div>
 
