@@ -69,7 +69,7 @@ function shortName(cat: string): string {
   return SHORT_NAMES[cat] ?? cat;
 }
 
-const RING_R = 44;
+const RING_R = 50;
 const CIRCUMFERENCE = 2 * Math.PI * RING_R;
 
 export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false }: Props) {
@@ -169,25 +169,25 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         </div>
 
         {/* 예상 점수 — 링 게이지 */}
-        <div className="flex items-center gap-4 px-5 py-5 bg-white border-b border-violet-100">
+        <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-violet-100">
           <div className="relative flex-shrink-0">
-            <svg width="116" height="116" viewBox="0 0 116 116">
+            <svg width="120" height="120" viewBox="0 0 120 120">
               {/* track */}
               <circle
-                cx="58" cy="58" r={RING_R}
+                cx="60" cy="60" r={RING_R}
                 fill="none" stroke="#ede9fe" strokeWidth="8"
                 strokeDasharray={CIRCUMFERENCE}
               />
               {/* fill */}
               <circle
-                cx="58" cy="58" r={RING_R}
+                cx="60" cy="60" r={RING_R}
                 fill="none"
                 stroke="url(#scoreGrad)"
                 strokeWidth="8"
                 strokeLinecap="round"
                 strokeDasharray={CIRCUMFERENCE}
                 strokeDashoffset={dashOffset}
-                transform="rotate(-90 58 58)"
+                transform="rotate(-90 60 60)"
               />
               <defs>
                 <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -197,14 +197,14 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-black text-stone-900 leading-none">{predictedScore}</span>
-              <span className="text-[9px] font-semibold text-violet-300 tracking-wide">/ 100</span>
+              <span className="text-4xl font-black text-stone-900 leading-none">{predictedScore}</span>
+              <span className="text-[10px] font-semibold text-violet-300 tracking-wide">/ 100</span>
             </div>
           </div>
           <div>
-            <p className="text-[8px] font-bold text-stone-400 uppercase tracking-widest mb-1">예상 점수</p>
-            <p className="text-sm font-bold text-indigo-600 mb-1.5">목표 {targetScore}점</p>
-            <p className={`text-[9px] font-bold ${scoreDiff >= 0 ? "text-indigo-500" : "text-amber-500"}`}>
+            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">예상 점수</p>
+            <p className="text-base font-bold text-indigo-600 mb-1.5">목표 {targetScore}점</p>
+            <p className={`text-xs font-bold ${scoreDiff >= 0 ? "text-indigo-500" : "text-amber-500"}`}>
               {scoreDiff >= 0 ? `+${scoreDiff}점 달성` : `${Math.abs(scoreDiff)}점 부족`}
             </p>
             {totalAnswered === 0 && (
