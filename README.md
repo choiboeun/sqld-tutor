@@ -33,7 +33,7 @@ SQLD(SQL 개발자) 자격증 합격률이 41.7%까지 하락한 상황에서, �
 | RAG | ChromaDB |
 | 백엔드 | FastAPI, Python |
 | 프론트엔드 | Next.js 14, TypeScript, Tailwind CSS |
-| 데이터베이스·인증 | Supabase (PostgreSQL) |
+| 데이터베이스·인증 | Supabase (PostgreSQL), 카카오 OAuth |
 | 배포 | Render (백엔드), Vercel (프론트엔드) |
 | 관찰성 | LangSmith |
 
@@ -50,6 +50,7 @@ SQLD(SQL 개발자) 자격증 합격률이 41.7%까지 하락한 상황에서, �
 - **오답 회고** — 틀린 문제 목록 조회 및 AI 추가 질문
 - **SQL 실행기** — 개념 확인용 인터랙티브 SQL 실행 환경
 - **예상 점수** — SQLD 실제 배점 기준 실시간 점수 산출
+- **카카오 로그인** — 카카오 OAuth 소셜 로그인 (이메일/비밀번호 로그인 병행)
 
 ---
 
