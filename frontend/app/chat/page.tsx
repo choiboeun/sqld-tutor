@@ -369,18 +369,6 @@ function ChatContent() {
     }
   }, [isLoading]);
 
-  // SPA 이동 시 채팅 초기화 (F5 새로고침은 cleanup이 실행 안 되므로 메시지 유지)
-  useEffect(() => {
-    return () => {
-      const tid = threadIdRef.current;
-      if (tid) {
-        try {
-          sessionStorage.removeItem(`chat_${tid}`);
-          sessionStorage.removeItem(`scroll_${tid}`);
-        } catch {}
-      }
-    };
-  }, []);
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
     // 스트림 버전 — 구 스트림의 done 이벤트가 신 스트림에 간섭하지 못하도록 방지
