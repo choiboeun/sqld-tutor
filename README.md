@@ -52,6 +52,10 @@ SQLD(SQL 개발자) 자격증 합격률이 41.7%까지 하락한 상황에서, �
 - **예상 점수** — SQLD 실제 배점 기준 실시간 점수 산출
 - **카카오 로그인** — 카카오 OAuth 소셜 로그인 (이메일/비밀번호 로그인 병행)
 - **계정 관리** — 비밀번호 변경 및 회원 탈퇴
+- **문의하기** — 사용자 문의 접수 및 관리자 페이지 처리
+- **간격반복 복습 일정** — 오답 기반 복습 타이밍 자동 스케줄링 (오늘/내일/이번 주/지연)
+- **랜딩 페이지** — 서비스 소개 및 주요 기능 안내
+- **개인정보처리방침** — `/privacy` 페이지
 
 ---
 
@@ -120,22 +124,22 @@ sqld-tutor/
 │   └── app/
 │       ├── agent/
 │       │   ├── graph.py          # LangGraph 그래프 정의 및 엣지 연결
-│       │   ├── state.py          # 대화 상태 스키마 (TutorState)
+│       │   ├── state.py          # 대화 상태 스키마 (TutorState, 30개 필드)
 │       │   ├── llm.py            # Gemini 2.5 Flash 클라이언트 초기화
-│       │   ├── prompts.py        # 노드별 프롬프트 템플릿
+│       │   ├── prompts.py        # 동적 시스템 프롬프트 (목표점수·정답률·streak 주입)
 │       │   ├── nodes/
-│       │   │   ├── intent_classifier.py  # 사용자 의도 분류 (drill/explain/review/sql/chatbot)
-│       │   │   ├── drill_node.py         # 문제 출제 및 채점
-│       │   │   ├── diagnose_node.py      # 진단 8문제 출제 및 카테고리 분석
+│       │   │   ├── intent_classifier.py  # 사용자 의도 분류 (정규식 기반)
+│       │   │   ├── drill_node.py         # 문제 출제 및 채점 (적응형 난이도)
+│       │   │   ├── diagnose_node.py      # 초기 진단 8문제 출제
 │       │   │   ├── explain_node.py       # RAG 기반 개념 설명 생성
 │       │   │   ├── review_node.py        # 오답 회고 처리
 │       │   │   ├── sql_node.py           # SQL 실행기 연동
-│       │   │   ├── chatbot.py            # 자유 대화 처리
-│       │   │   └── state_updater.py      # Supabase 학습 데이터 동기화
+│       │   │   ├── chatbot.py            # 자유 대화 처리 (Gemini 스트리밍)
+│       │   │   └── state_updater.py      # 정답률·streak·오답로그 갱신
 │       │   └── tools/
 │       │       ├── question_tools.py     # 문제 조회 및 카테고리별 출제 로직
 │       │       ├── grade_tools.py        # 정답 채점 및 정답률 계산
-│       │       ├── explain_tools.py      # ChromaDB RAG 검색
+│       │       ├── explain_tools.py      # ChromaDB RAG 검색 (k=5)
 │       │       └── sql_tools.py          # SQLite 기반 SQL 실행 환경
 │       ├── api/
 │       │   ├── chat.py           # 메인 채팅 SSE 스트리밍 엔드포인트
@@ -143,31 +147,43 @@ sqld-tutor/
 │       │   ├── progress.py       # 학습 진행률 및 예상 점수 API
 │       │   ├── user.py           # 사용자 정보 및 온보딩 목표 점수 API
 │       │   ├── wrong_answers.py  # 오답 목록 조회 API
-│       │   └── sql_execute.py    # SQL 실행 요청 처리
+│       │   ├── sql_execute.py    # SQL 실행 요청 처리
+│       │   ├── exam.py           # 모의고사 문제 출제 및 채점 API
+│       │   ├── home_data.py      # 홈 대시보드 종합 데이터 API
+│       │   ├── calendar.py       # 90일 학습 캘린더 히트맵 데이터 API
+│       │   ├── review_timing.py  # 간격반복 복습 일정 API
+│       │   └── inquiries.py      # 사용자 문의 접수 및 관리자 조회 API
 │       ├── db/
-│       │   └── checkpointer.py   # LangGraph Supabase 체크포인터 (대화 상태 영속화)
-│       ├── analytics.py          # Supabase 학습 로그 집계 및 통계 계산
+│       │   └── checkpointer.py   # LangGraph 체크포인터 (MemorySaver → AsyncPostgresSaver)
+│       ├── analytics.py          # Supabase 학습 로그 이벤트 기록
 │       ├── auth.py               # Supabase JWT 인증 미들웨어
 │       └── main.py               # FastAPI 앱 진입점 및 라우터 등록
 ├── frontend/
 │   ├── app/
 │   │   ├── (auth)/
-│   │   │   ├── login/page.tsx    # 로그인 페이지
-│   │   │   └── signup/page.tsx   # 회원가입 페이지
-│   │   ├── chat/page.tsx         # 메인 채팅 화면 (사이드바 + AI 대화 + SQL 실행기)
-│   │   ├── home/page.tsx         # 학습 현황 홈 (캘린더 히트맵 · 복습 일정 · 카테고리 정답률)
-│   │   ├── exam/page.tsx         # 모의고사 (50문항 · 90분 타이머)
-│   │   ├── exam/result/page.tsx  # 모의고사 결과 (과목별 점수 · 정답 해설)
-│   │   ├── onboarding/page.tsx   # 최초 접속 시 목표 점수 선택
-│   │   ├── wrong-answers/page.tsx # 오답 회고 페이지
-│   │   └── page.tsx              # 랜딩 페이지
+│   │   │   ├── login/page.tsx        # 로그인 (이메일 + 카카오 OAuth)
+│   │   │   ├── signup/page.tsx       # 회원가입
+│   │   │   └── auth/callback/route.ts # OAuth 콜백 처리
+│   │   ├── chat/page.tsx             # 메인 채팅 화면 (사이드바 + AI 대화 + SQL 실행기)
+│   │   ├── home/page.tsx             # 학습 현황 홈 (캘린더 히트맵 · 복습 일정 · 정답률)
+│   │   ├── exam/page.tsx             # 모의고사 (50문항 · 90분 타이머)
+│   │   ├── exam/result/page.tsx      # 모의고사 결과 (과목별 점수 · 정답 해설)
+│   │   ├── onboarding/page.tsx       # 최초 접속 시 목표 점수 선택
+│   │   ├── wrong-answers/page.tsx    # 오답 회고 페이지
+│   │   ├── admin/page.tsx            # 관리자 문의 처리 페이지
+│   │   ├── privacy/page.tsx          # 개인정보처리방침
+│   │   ├── offline/page.tsx          # 오프라인 안내 페이지 (PWA)
+│   │   └── page.tsx                  # 랜딩 페이지
 │   ├── components/
-│   │   └── Sidebar.tsx           # 예상점수·풀이수·학습진행·카테고리별 정답률 사이드바
+│   │   ├── Sidebar.tsx               # 예상점수·풀이수·학습진행·카테고리별 정답률 사이드바
+│   │   ├── BottomNav.tsx             # 모바일 하단 네비게이션
+│   │   ├── LandingPage.tsx           # 랜딩 페이지 컴포넌트
+│   │   └── MermaidChart.tsx          # Mermaid 다이어그램 렌더러
 │   └── lib/
-│       ├── api.ts                # 백엔드 API 호출 함수 모음
+│       ├── api.ts                    # 백엔드 API 호출 함수 모음
 │       └── supabase/
-│           ├── client.ts         # 브라우저용 Supabase 클라이언트
-│           └── server.ts         # 서버 컴포넌트용 Supabase 클라이언트
+│           ├── client.ts             # 브라우저용 Supabase 클라이언트
+│           └── server.ts             # 서버 컴포넌트용 Supabase 클라이언트
 ├── ingestion/
 │   └── build_index.py            # 개념 문서(cat*.md) → ChromaDB 인덱싱 스크립트
 ├── scripts/
@@ -175,7 +191,7 @@ sqld-tutor/
 │   └── add_questions_v2.py       # 문제 형식 v2 업로드 스크립트
 └── docs/
     ├── week1~16/                 # 주차별 설계 문서, 피드백, 버그 로그
-    └── analysis/                 # LangSmith 실행 로그 및 분석 데이터
+    └── screenshots/              # README 스크린샷 이미지
 ```
 
 ---
@@ -212,11 +228,22 @@ python build_index.py
 
 | 변수 | 설명 |
 |------|------|
-| `GEMINI_API_KEY` | Gemini API 키 |
+**백엔드 (`backend/.env`)**
+
+| 변수 | 설명 |
+|------|------|
+| `GEMINI_API_KEY` | Gemini 2.5 Flash API 키 |
 | `DATABASE_URL` | Supabase PostgreSQL 연결 문자열 (LangGraph 체크포인터용) |
 | `SUPABASE_URL` | Supabase 프로젝트 URL |
-| `SUPABASE_SERVICE_KEY` | Supabase 서비스 롤 키 |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase 서비스 롤 키 (백엔드 전용) |
+| `SUPABASE_ANON_KEY` | Supabase Anon 키 |
+| `ADMIN_EMAIL` | 관리자 이메일 (문의 API 접근 제한용) |
 | `LANGSMITH_API_KEY` | LangSmith 관찰성 (선택) |
-| `NEXT_PUBLIC_SUPABASE_URL` | 프론트엔드용 Supabase URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 프론트엔드용 Supabase Anon 키 |
-| `NEXT_PUBLIC_API_URL` | 백엔드 API 기본 URL |
+
+**프론트엔드 (`frontend/.env.local`)**
+
+| 변수 | 설명 |
+|------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 프로젝트 URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Anon 키 |
+| `NEXT_PUBLIC_BACKEND_URL` | 백엔드 API 기본 URL (예: `https://sqld-tutor.onrender.com`) |
