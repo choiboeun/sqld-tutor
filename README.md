@@ -83,21 +83,33 @@ SSE 스트리밍 응답 (token / message / concept / stats_updated / pending_que
 
 ## 스크린샷
 
-| 온보딩 | 진단 문제 |
-|--------|---------|
-| ![온보딩](docs/screenshots/01_onboarding.png) | ![진단](docs/screenshots/02_diagnosis.png) |
+| 랜딩 + 로그인 | 온보딩 |
+|------------|--------|
+| ![로그인](docs/screenshots/00_login.png) | ![온보딩](docs/screenshots/01_onboarding.png) |
 
-| 진단 결과 분석 | 일반 문제 + 개념 설명 |
-|--------------|-------------------|
-| ![진단결과](docs/screenshots/03_diagnosis_result.png) | ![개념설명](docs/screenshots/05_concept_explanation.png) |
+| 진단 문제 | 진단 결과 분석 |
+|---------|--------------|
+| ![진단](docs/screenshots/02_diagnosis.png) | ![진단결과](docs/screenshots/03_diagnosis_result.png) |
+
+| 일반 문제 + 개념 설명 (접힘) | 개념 설명 펼쳐진 상태 |
+|--------------------------|-------------------|
+| ![개념설명접힘](docs/screenshots/04_drill_with_concept.png) | ![개념설명펼침](docs/screenshots/05_concept_explanation.png) |
 
 | 오답 회고 목록 | 오답 상세 + 미니 채팅 |
 |--------------|-------------------|
 | ![오답목록](docs/screenshots/06_wrong_answers.png) | ![오답상세](docs/screenshots/07_wrong_answer_detail.png) |
 
-| SQL 실행기 |
-|-----------|
-| ![SQL실행기](docs/screenshots/08_sql_playground.png) |
+| SQL 실행기 | 홈 대시보드 |
+|-----------|-----------|
+| ![SQL실행기](docs/screenshots/08_sql_playground.png) | ![홈대시보드](docs/screenshots/09_home_dashboard.png) |
+
+| 모의고사 진행 | 모의고사 결과 |
+|------------|------------|
+| ![모의고사](docs/screenshots/10_exam.png) | ![모의고사결과](docs/screenshots/11_exam_result.png) |
+
+| 모의고사 문제별 정오표 | 모의고사 해설 모달 |
+|--------------------|----------------|
+| ![정오표](docs/screenshots/12_exam_result_answers.png) | ![해설모달](docs/screenshots/13_exam_result_detail.png) |
 
 ---
 
