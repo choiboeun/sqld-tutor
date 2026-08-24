@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [kakaoLoading, setKakaoLoading] = useState(false);
   const [typerText, setTyperText] = useState("");
 
   const leftElRef = useRef<HTMLDivElement>(null);
@@ -113,6 +114,15 @@ export default function LoginPage() {
       rightEl.removeEventListener("mouseleave", onLeave);
     };
   }, []);
+
+  const handleKakaoLogin = async () => {
+    setKakaoLoading(true);
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -285,8 +295,14 @@ export default function LoginPage() {
               <div style={{ flex: 1, height: "1px", background: "#e7e5e4" }} />
             </div>
 
-            <button disabled style={{ width: "100%", background: "#f5f4f3", border: "1.5px solid #e7e5e4", color: "#c4bfbb", padding: "12px", fontSize: "12.5px", fontWeight: 600, cursor: "not-allowed", animation: "loginEl .4s ease .62s both" }}>
-              카카오로 로그인 (준비 중)
+            <button
+              type="button"
+              onClick={handleKakaoLogin}
+              disabled={kakaoLoading}
+              style={{ width: "100%", background: "#FEE500", border: "none", color: "#3C1E1E", padding: "12px", fontSize: "12.5px", fontWeight: 700, cursor: kakaoLoading ? "not-allowed" : "pointer", opacity: kakaoLoading ? 0.7 : 1, animation: "loginEl .4s ease .62s both", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", transition: "opacity .15s, transform .15s" }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#3C1E1E"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.969 1.672 5.563 4.188 7.094L5.25 21.25l3.5-2.094C9.531 19.375 10.75 19.5 12 19.5c5.523 0 10-3.477 10-7.75C22 6.477 17.523 3 12 3z"/></svg>
+              {kakaoLoading ? "로그인 중..." : "카카오로 로그인"}
             </button>
 
             <p style={{ textAlign: "center", fontSize: "11.5px", color: "#78716c", marginTop: "20px", animation: "loginEl .4s ease .68s both" }}>
