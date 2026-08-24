@@ -51,6 +51,7 @@ SQLD(SQL 개발자) 자격증 합격률이 41.7%까지 하락한 상황에서, �
 - **SQL 실행기** — 개념 확인용 인터랙티브 SQL 실행 환경
 - **예상 점수** — SQLD 실제 배점 기준 실시간 점수 산출
 - **카카오 로그인** — 카카오 OAuth 소셜 로그인 (이메일/비밀번호 로그인 병행)
+- **계정 관리** — 비밀번호 변경 및 회원 탈퇴
 
 ---
 
@@ -59,17 +60,19 @@ SQLD(SQL 개발자) 자격증 합격률이 41.7%까지 하락한 상황에서, �
 ```
 사용자 입력
     ↓
-intent_classifier  ← 의도 분류 (drill / explain / review / sql / chatbot)
+intent_classifier  ← 의도 분류 (drill / explain / review / diagnose / sql / chatbot)
     ↓
-┌──────────┬──────────┬──────────┬──────────┬──────────┐
-│drill_node│explain   │review    │sql_node  │chatbot   │
-│(문제출제)│_node     │_node     │(SQL실행) │(자유대화)│
-│          │(개념설명)│(오답회고)│          │          │
-└──────────┴──────────┴──────────┴──────────┴──────────┘
+┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+│drill_node│explain   │review    │diagnose  │sql_node  │chatbot   │
+│(문제출제)│_node     │_node     │_node     │(SQL실행) │(자유대화)│
+│          │(개념설명)│(오답회고)│(진단출제)│          │          │
+└──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
     ↓
-state_updater  ← Supabase 학습 데이터 동기화
+state_updater  ← 정답률·streak·오답로그 갱신
     ↓
-SSE 스트리밍 응답
+adaptive_difficulty_router  ← 다음 노드 결정 (explain 강제 유도 / 카테고리 전환 / END)
+    ↓
+SSE 스트리밍 응답 (token / message / concept / stats_updated / pending_question / done)
 ```
 
 ---
@@ -171,7 +174,7 @@ sqld-tutor/
 │   ├── add_questions_batch1~4.py # 문제은행 Supabase 배치 업로드 스크립트
 │   └── add_questions_v2.py       # 문제 형식 v2 업로드 스크립트
 └── docs/
-    ├── week1~15/                 # 주차별 설계 문서, 피드백, 버그 로그
+    ├── week1~16/                 # 주차별 설계 문서, 피드백, 버그 로그
     └── analysis/                 # LangSmith 실행 로그 및 분석 데이터
 ```
 
@@ -209,7 +212,8 @@ python build_index.py
 
 | 변수 | 설명 |
 |------|------|
-| `GOOGLE_API_KEY` | Gemini API 키 |
+| `GEMINI_API_KEY` | Gemini API 키 |
+| `DATABASE_URL` | Supabase PostgreSQL 연결 문자열 (LangGraph 체크포인터용) |
 | `SUPABASE_URL` | Supabase 프로젝트 URL |
 | `SUPABASE_SERVICE_KEY` | Supabase 서비스 롤 키 |
 | `LANGSMITH_API_KEY` | LangSmith 관찰성 (선택) |
