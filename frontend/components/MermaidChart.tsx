@@ -28,24 +28,26 @@ export default function MermaidChart({ code }: Props) {
           if (!cancelled && ref.current) {
             ref.current.innerHTML = svg;
             const svgEl = ref.current.querySelector("svg");
-            if (svgEl) {
-              // Mermaid underestimates text width for mixed Korean/ASCII labels.
-              // Expand the viewBox to fit the true rendered bounding box so text
-              // isn't clipped at the SVG boundary. Don't touch size attributes —
-              // keep Mermaid's original width/max-width so the diagram stays small.
+            if (!svgEl) return;
+
+            // getBBox() must run AFTER fonts are loaded — Korean text metrics
+            // are wrong if measured before the font is ready, causing the
+            // viewBox to be set too narrow and the label to stay clipped.
+            document.fonts.ready.then(() => {
+              if (cancelled || !svgEl.isConnected) return;
               try {
                 const bbox = (svgEl as SVGSVGElement).getBBox();
                 if (bbox.width > 0 && bbox.height > 0) {
-                  const pad = 12;
+                  const pad = 16;
                   svgEl.setAttribute(
                     "viewBox",
                     `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`
                   );
                 }
               } catch {
-                // getBBox may fail in hidden/detached contexts — ignore
+                // ignore — getBBox fails in detached/hidden contexts
               }
-            }
+            });
           }
         })
         .catch(() => {
