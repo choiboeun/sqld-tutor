@@ -29,25 +29,10 @@ export default function MermaidChart({ code }: Props) {
             ref.current.innerHTML = svg;
             const svgEl = ref.current.querySelector("svg");
             if (!svgEl) return;
-
-            // getBBox() must run AFTER fonts are loaded — Korean text metrics
-            // are wrong if measured before the font is ready, causing the
-            // viewBox to be set too narrow and the label to stay clipped.
-            document.fonts.ready.then(() => {
-              if (cancelled || !svgEl.isConnected) return;
-              try {
-                const bbox = (svgEl as SVGSVGElement).getBBox();
-                if (bbox.width > 0 && bbox.height > 0) {
-                  const pad = 16;
-                  svgEl.setAttribute(
-                    "viewBox",
-                    `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`
-                  );
-                }
-              } catch {
-                // ignore — getBBox fails in detached/hidden contexts
-              }
-            });
+            // SVG clips content at its viewBox boundary by default.
+            // Setting overflow:visible lets labels that extend past the
+            // calculated viewBox render instead of being cut off.
+            svgEl.style.overflow = "visible";
           }
         })
         .catch(() => {
