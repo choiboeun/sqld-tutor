@@ -31,7 +31,7 @@ def _calc_predicted_score(accuracy: dict, attempts: dict) -> tuple[int, int]:
             acc = accuracy.get(cat, 0.0)
             covered += 1
         else:
-            acc = 0.0
+            acc = 0.5  # 미시도 카테고리는 50% 정답률로 보수 추정
         score += acc * weight * 2  # 문제 수 × 2점
     return round(score), covered
 

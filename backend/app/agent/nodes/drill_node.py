@@ -472,7 +472,7 @@ def drill_node(state: TutorState) -> dict:
 
     ans_char = match.group(1)
     user_answer = _CIRCLE_TO_INT.get(ans_char, int(ans_char))
-    correct = user_answer == pending["answer"]
+    correct = user_answer == pending.get("answer")
 
     return {
         "messages": [AIMessage(content=_format_feedback(pending, user_answer, correct))],

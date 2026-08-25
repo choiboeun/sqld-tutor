@@ -111,7 +111,8 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
             if full_q:
                 input_data["pending_question"] = {**client_pending_question, "answer": full_q["answer"]}
             else:
-                input_data["pending_question"] = client_pending_question
+                # ID가 문제 뱅크에 없으면 answer 없이 진행 (drill_node에서 .get("answer") 로 처리)
+                input_data["pending_question"] = {**client_pending_question}
             # 스테일 체크포인트 우회 — pending_question에 포함된 state_updater 최신 값 주입
             _pq = client_pending_question
             if isinstance(_pq.get("_diag_count"), int):

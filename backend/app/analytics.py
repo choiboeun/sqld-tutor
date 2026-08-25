@@ -1,9 +1,11 @@
 import os
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from supabase import create_client
 
 _client = None
 _lock = threading.Lock()
+_executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="analytics")
 
 
 def _get_client():
@@ -34,4 +36,4 @@ def log_event(user_id: str, event_type: str, properties: dict = None):
         except Exception as e:
             print(f"[analytics] log_event 실패: {e}")
 
-    threading.Thread(target=_send, daemon=True).start()
+    _executor.submit(_send)

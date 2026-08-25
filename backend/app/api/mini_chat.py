@@ -40,7 +40,9 @@ class MiniChatRequest(BaseModel):
 def _build_system_prompt(ctx: dict) -> str:
     options_text = ""
     for opt in ctx.get("options", []):
-        options_text += f"{opt['num']}. {opt['text']}\n"
+        if not isinstance(opt, dict):
+            continue
+        options_text += f"{opt.get('num', '?')}. {opt.get('text', '')}\n"
 
     return f"""당신은 SQLD AI 튜터입니다. 학생이 오답 회고 중 아래 문제에 대해 질문하고 있습니다.
 
