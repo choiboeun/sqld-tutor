@@ -44,9 +44,9 @@ export default function MermaidChart({ code }: Props) {
               } catch {
                 // getBBox may fail in hidden/detached contexts — ignore
               }
-              // Override Mermaid's inline max-width so SVG scales to its container.
+              // Override Mermaid's inline max-width so SVG doesn't overflow,
+              // but don't force width: 100% — let it keep its natural size.
               svgEl.style.maxWidth = "100%";
-              svgEl.style.width = "100%";
               svgEl.style.height = "auto";
             }
           }
