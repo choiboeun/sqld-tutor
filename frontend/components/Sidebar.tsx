@@ -141,7 +141,15 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-200 bg-[#dde1fb]">
           <Link
             href="/home"
-            onClick={onClose}
+            onClick={() => {
+              try {
+                if (threadId) {
+                  sessionStorage.removeItem(`chat_${threadId}`);
+                  sessionStorage.removeItem(`scroll_${threadId}`);
+                }
+              } catch {}
+              onClose?.();
+            }}
             className={`inline-flex items-center gap-1 text-xs transition-colors ${
               highlightHome
                 ? "text-indigo-700 font-semibold"

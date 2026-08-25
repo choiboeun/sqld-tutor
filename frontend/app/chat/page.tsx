@@ -666,7 +666,18 @@ function ChatContent() {
                 <rect y="15" width="20" height="2" rx="1"/>
               </svg>
             </button>
-            <Link href="/home" className="md:hidden flex items-center gap-2 text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors">
+            <Link
+              href="/home"
+              onClick={() => {
+                try {
+                  if (threadId) {
+                    sessionStorage.removeItem(`chat_${threadId}`);
+                    sessionStorage.removeItem(`scroll_${threadId}`);
+                  }
+                } catch {}
+              }}
+              className="md:hidden flex items-center gap-2 text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors"
+            >
               <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
               SQLD AI 튜터
             </Link>
