@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
+import OnboardingTour from "@/components/OnboardingTour";
 
 interface CategoryStat {
   accuracy: number;
@@ -289,7 +290,6 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
 }
 
 export default function HomePage() {
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [data, setData] = useState<ProgressData | null>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
@@ -314,7 +314,6 @@ export default function HomePage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("welcome") === "true") setShowWelcomeModal(true);
   }, []);
 
   useEffect(() => {
@@ -489,39 +488,6 @@ export default function HomePage() {
   return (
     <div className="md:h-[100dvh] md:overflow-hidden flex flex-col md:flex-row">
 
-      {/* 신규 가입 웰컴 모달 */}
-      {showWelcomeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white w-full max-w-sm mx-4 overflow-hidden shadow-xl">
-            <div className="px-7 py-6" style={{ background: "#818cf8" }}>
-              <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-2">SQLD AI 튜터</p>
-              <h2 className="text-2xl font-black text-white leading-snug">가입을 환영해요!</h2>
-              <p className="text-sm text-indigo-200 mt-1.5">먼저 AI가 실력을 진단해드릴게요.</p>
-            </div>
-            <div className="px-7 py-6 space-y-4">
-              <div className="space-y-2.5">
-                {[
-                  { icon: "①", text: "8문제로 카테고리별 실력을 진단해요" },
-                  { icon: "②", text: "진단 결과를 바탕으로 맞춤 문제를 출제해요" },
-                  { icon: "③", text: "취약한 부분은 AI가 개념까지 설명해줘요" },
-                ].map(({ icon, text }) => (
-                  <div key={icon} className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold text-sm shrink-0 w-5">{icon}</span>
-                    <p className="text-sm text-stone-600 leading-relaxed">{text}</p>
-                  </div>
-                ))}
-              </div>
-              <Link
-                href="/chat?new=true"
-                className="block w-full bg-indigo-500 text-white text-center py-3 text-sm font-bold tracking-wide hover:bg-indigo-600 transition-colors"
-              >
-                진단 시작하기
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 계정 설정 모달 */}
       {showAccountModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -622,7 +588,7 @@ export default function HomePage() {
       )}
 
       {/* ── 왼쪽 패널 (앰버) ── */}
-      <div className="md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>
+      <div data-tour="stats-panel" className="md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>
 
         {/* 앱 이름 + 계정 */}
         <div className="flex items-start justify-between mb-6 md:mb-0">
@@ -816,7 +782,7 @@ export default function HomePage() {
 
           {/* 3카드 가로 한 줄 */}
           <div className="grid grid-cols-3 gap-3">
-            <Link href="/chat" className="flex flex-col items-center bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 p-3 gap-2 hover:shadow-md transition-all">
+            <Link data-tour="m-ai" href="/chat" className="flex flex-col items-center bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 p-3 gap-2 hover:shadow-md transition-all">
               <div className="w-9 h-9 bg-indigo-500 rounded-sm flex items-center justify-center shrink-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
@@ -825,7 +791,7 @@ export default function HomePage() {
               <p className="text-xs font-bold text-stone-900 text-center leading-tight">AI 학습</p>
             </Link>
 
-            <Link href="/wrong-answers" className="flex flex-col items-center bg-white border border-stone-100 p-3 gap-2 hover:shadow-md transition-all">
+            <Link data-tour="m-wrong" href="/wrong-answers" className="flex flex-col items-center bg-white border border-stone-100 p-3 gap-2 hover:shadow-md transition-all">
               <div className="w-9 h-9 bg-amber-500 rounded-sm flex items-center justify-center shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
@@ -837,7 +803,7 @@ export default function HomePage() {
               <p className="text-xs font-bold text-stone-900 text-center leading-tight">오답 회고</p>
             </Link>
 
-            <Link href="/exam" className="flex flex-col items-center bg-white border border-stone-100 p-3 gap-2 hover:shadow-md transition-all">
+            <Link data-tour="m-exam" href="/exam" className="flex flex-col items-center bg-white border border-stone-100 p-3 gap-2 hover:shadow-md transition-all">
               <div className="w-9 h-9 bg-indigo-400 rounded-sm flex items-center justify-center shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -851,7 +817,7 @@ export default function HomePage() {
           </div>
 
           {/* 오늘 할 일 */}
-          <div className="bg-white border border-stone-100 p-5">
+          <div data-tour="m-todo" className="bg-white border border-stone-100 p-5">
             <p className="text-[15px] font-bold text-stone-800 mb-4">오늘 할 일</p>
             {todayTasks.length > 0 && (
               <div className="flex items-baseline gap-2 mb-5">
@@ -884,7 +850,7 @@ export default function HomePage() {
           </div>
 
           {/* 카테고리 정답률 */}
-          <div className="border border-indigo-200 p-2" style={{ background: "#fafaf9" }}>
+          <div data-tour="m-radar" className="border border-indigo-200 p-2" style={{ background: "#fafaf9" }}>
             <p className="text-[15px] font-bold text-stone-800 mb-1 px-1">카테고리 정답률</p>
             <div className="relative" style={{ minHeight: "280px" }}>
               <RadarChart catMap={catMap} />
@@ -892,7 +858,7 @@ export default function HomePage() {
           </div>
 
           {/* 학습 캘린더 */}
-          <div className="border border-indigo-200 p-5" style={{ background: "#fafaf9" }}>
+          <div data-tour="m-cal" className="border border-indigo-200 p-5" style={{ background: "#fafaf9" }}>
             <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
             {calendarData ? <CalendarHeatmap dates={calendarData.dates} /> : (
               <div className="flex gap-2 animate-pulse">
@@ -915,7 +881,7 @@ export default function HomePage() {
             <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
 
             {/* AI 학습 */}
-            <Link href="/chat" className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-none p-5 hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <Link data-tour="pc-ai" href="/chat" className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-none p-5 hover:shadow-md hover:-translate-y-0.5 transition-all">
               <div className="w-9 h-9 bg-indigo-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
@@ -929,7 +895,7 @@ export default function HomePage() {
             </Link>
 
             {/* 오답 회고 */}
-            <Link href="/wrong-answers" className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <Link data-tour="pc-wrong" href="/wrong-answers" className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
               <div className="w-9 h-9 bg-amber-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
@@ -945,7 +911,7 @@ export default function HomePage() {
             </Link>
 
             {/* 모의고사 */}
-            <Link href="/exam" className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+            <Link data-tour="pc-exam" href="/exam" className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
               <div className="w-9 h-9 bg-indigo-400 rounded-sm flex items-center justify-center mb-3 shrink-0">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -959,7 +925,7 @@ export default function HomePage() {
             </Link>
 
             {/* 카테고리 정답률 — 레이더 차트 */}
-            <div className="border border-indigo-200 rounded-none p-2" style={{ background: "#fafaf9" }}>
+            <div data-tour="pc-radar" className="border border-indigo-200 rounded-none p-2" style={{ background: "#fafaf9" }}>
               <p className="text-[15px] font-bold text-stone-800 mb-1 px-1">카테고리 정답률</p>
               <div className="relative" style={{ minHeight: "280px" }}>
                 <RadarChart catMap={catMap} />
@@ -971,7 +937,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-4">
 
             {/* 학습 캘린더 카드 */}
-            <div className="border border-indigo-200 rounded-none p-5" style={{ background: "#fafaf9" }}>
+            <div data-tour="pc-cal" className="border border-indigo-200 rounded-none p-5" style={{ background: "#fafaf9" }}>
               <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
               {calendarData ? (
                 <CalendarHeatmap dates={calendarData.dates} />
@@ -989,7 +955,7 @@ export default function HomePage() {
             </div>
 
             {/* 오늘 할 일 카드 — flex-1으로 남은 공간 채움 */}
-            <div className="flex-1 bg-white border border-stone-100 rounded-none p-5">
+            <div data-tour="pc-todo" className="flex-1 bg-white border border-stone-100 rounded-none p-5">
               <p className="text-[15px] font-bold text-stone-800 mb-4">오늘 할 일</p>
               {todayTasks.length > 0 && (
                 <div className="flex items-baseline gap-2 mb-5">
@@ -1025,6 +991,9 @@ export default function HomePage() {
         </div>
 
       </div>
+
+      {/* 온보딩 투어 */}
+      <OnboardingTour />
 
       {/* 문의하기 모달 */}
       {showInquiryModal && (
