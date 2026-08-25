@@ -29,9 +29,10 @@ export default function MermaidChart({ code }: Props) {
             ref.current.innerHTML = svg;
             const svgEl = ref.current.querySelector("svg");
             if (svgEl) {
-              // Mermaid underestimates text width for mixed Korean/ASCII labels,
-              // causing the SVG viewBox to clip content. Measure the true bounding
-              // box of all rendered content and expand the viewBox to fit.
+              // Mermaid underestimates text width for mixed Korean/ASCII labels.
+              // Expand the viewBox to fit the true rendered bounding box so text
+              // isn't clipped at the SVG boundary. Don't touch size attributes —
+              // keep Mermaid's original width/max-width so the diagram stays small.
               try {
                 const bbox = (svgEl as SVGSVGElement).getBBox();
                 if (bbox.width > 0 && bbox.height > 0) {
@@ -44,10 +45,6 @@ export default function MermaidChart({ code }: Props) {
               } catch {
                 // getBBox may fail in hidden/detached contexts — ignore
               }
-              // Override Mermaid's inline max-width so SVG doesn't overflow,
-              // but don't force width: 100% — let it keep its natural size.
-              svgEl.style.maxWidth = "100%";
-              svgEl.style.height = "auto";
             }
           }
         })
