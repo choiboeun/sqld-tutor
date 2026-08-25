@@ -3,7 +3,7 @@ import time
 from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 from app.agent.llm import llm
@@ -31,15 +31,24 @@ class MiniMessage(BaseModel):
     content: str
 
 
+class QuestionContext(BaseModel):
+    question: str = Field("", max_length=2000)
+    explanation: str = Field("", max_length=2000)
+    category: str = Field("", max_length=100)
+    difficulty: str = Field("", max_length=20)
+    correct_answer: int = 1
+    options: list = []
+
+
 class MiniChatRequest(BaseModel):
-    question_context: dict
+    question_context: QuestionContext
     messages: list[MiniMessage] = []
-    user_message: str
+    user_message: str = Field(..., max_length=1000)
 
 
-def _build_system_prompt(ctx: dict) -> str:
+def _build_system_prompt(ctx: QuestionContext) -> str:
     options_text = ""
-    for opt in ctx.get("options", []):
+    for opt in ctx.options:
         if not isinstance(opt, dict):
             continue
         options_text += f"{opt.get('num', '?')}. {opt.get('text', '')}\n"
@@ -47,12 +56,12 @@ def _build_system_prompt(ctx: dict) -> str:
     return f"""당신은 SQLD AI 튜터입니다. 학생이 오답 회고 중 아래 문제에 대해 질문하고 있습니다.
 
 [문제 정보]
-카테고리: {ctx.get('category', '')}
-난이도: {ctx.get('difficulty', '')}
-문제: {ctx.get('question', '')}
+카테고리: {ctx.category}
+난이도: {ctx.difficulty}
+문제: {ctx.question}
 보기:
-{options_text}정답: {ctx.get('correct_answer', '')}번
-해설: {ctx.get('explanation', '')}
+{options_text}정답: {ctx.correct_answer}번
+해설: {ctx.explanation}
 
 역할:
 - 학생의 질문에 위 문제 맥락을 바탕으로 친절하고 정확하게 답하세요.

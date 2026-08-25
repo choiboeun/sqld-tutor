@@ -332,7 +332,7 @@ function ChatContent() {
           } catch {}
           setSessionReady(true);
         } else {
-          window.location.href = "/login";
+          router.replace("/login");
         }
       });
   }, []);
@@ -343,7 +343,14 @@ function ChatContent() {
     const timer = setTimeout(() => {
       try {
         const toSave = messages.filter(m => !(m.role === "ai" && m.content === ""));
-        sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave));
+        try {
+          sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave));
+        } catch {
+          // 저장 공간 초과 시 최근 50개만 유지 후 재시도
+          try {
+            sessionStorage.setItem(`chat_${threadId}`, JSON.stringify(toSave.slice(-50)));
+          } catch {}
+        }
       } catch {}
     }, 300);
     return () => clearTimeout(timer);

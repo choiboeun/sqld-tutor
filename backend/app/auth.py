@@ -18,9 +18,10 @@ _CACHE_TTL = 300  # 5분
 async def _fetch_user_info(token: str) -> tuple[str, str]:
     """Returns (user_id, email). Caches result for CACHE_TTL seconds."""
     now = time.time()
-    cached = _token_cache.get(token)
-    if cached and now < cached[2]:
-        return cached[0], cached[1]
+    async with _token_cache_lock:
+        cached = _token_cache.get(token)
+        if cached and now < cached[2]:
+            return cached[0], cached[1]
 
     async with httpx.AsyncClient() as client:
         resp = await client.get(

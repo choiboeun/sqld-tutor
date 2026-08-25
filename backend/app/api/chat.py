@@ -5,7 +5,7 @@ from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage, AIMessage
 
 from app.agent.graph import graph
@@ -74,7 +74,7 @@ INITIAL_STATE = {
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(..., max_length=3000)
     thread_id: str = "default"
     target_score: int = 70
     clear_pending: bool = False
