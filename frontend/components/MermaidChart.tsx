@@ -27,6 +27,14 @@ export default function MermaidChart({ code }: Props) {
         .then(({ svg }) => {
           if (!cancelled && ref.current) {
             ref.current.innerHTML = svg;
+            // Mermaid injects style="max-width: Xpx" inline — override so SVG
+            // scales to its container instead of clipping inside overflow-y scroll areas.
+            const svgEl = ref.current.querySelector("svg");
+            if (svgEl) {
+              svgEl.style.maxWidth = "100%";
+              svgEl.style.width = "100%";
+              svgEl.style.height = "auto";
+            }
           }
         })
         .catch(() => {
@@ -42,7 +50,7 @@ export default function MermaidChart({ code }: Props) {
   return (
     <div
       ref={ref}
-      className="my-3 overflow-x-auto text-sm [&_svg]:max-w-full [&_svg]:h-auto"
+      className="my-3 overflow-x-auto text-sm"
     />
   );
 }
