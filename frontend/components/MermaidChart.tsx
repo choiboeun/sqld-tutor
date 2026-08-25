@@ -27,10 +27,24 @@ export default function MermaidChart({ code }: Props) {
         .then(({ svg }) => {
           if (!cancelled && ref.current) {
             ref.current.innerHTML = svg;
-            // Mermaid injects style="max-width: Xpx" inline — override so SVG
-            // scales to its container instead of clipping inside overflow-y scroll areas.
             const svgEl = ref.current.querySelector("svg");
             if (svgEl) {
+              // Mermaid underestimates text width for mixed Korean/ASCII labels,
+              // causing the SVG viewBox to clip content. Measure the true bounding
+              // box of all rendered content and expand the viewBox to fit.
+              try {
+                const bbox = (svgEl as SVGSVGElement).getBBox();
+                if (bbox.width > 0 && bbox.height > 0) {
+                  const pad = 12;
+                  svgEl.setAttribute(
+                    "viewBox",
+                    `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`
+                  );
+                }
+              } catch {
+                // getBBox may fail in hidden/detached contexts — ignore
+              }
+              // Override Mermaid's inline max-width so SVG scales to its container.
               svgEl.style.maxWidth = "100%";
               svgEl.style.width = "100%";
               svgEl.style.height = "auto";
