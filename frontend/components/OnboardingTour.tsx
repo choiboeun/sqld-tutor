@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 const TOUR_KEY = "sqld_tour_done";
-const CARD_W = 260;
-const CARD_H = 230;
 const PAD = 6;
 
 interface Step {
@@ -103,6 +101,8 @@ export default function OnboardingTour() {
   }, []);
 
   const steps = isMobile ? M_STEPS : PC_STEPS;
+  const CARD_W = isMobile ? 260 : 340;
+  const CARD_H = isMobile ? 230 : 260;
 
   const measure = useCallback(() => {
     const step = steps[cur];
@@ -155,7 +155,7 @@ export default function OnboardingTour() {
 
       setCardState({ centered: false, top, left, arrow, arrowX, arrowY });
     });
-  }, [cur, steps]);
+  }, [cur, steps, CARD_W, CARD_H]);
 
   useEffect(() => { if (visible) measure(); }, [visible, cur, measure]);
 
@@ -207,9 +207,9 @@ export default function OnboardingTour() {
           : { top: cardState.top, left: cardState.left }),
         width: CARD_W,
         background: "white",
-        borderRadius: 14,
-        padding: "20px 20px 16px",
-        boxShadow: "0 16px 40px rgba(0,0,0,.22)",
+        borderRadius: 16,
+        padding: isMobile ? "20px 20px 16px" : "28px 28px 22px",
+        boxShadow: "0 20px 60px rgba(0,0,0,.25)",
         zIndex: 9999,
       }}>
         {/* 화살표 */}
@@ -218,39 +218,39 @@ export default function OnboardingTour() {
         )}
 
         {step.eye && (
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", color: "#818cf8", marginBottom: 6 }}>
+          <p style={{ fontSize: isMobile ? 10 : 12, fontWeight: 700, letterSpacing: ".1em", color: "#818cf8", marginBottom: isMobile ? 6 : 8 }}>
             {step.eye}
           </p>
         )}
-        <p style={{ fontSize: 17, fontWeight: 900, color: "#1c1917", lineHeight: 1.25, marginBottom: 8 }}>
+        <p style={{ fontSize: isMobile ? 17 : 22, fontWeight: 900, color: "#1c1917", lineHeight: 1.25, marginBottom: isMobile ? 8 : 10 }}>
           {step.title}
         </p>
-        <p style={{ fontSize: 13, color: "#78716c", lineHeight: 1.65, whiteSpace: "pre-line" }}>
+        <p style={{ fontSize: isMobile ? 13 : 15, color: "#78716c", lineHeight: 1.7, whiteSpace: "pre-line" }}>
           {step.desc}
         </p>
 
         {step.cta ? (
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop: isMobile ? 16 : 22 }}>
             <button
               onClick={() => finish(true)}
               style={{
-                width: "100%", padding: 13,
+                width: "100%", padding: isMobile ? 13 : 16,
                 background: "#6366f1", color: "white",
-                fontFamily: "inherit", fontSize: 13, fontWeight: 800,
-                border: "none", borderRadius: 8, cursor: "pointer",
+                fontFamily: "inherit", fontSize: isMobile ? 13 : 16, fontWeight: 800,
+                border: "none", borderRadius: 10, cursor: "pointer",
               }}
             >
               진단 시작하기 →
             </button>
           </div>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: isMobile ? 16 : 22 }}>
             {/* 진행 점 */}
             <div style={{ display: "flex", gap: 5 }}>
               {steps.map((_, i) => (
                 <div key={i} style={{
                   height: 6, borderRadius: 3,
-                  width: i === cur ? 18 : 6,
+                  width: i === cur ? 20 : 6,
                   background: i === cur ? "#6366f1" : "#e7e5e2",
                   transition: "all .25s",
                 }} />
@@ -259,17 +259,17 @@ export default function OnboardingTour() {
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               <button
                 onClick={() => finish(false)}
-                style={{ fontSize: 12, fontWeight: 500, color: "#a8a29e", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}
+                style={{ fontSize: isMobile ? 12 : 13, fontWeight: 500, color: "#a8a29e", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}
               >
                 건너뛰기
               </button>
               <button
                 onClick={() => setCur(c => Math.min(c + 1, steps.length - 1))}
                 style={{
-                  fontSize: 13, fontWeight: 700,
+                  fontSize: isMobile ? 13 : 15, fontWeight: 700,
                   color: "white", background: "#6366f1",
-                  border: "none", borderRadius: 8,
-                  padding: "9px 14px", cursor: "pointer", fontFamily: "inherit",
+                  border: "none", borderRadius: 9,
+                  padding: isMobile ? "9px 14px" : "11px 20px", cursor: "pointer", fontFamily: "inherit",
                 }}
               >
                 {cur === steps.length - 2 ? "마지막 →" : "다음 →"}
