@@ -1,0 +1,35 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='520' height='200' viewBox='0 0 520 200' font-family='Malgun Gothic, Apple SD Gothic Neo, sans-serif'>
+<text x='260' y='22' text-anchor='middle' font-size='13' font-weight='bold' fill='#111'>참조 무결성 위반 케이스</text>
+<text x='44' y='69' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>부서</text>
+<rect x='10' y='75' width='69' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='29' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID</text>
+<line x1='48' y1='75' x2='48' y2='147' stroke='#222' stroke-width='1'/>
+<text x='63' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서명</text>
+<rect x='10' y='99' width='69' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='115' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='63' y='115' text-anchor='middle' font-size='10' fill='#222'>영업팀</text>
+<rect x='10' y='123' width='69' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='139' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='63' y='139' text-anchor='middle' font-size='10' fill='#222'>개발팀</text>
+<text x='323' y='69' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>사원</text>
+<rect x='270' y='75' width='107' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='289' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>사원ID</text>
+<line x1='308' y1='75' x2='308' y2='171' stroke='#222' stroke-width='1'/>
+<text x='323' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>이름</text>
+<line x1='339' y1='75' x2='339' y2='171' stroke='#222' stroke-width='1'/>
+<text x='358' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID</text>
+<rect x='270' y='99' width='107' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='289' y='115' text-anchor='middle' font-size='10' fill='#222'>E001</text>
+<text x='323' y='115' text-anchor='middle' font-size='10' fill='#222'>김철수</text>
+<text x='358' y='115' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<rect x='270' y='123' width='107' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='289' y='139' text-anchor='middle' font-size='10' fill='#222'>E002</text>
+<text x='323' y='139' text-anchor='middle' font-size='10' fill='#222'>이서연</text>
+<text x='358' y='139' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<rect x='270' y='147' width='107' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='289' y='163' text-anchor='middle' font-size='10' fill='#222'>E003</text>
+<text x='323' y='163' text-anchor='middle' font-size='10' fill='#222'>박민수</text>
+<text x='358' y='163' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='155' y='180' text-anchor='middle' font-size='10' fill='#333'>부서 1 ──── N 사원 (부서ID FK)</text>
+<defs><marker id='arr' markerWidth='6' markerHeight='6' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='#333'/></marker></defs><line x1='240' y1='95' x2='270' y2='95' stroke='#333' stroke-width='1.5' marker-end='url(#arr)'/>
+</svg>

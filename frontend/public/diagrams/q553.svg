@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="260" viewBox="0 0 520 260" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif">
+
+  <text x="125" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#111">정규화 전 (1NF 위반)</text>
+  <text x="390" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#111">정규화 후 (주문_상품)</text>
+
+  <!-- 왼쪽 테이블 -->
+  <rect x="10" y="35" width="230" height="28" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <line x1="80" y1="35" x2="80" y2="145" stroke="#222" stroke-width="1"/>
+  <line x1="160" y1="35" x2="160" y2="145" stroke="#222" stroke-width="1"/>
+  <text x="45" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#111">주문ID</text>
+  <text x="120" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#111">고객명</text>
+  <text x="195" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#111">상품목록</text>
+
+  <rect x="10" y="63" width="230" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="45" y="80" text-anchor="middle" font-size="10" fill="#222">O-001</text>
+  <text x="120" y="80" text-anchor="middle" font-size="10" fill="#222">김철수</text>
+  <text x="195" y="74" text-anchor="middle" font-size="10" fill="#111" font-weight="bold">사과, 배, 포도</text>
+
+  <rect x="10" y="89" width="230" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="45" y="106" text-anchor="middle" font-size="10" fill="#222">O-002</text>
+  <text x="120" y="106" text-anchor="middle" font-size="10" fill="#222">이영희</text>
+  <text x="195" y="100" text-anchor="middle" font-size="10" fill="#111" font-weight="bold">딸기, 수박</text>
+
+  <rect x="10" y="115" width="230" height="20" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="125" y="129" text-anchor="middle" font-size="9" fill="#555">...</text>
+
+  <rect x="30" y="144" width="190" height="30" fill="none" stroke="#555" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="125" y="158" text-anchor="middle" font-size="10" fill="#333">⚠ 상품목록에 여러 값 → 원자성 위반</text>
+  <text x="125" y="170" text-anchor="middle" font-size="10" fill="#333">(1NF 위반)</text>
+
+  <!-- 화살표 -->
+  <defs>
+    <marker id="arr" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+  <line x1="248" y1="110" x2="268" y2="110" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- 오른쪽 테이블 -->
+  <rect x="275" y="35" width="235" height="28" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <line x1="345" y1="35" x2="345" y2="195" stroke="#222" stroke-width="1"/>
+  <line x1="425" y1="35" x2="425" y2="195" stroke="#222" stroke-width="1"/>
+  <text x="310" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#111">주문ID</text>
+  <text x="385" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#111">고객명</text>
+  <text x="457" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#111">상품명</text>
+
+  <rect x="275" y="63" width="235" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="310" y="80" text-anchor="middle" font-size="10" fill="#222">O-001</text>
+  <text x="385" y="80" text-anchor="middle" font-size="10" fill="#222">김철수</text>
+  <text x="457" y="80" text-anchor="middle" font-size="10" fill="#222">사과</text>
+
+  <rect x="275" y="89" width="235" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="310" y="106" text-anchor="middle" font-size="10" fill="#222">O-001</text>
+  <text x="385" y="106" text-anchor="middle" font-size="10" fill="#222">김철수</text>
+  <text x="457" y="106" text-anchor="middle" font-size="10" fill="#222">배</text>
+
+  <rect x="275" y="115" width="235" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="310" y="132" text-anchor="middle" font-size="10" fill="#222">O-001</text>
+  <text x="385" y="132" text-anchor="middle" font-size="10" fill="#222">김철수</text>
+  <text x="457" y="132" text-anchor="middle" font-size="10" fill="#222">포도</text>
+
+  <rect x="275" y="141" width="235" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="310" y="158" text-anchor="middle" font-size="10" fill="#222">O-002</text>
+  <text x="385" y="158" text-anchor="middle" font-size="10" fill="#222">이영희</text>
+  <text x="457" y="158" text-anchor="middle" font-size="10" fill="#222">딸기</text>
+
+  <rect x="275" y="167" width="235" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="310" y="184" text-anchor="middle" font-size="10" fill="#222">O-002</text>
+  <text x="385" y="184" text-anchor="middle" font-size="10" fill="#222">이영희</text>
+  <text x="457" y="184" text-anchor="middle" font-size="10" fill="#222">수박</text>
+
+  <text x="260" y="230" text-anchor="middle" font-size="10" fill="#555">각 행은 하나의 원자값만 가져야 한다 (1NF)</text>
+</svg>

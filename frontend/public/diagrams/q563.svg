@@ -1,0 +1,69 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='520' height='220' viewBox='0 0 520 220' font-family='Malgun Gothic, Apple SD Gothic Neo, sans-serif'>
+<text x='260' y='22' text-anchor='middle' font-size='13' font-weight='bold' fill='#111'>3NF 위반 → 분해 과정</text>
+<text x='96' y='59' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>사원_부서 (3NF 위반)</text>
+<rect x='10' y='65' width='173' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='43' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>사원ID(PK)</text>
+<line x1='76' y1='65' x2='76' y2='185' stroke='#222' stroke-width='1'/>
+<text x='95' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID</text>
+<line x1='114' y1='65' x2='114' y2='185' stroke='#222' stroke-width='1'/>
+<text x='129' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서명</text>
+<line x1='145' y1='65' x2='145' y2='185' stroke='#222' stroke-width='1'/>
+<text x='164' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>급여</text>
+<rect x='10' y='89' width='173' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='43' y='105' text-anchor='middle' font-size='10' fill='#222'>E001</text>
+<text x='95' y='105' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='129' y='105' text-anchor='middle' font-size='10' fill='#222'>영업팀</text>
+<text x='164' y='105' text-anchor='middle' font-size='10' fill='#222'>3000</text>
+<rect x='10' y='113' width='173' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='43' y='129' text-anchor='middle' font-size='10' fill='#222'>E002</text>
+<text x='95' y='129' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='129' y='129' text-anchor='middle' font-size='10' fill='#222'>영업팀</text>
+<text x='164' y='129' text-anchor='middle' font-size='10' fill='#222'>2500</text>
+<rect x='10' y='137' width='173' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='43' y='153' text-anchor='middle' font-size='10' fill='#222'>E003</text>
+<text x='95' y='153' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='129' y='153' text-anchor='middle' font-size='10' fill='#222'>개발팀</text>
+<text x='164' y='153' text-anchor='middle' font-size='10' fill='#222'>3500</text>
+<rect x='10' y='161' width='173' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='43' y='177' text-anchor='middle' font-size='10' fill='#222'>E004</text>
+<text x='95' y='177' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='129' y='177' text-anchor='middle' font-size='10' fill='#222'>개발팀</text>
+<text x='164' y='177' text-anchor='middle' font-size='10' fill='#222'>4000</text>
+<text x='10' y='195' font-size='9' fill='#444'>사원ID → 부서ID → 부서명 (이행 함수 종속 발생)</text>
+<defs><marker id='arr' markerWidth='6' markerHeight='6' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='#333'/></marker></defs><line x1='240' y1='122' x2='270' y2='122' stroke='#333' stroke-width='1.5' marker-end='url(#arr)'/>
+<text x='341' y='59' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>사원</text>
+<rect x='270' y='65' width='142' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='303' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>사원ID(PK)</text>
+<line x1='336' y1='65' x2='336' y2='185' stroke='#222' stroke-width='1'/>
+<text x='355' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID</text>
+<line x1='374' y1='65' x2='374' y2='185' stroke='#222' stroke-width='1'/>
+<text x='393' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>급여</text>
+<rect x='270' y='89' width='142' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='303' y='105' text-anchor='middle' font-size='10' fill='#222'>E001</text>
+<text x='355' y='105' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='393' y='105' text-anchor='middle' font-size='10' fill='#222'>3000</text>
+<rect x='270' y='113' width='142' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='303' y='129' text-anchor='middle' font-size='10' fill='#222'>E002</text>
+<text x='355' y='129' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='393' y='129' text-anchor='middle' font-size='10' fill='#222'>2500</text>
+<rect x='270' y='137' width='142' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='303' y='153' text-anchor='middle' font-size='10' fill='#222'>E003</text>
+<text x='355' y='153' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='393' y='153' text-anchor='middle' font-size='10' fill='#222'>3500</text>
+<rect x='270' y='161' width='142' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='303' y='177' text-anchor='middle' font-size='10' fill='#222'>E004</text>
+<text x='355' y='177' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='393' y='177' text-anchor='middle' font-size='10' fill='#222'>4000</text>
+<text x='318' y='172' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>부서</text>
+<rect x='270' y='178' width='97' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='303' y='194' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID(PK)</text>
+<line x1='336' y1='178' x2='336' y2='250' stroke='#222' stroke-width='1'/>
+<text x='351' y='194' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서명</text>
+<rect x='270' y='202' width='97' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='303' y='218' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='351' y='218' text-anchor='middle' font-size='10' fill='#222'>영업팀</text>
+<rect x='270' y='226' width='97' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='303' y='242' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='351' y='242' text-anchor='middle' font-size='10' fill='#222'>개발팀</text>
+
+</svg>

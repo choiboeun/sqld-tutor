@@ -1,0 +1,48 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='520' height='245' viewBox='0 0 520 245' font-family='Malgun Gothic, Apple SD Gothic Neo, sans-serif'>
+<text x='260' y='22' text-anchor='middle' font-size='13' font-weight='bold' fill='#111'>뷰 정의와 조회 결과</text>
+<text x='94' y='69' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>사원</text>
+<rect x='10' y='75' width='169' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='29' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>사원ID</text>
+<line x1='48' y1='75' x2='48' y2='219' stroke='#222' stroke-width='1'/>
+<text x='63' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>이름</text>
+<line x1='79' y1='75' x2='79' y2='219' stroke='#222' stroke-width='1'/>
+<text x='91' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서</text>
+<line x1='103' y1='75' x2='103' y2='219' stroke='#222' stroke-width='1'/>
+<text x='122' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>급여</text>
+<line x1='141' y1='75' x2='141' y2='219' stroke='#222' stroke-width='1'/>
+<text x='160' y='91' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>입사년도</text>
+<rect x='10' y='99' width='169' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='115' text-anchor='middle' font-size='10' fill='#222'>E001</text>
+<text x='63' y='115' text-anchor='middle' font-size='10' fill='#222'>김철수</text>
+<text x='91' y='115' text-anchor='middle' font-size='10' fill='#222'>영업</text>
+<text x='122' y='115' text-anchor='middle' font-size='10' fill='#222'>3000</text>
+<text x='160' y='115' text-anchor='middle' font-size='10' fill='#222'>2020</text>
+<rect x='10' y='123' width='169' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='139' text-anchor='middle' font-size='10' fill='#222'>E002</text>
+<text x='63' y='139' text-anchor='middle' font-size='10' fill='#222'>이서연</text>
+<text x='91' y='139' text-anchor='middle' font-size='10' fill='#222'>개발</text>
+<text x='122' y='139' text-anchor='middle' font-size='10' fill='#222'>4500</text>
+<text x='160' y='139' text-anchor='middle' font-size='10' fill='#222'>2019</text>
+<rect x='10' y='147' width='169' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='163' text-anchor='middle' font-size='10' fill='#222'>E003</text>
+<text x='63' y='163' text-anchor='middle' font-size='10' fill='#222'>박민수</text>
+<text x='91' y='163' text-anchor='middle' font-size='10' fill='#222'>영업</text>
+<text x='122' y='163' text-anchor='middle' font-size='10' fill='#222'>2800</text>
+<text x='160' y='163' text-anchor='middle' font-size='10' fill='#222'>2022</text>
+<rect x='10' y='171' width='169' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='187' text-anchor='middle' font-size='10' fill='#222'>E004</text>
+<text x='63' y='187' text-anchor='middle' font-size='10' fill='#222'>최지우</text>
+<text x='91' y='187' text-anchor='middle' font-size='10' fill='#222'>개발</text>
+<text x='122' y='187' text-anchor='middle' font-size='10' fill='#222'>5000</text>
+<text x='160' y='187' text-anchor='middle' font-size='10' fill='#222'>2018</text>
+<rect x='10' y='195' width='169' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='211' text-anchor='middle' font-size='10' fill='#222'>E005</text>
+<text x='63' y='211' text-anchor='middle' font-size='10' fill='#222'>한지민</text>
+<text x='91' y='211' text-anchor='middle' font-size='10' fill='#222'>인사</text>
+<text x='122' y='211' text-anchor='middle' font-size='10' fill='#222'>3200</text>
+<text x='160' y='211' text-anchor='middle' font-size='10' fill='#222'>2021</text>
+<text x='10' y='195' font-size='10' fill='#333' font-weight='bold'>CREATE VIEW 개발팀_고급 AS</text>
+<text x='10' y='212' font-size='10' fill='#333'>  SELECT 사원ID, 이름, 급여 FROM 사원 WHERE 부서 = '개발' AND 급여 >= 4000;</text>
+<text x='10' y='229' font-size='10' fill='#555'>SELECT COUNT(*) FROM 개발팀_고급;</text>
+
+</svg>

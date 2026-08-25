@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="260" viewBox="0 0 520 260" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif">
+
+  <!-- 병원 -->
+  <rect x="20" y="90" width="110" height="75" fill="white" stroke="#222" stroke-width="1.5"/>
+  <rect x="20" y="90" width="110" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <text x="75" y="108" text-anchor="middle" font-size="13" font-weight="bold" fill="#111">병원</text>
+  <text x="75" y="133" text-anchor="middle" font-size="11" fill="#222">병원ID (PK)</text>
+  <text x="75" y="150" text-anchor="middle" font-size="11" fill="#222">병원명</text>
+
+  <!-- 의사 -->
+  <rect x="200" y="30" width="120" height="90" fill="white" stroke="#222" stroke-width="1.5"/>
+  <rect x="200" y="30" width="120" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <text x="260" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#111">의사</text>
+  <text x="260" y="73" text-anchor="middle" font-size="11" fill="#222">의사ID (PK)</text>
+  <text x="260" y="90" text-anchor="middle" font-size="11" fill="#222">병원ID (FK)</text>
+  <text x="260" y="107" text-anchor="middle" font-size="11" fill="#222">의사명</text>
+
+  <!-- 환자 -->
+  <rect x="200" y="165" width="120" height="75" fill="white" stroke="#222" stroke-width="1.5"/>
+  <rect x="200" y="165" width="120" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <text x="260" y="183" text-anchor="middle" font-size="13" font-weight="bold" fill="#111">환자</text>
+  <text x="260" y="208" text-anchor="middle" font-size="11" fill="#222">환자ID (PK)</text>
+  <text x="260" y="225" text-anchor="middle" font-size="11" fill="#222">환자명</text>
+
+  <!-- 진료 -->
+  <rect x="390" y="95" width="110" height="90" fill="white" stroke="#222" stroke-width="1.5"/>
+  <rect x="390" y="95" width="110" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <text x="445" y="113" text-anchor="middle" font-size="13" font-weight="bold" fill="#111">진료</text>
+  <text x="445" y="138" text-anchor="middle" font-size="11" fill="#222">진료ID (PK)</text>
+  <text x="445" y="155" text-anchor="middle" font-size="11" fill="#222">의사ID (FK)</text>
+  <text x="445" y="172" text-anchor="middle" font-size="11" fill="#222">환자ID (FK)</text>
+
+  <!-- 병원 - 의사 -->
+  <line x1="130" y1="118" x2="200" y2="80" stroke="#333" stroke-width="1.5"/>
+  <text x="143" y="112" font-size="11" fill="#333" font-weight="bold">1</text>
+  <text x="187" y="78" font-size="11" fill="#333" font-weight="bold">N</text>
+
+  <!-- 병원 - 환자 -->
+  <line x1="130" y1="148" x2="200" y2="200" stroke="#333" stroke-width="1.5"/>
+  <text x="143" y="168" font-size="11" fill="#333" font-weight="bold">1</text>
+  <text x="185" y="200" font-size="11" fill="#333" font-weight="bold">N</text>
+
+  <!-- 의사 - 진료 -->
+  <line x1="320" y1="80" x2="390" y2="130" stroke="#333" stroke-width="1.5"/>
+  <text x="330" y="96" font-size="11" fill="#333" font-weight="bold">1</text>
+  <text x="376" y="130" font-size="11" fill="#333" font-weight="bold">N</text>
+
+  <!-- 환자 - 진료 -->
+  <line x1="320" y1="200" x2="390" y2="170" stroke="#333" stroke-width="1.5"/>
+  <text x="330" y="198" font-size="11" fill="#333" font-weight="bold">1</text>
+  <text x="375" y="173" font-size="11" fill="#333" font-weight="bold">N</text>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='520' height='200' viewBox='0 0 520 200' font-family='Malgun Gothic, Apple SD Gothic Neo, sans-serif'>
+<text x='260' y='22' text-anchor='middle' font-size='13' font-weight='bold' fill='#111'>실행계획 (EXPLAIN PLAN) 출력</text>
+
+<rect x='10' y='38' width='500' height='145' fill='white' stroke='#222' stroke-width='1.5' rx='4'/>
+<rect x='10' y='38' width='500' height='26' fill='#e8e8e8' stroke='#222' stroke-width='1.5' rx='4'/>
+<text x='20' y='56' font-size='10' font-weight='bold' fill='#111'>OPERATION</text>
+<text x='220' y='56' font-size='10' font-weight='bold' fill='#111'>OBJECT</text>
+<text x='360' y='56' font-size='10' font-weight='bold' fill='#111'>ROWS</text>
+<text x='420' y='56' font-size='10' font-weight='bold' fill='#111'>COST</text>
+
+<line x1='10' y1='64' x2='510' y2='64' stroke='#ccc' stroke-width='1'/>
+<text x='20' y='80' font-size='10' fill='#222'>SELECT STATEMENT</text>
+<text x='360' y='80' font-size='10' fill='#222'>1</text><text x='420' y='80' font-size='10' fill='#222'>85</text>
+<text x='20' y='97' font-size='10' fill='#222'>  SORT (ORDER BY)</text>
+<text x='360' y='97' font-size='10' fill='#222'>1</text><text x='420' y='97' font-size='10' fill='#222'>84</text>
+<text x='20' y='114' font-size='10' fill='#dc2626' font-weight='bold'>    TABLE ACCESS FULL</text>
+<text x='220' y='114' font-size='10' fill='#dc2626' font-weight='bold'>EMP</text>
+<text x='360' y='114' font-size='10' fill='#dc2626'>14</text><text x='420' y='114' font-size='10' fill='#dc2626' font-weight='bold'>83</text>
+<text x='20' y='131' font-size='10' fill='#222'>  NESTED LOOPS</text>
+<text x='360' y='131' font-size='10' fill='#222'>1</text><text x='420' y='131' font-size='10' fill='#222'>2</text>
+<text x='20' y='148' font-size='10' fill='#222'>    INDEX RANGE SCAN</text>
+<text x='220' y='148' font-size='10' fill='#222'>PK_DEPT</text>
+<text x='360' y='148' font-size='10' fill='#222'>1</text><text x='420' y='148' font-size='10' fill='#222'>1</text>
+<text x='20' y='165' font-size='10' fill='#222'>    INDEX UNIQUE SCAN</text>
+<text x='220' y='165' font-size='10' fill='#222'>IDX_SAL</text>
+<text x='360' y='165' font-size='10' fill='#222'>1</text><text x='420' y='165' font-size='10' fill='#222'>1</text>
+</svg>

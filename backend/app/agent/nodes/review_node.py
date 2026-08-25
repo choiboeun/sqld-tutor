@@ -88,6 +88,8 @@ def _format_question(q: dict) -> str:
     sections.append("> 오답 복습 중인 문제입니다.")
     if context:
         sections.append(_normalize_context(_format_sql_labels(context)))
+    if q.get("image"):
+        sections.append(f"![다이어그램](/diagrams/{q['image']})")
     sections.append(q['question'])
     sections.append(opts_block)
     sections.append("번호로 답하세요.")

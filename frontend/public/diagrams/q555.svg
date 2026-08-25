@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="260" viewBox="0 0 520 260" font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif">
+
+  <text x="260" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#111">2NF 위반 → 분해 과정</text>
+
+  <!-- 왼쪽: 2NF 위반 테이블 -->
+  <text x="125" y="42" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">배정 (2NF 위반)</text>
+  <rect x="10" y="50" width="255" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <line x1="75" y1="50" x2="75" y2="178" stroke="#222" stroke-width="1"/>
+  <line x1="145" y1="50" x2="145" y2="178" stroke="#222" stroke-width="1"/>
+  <line x1="200" y1="50" x2="200" y2="178" stroke="#222" stroke-width="1"/>
+  <text x="42" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">사원ID (PK)</text>
+  <text x="110" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">프로젝트ID (PK)</text>
+  <text x="172" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">사원명</text>
+  <text x="232" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">직급</text>
+
+  <rect x="10" y="76" width="255" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="42" y="93" text-anchor="middle" font-size="10" fill="#222">E001</text>
+  <text x="110" y="93" text-anchor="middle" font-size="10" fill="#222">P001</text>
+  <text x="172" y="93" text-anchor="middle" font-size="10" fill="#222">김민준</text>
+  <text x="232" y="93" text-anchor="middle" font-size="10" fill="#222">과장</text>
+
+  <rect x="10" y="102" width="255" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="42" y="119" text-anchor="middle" font-size="10" fill="#222">E001</text>
+  <text x="110" y="119" text-anchor="middle" font-size="10" fill="#222">P002</text>
+  <text x="172" y="119" text-anchor="middle" font-size="10" fill="#222">김민준</text>
+  <text x="232" y="119" text-anchor="middle" font-size="10" fill="#222">과장</text>
+
+  <rect x="10" y="128" width="255" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="42" y="145" text-anchor="middle" font-size="10" fill="#222">E002</text>
+  <text x="110" y="145" text-anchor="middle" font-size="10" fill="#222">P001</text>
+  <text x="172" y="145" text-anchor="middle" font-size="10" fill="#222">이서연</text>
+  <text x="232" y="145" text-anchor="middle" font-size="10" fill="#222">대리</text>
+
+  <rect x="10" y="154" width="255" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="42" y="171" text-anchor="middle" font-size="10" fill="#222">E002</text>
+  <text x="110" y="171" text-anchor="middle" font-size="10" fill="#222">P003</text>
+  <text x="172" y="171" text-anchor="middle" font-size="10" fill="#222">이서연</text>
+  <text x="232" y="171" text-anchor="middle" font-size="10" fill="#222">대리</text>
+
+  <!-- 부분 함수 종속 표시 -->
+  <defs>
+    <marker id="arrg" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto">
+      <path d="M0,0 L5,2.5 L0,5 Z" fill="#555"/>
+    </marker>
+    <marker id="arrb" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+  <text x="10" y="200" font-size="9" fill="#444">⚠ 사원명·직급 → 사원ID에만 종속 (부분 함수 종속)</text>
+
+  <!-- 화살표 -->
+  <line x1="272" y1="120" x2="290" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrb)"/>
+
+  <!-- 오른쪽: 분해 결과 -->
+  <text x="410" y="42" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">분해 후 (2NF 만족)</text>
+
+  <!-- 사원 테이블 -->
+  <rect x="295" y="50" width="215" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <line x1="365" y1="50" x2="365" y2="128" stroke="#222" stroke-width="1"/>
+  <line x1="430" y1="50" x2="430" y2="128" stroke="#222" stroke-width="1"/>
+  <text x="330" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">사원ID (PK)</text>
+  <text x="397" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">사원명</text>
+  <text x="462" y="68" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">직급</text>
+
+  <rect x="295" y="76" width="215" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="330" y="93" text-anchor="middle" font-size="10" fill="#222">E001</text>
+  <text x="397" y="93" text-anchor="middle" font-size="10" fill="#222">김민준</text>
+  <text x="462" y="93" text-anchor="middle" font-size="10" fill="#222">과장</text>
+
+  <rect x="295" y="102" width="215" height="26" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="330" y="119" text-anchor="middle" font-size="10" fill="#222">E002</text>
+  <text x="397" y="119" text-anchor="middle" font-size="10" fill="#222">이서연</text>
+  <text x="462" y="119" text-anchor="middle" font-size="10" fill="#222">대리</text>
+
+  <!-- 배정 테이블 -->
+  <rect x="295" y="148" width="215" height="26" fill="#e8e8e8" stroke="#222" stroke-width="1.5"/>
+  <line x1="365" y1="148" x2="365" y2="226" stroke="#222" stroke-width="1"/>
+  <text x="330" y="166" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">사원ID (PK,FK)</text>
+  <text x="430" y="166" text-anchor="middle" font-size="9" font-weight="bold" fill="#111">프로젝트ID (PK)</text>
+
+  <rect x="295" y="174" width="215" height="22" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="330" y="189" text-anchor="middle" font-size="10" fill="#222">E001</text>
+  <text x="430" y="189" text-anchor="middle" font-size="10" fill="#222">P001</text>
+
+  <rect x="295" y="196" width="215" height="22" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="330" y="211" text-anchor="middle" font-size="10" fill="#222">E001</text>
+  <text x="430" y="211" text-anchor="middle" font-size="10" fill="#222">P002</text>
+
+  <rect x="295" y="218" width="215" height="22" fill="white" stroke="#222" stroke-width="1"/>
+  <text x="330" y="233" text-anchor="middle" font-size="10" fill="#222">E002</text>
+  <text x="430" y="233" text-anchor="middle" font-size="10" fill="#222">P001</text>
+
+  <text x="135" y="245" text-anchor="middle" font-size="9" fill="#555">사원명·직급을 사원 테이블로 분리하여 부분 종속 제거</text>
+</svg>

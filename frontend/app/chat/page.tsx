@@ -266,6 +266,14 @@ const mdComponents = {
   em: ({ children }: { children?: React.ReactNode }) => (
     <span>{children}</span>
   ),
+  img: ({ src, alt }: { src?: string; alt?: string }) => (
+    <img
+      src={src}
+      alt={alt ?? "다이어그램"}
+      className="my-3 max-w-full rounded-lg border border-stone-200"
+      style={{ maxHeight: 360 }}
+    />
+  ),
 };
 
 function ChatContent() {

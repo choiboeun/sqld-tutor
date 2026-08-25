@@ -1,0 +1,46 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='520' height='215' viewBox='0 0 520 215' font-family='Malgun Gothic, Apple SD Gothic Neo, sans-serif'>
+<text x='260' y='22' text-anchor='middle' font-size='13' font-weight='bold' fill='#111'>서브쿼리 IN 조건</text>
+<text x='82' y='59' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>사원</text>
+<rect x='10' y='65' width='145' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='29' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>사원ID</text>
+<line x1='48' y1='65' x2='48' y2='209' stroke='#222' stroke-width='1'/>
+<text x='63' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>이름</text>
+<line x1='79' y1='65' x2='79' y2='209' stroke='#222' stroke-width='1'/>
+<text x='98' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID</text>
+<line x1='117' y1='65' x2='117' y2='209' stroke='#222' stroke-width='1'/>
+<text x='136' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>급여</text>
+<rect x='10' y='89' width='145' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='105' text-anchor='middle' font-size='10' fill='#222'>E001</text>
+<text x='63' y='105' text-anchor='middle' font-size='10' fill='#222'>김철수</text>
+<text x='98' y='105' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='136' y='105' text-anchor='middle' font-size='10' fill='#222'>3000</text>
+<rect x='10' y='113' width='145' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='129' text-anchor='middle' font-size='10' fill='#222'>E002</text>
+<text x='63' y='129' text-anchor='middle' font-size='10' fill='#222'>이서연</text>
+<text x='98' y='129' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='136' y='129' text-anchor='middle' font-size='10' fill='#222'>3500</text>
+<rect x='10' y='137' width='145' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='153' text-anchor='middle' font-size='10' fill='#222'>E003</text>
+<text x='63' y='153' text-anchor='middle' font-size='10' fill='#222'>박민수</text>
+<text x='98' y='153' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<text x='136' y='153' text-anchor='middle' font-size='10' fill='#222'>2800</text>
+<rect x='10' y='161' width='145' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='177' text-anchor='middle' font-size='10' fill='#222'>E004</text>
+<text x='63' y='177' text-anchor='middle' font-size='10' fill='#222'>최지우</text>
+<text x='98' y='177' text-anchor='middle' font-size='10' fill='#222'>D03</text>
+<text x='136' y='177' text-anchor='middle' font-size='10' fill='#222'>4000</text>
+<rect x='10' y='185' width='145' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='29' y='201' text-anchor='middle' font-size='10' fill='#222'>E005</text>
+<text x='63' y='201' text-anchor='middle' font-size='10' fill='#222'>한지민</text>
+<text x='98' y='201' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='136' y='201' text-anchor='middle' font-size='10' fill='#222'>2500</text>
+<text x='349' y='59' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>VIP_부서</text>
+<rect x='330' y='65' width='38' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='349' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서ID</text>
+<rect x='330' y='89' width='38' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='349' y='105' text-anchor='middle' font-size='10' fill='#222'>D01</text>
+<rect x='330' y='113' width='38' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='349' y='129' text-anchor='middle' font-size='10' fill='#222'>D02</text>
+<text x='260' y='200' text-anchor='middle' font-size='10' fill='#555'>SELECT * FROM 사원 WHERE 부서ID IN (SELECT 부서ID FROM VIP_부서)</text>
+
+</svg>

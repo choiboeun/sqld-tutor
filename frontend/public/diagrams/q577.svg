@@ -1,0 +1,39 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='520' height='218' viewBox='0 0 520 218' font-family='Malgun Gothic, Apple SD Gothic Neo, sans-serif'>
+<text x='260' y='22' text-anchor='middle' font-size='13' font-weight='bold' fill='#111'>윈도우 함수 결과 예측</text>
+<text x='125' y='59' text-anchor='middle' font-size='11' font-weight='bold' fill='#333'>사원</text>
+<rect x='60' y='65' width='131' height='24' fill='#e8e8e8' stroke='#222' stroke-width='1.5'/>
+<text x='79' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>사원ID</text>
+<line x1='98' y1='65' x2='98' y2='209' stroke='#222' stroke-width='1'/>
+<text x='113' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>이름</text>
+<line x1='129' y1='65' x2='129' y2='209' stroke='#222' stroke-width='1'/>
+<text x='141' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>부서</text>
+<line x1='153' y1='65' x2='153' y2='209' stroke='#222' stroke-width='1'/>
+<text x='172' y='81' text-anchor='middle' font-size='10' font-weight='bold' fill='#111'>급여</text>
+<rect x='60' y='89' width='131' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='79' y='105' text-anchor='middle' font-size='10' fill='#222'>E001</text>
+<text x='113' y='105' text-anchor='middle' font-size='10' fill='#222'>김철수</text>
+<text x='141' y='105' text-anchor='middle' font-size='10' fill='#222'>영업</text>
+<text x='172' y='105' text-anchor='middle' font-size='10' fill='#222'>3000</text>
+<rect x='60' y='113' width='131' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='79' y='129' text-anchor='middle' font-size='10' fill='#222'>E002</text>
+<text x='113' y='129' text-anchor='middle' font-size='10' fill='#222'>이서연</text>
+<text x='141' y='129' text-anchor='middle' font-size='10' fill='#222'>개발</text>
+<text x='172' y='129' text-anchor='middle' font-size='10' fill='#222'>4000</text>
+<rect x='60' y='137' width='131' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='79' y='153' text-anchor='middle' font-size='10' fill='#222'>E003</text>
+<text x='113' y='153' text-anchor='middle' font-size='10' fill='#222'>박민수</text>
+<text x='141' y='153' text-anchor='middle' font-size='10' fill='#222'>영업</text>
+<text x='172' y='153' text-anchor='middle' font-size='10' fill='#222'>2500</text>
+<rect x='60' y='161' width='131' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='79' y='177' text-anchor='middle' font-size='10' fill='#222'>E004</text>
+<text x='113' y='177' text-anchor='middle' font-size='10' fill='#222'>최지우</text>
+<text x='141' y='177' text-anchor='middle' font-size='10' fill='#222'>개발</text>
+<text x='172' y='177' text-anchor='middle' font-size='10' fill='#222'>3500</text>
+<rect x='60' y='185' width='131' height='24' fill='white' stroke='#222' stroke-width='1'/>
+<text x='79' y='201' text-anchor='middle' font-size='10' fill='#222'>E005</text>
+<text x='113' y='201' text-anchor='middle' font-size='10' fill='#222'>한지민</text>
+<text x='141' y='201' text-anchor='middle' font-size='10' fill='#222'>영업</text>
+<text x='172' y='201' text-anchor='middle' font-size='10' fill='#222'>3200</text>
+<text x='260' y='200' text-anchor='middle' font-size='10' fill='#555'>SELECT 이름, 부서, 급여, RANK() OVER (PARTITION BY 부서 ORDER BY 급여 DESC) AS rnk FROM 사원</text>
+
+</svg>
