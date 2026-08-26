@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -297,6 +297,7 @@ function ChatContent() {
   const lastUserMessageRef = useRef("");
   const [threadId, setThreadId] = useState<string | null>(null);
   const [targetScore, setTargetScore] = useState(70);
+  const router = useRouter();
   const [sessionReady, setSessionReady] = useState(false);
   const [sqlPanelOpen, setSqlPanelOpen] = useState(false);
   const [sqlQuery, setSqlQuery] = useState("SELECT * FROM EMP;");
