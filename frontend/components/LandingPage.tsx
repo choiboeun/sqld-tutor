@@ -193,6 +193,38 @@ const CSS = `
   .cm-ai,.rpl,.cm-tbl-wrap,.pg-results{transition:none}
   .cm-cur{animation:none;opacity:1}.cm-dots span{animation:none;opacity:.5}
 }
+.pain-line{display:inline-block;font-size:13px;font-weight:600;background:rgba(249,115,22,.1);color:#c2410c;padding:4px 10px;margin-bottom:20px;border-left:3px solid #f97316}
+.hl{display:inline;background:rgba(99,102,241,.18);color:#3730a3;padding:0 4px;font-style:normal}
+.scenario-grid-3{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--bd)}
+.scenario-card{padding:40px 40px 40px 0;border-right:1px solid var(--bd)}
+.scenario-card:last-child{border-right:none}
+.scenario-card+.scenario-card{padding-left:40px}
+.sc-situation{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--fg-3);padding-bottom:12px;border-bottom:1px solid var(--bd);margin-bottom:16px}
+.sc-title{font-size:18px;font-weight:700;color:var(--fg);line-height:1.4;margin-bottom:16px}
+.sc-mini-chat{display:flex;flex-direction:column;gap:6px}
+.sc-user{align-self:flex-end;background:var(--accent);color:#3730a3;font-size:12px;padding:7px 11px;max-width:85%;line-height:1.5}
+.sc-ai{align-self:flex-start;background:var(--bg-2);border:1px solid var(--bd);font-size:12px;padding:8px 11px;max-width:90%;line-height:1.65;color:var(--fg-2)}
+.trust-num-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd)}
+.trust-num-card{background:var(--bg);padding:36px 32px;display:flex;flex-direction:column;gap:8px}
+.trust-big{font-size:48px;font-weight:900;letter-spacing:-.04em;color:#6366f1;line-height:1;font-variant-numeric:tabular-nums}
+.trust-big span{font-size:20px;color:var(--fg-3);font-weight:700}
+.trust-card-label{font-size:15px;font-weight:700;color:var(--fg)}
+.trust-card-sub{font-size:14px;color:var(--fg-2);line-height:1.55}
+.dev-quote-card{background:var(--accent);padding:36px 40px;display:flex;align-items:flex-start;gap:28px;border:1px solid rgba(99,102,241,.2);margin-top:1px}
+.dev-avatar-icon{width:52px;height:52px;background:#6366f1;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dev-text-group{display:flex;flex-direction:column;gap:8px}
+.dev-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(22,163,74,.15);color:#15803d;border:1px solid rgba(22,163,74,.3);font-size:11px;font-weight:700;padding:3px 10px;letter-spacing:.04em;align-self:flex-start}
+.dev-quote-text{font-size:17px;font-weight:700;line-height:1.55;color:#1c1917;text-wrap:balance}
+.dev-role{font-size:13px;color:rgba(55,48,163,.55)}
+@media(max-width:820px){
+  .scenario-grid-3{grid-template-columns:1fr}
+  .scenario-card{padding:20px 0;border-right:none;border-bottom:1px solid var(--bd)}.scenario-card:last-child{border-bottom:none}.scenario-card+.scenario-card{padding-left:0}
+  .sc-title{font-size:15px}
+  .trust-num-grid{grid-template-columns:1fr}
+  .trust-big{font-size:36px}.trust-card-label{font-size:14px}
+  .dev-quote-card{flex-direction:column;gap:16px;padding:28px 20px}
+  .dev-quote-text{font-size:15px}
+}
 `;
 
 export default function LandingPage() {
@@ -519,12 +551,12 @@ export default function LandingPage() {
       <section className="hero">
         <div className="hero-l">
           <p className="eyebrow">SQLD AI 튜터</p>
-          <h1 className="hero-h1">약점만 찾아서<br />집중 공략해드려요</h1>
+          <p className="pain-line">해설 읽어도 왜 틀렸는지 모르겠다면</p>
+          <h1 className="hero-h1">틀린 이유를 AI가<br /><em className="hl">바로 설명</em>해드려요</h1>
           <p className="hero-sub">
-            &ldquo;GROUP BY 설명해줘&rdquo;, &ldquo;조인 문제 내줘&rdquo;<br />
-            <strong>그냥 말하면 AI가 바로 응답해요.</strong><br /><br />
-            <strong>8문제 진단</strong>으로 약점을 파악하고,
-            맞춤 문제를 출제하고, 틀리면 개념까지 설명해드려요.
+            &ldquo;이 보기는 왜 틀려?&rdquo; 채팅창에 물어보면 AI가 즉시 답해요.<br />
+            <strong>8문제 진단</strong>으로 약점을 파악하고, 틀릴 때마다 자동으로 개념을 짚어줘요.<br />
+            문어CBT에는 없는, <strong>대화형 AI 튜터</strong>가 곁에 있어요.
           </p>
           <div className="btn-glow-wrap">
             <div className="btn-glow" />
@@ -634,6 +666,38 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* SCENARIO CARDS */}
+      <div className="wrap" style={{ paddingTop: '96px', paddingBottom: '96px' }}>
+        <p className="sec-label">이런 순간, AI가 다릅니다</p>
+        <h2 className="sec-title">문제집으로는 해결 안 되던 순간들</h2>
+        <div className="scenario-grid-3" style={{ marginTop: '48px' }}>
+          <div className="scenario-card">
+            <p className="sc-situation">해설 읽어도 이해가 안 될 때</p>
+            <p className="sc-title">왜 3번이 아니라 2번이야?</p>
+            <div className="sc-mini-chat">
+              <div className="sc-user">GROUP BY에서 SELECT 컬럼 제한 이유가 뭐야?</div>
+              <div className="sc-ai">GROUP BY는 집계 기준 컬럼 외에 개별 값이 여러 개라 특정할 수 없어서요. 예를 들어 dept_id로 묶으면 name은 여러 개라 어떤 걸 보여줄지 모르거든요.</div>
+            </div>
+          </div>
+          <div className="scenario-card">
+            <p className="sc-situation">어떤 문제를 풀어야 할지 모를 때</p>
+            <p className="sc-title">오늘 뭐 공부해야 해?</p>
+            <div className="sc-mini-chat">
+              <div className="sc-user">서브쿼리 문제 내줘</div>
+              <div className="sc-ai">[서브쿼리 & Top N / 난이도: 중] 아래 SQL에서 각 부서의 평균 급여보다 많이 받는 사원을 조회하는 올바른 쿼리는?</div>
+            </div>
+          </div>
+          <div className="scenario-card">
+            <p className="sc-situation">같은 유형을 계속 틀릴 때</p>
+            <p className="sc-title">NULL 관련 문제는 왜 맨날 틀리지?</p>
+            <div className="sc-mini-chat">
+              <div className="sc-user">NULL 비교할 때 왜 = 못 쓰는 거야?</div>
+              <div className="sc-ai">NULL은 "값 없음"이라 비교 자체가 불가능해요. NULL = NULL은 unknown을 반환해서 WHERE에서 걸러져요. IS NULL / IS NOT NULL만 동작해요.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* FEATURES */}
       <div className="wrap">
         <p className="sec-label">핵심 기능</p>
@@ -679,6 +743,40 @@ export default function LandingPage() {
             </div>
             <p className="xfeat-t">자유로운 AI 대화</p>
             <p className="xfeat-d">&ldquo;GROUP BY 설명해줘&rdquo;, &ldquo;윈도우 함수 어려운 문제 내줘&rdquo;처럼 자연어로 요청하면 AI가 바로 응답해요.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* TRUST NUMBERS */}
+      <div className="wrap" style={{ paddingBottom: '80px' }}>
+        <p className="sec-label">숫자로 보는 SQLD 튜터</p>
+        <div className="trust-num-grid" style={{ marginTop: '40px' }}>
+          <div className="trust-num-card">
+            <div className="trust-big">680<span>문제</span></div>
+            <p className="trust-card-label">SQLD 합격자 직접 제작</p>
+            <p className="trust-card-sub">기출 경향 분석 후 11개 카테고리를 고르게 커버한 680문제. 하/중/상 난이도별로 구분돼요.</p>
+          </div>
+          <div className="trust-num-card">
+            <div className="trust-big">11<span>개</span></div>
+            <p className="trust-card-label">카테고리 정답률 추적</p>
+            <p className="trust-card-sub">2024년 개정 출제기준 기반 11개 카테고리. 풀수록 어디가 약한지 한눈에 보여요.</p>
+          </div>
+          <div className="trust-num-card">
+            <div className="trust-big">8.5<span>/10</span></div>
+            <p className="trust-card-label">베타 테스터 NPS</p>
+            <p className="trust-card-sub">비공개 베타 3명 평균 추천 점수. "이해가 안 될 때 계속 질문할 수 있어서 좋았다"는 공통 피드백이에요.</p>
+          </div>
+        </div>
+        <div className="dev-quote-card">
+          <div className="dev-avatar-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+          <div className="dev-text-group">
+            <span className="dev-badge">✓ SQLD 합격자 제작</span>
+            <p className="dev-quote-text">&ldquo;저도 SQLD 준비하면서 해설만으로는 이해가 안 됐어요. 그래서 틀리면 바로 물어볼 수 있는 AI 튜터를 직접 만들었습니다.&rdquo;</p>
+            <p className="dev-role">SQLD 튜터 개발자 · 최 (SQLD 합격, 2026년 3월)</p>
           </div>
         </div>
       </div>
