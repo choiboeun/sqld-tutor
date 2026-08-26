@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const TOUR_KEY = "sqld_tour_done";
 const PAD = 6;
@@ -195,10 +196,24 @@ export default function OnboardingTour() {
   });
 
   useEffect(() => {
-    try { if (localStorage.getItem(TOUR_KEY)) return; } catch { return; }
-    setIsMobile(window.innerWidth < 768);
-    const t = setTimeout(() => setVisible(true), 800);
-    return () => clearTimeout(t);
+    let cancelled = false;
+    async function check() {
+      try { if (localStorage.getItem(TOUR_KEY)) return; } catch {}
+
+      // 기존 회원(onboarding_completed: true)은 투어 스킵 + localStorage 채움
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data.user?.user_metadata?.onboarding_completed === true) {
+        try { localStorage.setItem(TOUR_KEY, "1"); } catch {}
+        return;
+      }
+
+      if (cancelled) return;
+      setIsMobile(window.innerWidth < 768);
+      setTimeout(() => { if (!cancelled) setVisible(true); }, 800);
+    }
+    check();
+    return () => { cancelled = true; };
   }, []);
 
   // Lock body scroll while tour is active
