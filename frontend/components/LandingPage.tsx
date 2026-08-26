@@ -622,25 +622,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PAIN */}
-      <div className="wrap">
-        <p className="sec-label">이런 경험 있으신가요?</p>
-        <div className="pain-grid">
-          <div className="pain-item">
-            <p className="pain-q">&ldquo;어디서부터 공부해야<br />할지 모르겠다&rdquo;</p>
-            <p className="pain-desc">출제 범위가 넓어서 무엇을 우선 공부해야 할지 방향을 잡기 어렵다</p>
-          </div>
-          <div className="pain-item">
-            <p className="pain-q">&ldquo;문제 풀어도 왜 틀렸는지<br />이해가 안 된다&rdquo;</p>
-            <p className="pain-desc">정답을 봐도 개념이 없으면 다음에 같은 문제를 또 틀릴 수밖에 없다</p>
-          </div>
-          <div className="pain-item">
-            <p className="pain-q">&ldquo;같은 유형을<br />계속 틀린다&rdquo;</p>
-            <p className="pain-desc">틀린 문제를 체계적으로 복습할 방법이 없어서 같은 실수가 반복된다</p>
-          </div>
-        </div>
-      </div>
-
       {/* HOW IT WORKS */}
       <div className="wrap-alt">
         <div className="wrap" style={{ paddingTop: '96px', paddingBottom: '96px' }}>
@@ -749,25 +730,7 @@ export default function LandingPage() {
 
       {/* TRUST NUMBERS */}
       <div className="wrap" style={{ paddingBottom: '80px' }}>
-        <p className="sec-label">숫자로 보는 SQLD 튜터</p>
-        <div className="trust-num-grid" style={{ marginTop: '40px' }}>
-          <div className="trust-num-card">
-            <div className="trust-big">680<span>문제</span></div>
-            <p className="trust-card-label">SQLD 합격자 직접 제작</p>
-            <p className="trust-card-sub">기출 경향 분석 후 11개 카테고리를 고르게 커버한 680문제. 하/중/상 난이도별로 구분돼요.</p>
-          </div>
-          <div className="trust-num-card">
-            <div className="trust-big">11<span>개</span></div>
-            <p className="trust-card-label">카테고리 정답률 추적</p>
-            <p className="trust-card-sub">2024년 개정 출제기준 기반 11개 카테고리. 풀수록 어디가 약한지 한눈에 보여요.</p>
-          </div>
-          <div className="trust-num-card">
-            <div className="trust-big">8.5<span>/10</span></div>
-            <p className="trust-card-label">베타 테스터 NPS</p>
-            <p className="trust-card-sub">비공개 베타 3명 평균 추천 점수. "이해가 안 될 때 계속 질문할 수 있어서 좋았다"는 공통 피드백이에요.</p>
-          </div>
-        </div>
-        <div className="dev-quote-card">
+        <div className="dev-quote-card" style={{ marginTop: '0' }}>
           <div className="dev-avatar-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
