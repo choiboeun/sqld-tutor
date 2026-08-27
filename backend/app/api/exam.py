@@ -35,15 +35,19 @@ SUBJECT1_CATS = {"데이터 모델링 기초", "데이터 모델과 SQL"}
 
 _QUESTIONS: list[dict] | None = None
 _QUESTIONS_INDEX: dict[str, dict] | None = None
+_QUESTIONS_MTIME: float = 0.0
+
+_QUESTIONS_PATH = Path(__file__).parent.parent / "data" / "questions" / "questions_v0.1.jsonl"
 
 
 def _load_questions() -> list[dict]:
-    global _QUESTIONS, _QUESTIONS_INDEX
-    if _QUESTIONS is None:
-        path = Path(__file__).parent.parent / "data" / "questions" / "questions_v0.1.jsonl"
-        with open(path) as f:
+    global _QUESTIONS, _QUESTIONS_INDEX, _QUESTIONS_MTIME
+    mtime = _QUESTIONS_PATH.stat().st_mtime
+    if _QUESTIONS is None or mtime != _QUESTIONS_MTIME:
+        with open(_QUESTIONS_PATH) as f:
             _QUESTIONS = [json.loads(line) for line in f if line.strip()]
         _QUESTIONS_INDEX = {q["id"]: q for q in _QUESTIONS}
+        _QUESTIONS_MTIME = mtime
     return _QUESTIONS
 
 
