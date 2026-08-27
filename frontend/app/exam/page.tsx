@@ -43,7 +43,13 @@ function preprocessContext(ctx: string): string {
 
 // ── 배경 정보 전용 마크다운 컴포넌트 ──
 const contextMdComponents = {
-  // 섹션 헤더: ### 섹션명 → 배경색 구분 배너
+  // 대섹션 헤더: ## 섹션명 → 진한 배너 (테이블 구조 / 데이터 등)
+  h2: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <div className="text-xs font-bold text-stone-700 bg-stone-300 px-4 py-2 -mx-4 mt-6 mb-2 tracking-wide border-l-4 border-stone-500">
+      {children}
+    </div>
+  ),
+  // 소섹션 헤더: ### 테이블명 → 연한 배너
   h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <div className="text-[11px] font-bold text-stone-500 bg-stone-200 px-4 py-1.5 -mx-4 mt-5 mb-2 uppercase tracking-widest border-l-2 border-stone-400">
       {children}
