@@ -22,6 +22,7 @@ interface ExamQuestion {
   difficulty: string;
   question: string;
   context: string;
+  image: string;
   options: Record<string, string>;
 }
 
@@ -54,6 +55,7 @@ const contextMdComponents = {
       {children}
     </div>
   ),
+  hr: () => <hr className="my-2 border-stone-300" />,
   // 데이터 테이블: 13px, 컴팩트, 왼쪽 정렬
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-1.5">
@@ -102,6 +104,7 @@ const mdComponents = {
       {children}
     </div>
   ),
+  hr: () => <hr className="my-3 border-stone-200" />,
   table: (props: React.HTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-2">
       <table className="border-collapse text-sm" {...props} />
@@ -282,12 +285,10 @@ export default function ExamPage() {
   }, [startTimer, submit, persist, router]);
 
   const selectAnswer = useCallback((questionNum: number, optNum: number) => {
-    setAnswers((prev) => {
-      const next = { ...prev, [questionNum]: optNum };
-      answersRef.current = next;
-      persist(questionsRef.current, next, currentRef.current, startTimestampRef.current);
-      return next;
-    });
+    const next = { ...answersRef.current, [questionNum]: optNum };
+    answersRef.current = next;
+    persist(questionsRef.current, next, currentRef.current, startTimestampRef.current);
+    setAnswers(next);
   }, [persist]);
 
   const moveTo = useCallback((idx: number) => {
@@ -520,8 +521,17 @@ export default function ExamPage() {
               /* ── 배경 정보 있음: 2단 레이아웃 ── */
               <div className="flex flex-col md:flex-row gap-5 items-start">
 
-                {/* 왼쪽: 배경 정보 */}
+                {/* 왼쪽: 이미지(있으면) + 배경 정보 */}
                 <div className="w-full md:w-[42%] md:shrink-0 border border-stone-200 bg-[#fafaf9] overflow-hidden">
+                  {q.image && (
+                    <div className="border-b border-stone-200 bg-white p-3 flex justify-center">
+                      <img
+                        src={`/diagrams/${q.image}`}
+                        alt="문제 다이어그램"
+                        className="max-w-full h-auto"
+                      />
+                    </div>
+                  )}
                   <div className="px-4 py-3 text-stone-700">
                     <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={contextMdComponents}>
                       {preprocessContext(q.context)}
@@ -533,6 +543,18 @@ export default function ExamPage() {
                 <div className="flex-1 min-w-0">
                   {questionBlock}
                 </div>
+              </div>
+            ) : q.image ? (
+              /* ── 이미지만 있음: 이미지 위, 문제 아래 ── */
+              <div className="flex flex-col gap-4">
+                <div className="border border-stone-200 bg-white p-4 flex justify-center">
+                  <img
+                    src={`/diagrams/${q.image}`}
+                    alt="문제 다이어그램"
+                    className="max-w-full h-auto"
+                  />
+                </div>
+                {questionBlock}
               </div>
             ) : (
               /* ── 배경 정보 없음: 단일 컬럼 ── */

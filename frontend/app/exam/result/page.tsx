@@ -29,7 +29,7 @@ interface QuestionResult {
 
 const mdComponents = {
   h3: ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <div className="text-[11px] font-bold text-stone-500 border-l-2 border-stone-400 pl-2 mt-3 mb-1.5">
+    <div className="text-[11px] font-bold text-stone-500 bg-stone-200 px-4 py-1.5 -mx-4 mt-5 mb-2 uppercase tracking-widest border-l-2 border-stone-400">
       {children}
     </div>
   ),
@@ -322,8 +322,10 @@ export default function ExamResultPage() {
             <div className="px-5 py-4 space-y-4">
               {/* context */}
               {selected.context && (
-                <div className="bg-stone-100 border border-stone-200 px-3 py-2 text-sm text-stone-700">
-                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>{selected.context}</ReactMarkdown>
+                <div className="bg-stone-100 border border-stone-200 px-4 py-3 text-sm text-stone-700 overflow-hidden">
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} components={mdComponents}>
+                    {selected.context.replace(/\*\*\[([^\]]+)\]\*\*/g, (_, t) => `### ${t}`)}
+                  </ReactMarkdown>
                 </div>
               )}
 

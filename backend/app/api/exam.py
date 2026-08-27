@@ -109,6 +109,7 @@ async def generate_exam(user_id: str = Depends(get_current_user_id)):
                 "difficulty": q.get("difficulty", "중"),
                 "question": q["question"],
                 "context": q.get("context") or "",
+                "image": q.get("image") or "",
                 "options": q["options"],
             }
             for i, q in enumerate(ordered)

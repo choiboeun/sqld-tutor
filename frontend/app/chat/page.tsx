@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import dynamic from "next/dynamic";
 import Sidebar, { LiveStats } from "@/components/Sidebar";
 import { visit } from 'unist-util-visit';
@@ -932,7 +933,7 @@ function ChatContent() {
                             난이도 {parsed.difficulty}
                           </span>
                         </div>
-                        <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }]]} components={mdComponents}>
+                        <ReactMarkdown remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkBreaks]} components={mdComponents}>
                           {fixMissingTableSeparator(optData ? optData.stem : parsed.body)}
                         </ReactMarkdown>
                         {optData && (
