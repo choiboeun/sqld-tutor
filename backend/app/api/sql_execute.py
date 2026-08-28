@@ -25,6 +25,8 @@ async def sql_execute(req: SqlRequest, _: str = Depends(get_current_user_id)):
     conn = get_sandbox_conn()
     try:
         cursor = conn.execute(query)
+        if cursor.description is None:
+            return {"columns": [], "rows": [], "error": None}
         columns = [desc[0] for desc in cursor.description]
         rows = [[str(v) if v is not None else "NULL" for v in row] for row in cursor.fetchall()]
         return {"columns": columns, "rows": rows, "error": None}

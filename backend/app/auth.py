@@ -23,15 +23,18 @@ async def _fetch_user_info(token: str) -> tuple[str, str]:
         if cached and now < cached[2]:
             return cached[0], cached[1]
 
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            f"{SUPABASE_URL}/auth/v1/user",
-            headers={
-                "Authorization": f"Bearer {token}",
-                "apikey": SUPABASE_ANON_KEY,
-            },
-            timeout=5.0,
-        )
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                f"{SUPABASE_URL}/auth/v1/user",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "apikey": SUPABASE_ANON_KEY,
+                },
+                timeout=5.0,
+            )
+    except (httpx.ConnectError, httpx.TimeoutException, httpx.RequestError):
+        raise HTTPException(status_code=503, detail="인증 서버에 연결할 수 없어요. 잠시 후 다시 시도해주세요.")
     if resp.status_code != 200:
         raise HTTPException(status_code=401, detail="인증이 필요해요.")
     data = resp.json()

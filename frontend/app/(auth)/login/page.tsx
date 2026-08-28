@@ -117,14 +117,19 @@ export default function LoginPage() {
 
   const handleKakaoLogin = async () => {
     setKakaoLoading(true);
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
-      provider: "kakao",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        scopes: "profile_nickname",
-      },
-    });
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "kakao",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: "profile_nickname",
+        },
+      });
+      if (error) throw error;
+    } catch {
+      setKakaoLoading(false);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {

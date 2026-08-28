@@ -4,9 +4,15 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 import BottomNav from "@/components/BottomNav";
+
+const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
+  ssr: false,
+  loading: () => <div className="bg-stone-100 p-3 text-xs text-stone-400 my-2">다이어그램 로딩 중...</div>,
+});
 
 interface Option {
   num: number;
@@ -46,9 +52,19 @@ const mdComponents = {
   td: ({ children }: { children?: React.ReactNode }) => (
     <td className="border border-stone-200 px-2 py-1 whitespace-nowrap">{children}</td>
   ),
-  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
-    <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>{children}</code>
-  ),
+  code: ({ children, className }: { children?: React.ReactNode; className?: string }) => {
+    if (className === "language-mermaid") {
+      return <MermaidChart code={String(children)} />;
+    }
+    const isBlock = className?.includes("language-");
+    return isBlock ? (
+      <pre className="bg-stone-100 rounded-lg p-3 overflow-x-auto text-xs font-mono my-2 whitespace-pre-wrap border border-stone-200">
+        <code>{children}</code>
+      </pre>
+    ) : (
+      <code className={`bg-stone-100 text-stone-700 px-1 py-0.5 rounded text-xs font-mono ${className ?? ""}`}>{children}</code>
+    );
+  },
   pre: ({ children }: { children?: React.ReactNode }) => (
     <pre className="bg-stone-100 rounded-lg p-3 overflow-x-auto text-xs font-mono my-2 whitespace-pre-wrap border border-stone-200">{children}</pre>
   ),

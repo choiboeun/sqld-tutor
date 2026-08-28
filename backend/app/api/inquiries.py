@@ -1,7 +1,7 @@
 import logging
 import os
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from supabase import create_client
 from app.auth import get_current_user_id, get_current_user_email
 
@@ -21,7 +21,7 @@ def _get_supabase():
 
 
 class InquiryCreate(BaseModel):
-    message: str
+    message: str = Field(..., max_length=2000)
 
 
 # ── 문의 제출 (로그인 사용자) ──────────────────────────────────────

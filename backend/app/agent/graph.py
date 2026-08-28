@@ -1,3 +1,5 @@
+import os
+
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 
@@ -12,7 +14,7 @@ from app.agent.nodes.state_updater import state_updater
 from app.agent.nodes.sql_node import sql_node
 from langchain_core.messages import AIMessage as _AIMessage
 
-_AUTO_EXPLAIN = True
+_AUTO_EXPLAIN = os.getenv("AUTO_EXPLAIN", "true").lower() != "false"
 
 tool_node = ToolNode(ALL_TOOLS)
 

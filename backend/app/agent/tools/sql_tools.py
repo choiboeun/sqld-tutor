@@ -4,7 +4,7 @@ from langchain_core.tools import tool
 
 _ALLOWED = re.compile(r"^\s*SELECT\b", re.IGNORECASE)
 _BLOCKED = re.compile(
-    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|ATTACH)\b",
+    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|ATTACH|RECURSIVE)\b",
     re.IGNORECASE,
 )
 

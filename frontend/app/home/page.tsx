@@ -314,9 +314,6 @@ export default function HomePage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  }, []);
-
-  useEffect(() => {
     (async () => {
       const { data: authData } = await createClient().auth.getUser();
       if (!authData.user) { window.location.href = "/login"; return; }

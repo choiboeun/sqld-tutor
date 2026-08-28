@@ -36,8 +36,8 @@ async def delete_user(
         rpc_resp = await client.post(
             f"{SUPABASE_URL}/rest/v1/rpc/delete_user",
             headers={
-                "Authorization": f"Bearer {token}",
-                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
                 "Content-Type": "application/json",
             },
             json={},

@@ -42,7 +42,10 @@ _QUESTIONS_PATH = Path(__file__).parent.parent / "data" / "questions" / "questio
 
 def _load_questions() -> list[dict]:
     global _QUESTIONS, _QUESTIONS_INDEX, _QUESTIONS_MTIME
-    mtime = _QUESTIONS_PATH.stat().st_mtime
+    try:
+        mtime = _QUESTIONS_PATH.stat().st_mtime
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"문제 파일을 찾을 수 없습니다: {_QUESTIONS_PATH}") from exc
     if _QUESTIONS is None or mtime != _QUESTIONS_MTIME:
         with open(_QUESTIONS_PATH) as f:
             _QUESTIONS = [json.loads(line) for line in f if line.strip()]
