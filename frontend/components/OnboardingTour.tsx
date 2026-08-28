@@ -206,12 +206,6 @@ export default function OnboardingTour() {
 
       try { if (localStorage.getItem(key)) return; } catch {}
 
-      // 기존 회원(onboarding_completed: true)은 투어 스킵 + localStorage 채움
-      if (data.user?.user_metadata?.onboarding_completed === true) {
-        try { localStorage.setItem(key, "1"); } catch {}
-        return;
-      }
-
       if (cancelled) return;
       setTourKey(key);
       setIsMobile(window.innerWidth < 768);
