@@ -42,7 +42,9 @@ async def get_calendar(thread_id: str, user_id: str = Depends(get_current_user_i
 
     counts: dict[str, int] = defaultdict(int)
     for row in result.data or []:
-        date_str = row["created_at"][:10]  # "2026-08-01T12:34:56+00:00" → "2026-08-01"
-        counts[date_str] += 1
+        created_at = row.get("created_at")
+        if not created_at:
+            continue
+        counts[created_at[:10]] += 1
 
     return {"dates": dict(counts)}

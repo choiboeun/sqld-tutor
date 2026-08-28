@@ -514,6 +514,9 @@ function ChatContent() {
                 return prev;
               });
               setNetworkError(true);
+              setIsLoading(false);
+              await reader.cancel();
+              break;
             }
           } catch {
             // JSON 파싱 실패 무시

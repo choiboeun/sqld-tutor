@@ -41,7 +41,7 @@ async def get_wrong_answers(thread_id: str, user_id: str = Depends(get_current_u
             "question": q["question"],
             "context": q.get("context", ""),
             "options": opts_list,
-            "correct_answer": q["answer"],
+            "correct_answer": q.get("answer", 0),
             "student_answer": student_answer,
             "explanation": q.get("explanation", ""),
             "still_wrong": qid in recent_mistakes,

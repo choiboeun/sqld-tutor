@@ -233,6 +233,8 @@ export default function WrongAnswersPage() {
               setMiniMessages((prev) =>
                 prev.filter((m, i) => !(i === prev.length - 1 && m.role === "ai" && m.content === ""))
               );
+              await reader.cancel();
+              break;
             } else if (event.type === "error") {
               setMiniMessages((prev) => {
                 const next = [...prev];

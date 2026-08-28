@@ -117,10 +117,12 @@ async def get_home_data(thread_id: str, user_id: str = Depends(get_current_user_
             rows = type("R", (), {"data": []})()
         for row in rows.data or []:
             # calendar
-            calendar_counts[row["created_at"][:10]] += 1
+            created_at = row.get("created_at")
+            if created_at:
+                calendar_counts[created_at[:10]] += 1
 
             # review-timing: most recent wrong event per qid
-            props = row.get("properties", {})
+            props = row.get("properties") or {}
             qid = str(props.get("question_id", ""))
             if qid in wrong_log and not props.get("correct", True):
                 ts = row["created_at"]

@@ -68,7 +68,7 @@ async def get_review_timing(thread_id: str, user_id: str = Depends(get_current_u
         except Exception:
             rows = type("R", (), {"data": []})()
         for row in rows.data or []:
-            props = row.get("properties", {})
+            props = row.get("properties") or {}
             qid = str(props.get("question_id", ""))
             if qid not in wrong_log:
                 continue

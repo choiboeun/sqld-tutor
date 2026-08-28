@@ -162,6 +162,7 @@ export default function ExamPage() {
   const currentRef = useRef<number>(0);
   const startTimestampRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const submitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittedRef = useRef(false);
   const [timerToast, setTimerToast] = useState(false);
 
@@ -179,7 +180,6 @@ export default function ExamPage() {
     if (submittedRef.current) return;
     submittedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
-    sessionStorage.removeItem(STORAGE_KEY);
     setGrading(true);
 
     try {
@@ -215,6 +215,7 @@ export default function ExamPage() {
         correct: gradedMap[q.id]?.correct ?? false,
       }));
 
+      sessionStorage.removeItem(STORAGE_KEY);
       sessionStorage.setItem("examResult", JSON.stringify(results));
       router.push("/exam/result");
     } catch {
@@ -232,7 +233,7 @@ export default function ExamPage() {
       if (left <= 0) {
         clearInterval(timerRef.current!);
         setTimerToast(true);
-        setTimeout(() => submit(questionsRef.current, answersRef.current), 2000);
+        submitTimeoutRef.current = setTimeout(() => submit(questionsRef.current, answersRef.current), 2000);
       }
     }, 1000);
   }, [submit]);
@@ -287,7 +288,10 @@ export default function ExamPage() {
       }
     })();
 
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (submitTimeoutRef.current) clearTimeout(submitTimeoutRef.current);
+    };
   }, [startTimer, submit, persist, router]);
 
   const selectAnswer = useCallback((questionNum: number, optNum: number) => {

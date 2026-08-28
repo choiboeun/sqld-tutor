@@ -14,6 +14,12 @@ from app.db.checkpointer import open_checkpointer_pool
 async def lifespan(app: FastAPI):
     await open_checkpointer_pool()
     yield
+    from app.db.checkpointer import _async_pool
+    if _async_pool is not None:
+        try:
+            await _async_pool.close()
+        except Exception:
+            pass
 
 
 app = FastAPI(title="SQLD AI Tutor API", lifespan=lifespan)
