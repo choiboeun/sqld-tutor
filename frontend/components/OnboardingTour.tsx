@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const TOUR_KEY = "sqld_tour_done";
+const TOUR_KEY = (userId: string) => `sqld_tour_done_${userId}`;
 const PAD = 6;
 
 interface Step {
@@ -189,6 +189,7 @@ export default function OnboardingTour() {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
+  const [tourKey, setTourKey] = useState("");
   const [cur, setCur] = useState(0);
   const [spot, setSpot] = useState<Spot | null>(null);
   const [cardState, setCardState] = useState<CardState>({
@@ -198,17 +199,21 @@ export default function OnboardingTour() {
   useEffect(() => {
     let cancelled = false;
     async function check() {
-      try { if (localStorage.getItem(TOUR_KEY)) return; } catch {}
-
-      // 기존 회원(onboarding_completed: true)은 투어 스킵 + localStorage 채움
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
+      const userId = data.user?.id ?? "anon";
+      const key = TOUR_KEY(userId);
+
+      try { if (localStorage.getItem(key)) return; } catch {}
+
+      // 기존 회원(onboarding_completed: true)은 투어 스킵 + localStorage 채움
       if (data.user?.user_metadata?.onboarding_completed === true) {
-        try { localStorage.setItem(TOUR_KEY, "1"); } catch {}
+        try { localStorage.setItem(key, "1"); } catch {}
         return;
       }
 
       if (cancelled) return;
+      setTourKey(key);
       setIsMobile(window.innerWidth < 768);
       setTimeout(() => { if (!cancelled) setVisible(true); }, 800);
     }
@@ -286,10 +291,10 @@ export default function OnboardingTour() {
   useEffect(() => { if (visible) measure(); }, [visible, cur, measure]);
 
   const finish = useCallback((goChat: boolean) => {
-    try { localStorage.setItem(TOUR_KEY, "1"); } catch {}
+    try { if (tourKey) localStorage.setItem(tourKey, "1"); } catch {}
     setVisible(false);
     if (goChat) router.push("/chat?new=true");
-  }, [router]);
+  }, [router, tourKey]);
 
   if (!visible) return null;
 
