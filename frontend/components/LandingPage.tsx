@@ -683,7 +683,7 @@ export default function LandingPage() {
       <div className="wrap">
         <p className="sec-label">핵심 기능</p>
         <div className="feat-grid">
-          <div className="feat-card"><div className="feat-big">530<span>문제</span></div><p className="feat-t">방대한 문제은행</p><p className="feat-d">SQLD 합격자가 기출 경향을 분석해 직접 제작한 530문제. 11개 카테고리를 고르게 커버해요.</p></div>
+          <div className="feat-card"><div className="feat-big">688<span>문제</span></div><p className="feat-t">방대한 문제은행</p><p className="feat-d">SQLD 합격자가 기출 경향을 분석해 직접 제작한 688문제. 11개 카테고리를 고르게 커버해요.</p></div>
           <div className="feat-card"><div className="feat-big">11<span>개 카테고리</span></div><p className="feat-t">카테고리별 정답률 추적</p><p className="feat-d">문제를 풀수록 카테고리별 정답률이 쌓여요. 어디가 얼마나 약한지 한눈에 볼 수 있어요.</p></div>
           <div className="feat-card"><div className="feat-big">예상<span>점수</span></div><p className="feat-t">실시간 점수 계산</p><p className="feat-d">카테고리별 정답률로 SQLD 실제 배점을 반영한 예상 점수를 실시간으로 계산해드려요.</p></div>
           <div className="feat-card"><div className="feat-big">50<span>문제</span></div><p className="feat-t">실전 모의고사</p><p className="feat-d">90분 제한, 실제 SQLD 배점 구조로 구성된 모의고사. 시험 전 최종 점검에 활용하세요.</p></div>
