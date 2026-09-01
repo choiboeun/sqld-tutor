@@ -30,6 +30,12 @@ const CSS = `
 .hero-note{margin-top:24px;font-size:13px;color:rgba(55,48,163,.45)}
 .btn-ghost{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:14px;font-weight:600;color:rgba(55,48,163,.6);text-decoration:none;padding:8px 0;border-bottom:1px dashed rgba(99,102,241,.3);transition:color .15s,border-color .15s}
 .btn-ghost:hover{color:#4f46e5;border-bottom-color:#6366f1}
+.btn-outline{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:transparent;color:#6366f1;font-size:16px;font-weight:700;padding:14px 32px;text-decoration:none;border:2px solid #6366f1;transition:background .15s,color .15s}
+.btn-outline:hover{background:#6366f1;color:#fff}
+.btn-cta-outline{display:inline-block;background:transparent;color:#6366f1;font-size:16px;font-weight:700;padding:16px 44px;text-decoration:none;border:2px solid #6366f1;transition:background .15s,color .15s;margin-left:16px}
+.btn-cta-outline:hover{background:#6366f1;color:#fff}
+.hero-cta-group{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:0}
+.cta-btn-group{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px;margin-top:8px}
 .hero-r{background:var(--bg-2);display:flex;align-items:center;justify-content:center;padding:36px 36px}
 .cm{width:100%;background:var(--bg);border:1px solid var(--bd);box-shadow:0 8px 32px rgba(0,0,0,.09)}
 .cm-bar{background:var(--accent);padding:10px 14px;display:flex;align-items:center;gap:6px}
@@ -560,20 +566,24 @@ export default function LandingPage() {
             <strong>8문제 진단</strong>으로 약점을 파악하고, 틀릴 때마다 자동으로 개념을 짚어줘요.<br />
             문어CBT에는 없는, <strong>대화형 AI 튜터</strong>가 곁에 있어요.
           </p>
-          <div className="btn-glow-wrap">
-            <div className="btn-glow" />
-            <Link className="btn-primary" href="/login">
-              무료로 시작하기
+          <div className="hero-cta-group">
+            <div className="btn-glow-wrap">
+              <div className="btn-glow" />
+              <Link className="btn-primary" href="/login">
+                무료로 시작하기
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+            <Link className="btn-outline" href="/chat?guest=true">
+              먼저 경험해보기
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
           </div>
           <p className="hero-note">회원가입 필요 · 무료 · 광고 없음</p>
-          <Link className="btn-ghost" href="/chat?guest=true">
-            먼저 경험해보기
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </Link>
           <div className="scroll-hint" id="scroll-hint">
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
@@ -830,7 +840,10 @@ export default function LandingPage() {
         <p className="cta-label">지금 바로 시작하기</p>
         <h2 className="cta-h">SQLD 합격,<br />AI와 함께 준비하세요</h2>
         <p className="cta-sub">가입하고 8문제 진단부터 시작해보세요. 무료예요.</p>
-        <Link className="btn-cta" href="/login">무료로 시작하기</Link>
+        <div className="cta-btn-group">
+          <Link className="btn-cta" href="/login">무료로 시작하기</Link>
+          <Link className="btn-cta-outline" href="/chat?guest=true">먼저 경험해보기</Link>
+        </div>
         <Link className="cta-login" href="/login">이미 계정이 있으신가요? 로그인</Link>
       </div>
 
