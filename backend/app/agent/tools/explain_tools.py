@@ -105,6 +105,17 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     content = re.sub(r'\n•\s*', '\n- ', content)
     # "다음 문제를 풀려면 문제 줘" 안내 문장 제거 (UI 버튼으로 대체)
     content = re.sub(r'\n*-{0,3}\n*>\s*다음 문제를 풀려면.*$', '', content, flags=re.MULTILINE)
+    # 코드 블록 밖 파이프(|) → 슬래시(/) 변환 (ASC|DESC 등이 마크다운 테이블로 오파싱되는 문제 방지)
+    def _replace_pipe_outside_code(text: str) -> str:
+        parts = re.split(r'(```[\s\S]*?```)', text)
+        result = []
+        for j, part in enumerate(parts):
+            if j % 2 == 1:  # 코드 블록 내부 → 그대로 유지
+                result.append(part)
+            else:
+                result.append(part.replace('|', '/'))
+        return ''.join(result)
+    content = _replace_pipe_outside_code(content)
     # COUNT(*), SELECT * 등 SQL 별표가 마크다운 이탤릭으로 소비되는 문제 방지
     content = re.sub(r'\(\*\)', r'(\\*)', content)
     # \n 은 줄 시작 * 불릿마커이므로 이스케이프 제외 → [ \t] 만 허용

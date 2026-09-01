@@ -141,9 +141,14 @@ const CIRCLE_TO_NUM: Record<string, number> = { "①": 1, "②": 2, "③": 3, "�
 function fixMissingTableSeparator(text: string): string {
   const lines = text.split("\n");
   const result: string[] = [];
+  let inCodeBlock = false;
   for (let i = 0; i < lines.length; i++) {
-    result.push(lines[i]);
     const cur = lines[i];
+    // 코드 블록 진입/탈출 추적 (``` 로 시작하는 줄)
+    if (cur.trimStart().startsWith("```")) inCodeBlock = !inCodeBlock;
+    result.push(cur);
+    // 코드 블록 내부는 파이프가 있어도 테이블 separator 삽입 금지
+    if (inCodeBlock) continue;
     const prv = i > 0 ? lines[i - 1] : "";
     const nxt = i + 1 < lines.length ? lines[i + 1] : "";
     const curHasPipe = cur.includes("|");
