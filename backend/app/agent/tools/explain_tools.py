@@ -61,8 +61,13 @@ _search_cache: dict[str, list] = {}
 def _cached_search(concept: str, k: int = 5) -> list:
     key = concept.strip().lower()
     if key not in _search_cache:
-        vectorstore = _get_vectorstore()
-        _search_cache[key] = vectorstore.similarity_search(concept, k=k)
+        try:
+            vectorstore = _get_vectorstore()
+            _search_cache[key] = vectorstore.similarity_search(concept, k=k)
+        except Exception as e:
+            # 임베딩 API 실패(429 등) → 빈 리스트 반환, 캐시에 저장하지 않음
+            print(f"[_cached_search] 임베딩 API 실패 ({type(e).__name__}): {e}")
+            return []
     return _search_cache[key]
 
 
@@ -78,10 +83,12 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
         concept = "SQLD 개념"
 
     docs = _cached_search(concept)
-    context = "\n\n---\n\n".join(doc.page_content for doc in docs)
+    # RAG 실패 시에도 LLM 자체 지식으로 설명 — 게스트 임베딩 API 쿼터 소진 시 fallback
+    context = "\n\n---\n\n".join(doc.page_content for doc in docs) if docs else ""
 
+    prompt_context = context if context else "참고 자료 없음 — SQLD 시험 범위 내 일반 지식으로 설명하세요."
     messages = [
-        SystemMessage(content=_PROMPT.format(level=level, context=context)),
+        SystemMessage(content=_PROMPT.format(level=level, context=prompt_context)),
         HumanMessage(content=f"{concept}에 대해 설명해주세요."),
     ]
     response = llm.invoke(messages)

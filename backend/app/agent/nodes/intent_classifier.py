@@ -51,13 +51,15 @@ def intent_classifier(state: TutorState) -> dict:
         # bare "문제" ("이 문제에 대해서...")는 종료 조건에서 제외
         if _DRILL_EXPLICIT.search(text):
             return {"current_mode": "drill", "follow_up_mode": False}
-        # 오답 복습 / 약점 분석은 follow_up_mode에서도 즉시 허용
+        # 오답 복습 / 약점 분석 / 개념 설명 / SQL은 follow_up_mode에서도 즉시 허용
         if _REVIEW.search(text):
             return {"current_mode": "review", "follow_up_mode": False}
         if _DIAGNOSE.search(text):
             return {"current_mode": "diagnose", "follow_up_mode": False}
         if _SQL.search(text):
             return {"current_mode": "sql", "follow_up_mode": False}
+        if _EXPLAIN.search(text):
+            return {"current_mode": "explain", "follow_up_mode": False}
         return {"current_mode": "chat"}
 
     # 명시적 drill 요청("문제 줘" 등)을 먼저 체크하고, 이후 설명 의도를 우선 처리.
