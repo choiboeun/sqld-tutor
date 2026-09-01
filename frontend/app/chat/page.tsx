@@ -1200,7 +1200,8 @@ function ChatContent() {
                 href="/"
                 className="flex items-center gap-2 text-sm text-indigo-600 font-medium bg-indigo-50 px-3 py-2.5 mb-5 hover:bg-indigo-100 transition-colors"
               >
-                📝 <span>모의고사는 <strong>홈</strong>에서 비회원도 이용 가능해요 →</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-indigo-500"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                <span>모의고사는 <strong>비회원이여도</strong> 홈으로 이동하여 이용 가능해요 →</span>
               </Link>
               <div className="flex flex-col gap-2">
                 <Link
