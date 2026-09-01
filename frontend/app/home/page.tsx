@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -289,7 +289,8 @@ function RadarChart({ catMap }: { catMap: Record<string, CategoryStat> }) {
   );
 }
 
-export default function HomePage() {
+function HomeContent() {
+  const [isGuest, setIsGuest] = useState(false);
   const [data, setData] = useState<ProgressData | null>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState("");
@@ -316,7 +317,11 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       const { data: authData } = await createClient().auth.getUser();
-      if (!authData.user) { window.location.href = "/login"; return; }
+      if (!authData.user) {
+        setIsGuest(true);
+        setLoading(false);
+        return;
+      }
 
       const uid = authData.user.id;
       setUserEmail(authData.user.email ?? "");
@@ -485,6 +490,56 @@ export default function HomePage() {
       href: `/chat?category=${encodeURIComponent(c.category)}`,
     });
   });
+
+  // 비로그인 게스트 홈 화면
+  if (!loading && isGuest) {
+    return (
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-block mb-4">
+              <Image src="/logo.png" alt="SQLD AI" width={48} height={48} className="mx-auto" />
+            </Link>
+            <h1 className="text-xl font-bold text-stone-800 mb-1">SQLD AI 튜터</h1>
+            <p className="text-sm text-stone-500">로그인하면 학습 기록을 저장할 수 있어요</p>
+          </div>
+          <div className="space-y-3 mb-6">
+            <Link href="/exam" className="flex items-center justify-between bg-white border border-indigo-200 px-5 py-4 hover:bg-indigo-50 transition-colors group">
+              <div>
+                <p className="text-sm font-semibold text-stone-800">모의고사</p>
+                <p className="text-xs text-stone-400 mt-0.5">50문제 실전 모의시험 — 로그인 없이 이용 가능</p>
+              </div>
+              <svg className="w-4 h-4 text-indigo-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </Link>
+            <Link href="/chat?guest=true" className="flex items-center justify-between bg-white border border-indigo-200 px-5 py-4 hover:bg-indigo-50 transition-colors group">
+              <div>
+                <p className="text-sm font-semibold text-stone-800">AI 챗봇으로 문제 풀기</p>
+                <p className="text-xs text-stone-400 mt-0.5">로그인 없이 3문제 무료 체험</p>
+              </div>
+              <svg className="w-4 h-4 text-indigo-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </Link>
+            {[
+              { label: "약점 분석 & 맞춤 학습", sub: "카테고리별 정답률 분석" },
+              { label: "오답 복습", sub: "틀린 문제 다시 풀기" },
+              { label: "학습 달력 & 연속 학습일", sub: "매일의 풀이 기록 시각화" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-between bg-stone-100 border border-stone-200 px-5 py-4 opacity-60">
+                <div>
+                  <p className="text-sm font-semibold text-stone-500">🔒 {item.label}</p>
+                  <p className="text-xs text-stone-400 mt-0.5">{item.sub}</p>
+                </div>
+                <span className="text-xs text-stone-400 font-medium">회원 전용</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Link href="/signup" className="w-full text-center bg-indigo-600 text-white py-3 text-sm font-semibold hover:bg-indigo-700 transition-colors">무료로 회원가입</Link>
+            <Link href="/login" className="w-full text-center border border-stone-200 text-stone-600 py-3 text-sm font-semibold hover:bg-stone-50 transition-colors">로그인</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="md:h-[100dvh] md:overflow-hidden flex flex-col md:flex-row">
@@ -1064,3 +1119,11 @@ export default function HomePage() {
   );
 }
 
+
+export default function HomePage() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
+  );
+}

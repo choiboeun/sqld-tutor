@@ -285,6 +285,7 @@ function ChatContent() {
   const [guestQuestionCount, setGuestQuestionCount] = useState(0);
   const [showGuestModal, setShowGuestModal] = useState(false);
   const guestModalShownRef = useRef(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -716,6 +717,8 @@ function ChatContent() {
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         highlightHome={!isLoading && messages.some(m => m.role === "ai" && m.content.startsWith("**진단 완료!"))}
+        isGuest={isGuest}
+        onGuestLeave={() => setShowLeaveModal(true)}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -1136,6 +1139,43 @@ function ChatContent() {
           </div>
         </div>
       </div>
+
+      {/* 게스트 나가기 경고 모달 */}
+      {showLeaveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white w-full max-w-sm shadow-xl overflow-hidden">
+            <div className="px-6 py-5">
+              <h2 className="text-base font-bold text-stone-800 mb-2">지금 나가면 기록이 사라져요</h2>
+              <p className="text-sm text-stone-500 mb-5">
+                비로그인 상태라 지금까지의 대화 기록이 모두 삭제돼요.<br />
+                그래도 나가시겠어요?
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowLeaveModal(false)}
+                  className="flex-1 border border-stone-200 text-stone-600 py-2.5 text-sm font-semibold hover:bg-stone-50 transition-colors"
+                >
+                  계속 풀기
+                </button>
+                <Link
+                  href="/home"
+                  onClick={() => {
+                    try {
+                      if (threadId) {
+                        sessionStorage.removeItem("guest_thread_id");
+                        sessionStorage.removeItem(`chat_${threadId}`);
+                      }
+                    } catch {}
+                  }}
+                  className="flex-1 text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                >
+                  나가기
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 게스트 회원가입 유도 모달 */}
       {showGuestModal && (

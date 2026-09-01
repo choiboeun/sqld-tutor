@@ -34,6 +34,8 @@ interface Props {
   isOpen?: boolean;
   onClose?: () => void;
   highlightHome?: boolean;
+  isGuest?: boolean;
+  onGuestLeave?: () => void;
 }
 
 const ALL_CATEGORIES = [
@@ -73,7 +75,7 @@ function shortName(cat: string): string {
 const RING_R = 50;
 const CIRCUMFERENCE = 2 * Math.PI * RING_R;
 
-export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false }: Props) {
+export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed, isOpen = false, onClose, highlightHome = false, isGuest = false, onGuestLeave }: Props) {
   const [data, setData] = useState<ProgressData | null>(null);
 
   useEffect(() => {
@@ -139,26 +141,35 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
 
         {/* Logo */}
         <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-200 bg-[#dde1fb]">
-          <Link
-            href="/home"
-            onClick={() => {
-              try {
-                if (threadId) {
-                  sessionStorage.removeItem(`chat_${threadId}`);
-                  sessionStorage.removeItem(`scroll_${threadId}`);
-                }
-              } catch {}
-              onClose?.();
-            }}
-            className={`inline-flex items-center gap-1 text-xs transition-colors ${
-              highlightHome
-                ? "text-indigo-700 font-semibold"
-                : "text-indigo-500 hover:text-indigo-600"
-            }`}
-          >
-            ← 홈으로
-            {highlightHome && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse ml-0.5" />}
-          </Link>
+          {isGuest ? (
+            <button
+              onClick={() => { onClose?.(); onGuestLeave?.(); }}
+              className={`inline-flex items-center gap-1 text-xs transition-colors text-indigo-500 hover:text-indigo-600`}
+            >
+              ← 홈으로
+            </button>
+          ) : (
+            <Link
+              href="/home"
+              onClick={() => {
+                try {
+                  if (threadId) {
+                    sessionStorage.removeItem(`chat_${threadId}`);
+                    sessionStorage.removeItem(`scroll_${threadId}`);
+                  }
+                } catch {}
+                onClose?.();
+              }}
+              className={`inline-flex items-center gap-1 text-xs transition-colors ${
+                highlightHome
+                  ? "text-indigo-700 font-semibold"
+                  : "text-indigo-500 hover:text-indigo-600"
+              }`}
+            >
+              ← 홈으로
+              {highlightHome && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse ml-0.5" />}
+            </Link>
+          )}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />

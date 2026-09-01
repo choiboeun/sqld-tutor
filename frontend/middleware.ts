@@ -26,13 +26,10 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
-  // 미인증: 보호 경로 → /login, /home은 랜딩으로
+  // 미인증: 보호 경로 → /login (chat, home, exam은 게스트 허용으로 제외)
   const protectedPaths = ["/onboarding", "/wrong-answers", "/admin"];
   if (!user && protectedPaths.some((p) => path.startsWith(p))) {
     return NextResponse.redirect(new URL("/login", request.url));
-  }
-  if (!user && path.startsWith("/home")) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (user) {
