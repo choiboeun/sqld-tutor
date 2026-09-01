@@ -364,8 +364,8 @@ function ChatContent() {
           } catch {}
           setSessionReady(true);
         } else {
-          // 비로그인 + 비게스트: 홈으로 이동 (게스트 경험 유도)
-          router.replace("/home");
+          // 비로그인 + 비게스트: 랜딩으로 이동
+          router.replace("/");
         }
       });
   }, []);
@@ -409,16 +409,16 @@ function ChatContent() {
     }
   }, [isLoading]);
 
-  // 게스트 모드: 탭/창 닫기 시 대화 기록 소실 경고
+  // 게스트 모드: 실제 대화가 있을 때만 탭/창 닫기 경고 (초기 인사 메시지 제외)
   useEffect(() => {
-    if (!isGuest) return;
+    if (!isGuest || messages.length <= 1) return;
     const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = "";
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [isGuest]);
+  }, [isGuest, messages.length]);
 
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
