@@ -2,6 +2,8 @@ import os
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
+from langgraph.checkpoint.memory import MemorySaver
+from app.db.checkpointer import get_checkpointer
 
 from app.agent.state import TutorState
 from app.agent.nodes.chatbot import chatbot_node, ALL_TOOLS
@@ -111,5 +113,8 @@ builder.add_edge("diagnose", END)
 builder.add_edge("sql", END)
 builder.add_edge("diagnostic_block", END)
 
-from app.db.checkpointer import get_checkpointer
 graph = builder.compile(checkpointer=get_checkpointer())
+
+# 게스트 전용 그래프 — 메모리에만 저장, DB 미적재, 서버 재시작 시 자동 소멸
+_guest_memory = MemorySaver()
+guest_graph = builder.compile(checkpointer=_guest_memory)

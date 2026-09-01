@@ -280,10 +280,18 @@ const mdComponents = {
 function ChatContent() {
   const searchParams = useSearchParams();
   const isNewUser = searchParams.get("new") === "true";
+  const isGuestMode = searchParams.get("guest") === "true";
+  const [isGuest, setIsGuest] = useState(isGuestMode);
+  const [guestQuestionCount, setGuestQuestionCount] = useState(0);
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const guestModalShownRef = useRef(false);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "ai",
-      content: isNewUser
+      content: isGuestMode
+        ? "안녕하세요! 게스트님.\nSQLD AI 튜터입니다. '문제 줘'라고 가볍게 시작해보시고, 궁금한 것이 있다면 채팅에 자유롭게 물어보세요."
+        : isNewUser
         ? "안녕하세요! SQLD AI 튜터입니다.\n먼저 8문제로 현재 실력을 파악해볼게요. 편하게 답해보세요!"
         : "안녕하세요! SQLD AI 튜터입니다.\n'문제 줘', '약점 분석해줘' 등으로 시작해보세요.",
     },
@@ -320,6 +328,20 @@ function ChatContent() {
   const threadIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    // 게스트 모드: sessionStorage에 임시 ID 생성 (탭 닫으면 리셋)
+    if (isGuestMode) {
+      setIsGuest(true);
+      let gid = sessionStorage.getItem("guest_thread_id");
+      if (!gid) {
+        gid = "guest_" + crypto.randomUUID();
+        sessionStorage.setItem("guest_thread_id", gid);
+      }
+      setThreadId(gid);
+      threadIdRef.current = gid;
+      setSessionReady(true);
+      return;
+    }
+
     createClient()
       .auth.getUser()
       .then(({ data }) => {
@@ -342,7 +364,8 @@ function ChatContent() {
           } catch {}
           setSessionReady(true);
         } else {
-          router.replace("/login");
+          // 비로그인 + 비게스트: 홈으로 이동 (게스트 경험 유도)
+          router.replace("/home");
         }
       });
   }, []);
@@ -386,6 +409,17 @@ function ChatContent() {
     }
   }, [isLoading]);
 
+  // 게스트 모드: 탭/창 닫기 시 대화 기록 소실 경고
+  useEffect(() => {
+    if (!isGuest) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isGuest]);
+
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
     // 스트림 버전 — 구 스트림의 done 이벤트가 신 스트림에 간섭하지 못하도록 방지
@@ -420,7 +454,7 @@ function ChatContent() {
       const res = await fetch(chatUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders },
-        body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending, client_pending_question: clearPending ? {} : capturedPQ }),
+        body: JSON.stringify({ message, thread_id: threadId, user_id: threadId, target_score: targetScore, clear_pending: clearPending, client_pending_question: clearPending ? {} : capturedPQ, is_guest: isGuest }),
         signal: controller.signal,
       });
 
@@ -494,6 +528,17 @@ function ChatContent() {
               streamingContent = "";
             } else if (event.type === "stats_updated") {
               setLiveStats(event.content as LiveStats);
+              // 게스트: 채점 완료 시 카운트 증가 → 3문제 시 모달 표시
+              if (isGuest && !guestModalShownRef.current) {
+                setGuestQuestionCount((n) => {
+                  const next = n + 1;
+                  if (next >= 3) {
+                    guestModalShownRef.current = true;
+                    setShowGuestModal(true);
+                  }
+                  return next;
+                });
+              }
             } else if (event.type === "done") {
               if (myStreamId !== streamIdRef.current) { await reader.cancel(); break; }
               setMessages((prev) =>
@@ -543,9 +588,9 @@ function ChatContent() {
     }
   }, [threadId, targetScore]);
 
-  // ?new=true 로 진입 시 진단 자동 시작 (세션 복원 완료 후에만, 대화 이력이 없을 때만)
+  // ?new=true 로 진입 시 진단 자동 시작 (세션 복원 완료 후에만, 대화 이력이 없을 때만, 게스트 제외)
   useEffect(() => {
-    if (searchParams.get("new") === "true" && threadId && !diagnosticFired.current && sessionReady) {
+    if (!isGuest && searchParams.get("new") === "true" && threadId && !diagnosticFired.current && sessionReady) {
       diagnosticFired.current = true;
       if (messages.length <= 1) {
         streamChat("진단 시작해줘", false);
@@ -567,9 +612,10 @@ function ChatContent() {
     }
   }, [searchParams, threadId, streamChat, sessionReady]);
 
-  // 재접속 시 진단 미완료 감지 → 배너 표시
+  // 재접속 시 진단 미완료 감지 → 배너 표시 (게스트는 서버에 체크포인트 없으므로 스킵)
   useEffect(() => {
     if (!sessionReady || !threadId || resumeDiagnosticFired.current) return;
+    if (isGuest) return;
     if (searchParams.get("new") === "true") return;
     if (messages.length > 1) return;
     resumeDiagnosticFired.current = true;
@@ -1029,24 +1075,41 @@ function ChatContent() {
             >
               문제 풀기
             </button>
-            <button
-              onClick={() => streamChat("약점 분석해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
-            >
-              약점 분석
-            </button>
-            <button
-              onClick={() => streamChat("오답 복습해줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
-            >
-              오답 복습
-            </button>
-            <button
-              onClick={handleWeakConceptChip}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
-            >
-              틀린 개념 복습
-            </button>
+            {isGuest ? (
+              <>
+                {(["약점 분석", "오답 복습", "틀린 개념 복습"] as const).map((label) => (
+                  <button
+                    key={label}
+                    onClick={() => setShowGuestModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-400 bg-white border border-stone-200 cursor-pointer transition-colors"
+                    title="회원가입 후 사용 가능"
+                  >
+                    🔒 {label}
+                  </button>
+                ))}
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => streamChat("약점 분석해줘", true, true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+                >
+                  약점 분석
+                </button>
+                <button
+                  onClick={() => streamChat("오답 복습해줘", true, true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+                >
+                  오답 복습
+                </button>
+                <button
+                  onClick={handleWeakConceptChip}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+                >
+                  틀린 개념 복습
+                </button>
+              </>
+            )}
           </div>
         )}
 
@@ -1073,6 +1136,59 @@ function ChatContent() {
           </div>
         </div>
       </div>
+
+      {/* 게스트 회원가입 유도 모달 */}
+      {showGuestModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white w-full max-w-sm shadow-xl overflow-hidden">
+            <div className="bg-indigo-600 px-6 py-5 text-white">
+              <p className="text-xs font-semibold tracking-wide uppercase text-indigo-200 mb-1">3문제 체험 완료</p>
+              <h2 className="text-lg font-bold leading-snug">더 많은 기능을 사용하려면<br/>회원가입이 필요해요</h2>
+            </div>
+            <div className="px-6 py-5">
+              <p className="text-sm text-stone-500 mb-4">가입하면 이런 기능을 이용할 수 있어요</p>
+              <ul className="space-y-2.5 mb-5">
+                {[
+                  "내 약점 카테고리 분석",
+                  "틀린 문제 오답 복습",
+                  "틀린 개념 집중 설명",
+                  "풀이 기록 영구 저장",
+                  "연속 정답 스트릭 & 예상 점수 추적",
+                ].map((feat) => (
+                  <li key={feat} className="flex items-center gap-2 text-sm text-stone-700">
+                    <span className="w-4 h-4 bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold flex-shrink-0">✓</span>
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs text-stone-400 mb-5">
+                📝 모의고사는 비회원도 이용 가능해요.{" "}
+                <Link href="/exam" className="text-indigo-500 underline">바로 풀기</Link>
+              </p>
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/signup"
+                  className="w-full text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                >
+                  무료로 회원가입
+                </Link>
+                <Link
+                  href="/login"
+                  className="w-full text-center border border-indigo-200 text-indigo-600 py-2.5 text-sm font-semibold hover:bg-indigo-50 transition-colors"
+                >
+                  이미 계정이 있어요
+                </Link>
+                <button
+                  onClick={() => setShowGuestModal(false)}
+                  className="text-xs text-stone-400 hover:text-stone-500 py-1 transition-colors"
+                >
+                  계속 체험하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* SQL 패널 — PC에서만 표시 */}
       {sqlPanelOpen && (

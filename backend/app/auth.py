@@ -1,6 +1,7 @@
 import asyncio
 import os
 import time
+from typing import Optional
 import httpx
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -9,6 +10,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
 
 _security = HTTPBearer()
+_security_optional = HTTPBearer(auto_error=False)
 # (user_id, email, expiry)
 _token_cache: dict[str, tuple[str, str, float]] = {}
 _token_cache_lock = asyncio.Lock()
@@ -55,6 +57,16 @@ async def _fetch_user_info(token: str) -> tuple[str, str]:
 async def get_current_user_id(
     credentials: HTTPAuthorizationCredentials = Depends(_security),
 ) -> str:
+    user_id, _ = await _fetch_user_info(credentials.credentials)
+    return user_id
+
+
+async def get_optional_user_id(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_security_optional),
+) -> Optional[str]:
+    """인증 헤더가 없으면 None 반환 (게스트 허용 엔드포인트용)."""
+    if credentials is None:
+        return None
     user_id, _ = await _fetch_user_info(credentials.credentials)
     return user_id
 

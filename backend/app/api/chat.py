@@ -8,10 +8,10 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from langchain_core.messages import HumanMessage, AIMessage
 
-from app.agent.graph import graph
+from app.agent.graph import graph, guest_graph
 from app.agent.tools.question_tools import get_question_by_id
 from app.analytics import log_event
-from app.auth import get_current_user_id
+from app.auth import get_optional_user_id
 
 router = APIRouter()
 
@@ -79,6 +79,7 @@ class ChatRequest(BaseModel):
     target_score: int = 70
     clear_pending: bool = False
     client_pending_question: dict = {}
+    is_guest: bool = False
 
 
 def _get_text(content) -> str:
@@ -90,16 +91,18 @@ def _get_text(content) -> str:
     return str(content)
 
 
-async def _stream_response(message: str, thread_id: str, user_id: str = "anonymous", target_score: int = 70, clear_pending: bool = False, client_pending_question: Optional[dict] = None):
+async def _stream_response(message: str, thread_id: str, user_id: Optional[str] = None, target_score: int = 70, clear_pending: bool = False, client_pending_question: Optional[dict] = None, is_guest: bool = False):
     config = {"configurable": {"thread_id": thread_id}}
+    active_graph = guest_graph if is_guest else graph
 
-    existing = await graph.aget_state(config)
+    existing = await active_graph.aget_state(config)
     existing_msgs = existing.values.get("messages", []) if existing.values else []
     is_new = len(existing_msgs) == 0
 
     if is_new:
         input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)], "user_id": user_id, "target_score": target_score}
-        log_event(user_id, "session_start", {"thread_id": thread_id})  # JWT 검증된 user_id 사용
+        if user_id:
+            log_event(user_id, "session_start", {"thread_id": thread_id})
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
         if clear_pending:
@@ -138,7 +141,7 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 
     async def _collect():
         try:
-            async for event in graph.astream_events(input_data, config=config, version="v2"):
+            async for event in active_graph.astream_events(input_data, config=config, version="v2"):
                 await queue.put(("event", event))
         except Exception as e:
             print(f"[stream_error] {type(e).__name__}: {e}")
@@ -240,13 +243,24 @@ async def _stream_response(message: str, thread_id: str, user_id: str = "anonymo
 
 
 @router.post("/chat")
-async def chat(req: ChatRequest, user_id: str = Depends(get_current_user_id)):
-    if req.thread_id != user_id:
-        raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
-    if not _check_rate_limit(user_id):
+async def chat(req: ChatRequest, user_id: Optional[str] = Depends(get_optional_user_id)):
+    is_guest = req.is_guest or user_id is None
+
+    if not is_guest:
+        # 인증 사용자: thread_id === user_id 보안 체크 유지
+        if req.thread_id != user_id:
+            raise HTTPException(status_code=403, detail="접근 권한이 없어요.")
+    else:
+        # 게스트: thread_id가 "guest_" 접두어로 시작해야 함
+        if not req.thread_id.startswith("guest_"):
+            raise HTTPException(status_code=400, detail="게스트 세션 ID가 올바르지 않아요.")
+
+    rate_key = user_id if user_id else req.thread_id
+    if not _check_rate_limit(rate_key):
         raise HTTPException(status_code=429, detail="요청이 너무 많아요. 잠시 후 다시 시도해주세요.")
+
     return StreamingResponse(
-        _stream_response(req.message, req.thread_id, user_id, req.target_score, req.clear_pending, req.client_pending_question or None),
+        _stream_response(req.message, req.thread_id, user_id, req.target_score, req.clear_pending, req.client_pending_question or None, is_guest=is_guest),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

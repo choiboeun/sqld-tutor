@@ -3,7 +3,8 @@ import random
 from pathlib import Path
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from app.auth import get_current_user_id
+from typing import Optional
+from app.auth import get_optional_user_id
 
 router = APIRouter()
 
@@ -81,7 +82,7 @@ def _sample_by_difficulty(pool: list[dict], plan: dict[str, int]) -> list[dict]:
 
 
 @router.get("/exam/generate")
-async def generate_exam(user_id: str = Depends(get_current_user_id)):
+async def generate_exam(user_id: Optional[str] = Depends(get_optional_user_id)):
     all_qs = _load_questions()
 
     by_cat: dict[str, list[dict]] = {}
@@ -129,7 +130,7 @@ class GradeRequest(BaseModel):
 
 
 @router.post("/exam/grade")
-async def grade_exam(body: GradeRequest, user_id: str = Depends(get_current_user_id)):
+async def grade_exam(body: GradeRequest, user_id: Optional[str] = Depends(get_optional_user_id)):
     _load_questions()
     results = []
     for qid, selected in body.answers.items():

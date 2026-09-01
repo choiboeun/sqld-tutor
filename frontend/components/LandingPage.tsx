@@ -28,6 +28,8 @@ const CSS = `
 .btn-primary{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;background:#6366f1;color:#fff;font-size:16px;font-weight:700;padding:14px 32px;text-decoration:none;border:2px solid #6366f1;transition:background .15s,border-color .15s}
 .btn-primary:hover{background:#4f46e5;border-color:#4f46e5}
 .hero-note{margin-top:24px;font-size:13px;color:rgba(55,48,163,.45)}
+.btn-ghost{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:14px;font-weight:600;color:rgba(55,48,163,.6);text-decoration:none;padding:8px 0;border-bottom:1px dashed rgba(99,102,241,.3);transition:color .15s,border-color .15s}
+.btn-ghost:hover{color:#4f46e5;border-bottom-color:#6366f1}
 .hero-r{background:var(--bg-2);display:flex;align-items:center;justify-content:center;padding:36px 36px}
 .cm{width:100%;background:var(--bg);border:1px solid var(--bd);box-shadow:0 8px 32px rgba(0,0,0,.09)}
 .cm-bar{background:var(--accent);padding:10px 14px;display:flex;align-items:center;gap:6px}
@@ -568,6 +570,10 @@ export default function LandingPage() {
             </Link>
           </div>
           <p className="hero-note">회원가입 필요 · 무료 · 광고 없음</p>
+          <Link className="btn-ghost" href="/chat?guest=true">
+            먼저 경험해보기
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+          </Link>
           <div className="scroll-hint" id="scroll-hint">
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
