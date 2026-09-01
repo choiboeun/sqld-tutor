@@ -570,20 +570,20 @@ export default function LandingPage() {
             <div className="btn-glow-wrap">
               <div className="btn-glow" />
               <Link className="btn-primary" href="/login">
-                무료로 시작하기
+                가입하고 시작하기
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>
             <Link className="btn-outline" href="/chat?guest=true">
-              먼저 경험해보기
+              로그인 없이 체험하기
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
           </div>
-          <p className="hero-note">회원가입 필요 · 무료 · 광고 없음</p>
+          <p className="hero-note">회원가입 필요 · <strong style={{color:"rgba(99,102,241,0.75)",fontWeight:700}}>무료</strong> · 광고 없음</p>
           <div className="scroll-hint" id="scroll-hint">
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
             <svg width="64" height="32" viewBox="0 0 64 32" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 8 32 26 60 8" /></svg>
@@ -841,8 +841,8 @@ export default function LandingPage() {
         <h2 className="cta-h">SQLD 합격,<br />AI와 함께 준비하세요</h2>
         <p className="cta-sub">가입하고 8문제 진단부터 시작해보세요. 무료예요.</p>
         <div className="cta-btn-group">
-          <Link className="btn-cta" href="/login">무료로 시작하기</Link>
-          <Link className="btn-cta-outline" href="/chat?guest=true">먼저 경험해보기</Link>
+          <Link className="btn-cta" href="/login">가입하고 시작하기</Link>
+          <Link className="btn-cta-outline" href="/chat?guest=true">로그인 없이 체험하기</Link>
         </div>
         <Link className="cta-login" href="/login">이미 계정이 있으신가요? 로그인</Link>
       </div>
