@@ -1196,10 +1196,12 @@ function ChatContent() {
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-stone-400 mb-5">
-                📝 모의고사는 비회원도 이용 가능해요.{" "}
-                <Link href="/exam" className="text-indigo-500 underline">바로 풀기</Link>
-              </p>
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-sm text-indigo-600 font-medium bg-indigo-50 px-3 py-2.5 mb-5 hover:bg-indigo-100 transition-colors"
+              >
+                📝 <span>모의고사는 <strong>홈</strong>에서 비회원도 이용 가능해요 →</span>
+              </Link>
               <div className="flex flex-col gap-2">
                 <Link
                   href="/signup"
