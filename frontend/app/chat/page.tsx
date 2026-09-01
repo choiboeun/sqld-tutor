@@ -332,11 +332,8 @@ function ChatContent() {
     // 게스트 모드: sessionStorage에 임시 ID 생성 (탭 닫으면 리셋)
     if (isGuestMode) {
       setIsGuest(true);
-      let gid = sessionStorage.getItem("guest_thread_id");
-      if (!gid) {
-        gid = "guest_" + crypto.randomUUID();
-        sessionStorage.setItem("guest_thread_id", gid);
-      }
+      const gid = "guest_" + crypto.randomUUID();
+      sessionStorage.setItem("guest_thread_id", gid);
       setThreadId(gid);
       threadIdRef.current = gid;
       setSessionReady(true);
@@ -1158,13 +1155,11 @@ function ChatContent() {
                   계속 풀기
                 </button>
                 <Link
-                  href="/home"
+                  href="/"
                   onClick={() => {
                     try {
-                      if (threadId) {
-                        sessionStorage.removeItem("guest_thread_id");
-                        sessionStorage.removeItem(`chat_${threadId}`);
-                      }
+                      sessionStorage.removeItem("guest_thread_id");
+                      if (threadId) sessionStorage.removeItem(`chat_${threadId}`);
                     } catch {}
                   }}
                   className="flex-1 text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
