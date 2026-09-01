@@ -54,6 +54,18 @@ def _get_vectorstore() -> Chroma:
     )
 
 
+# similarity_search 결과 캐시 — 같은 개념은 서버 수명 동안 API 재호출 없음
+_search_cache: dict[str, list] = {}
+
+
+def _cached_search(concept: str, k: int = 5) -> list:
+    key = concept.strip().lower()
+    if key not in _search_cache:
+        vectorstore = _get_vectorstore()
+        _search_cache[key] = vectorstore.similarity_search(concept, k=k)
+    return _search_cache[key]
+
+
 @tool
 def explain_concept(concept: str, level: str = "beginner") -> str:
     """SQLD 개념을 학습 자료 기반(RAG)으로 학생 수준에 맞게 설명한다.
@@ -65,8 +77,7 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     if not concept or not concept.strip():
         concept = "SQLD 개념"
 
-    vectorstore = _get_vectorstore()
-    docs = vectorstore.similarity_search(concept, k=5)
+    docs = _cached_search(concept)
     context = "\n\n---\n\n".join(doc.page_content for doc in docs)
 
     messages = [

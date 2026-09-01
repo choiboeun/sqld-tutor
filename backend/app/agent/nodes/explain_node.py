@@ -34,9 +34,16 @@ async def explain_node(state: TutorState) -> dict:
         concept = raw or "SQLD 개념"
 
     # explain_concept은 sync이므로 to_thread로 이벤트 루프 블로킹 방지
-    result = await asyncio.to_thread(
-        explain_concept.invoke, {"concept": concept, "level": student_level}
-    )
+    try:
+        result = await asyncio.to_thread(
+            explain_concept.invoke, {"concept": concept, "level": student_level}
+        )
+    except Exception as e:
+        print(f"[explain_node] 개념 설명 실패: {type(e).__name__}: {e}")
+        # last_explained_category 업데이트 → 같은 카테고리 반복 재시도 방지 (API 낭비 차단)
+        if is_adaptive:
+            return {"last_explained_category": state.get("last_category")}
+        return {}
 
     updates: dict = {"messages": [AIMessage(content=result)]}
     if is_adaptive:

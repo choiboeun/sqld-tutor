@@ -79,7 +79,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
   const [data, setData] = useState<ProgressData | null>(null);
 
   useEffect(() => {
-    if (!threadId) return;
+    if (!threadId || isGuest) return;
     (async () => {
       try {
         const res = await fetch(`/api/progress/${threadId}`, { headers: await getAuthHeaders() });
@@ -89,7 +89,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         onStatsRefreshed?.();
       } catch {}
     })();
-  }, [threadId, refresh, onStatsRefreshed]);
+  }, [threadId, refresh, isGuest, onStatsRefreshed]);
 
   const catMap: Record<string, CategoryStat> = liveStats
     ? Object.fromEntries(
