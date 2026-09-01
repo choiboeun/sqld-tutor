@@ -332,19 +332,10 @@ function ChatContent() {
     // 게스트 모드: sessionStorage에 임시 ID 생성 (탭 닫으면 리셋)
     if (isGuestMode) {
       setIsGuest(true);
-      // 재마운트 시 동일 탭 세션이면 기존 ID 재사용 (새 UUID 생성 시 MemorySaver 상태 끊김)
-      let gid = sessionStorage.getItem("guest_thread_id") ?? "";
-      if (!gid) {
-        gid = "guest_" + crypto.randomUUID();
-        sessionStorage.setItem("guest_thread_id", gid);
-      }
+      const gid = "guest_" + crypto.randomUUID();
+      sessionStorage.setItem("guest_thread_id", gid);
       setThreadId(gid);
       threadIdRef.current = gid;
-      // 재마운트 후 liveStats 복원 (사이드바 초기화 방지)
-      try {
-        const saved = sessionStorage.getItem(`live_stats_${gid}`);
-        if (saved) setLiveStats(JSON.parse(saved));
-      } catch {}
       setSessionReady(true);
       return;
     }
@@ -535,8 +526,6 @@ function ChatContent() {
               streamingContent = "";
             } else if (event.type === "stats_updated") {
               setLiveStats(event.content as LiveStats);
-              // 재마운트 대비 sessionStorage에 백업 (사이드바 초기화 방지)
-              try { if (threadId) sessionStorage.setItem(`live_stats_${threadId}`, JSON.stringify(event.content)); } catch {}
               // 게스트: 채점 완료 시 카운트 증가 → 3문제 시 모달 표시
               if (isGuest && !guestModalShownRef.current) {
                 setGuestQuestionCount((n) => {
