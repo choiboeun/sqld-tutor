@@ -844,6 +844,7 @@ export default function LandingPage() {
           <Link className="btn-cta" href="/login">가입하고 시작하기</Link>
           <Link className="btn-cta-outline" href="/chat?guest=true">로그인 없이 체험하기</Link>
         </div>
+        <p className="hero-note" style={{marginTop:"16px"}}>회원가입 필요 · <strong style={{color:"rgba(99,102,241,0.75)",fontWeight:700}}>무료</strong> · 광고 없음</p>
         <Link className="cta-login" href="/login">이미 계정이 있으신가요? 로그인</Link>
       </div>
 
