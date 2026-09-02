@@ -291,6 +291,7 @@ function ChatContent() {
   const [showGuestModal, setShowGuestModal] = useState(false);
   const guestModalShownRef = useRef(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [leaveTarget, setLeaveTarget] = useState<"home" | "back">("home");
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -426,10 +427,10 @@ function ChatContent() {
   // 게스트 모드: 브라우저 뒤로가기도 경고 모달 표시
   useEffect(() => {
     if (!isGuest || messages.length <= 1) return;
-    // 현재 히스토리에 더미 엔트리를 추가해 뒤로가기를 가로챔
     history.pushState(null, "", window.location.href);
     const handler = () => {
       history.pushState(null, "", window.location.href);
+      setLeaveTarget("back");
       setShowLeaveModal(true);
     };
     window.addEventListener("popstate", handler);
@@ -733,7 +734,7 @@ function ChatContent() {
         onClose={() => setSidebarOpen(false)}
         highlightHome={!isLoading && messages.some(m => m.role === "ai" && m.content.startsWith("**진단 완료!"))}
         isGuest={isGuest}
-        onGuestLeave={() => setShowLeaveModal(true)}
+        onGuestLeave={() => { setLeaveTarget("home"); setShowLeaveModal(true); }}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -1184,18 +1185,22 @@ function ChatContent() {
                 >
                   계속 풀기
                 </button>
-                <Link
-                  href="/home"
+                <button
                   onClick={() => {
                     try {
                       sessionStorage.removeItem("guest_thread_id");
                       if (threadId) sessionStorage.removeItem(`chat_${threadId}`);
                     } catch {}
+                    if (leaveTarget === "back") {
+                      history.go(-2); // pushState로 쌓인 더미 엔트리 건너뛰고 실제 이전 페이지로
+                    } else {
+                      router.push("/home");
+                    }
                   }}
                   className="flex-1 text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
                 >
                   나가기
-                </Link>
+                </button>
               </div>
             </div>
           </div>
