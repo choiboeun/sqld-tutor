@@ -292,6 +292,8 @@ function ChatContent() {
   const guestModalShownRef = useRef(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [leaveTarget, setLeaveTarget] = useState<"home" | "back">("home");
+  const guestPushCountRef = useRef(0);
+  const guestPopstateSetupRef = useRef(false);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -424,12 +426,15 @@ function ChatContent() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [isGuest, messages.length]);
 
-  // 게스트 모드: 브라우저 뒤로가기도 경고 모달 표시
+  // 게스트 모드: 브라우저 뒤로가기도 경고 모달 표시 (최초 1회만 세팅)
   useEffect(() => {
-    if (!isGuest || messages.length <= 1) return;
+    if (!isGuest || messages.length <= 1 || guestPopstateSetupRef.current) return;
+    guestPopstateSetupRef.current = true;
     history.pushState(null, "", window.location.href);
+    guestPushCountRef.current = 1;
     const handler = () => {
       history.pushState(null, "", window.location.href);
+      guestPushCountRef.current += 1;
       setLeaveTarget("back");
       setShowLeaveModal(true);
     };
@@ -1192,9 +1197,10 @@ function ChatContent() {
                       if (threadId) sessionStorage.removeItem(`chat_${threadId}`);
                     } catch {}
                     if (leaveTarget === "back") {
-                      history.go(-2); // pushState로 쌓인 더미 엔트리 건너뛰고 실제 이전 페이지로
+                      // 쌓인 더미 pushState 수 + 1만큼 뒤로 이동해야 실제 이전 페이지에 도달
+                      history.go(-(guestPushCountRef.current + 1));
                     } else {
-                      router.push("/home");
+                      router.push("/");
                     }
                   }}
                   className="flex-1 text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
