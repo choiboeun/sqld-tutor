@@ -423,6 +423,19 @@ function ChatContent() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [isGuest, messages.length]);
 
+  // 게스트 모드: 브라우저 뒤로가기도 경고 모달 표시
+  useEffect(() => {
+    if (!isGuest || messages.length <= 1) return;
+    // 현재 히스토리에 더미 엔트리를 추가해 뒤로가기를 가로챔
+    history.pushState(null, "", window.location.href);
+    const handler = () => {
+      history.pushState(null, "", window.location.href);
+      setShowLeaveModal(true);
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, [isGuest, messages.length]);
+
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
     // 스트림 버전 — 구 스트림의 done 이벤트가 신 스트림에 간섭하지 못하도록 방지
@@ -1172,7 +1185,7 @@ function ChatContent() {
                   계속 풀기
                 </button>
                 <Link
-                  href="/"
+                  href="/home"
                   onClick={() => {
                     try {
                       sessionStorage.removeItem("guest_thread_id");
