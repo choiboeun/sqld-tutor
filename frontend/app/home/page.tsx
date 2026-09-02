@@ -491,56 +491,204 @@ function HomeContent() {
     });
   });
 
-  // 비로그인 게스트 홈 화면
+  // 비로그인 게스트 홈 화면 — 로그인 유저와 동일 레이아웃, 잠금 기능만 표시
   if (!loading && isGuest) {
+    const LockIcon = () => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    );
     return (
-      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-block mb-4">
-              <Image src="/logo.png" alt="SQLD AI" width={48} height={48} className="mx-auto" />
+      <div className="md:h-[100dvh] md:overflow-hidden flex flex-col md:flex-row">
+
+        {/* ── 왼쪽 패널 (보라) ── */}
+        <div className="md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>
+
+          {/* 앱 이름 + 로그인 버튼 */}
+          <div className="flex items-start justify-between mb-6 md:mb-0">
+            <div className="flex items-center gap-3">
+              <Image src="/icons/logo-mark-256.png" alt="SQLD AI 튜터" width={48} height={48} className="shrink-0" />
+              <div>
+                <div className="text-lg font-bold tracking-tight leading-tight">SQLD AI 튜터</div>
+                <p className="text-sm mt-0.5" style={{ color: "rgba(55,48,163,.6)" }}>SQL 자격증 합격을 위한 AI 튜터</p>
+              </div>
+            </div>
+            <Link href="/login" className="flex items-center gap-1.5 text-xs text-indigo-500 hover:text-indigo-900 transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+              <span>로그인</span>
             </Link>
-            <h1 className="text-xl font-bold text-stone-800 mb-1">SQLD AI 튜터</h1>
-            <p className="text-sm text-stone-500">로그인하면 학습 기록을 저장할 수 있어요</p>
           </div>
-          <div className="space-y-3 mb-6">
-            <Link href="/exam" className="flex items-center justify-between bg-white border border-indigo-200 px-5 py-4 hover:bg-indigo-50 transition-colors group">
-              <div>
-                <p className="text-sm font-semibold text-stone-800">모의고사</p>
-                <p className="text-xs text-stone-400 mt-0.5">50문제 실전 모의시험 — 로그인 없이 이용 가능</p>
-              </div>
-              <svg className="w-4 h-4 text-indigo-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
-            </Link>
-            <Link href="/chat?guest=true" className="flex items-center justify-between bg-white border border-indigo-200 px-5 py-4 hover:bg-indigo-50 transition-colors group">
-              <div>
-                <p className="text-sm font-semibold text-stone-800">AI 챗봇으로 문제 풀기</p>
-                <p className="text-xs text-stone-400 mt-0.5">로그인 없이 3문제 무료 체험</p>
-              </div>
-              <svg className="w-4 h-4 text-indigo-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
-            </Link>
-            {[
-              { label: "약점 분석 & 맞춤 학습", sub: "카테고리별 정답률 분석" },
-              { label: "오답 복습", sub: "틀린 문제 다시 풀기" },
-              { label: "학습 달력 & 연속 학습일", sub: "매일의 풀이 기록 시각화" },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between bg-stone-100 border border-stone-300 px-5 py-4 opacity-75 cursor-not-allowed">
-                <div>
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0">
-                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <p className="text-sm font-semibold text-stone-500">{item.label}</p>
-                  </div>
-                  <p className="text-xs text-stone-400">{item.sub}</p>
+
+          {/* 예상 점수 — 잠금 */}
+          <div className="flex flex-col flex-1 justify-center">
+            <div className="relative w-full">
+              {/* 흐릿한 배경 더미 */}
+              <div className="opacity-20 pointer-events-none select-none">
+                <p className="font-bold uppercase mb-2" style={{ fontSize: "12px", letterSpacing: ".15em", color: "rgba(55,48,163,.55)" }}>예상 점수</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="font-black leading-[.85] tabular-nums" style={{ fontSize: "62px", letterSpacing: "-.07em", color: "#1e1b4b" }}>--</span>
+                  <span className="text-lg font-semibold" style={{ color: "rgba(55,48,163,.38)" }}>점</span>
                 </div>
-                <span className="text-xs text-stone-400 font-medium">회원 전용</span>
+                <p className="text-xs font-bold mb-5" style={{ color: "rgba(55,48,163,.5)" }}>목표까지 --점</p>
+                <div className="h-px mb-4" style={{ background: "rgba(99,102,241,.18)" }} />
+                <div className="flex gap-[5px]">
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <div key={i} className="flex-1 rounded-full" style={{ height: "9px", background: "rgba(99,102,241,.16)" }} />
+                  ))}
+                </div>
               </div>
-            ))}
+              {/* 잠금 오버레이 */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <p className="text-sm font-bold text-indigo-900">회원 전용 기능</p>
+                <p className="text-xs text-center" style={{ color: "rgba(55,48,163,.55)" }}>로그인하면 예상 점수·학습 통계를<br/>실시간으로 확인할 수 있어요</p>
+                <div className="flex gap-2 mt-1">
+                  <Link href="/signup" className="text-xs text-white bg-indigo-600 px-4 py-2 font-semibold hover:bg-indigo-700 transition-colors">무료 회원가입</Link>
+                  <Link href="/login" className="text-xs text-indigo-600 border border-indigo-400 px-4 py-2 font-semibold hover:bg-indigo-50 transition-colors">로그인</Link>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Link href="/signup" className="w-full text-center bg-indigo-600 text-white py-3 text-sm font-semibold hover:bg-indigo-700 transition-colors">무료로 회원가입</Link>
-            <Link href="/login" className="w-full text-center border border-stone-200 text-stone-600 py-3 text-sm font-semibold hover:bg-stone-50 transition-colors">로그인</Link>
+
+          <p className="text-xs mt-auto pt-6 leading-relaxed" style={{ color: "rgba(55,48,163,.4)" }}>
+            SQLD 합격자가 기출 경향을 분석해 제작한 문제은행
+          </p>
+        </div>
+
+        {/* ── 오른쪽 패널 ── */}
+        <div className="bg-stone-50 flex-1 flex flex-col p-7 md:p-10 md:overflow-y-auto">
+
+          {/* 모바일 */}
+          <div className="md:hidden flex flex-col gap-4">
+            <div className="grid grid-cols-3 gap-3">
+              {/* AI 학습 — 활성 */}
+              <Link href="/chat?guest=true" className="flex flex-col items-center bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 p-3 gap-2 hover:shadow-md transition-all">
+                <div className="w-9 h-9 bg-indigo-500 rounded-sm flex items-center justify-center shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                  </svg>
+                </div>
+                <p className="text-xs font-bold text-stone-900 text-center leading-tight">AI 학습</p>
+              </Link>
+              {/* 오답 회고 — 잠금 */}
+              <div className="flex flex-col items-center bg-stone-100 border border-stone-200 p-3 gap-2 opacity-75 cursor-not-allowed">
+                <div className="w-9 h-9 bg-stone-300 rounded-sm flex items-center justify-center shrink-0">
+                  <LockIcon />
+                </div>
+                <p className="text-xs font-bold text-stone-400 text-center leading-tight">오답 회고</p>
+              </div>
+              {/* 모의고사 — 활성 */}
+              <Link href="/exam" className="flex flex-col items-center bg-white border border-stone-100 p-3 gap-2 hover:shadow-md transition-all">
+                <div className="w-9 h-9 bg-indigo-400 rounded-sm flex items-center justify-center shrink-0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </div>
+                <p className="text-xs font-bold text-stone-900 text-center leading-tight">모의고사</p>
+              </Link>
+            </div>
+            {/* 오늘 할 일 — 잠금 */}
+            <div className="bg-stone-100 border border-stone-200 p-5 opacity-75 cursor-not-allowed">
+              <div className="flex items-center gap-1.5 mb-3"><LockIcon /><p className="text-[15px] font-bold text-stone-400">오늘 할 일</p></div>
+              <p className="text-sm text-stone-400">회원 전용 — 로그인하면 맞춤 학습 목표가 생성돼요</p>
+            </div>
+            {/* 카테고리 정답률 — 잠금 */}
+            <div className="border border-stone-200 p-4 bg-stone-100 opacity-75 cursor-not-allowed">
+              <div className="flex items-center gap-1.5 mb-2"><LockIcon /><p className="text-[15px] font-bold text-stone-400">카테고리 정답률</p></div>
+              <p className="text-sm text-stone-400">회원 전용 — 카테고리별 정답률을 분석해드려요</p>
+            </div>
+            {/* 학습 캘린더 — 잠금 */}
+            <div className="border border-stone-200 p-5 bg-stone-100 opacity-75 cursor-not-allowed">
+              <div className="flex items-center gap-1.5 mb-2"><LockIcon /><p className="text-[15px] font-bold text-stone-400">학습 캘린더</p></div>
+              <p className="text-sm text-stone-400">회원 전용 — 날짜별 학습 기록을 시각화해드려요</p>
+            </div>
           </div>
+
+          {/* 데스크탑 */}
+          <div className="hidden md:grid md:grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 flex-1">
+
+            {/* 왼쪽: 바로 시작 */}
+            <div className="flex flex-col gap-2.5">
+              <p className="text-sm font-semibold text-stone-400 uppercase tracking-widest mb-1">바로 시작</p>
+
+              {/* AI 학습 — 활성 */}
+              <Link href="/chat?guest=true" className="flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-none p-5 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <div className="w-9 h-9 bg-indigo-500 rounded-sm flex items-center justify-center mb-3 shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                  </svg>
+                </div>
+                <p className="text-[15px] font-bold text-stone-900">AI 학습</p>
+                <p className="text-sm text-indigo-500 mt-1">로그인 없이 3문제 무료 체험</p>
+                <div className="mt-4">
+                  <span className="inline-flex items-center bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-full">시작하기 →</span>
+                </div>
+              </Link>
+
+              {/* 오답 회고 — 잠금 */}
+              <div className="flex flex-col bg-stone-100 border border-stone-300 rounded-none p-4 opacity-75 cursor-not-allowed">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <div className="w-9 h-9 bg-stone-300 rounded-sm flex items-center justify-center shrink-0">
+                    <LockIcon />
+                  </div>
+                </div>
+                <p className="text-[15px] font-bold text-stone-400">오답 회고</p>
+                <p className="text-sm text-stone-400 mt-1">회원 전용</p>
+              </div>
+
+              {/* 모의고사 — 활성 */}
+              <Link href="/exam" className="flex flex-col bg-white border border-stone-100 rounded-none p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <div className="w-9 h-9 bg-indigo-400 rounded-sm flex items-center justify-center mb-3 shrink-0">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </div>
+                <p className="text-[15px] font-bold text-stone-900">모의고사</p>
+                <p className="text-sm text-stone-400 mt-1">50문제 · 90분 · 실전 배점</p>
+              </Link>
+
+              {/* 카테고리 정답률 — 잠금 */}
+              <div className="border border-stone-300 rounded-none p-4 bg-stone-100 opacity-75 cursor-not-allowed flex-1 flex flex-col justify-center items-center gap-2 min-h-[160px]">
+                <LockIcon />
+                <p className="text-[15px] font-bold text-stone-400">카테고리 정답률</p>
+                <p className="text-xs text-stone-400 text-center">회원 전용 — 카테고리별 정답률을<br/>레이더 차트로 분석해드려요</p>
+              </div>
+            </div>
+
+            {/* 오른쪽: 학습 캘린더 + 오늘 할 일 */}
+            <div className="flex flex-col gap-4">
+
+              {/* 학습 캘린더 — 잠금 */}
+              <div className="border border-stone-300 rounded-none p-5 bg-stone-100 opacity-75 cursor-not-allowed">
+                <div className="flex items-center gap-1.5 mb-4"><LockIcon /><p className="text-[15px] font-bold text-stone-400">학습 캘린더</p></div>
+                <div className="h-28 flex flex-col items-center justify-center gap-1">
+                  <p className="text-sm text-stone-400">회원 전용</p>
+                  <p className="text-xs text-stone-400">날짜별 학습 기록을 달력으로 확인할 수 있어요</p>
+                </div>
+              </div>
+
+              {/* 오늘 할 일 — 잠금 */}
+              <div className="flex-1 bg-stone-100 border border-stone-300 rounded-none p-5 opacity-75 cursor-not-allowed">
+                <div className="flex items-center gap-1.5 mb-4"><LockIcon /><p className="text-[15px] font-bold text-stone-400">오늘 할 일</p></div>
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm text-stone-400">회원 전용</p>
+                  <p className="text-xs text-stone-400">로그인하면 약점 카테고리·복습 스케줄을<br/>맞춤으로 보여드려요</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
     );
