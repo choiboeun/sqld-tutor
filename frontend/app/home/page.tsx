@@ -626,7 +626,8 @@ function HomeContent() {
                   </svg>
                 </div>
                 <p className="text-[15px] font-bold text-stone-900">AI 학습</p>
-                <p className="text-sm text-indigo-500 mt-1">로그인 없이 3문제 무료 체험</p>
+                <p className="text-sm text-indigo-500 mt-1">로그인 없이 AI 학습 가능</p>
+                <p className="text-xs text-stone-400 mt-0.5">로그인하지 않으면 기록은 저장되지 않습니다.</p>
                 <div className="mt-4">
                   <span className="inline-flex items-center bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-full">시작하기 →</span>
                 </div>
