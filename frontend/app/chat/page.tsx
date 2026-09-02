@@ -761,7 +761,7 @@ function ChatContent() {
             onClick={() => isGuest ? setShowGuestModal(true) : setSqlPanelOpen((v) => !v)}
             className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
               isGuest
-                ? "bg-white/70 border-white/60 text-stone-400 hover:bg-white hover:text-stone-500"
+                ? "bg-stone-100/80 border-stone-300/80 text-stone-400 opacity-75 cursor-not-allowed"
                 : sqlPanelOpen
                   ? "bg-white border-white text-indigo-700"
                   : "bg-white/70 border-white/60 text-indigo-600 hover:bg-white hover:text-indigo-700"
@@ -1095,10 +1095,10 @@ function ChatContent() {
                   <button
                     key={label}
                     onClick={() => setShowGuestModal(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-400 bg-white border border-stone-200 cursor-pointer transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-400 bg-stone-100 border border-stone-300 cursor-not-allowed opacity-75 transition-colors"
                     title="회원가입 후 사용 가능"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-amber-500">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                     {label}
