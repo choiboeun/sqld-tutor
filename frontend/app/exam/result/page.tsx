@@ -243,11 +243,11 @@ export default function ExamResultPage() {
           <span><span className="inline-block w-3 h-3 bg-stone-100 border border-stone-200 mr-1" />미답변</span>
         </div>
 
-        {/* 나가기 경고 배너 */}
+        {/* 저장 안내 + 나가기 경고 배너 */}
         <div className="flex items-start gap-2.5 bg-indigo-50 border border-indigo-200 px-4 py-3 mb-3">
           <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <p className="text-xs text-indigo-800 leading-relaxed">
-            이 페이지를 벗어나면 <span className="font-semibold">오답 기록이 사라집니다.</span> 틀린 문제를 먼저 클릭해 확인하세요.
+            <span className="font-semibold">이 결과는 저장되지 않아요.</span> 페이지를 벗어나면 오답 기록도 사라지니 틀린 문제를 먼저 클릭해 확인하세요.
           </p>
         </div>
 

@@ -209,17 +209,20 @@ const mdComponents = {
   ),
   // Fix 1: GFM 테이블
   table: ({ children }: { children?: React.ReactNode }) => (
-    <div className="overflow-x-auto my-2">
-      <table className="border-collapse text-xs">{children}</table>
+    <div className="overflow-x-auto my-3 rounded-lg border border-stone-200 shadow-sm">
+      <table className="border-collapse text-xs w-full">{children}</table>
     </div>
   ),
   th: ({ children }: { children?: React.ReactNode }) => (
-    <th className="border border-stone-200 bg-stone-100 px-2 py-1 text-left font-semibold whitespace-nowrap">
+    <th className="border-b border-stone-200 bg-stone-50 px-3 py-1.5 text-left font-semibold text-stone-700 whitespace-nowrap">
       {children}
     </th>
   ),
   td: ({ children }: { children?: React.ReactNode }) => (
-    <td className="border border-stone-200 px-2 py-1 whitespace-nowrap">{children}</td>
+    <td className="border-b border-stone-100 px-3 py-1.5 whitespace-nowrap text-stone-600 last:border-b-0">{children}</td>
+  ),
+  tbody: ({ children }: { children?: React.ReactNode }) => (
+    <tbody className="divide-y divide-stone-100">{children}</tbody>
   ),
   // Fix 2: 번호 목록(ol)은 숫자로, 불릿(ul)은 점으로
   ol: ({ children }: { children?: React.ReactNode }) => (
@@ -619,7 +622,7 @@ function ChatContent() {
         abortStreamRef.current = null;
       }
     }
-  }, [threadId, targetScore]);
+  }, [threadId, targetScore, isGuest]);
 
   // ?new=true 로 진입 시 진단 자동 시작 (세션 복원 완료 후에만, 대화 이력이 없을 때만, 게스트 제외)
   useEffect(() => {
@@ -809,6 +812,37 @@ function ChatContent() {
             )}
             SQL 실행
           </button>
+
+          {/* 홈으로 버튼 — 모바일 전용 */}
+          {isGuest ? (
+            <button
+              onClick={() => { setLeaveTarget("home"); setShowLeaveModal(true); }}
+              className="md:hidden flex items-center gap-1 text-sm text-stone-600 hover:text-indigo-600 transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+              </svg>
+              홈
+            </button>
+          ) : (
+            <Link
+              href="/home"
+              onClick={() => {
+                try {
+                  if (threadId) {
+                    sessionStorage.removeItem(`chat_${threadId}`);
+                    sessionStorage.removeItem(`scroll_${threadId}`);
+                  }
+                } catch {}
+              }}
+              className="md:hidden flex items-center gap-1 text-sm text-stone-600 hover:text-indigo-600 transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 5l-7 7 7 7"/>
+              </svg>
+              홈
+            </Link>
+          )}
 
           </div>
         </div>

@@ -312,6 +312,10 @@ function HomeContent() {
   const [inquiryMsg, setInquiryMsg] = useState("");
   const [inquiryLoading, setInquiryLoading] = useState(false);
   const [inquiryResult, setInquiryResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [showGuestBanner, setShowGuestBanner] = useState(true);
+  useEffect(() => {
+    try { if (sessionStorage.getItem("guest_banner_dismissed")) setShowGuestBanner(false); } catch {}
+  }, []);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -500,6 +504,28 @@ function HomeContent() {
     );
     return (
       <div className="md:h-[100dvh] md:overflow-hidden flex flex-col md:flex-row">
+
+        {/* 게스트 안내 배너 */}
+        {showGuestBanner && (
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-indigo-600 text-white text-xs">
+            <div className="flex items-center gap-2 min-w-0">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span className="truncate">잠금 기능은 로그인 후 이용할 수 있어요</span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link href="/signup" className="font-semibold underline underline-offset-2 whitespace-nowrap">무료 가입</Link>
+              <button
+                onClick={() => { try { sessionStorage.setItem("guest_banner_dismissed", "1"); } catch {} setShowGuestBanner(false); }}
+                className="text-white/70 hover:text-white transition-colors"
+                aria-label="닫기"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* ── 왼쪽 패널 (보라) ── */}
         <div className="md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>

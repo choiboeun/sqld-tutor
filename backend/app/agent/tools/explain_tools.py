@@ -24,8 +24,8 @@ _PROMPT = """당신은 SQLD 자격증 시험 전문 튜터입니다.
   올바른 예: **GROUP BY**, **UNPIVOT**, **시험 포인트** / 틀린 예: **데이터를**, **방식이**, **테이블의**
 - 코드 블록(```sql ... ```) 안에서는 ** 마크다운을 절대 사용하지 마세요. 코드 블록 안은 순수 SQL 코드만 작성하세요.
   틀린 예: ```sql **SELECT** col **FROM** tbl ``` / 올바른 예: ```sql SELECT col FROM tbl ```
-- SQL 구문 설명에서 선택지(ASC|DESC, ROWS|RANGE 등)를 나타낼 때 파이프(|)는 코드 블록 안에서만 사용하세요. 코드 블록 밖 일반 텍스트에서는 슬래시(/)로 대체하세요.
-  틀린 예: ORDER BY 컬럼 ASC|DESC (코드 블록 밖) / 올바른 예: ORDER BY 컬럼 ASC/DESC (코드 블록 밖)
+- SQL 구문 설명에서 선택지(ASC|DESC, ROWS|RANGE 등)를 나타낼 때는 슬래시(/)를 사용하세요. 단, 마크다운 표(| 컬럼1 | 컬럼2 |)는 파이프(|)를 그대로 사용하세요.
+  틀린 예: ORDER BY 컬럼 ASC|DESC / 올바른 예: ORDER BY 컬럼 ASC/DESC
 - 볼드 단어에 조사(은/는/이/가/을/를/으로/에서)가 붙을 때는 조사를 볼드 안에 포함하세요.
   올바른 예: **JOIN이**, **정규화를** / 틀린 예: **JOIN**이, **정규화**를
 - 이탤릭(*기울임*)은 절대 사용하지 마세요.
@@ -105,7 +105,8 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     content = re.sub(r'\n•\s*', '\n- ', content)
     # "다음 문제를 풀려면 문제 줘" 안내 문장 제거 (UI 버튼으로 대체)
     content = re.sub(r'\n*-{0,3}\n*>\s*다음 문제를 풀려면.*$', '', content, flags=re.MULTILINE)
-    # 코드 블록 밖 파이프(|) → 슬래시(/) 변환 (ASC|DESC 등이 마크다운 테이블로 오파싱되는 문제 방지)
+    # 코드 블록 밖 인라인 파이프(|) → 슬래시(/) 변환 (ASC|DESC 등이 마크다운 테이블로 오파싱되는 문제 방지)
+    # 단, 마크다운 테이블 행(| 로 시작하는 줄)은 보존
     def _replace_pipe_outside_code(text: str) -> str:
         parts = re.split(r'(```[\s\S]*?```)', text)
         result = []
@@ -113,7 +114,14 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
             if j % 2 == 1:  # 코드 블록 내부 → 그대로 유지
                 result.append(part)
             else:
-                result.append(part.replace('|', '/'))
+                lines = part.split('\n')
+                fixed = []
+                for line in lines:
+                    if line.lstrip().startswith('|'):  # 테이블 행 → 파이프 유지
+                        fixed.append(line)
+                    else:
+                        fixed.append(line.replace('|', '/'))
+                result.append('\n'.join(fixed))
         return ''.join(result)
     content = _replace_pipe_outside_code(content)
     # COUNT(*), SELECT * 등 SQL 별표가 마크다운 이탤릭으로 소비되는 문제 방지
