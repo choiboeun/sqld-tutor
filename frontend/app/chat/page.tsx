@@ -1217,7 +1217,7 @@ function ChatContent() {
                       // 뒤로가기를 여러 번 눌러도 handler가 dummy를 제자리에 push해 스택 깊이는 항상 동일
                       history.go(-2);
                     } else {
-                      router.push("/");
+                      router.push("/home");
                     }
                   }}
                   className="flex-1 text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
