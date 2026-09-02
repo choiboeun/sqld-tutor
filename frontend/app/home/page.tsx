@@ -523,10 +523,15 @@ function HomeContent() {
               { label: "오답 복습", sub: "틀린 문제 다시 풀기" },
               { label: "학습 달력 & 연속 학습일", sub: "매일의 풀이 기록 시각화" },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between bg-stone-100 border border-stone-200 px-5 py-4 opacity-60">
+              <div key={item.label} className="flex items-center justify-between bg-stone-100 border border-stone-300 px-5 py-4 opacity-75 cursor-not-allowed">
                 <div>
-                  <p className="text-sm font-semibold text-stone-500">🔒 {item.label}</p>
-                  <p className="text-xs text-stone-400 mt-0.5">{item.sub}</p>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <p className="text-sm font-semibold text-stone-500">{item.label}</p>
+                  </div>
+                  <p className="text-xs text-stone-400">{item.sub}</p>
                 </div>
                 <span className="text-xs text-stone-400 font-medium">회원 전용</span>
               </div>
