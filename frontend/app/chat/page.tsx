@@ -1208,8 +1208,14 @@ function ChatContent() {
                       if (threadId) sessionStorage.removeItem(`chat_${threadId}`);
                     } catch {}
                     if (leaveTarget === "back") {
-                      // 쌓인 더미 pushState 수 + 1만큼 뒤로 이동해야 실제 이전 페이지에 도달
-                      history.go(-(guestPushCountRef.current + 1));
+                      // history.go 전에 리스너 제거 — go()가 발생시키는 popstate를 우리 핸들러가 잡지 않도록
+                      if (guestPopstateHandlerRef.current) {
+                        window.removeEventListener("popstate", guestPopstateHandlerRef.current);
+                        guestPopstateHandlerRef.current = null;
+                      }
+                      // 항상 -2: setup dummy(1) + /chat 원본(1) = 2스텝 뒤가 이전 페이지(랜딩)
+                      // 뒤로가기를 여러 번 눌러도 handler가 dummy를 제자리에 push해 스택 깊이는 항상 동일
+                      history.go(-2);
                     } else {
                       router.push("/");
                     }
