@@ -165,7 +165,6 @@ export default function ExamPage() {
   const submitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submittedRef = useRef(false);
   const [timerToast, setTimerToast] = useState(false);
-  const [isGuest, setIsGuest] = useState(false);
 
   const persist = useCallback((
     qs: ExamQuestion[],
@@ -265,10 +264,6 @@ export default function ExamPage() {
       }
 
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) setIsGuest(true);
-
         const headers = await getAuthHeaders(); // 게스트면 {} 반환, 백엔드는 optional auth
         const res = await fetch("/api/exam/generate", { headers });
         if (!res.ok) throw new Error("문제 로드 실패");
@@ -391,14 +386,6 @@ export default function ExamPage() {
       {timerToast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-stone-800 text-white text-sm font-semibold px-5 py-2.5 shadow-lg">
           시간이 종료되었습니다. 자동 제출합니다...
-        </div>
-      )}
-
-      {/* 게스트 배너 */}
-      {isGuest && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-between gap-2">
-          <p className="text-xs text-amber-700 font-medium">비로그인 상태입니다. 모의고사 결과는 저장되지 않아요.</p>
-          <a href="/signup" className="text-xs text-amber-800 font-bold underline shrink-0">회원가입하기 →</a>
         </div>
       )}
 
