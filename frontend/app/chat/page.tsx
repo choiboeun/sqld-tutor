@@ -758,16 +758,25 @@ function ChatContent() {
           <div className="flex items-center gap-3">
           {/* SQL 패널 토글 버튼 — PC만 표시 */}
           <button
-            onClick={() => setSqlPanelOpen((v) => !v)}
+            onClick={() => isGuest ? setShowGuestModal(true) : setSqlPanelOpen((v) => !v)}
             className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
-              sqlPanelOpen
-                ? "bg-white border-white text-indigo-700"
-                : "bg-white/70 border-white/60 text-indigo-600 hover:bg-white hover:text-indigo-700"
+              isGuest
+                ? "bg-white/70 border-white/60 text-stone-400 hover:bg-white hover:text-stone-500"
+                : sqlPanelOpen
+                  ? "bg-white border-white text-indigo-700"
+                  : "bg-white/70 border-white/60 text-indigo-600 hover:bg-white hover:text-indigo-700"
             }`}
+            title={isGuest ? "회원가입 후 사용 가능" : undefined}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-            </svg>
+            {isGuest ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+            )}
             SQL 실행
           </button>
 
@@ -1089,7 +1098,10 @@ function ChatContent() {
                     className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-400 bg-white border border-stone-200 cursor-pointer transition-colors"
                     title="회원가입 후 사용 가능"
                   >
-                    🔒 {label}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    {label}
                   </button>
                 ))}
               </>
