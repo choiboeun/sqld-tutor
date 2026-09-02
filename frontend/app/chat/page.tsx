@@ -294,6 +294,7 @@ function ChatContent() {
   const [leaveTarget, setLeaveTarget] = useState<"home" | "back">("home");
   const guestPushCountRef = useRef(0);
   const guestPopstateSetupRef = useRef(false);
+  const guestPopstateHandlerRef = useRef<(() => void) | null>(null);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -426,7 +427,7 @@ function ChatContent() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [isGuest, messages.length]);
 
-  // 게스트 모드: 브라우저 뒤로가기도 경고 모달 표시 (최초 1회만 세팅)
+  // 게스트 모드: 브라우저 뒤로가기 경고 모달 (최초 1회 등록, 컴포넌트 언마운트 시에만 해제)
   useEffect(() => {
     if (!isGuest || messages.length <= 1 || guestPopstateSetupRef.current) return;
     guestPopstateSetupRef.current = true;
@@ -438,9 +439,19 @@ function ChatContent() {
       setLeaveTarget("back");
       setShowLeaveModal(true);
     };
+    guestPopstateHandlerRef.current = handler;
     window.addEventListener("popstate", handler);
-    return () => window.removeEventListener("popstate", handler);
+    // cleanup은 별도 unmount effect에서 처리 — 여기서 반환하면 messages 변경 시마다 리스너가 제거됨
   }, [isGuest, messages.length]);
+
+  // 컴포넌트 언마운트 시에만 popstate 리스너 해제
+  useEffect(() => {
+    return () => {
+      if (guestPopstateHandlerRef.current) {
+        window.removeEventListener("popstate", guestPopstateHandlerRef.current);
+      }
+    };
+  }, []);
 
 
   const streamChat = useCallback(async (message: string, showUserMsg: boolean, clearPending = false) => {
