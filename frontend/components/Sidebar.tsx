@@ -295,18 +295,29 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
         </div>
 
         {/* 오답 회고 */}
-        <Link
-          href="/wrong-answers"
-          className="flex items-center justify-between w-full px-5 py-3 bg-white hover:bg-indigo-50 transition-colors text-stone-700 border-t border-violet-200 hover:text-indigo-700"
-          onClick={onClose}
-        >
-          <span className="text-sm font-medium">오답 회고</span>
-          {data?.wrong_count != null && data.wrong_count > 0 && (
-            <span className="text-xs bg-amber-500 text-white px-2 py-0.5 font-semibold">
-              {data.wrong_count}개
-            </span>
-          )}
-        </Link>
+        {isGuest ? (
+          <div className="flex items-center justify-between w-full px-5 py-3 bg-stone-100 border-t border-stone-200 opacity-75 cursor-not-allowed" title="회원가입 후 사용 가능">
+            <div className="flex items-center gap-1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500 shrink-0">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span className="text-sm font-medium text-stone-400">오답 회고</span>
+            </div>
+          </div>
+        ) : (
+          <Link
+            href="/wrong-answers"
+            className="flex items-center justify-between w-full px-5 py-3 bg-white hover:bg-indigo-50 transition-colors text-stone-700 border-t border-violet-200 hover:text-indigo-700"
+            onClick={onClose}
+          >
+            <span className="text-sm font-medium">오답 회고</span>
+            {data?.wrong_count != null && data.wrong_count > 0 && (
+              <span className="text-xs bg-amber-500 text-white px-2 py-0.5 font-semibold">
+                {data.wrong_count}개
+              </span>
+            )}
+          </Link>
+        )}
 
         {totalAnswered === 0 && (
           <p className="text-xs text-stone-400 text-center py-3">
