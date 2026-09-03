@@ -140,55 +140,57 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       }>
 
         {/* Logo */}
-        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-indigo-200/40 bg-gradient-to-br from-[#e8e6ff] to-[#d4d0ff]">
-          {isGuest ? (
-            <button
-              onClick={() => { onClose?.(); onGuestLeave?.(); }}
-              className="inline-flex items-center gap-1.5 text-xs transition-colors text-indigo-500 hover:text-indigo-700"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
-                <polyline points="9 21 9 12 15 12 15 21"/>
-              </svg>
-              홈으로
-            </button>
-          ) : (
-            <Link
-              href="/home"
-              onClick={() => {
-                try {
-                  if (threadId) {
-                    sessionStorage.removeItem(`chat_${threadId}`);
-                    sessionStorage.removeItem(`scroll_${threadId}`);
-                  }
-                } catch {}
-                onClose?.();
-              }}
-              className={`inline-flex items-center gap-1.5 text-xs transition-colors ${
-                highlightHome
-                  ? "text-indigo-700 font-semibold"
-                  : "text-indigo-500 hover:text-indigo-700"
-              }`}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
-                <polyline points="9 21 9 12 15 12 15 21"/>
-              </svg>
-              홈으로
-              {highlightHome && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse ml-0.5" />}
-            </Link>
-          )}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
-              <span className="text-sm font-extrabold text-[#312e81] tracking-tight">SQLD AI 튜터</span>
-            </div>
+        <div className="px-4 h-[56px] flex items-center justify-between border-b border-indigo-200/40 bg-gradient-to-br from-[#e8e6ff] to-[#d4d0ff]">
+          {/* 왼쪽: 로고 + 타이틀 */}
+          <div className="flex items-center gap-2 min-w-0">
+            <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={22} height={22} className="shrink-0" />
+            <span className="shimmer-title text-sm font-extrabold tracking-tight">SQLD AI 튜터</span>
+          </div>
+          {/* 오른쪽: 홈 pill + 닫기 버튼(모바일) */}
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {isGuest ? (
+              <button
+                onClick={() => { onClose?.(); onGuestLeave?.(); }}
+                className="inline-flex items-center gap-1 bg-white/75 border border-indigo-200/40 rounded-full px-2.5 py-1 text-xs font-semibold text-[#3730a3] backdrop-blur-sm shadow-sm active:scale-95 transition-transform"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+                  <polyline points="9 21 9 12 15 12 15 21"/>
+                </svg>
+                홈
+              </button>
+            ) : (
+              <Link
+                href="/home"
+                onClick={() => {
+                  try {
+                    if (threadId) {
+                      sessionStorage.removeItem(`chat_${threadId}`);
+                      sessionStorage.removeItem(`scroll_${threadId}`);
+                    }
+                  } catch {}
+                  onClose?.();
+                }}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-sm shadow-sm active:scale-95 transition-transform ${
+                  highlightHome
+                    ? "bg-indigo-100/80 border border-indigo-300/50 text-indigo-700"
+                    : "bg-white/75 border border-indigo-200/40 text-[#3730a3]"
+                }`}
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+                  <polyline points="9 21 9 12 15 12 15 21"/>
+                </svg>
+                홈
+                {highlightHome && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse ml-0.5" />}
+              </Link>
+            )}
             <button
               onClick={onClose}
               className="md:hidden text-stone-400 hover:text-stone-600 transition-colors p-1"
               aria-label="닫기"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>

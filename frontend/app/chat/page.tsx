@@ -757,7 +757,7 @@ function ChatContent() {
       />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-6 h-[80px] border-b border-indigo-200/40 bg-gradient-to-br from-[#e8e6ff] to-[#d4d0ff] flex items-center justify-between">
+        <div className="px-6 h-[56px] border-b border-indigo-200/40 bg-gradient-to-br from-[#e8e6ff] to-[#d4d0ff] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -780,10 +780,10 @@ function ChatContent() {
                   }
                 } catch {}
               }}
-              className="md:hidden flex items-center gap-2 text-base font-extrabold text-[#312e81] tracking-tight hover:text-indigo-700 transition-colors"
+              className="md:hidden flex items-center gap-2 tracking-tight transition-colors"
             >
-              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
-              SQLD AI 튜터
+              <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={22} height={22} className="shrink-0" />
+              <span className="shimmer-title text-base font-extrabold">SQLD AI 튜터</span>
             </Link>
           </div>
 
