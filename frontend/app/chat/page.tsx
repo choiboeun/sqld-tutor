@@ -1157,7 +1157,7 @@ function ChatContent() {
           <div className="flex border-t border-indigo-100 bg-white overflow-x-auto scrollbar-hide">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-indigo-700 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] active:scale-[0.94] active:opacity-70 transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-indigo-700 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] hover:bg-indigo-50/50 active:scale-[0.94] active:opacity-70 transition-all"
             >
               문제 풀기
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shrink-0" />
