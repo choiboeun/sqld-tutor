@@ -32,6 +32,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  // /chat 게스트 접근 처리 — flash 방지
+  if (!user && path.startsWith("/chat")) {
+    const isGuestParam = request.nextUrl.searchParams.get("guest") === "true";
+    const hasGuestCookie = request.cookies.get("sqld_guest")?.value === "1";
+    if (!isGuestParam && !hasGuestCookie) {
+      // 비인증 비게스트: 미들웨어에서 즉시 리다이렉트 → 페이지 렌더 없이 바로 이동
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    if (isGuestParam && !hasGuestCookie) {
+      // 첫 게스트 진입: 쿠키 발급 (24시간)
+      response.cookies.set("sqld_guest", "1", {
+        maxAge: 60 * 60 * 24,
+        httpOnly: false,
+        sameSite: "lax",
+        path: "/",
+      });
+    }
+  }
+
   if (user) {
     const onboardingDone = user.user_metadata?.onboarding_completed === true;
 
