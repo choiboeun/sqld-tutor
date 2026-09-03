@@ -761,13 +761,19 @@ function ChatContent() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-1 text-indigo-400 hover:text-indigo-700 transition-colors"
+              className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg bg-white/70 border border-indigo-200/40 text-indigo-700 hover:bg-white/90 active:scale-95 transition-all"
               aria-label="메뉴 열기"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <rect y="3" width="20" height="2" rx="1"/>
-                <rect y="9" width="20" height="2" rx="1"/>
-                <rect y="15" width="20" height="2" rx="1"/>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="0"  y="0"  width="3.5" height="3.5" rx="0.8"/>
+                <rect x="5.25" y="0"  width="3.5" height="3.5" rx="0.8"/>
+                <rect x="10.5" y="0"  width="3.5" height="3.5" rx="0.8"/>
+                <rect x="0"  y="5.25" width="3.5" height="3.5" rx="0.8"/>
+                <rect x="5.25" y="5.25" width="3.5" height="3.5" rx="0.8"/>
+                <rect x="10.5" y="5.25" width="3.5" height="3.5" rx="0.8"/>
+                <rect x="0"  y="10.5" width="3.5" height="3.5" rx="0.8"/>
+                <rect x="5.25" y="10.5" width="3.5" height="3.5" rx="0.8"/>
+                <rect x="10.5" y="10.5" width="3.5" height="3.5" rx="0.8"/>
               </svg>
             </button>
             <Link
