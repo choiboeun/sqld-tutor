@@ -1277,55 +1277,145 @@ function ChatContent() {
       {/* 게스트 회원가입 유도 모달 */}
       {showGuestModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white w-full max-w-sm shadow-xl overflow-hidden">
-            <div className="bg-indigo-600 px-6 py-5 text-white">
-              <p className="text-xs font-semibold tracking-wide uppercase text-indigo-200 mb-1">3문제 체험 완료</p>
-              <h2 className="text-lg font-bold leading-snug">더 많은 기능을 사용하려면<br/>회원가입이 필요해요</h2>
+          <div className="bg-white w-full max-w-[380px] shadow-2xl overflow-hidden">
+
+            {/* 타이틀 */}
+            <div className="px-5 py-4 border-b border-indigo-100">
+              <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                <span className="w-[5px] h-[5px] bg-indigo-500 rounded-full animate-pulse inline-block" />
+                체험 중
+              </p>
+              <h2 className="text-[15px] font-black text-indigo-950 leading-snug">비회원이라 잠긴 기능들이에요<br />회원가입하면 전부 무료로 열려요</h2>
             </div>
-            <div className="px-6 py-5">
-              <p className="text-sm text-stone-500 mb-4">가입하면 이런 기능을 이용할 수 있어요</p>
-              <ul className="space-y-2.5 mb-5">
-                {[
-                  "내 약점 카테고리 분석",
-                  "틀린 문제 오답 복습",
-                  "틀린 개념 집중 설명",
-                  "풀이 기록 영구 저장",
-                  "연속 정답 스트릭 & 예상 점수 추적",
-                ].map((feat) => (
-                  <li key={feat} className="flex items-center gap-2 text-sm text-stone-700">
-                    <span className="w-4 h-4 bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold flex-shrink-0">✓</span>
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-sm text-indigo-600 font-medium bg-indigo-50 px-3 py-2.5 mb-5 hover:bg-indigo-100 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-indigo-500"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-                <span>모의고사는 <strong>비회원이여도</strong> 홈으로 이동하여 이용 가능해요 →</span>
-              </Link>
-              <div className="flex flex-col gap-2">
-                <Link
-                  href="/signup"
-                  className="w-full text-center bg-indigo-600 text-white py-2.5 text-sm font-semibold hover:bg-indigo-700 transition-colors"
-                >
-                  무료로 회원가입
-                </Link>
-                <Link
-                  href="/login"
-                  className="w-full text-center border border-indigo-200 text-indigo-600 py-2.5 text-sm font-semibold hover:bg-indigo-50 transition-colors"
-                >
-                  이미 계정이 있어요
-                </Link>
-                <button
-                  onClick={() => setShowGuestModal(false)}
-                  className="text-xs text-stone-400 hover:text-stone-500 py-1 transition-colors"
-                >
-                  계속 체험하기
-                </button>
+
+            {/* 무료 지금 가능 */}
+            <div className="px-5 py-3 border-b border-indigo-100">
+              <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <span className="bg-emerald-500 text-white px-1.5 py-px text-[8px] font-black">무료</span>
+                지금 바로 가능
+              </p>
+              {/* AI 튜터 히어로 카드 */}
+              <div className="bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-200 p-3 mb-2 flex items-start gap-2.5">
+                <svg width="46" height="46" viewBox="0 0 46 46" fill="none" className="shrink-0">
+                  <rect width="46" height="46" rx="11" fill="#ede9fe"/>
+                  <rect x="7" y="9" width="26" height="17" rx="4" fill="#6366f1"/>
+                  <path d="M13 26 L10 32 L20 26Z" fill="#6366f1"/>
+                  <circle cx="15" cy="17.5" r="2.2" fill="white"/>
+                  <circle cx="21" cy="17.5" r="2.2" fill="white"/>
+                  <circle cx="27" cy="17.5" r="2.2" fill="white"/>
+                  <path d="M38 7 L39.4 10.6 L43 12 L39.4 13.4 L38 17 L36.6 13.4 L33 12 L36.6 10.6 Z" fill="#a78bfa"/>
+                  <circle cx="38" cy="26" r="1.5" fill="#c4b5fd" opacity={0.7}/>
+                  <circle cx="42" cy="20" r="1" fill="#c4b5fd" opacity={0.5}/>
+                </svg>
+                <div>
+                  <p className="text-[12px] font-black text-indigo-900 mb-0.5">SQLD 전용 AI 튜터와 대화</p>
+                  <p className="text-[10px] text-stone-500 leading-relaxed">내 수준에 맞는 문제를 출제하고, 틀리면 그 개념을 즉시 설명해줘요. 카테고리 지정, 개념 질문까지 — 채팅으로 다 돼요.</p>
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {["맞춤 문제 출제", "틀린 개념 즉시 설명", "카테고리 지정"].map(c => (
+                      <span key={c} className="text-[9px] font-bold px-1.5 py-px bg-indigo-100 text-indigo-600 border border-indigo-200">{c}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
+              {/* 모의고사 */}
+              <button
+                onClick={() => { setShowGuestModal(false); setLeaveTarget("home"); setShowLeaveModal(true); }}
+                className="w-full flex items-center justify-between bg-emerald-50 border-2 border-emerald-300 p-2.5 hover:border-emerald-400 transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" className="shrink-0">
+                    <rect width="36" height="36" rx="8" fill="#d1fae5"/>
+                    <rect x="9" y="5" width="16" height="21" rx="2.5" fill="white" stroke="#10b981" strokeWidth="1.3"/>
+                    <line x1="12.5" y1="11" x2="21.5" y2="11" stroke="#10b981" strokeWidth="1.2" strokeLinecap="round"/>
+                    <line x1="12.5" y1="14.5" x2="21.5" y2="14.5" stroke="#10b981" strokeWidth="1.2" strokeLinecap="round"/>
+                    <line x1="12.5" y1="18" x2="18" y2="18" stroke="#10b981" strokeWidth="1.2" strokeLinecap="round"/>
+                    <circle cx="25" cy="26" r="5.5" fill="#10b981"/>
+                    <path d="M22.5 26 L24.5 28 L27.5 23.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div className="text-left">
+                    <p className="text-[12px] font-black text-emerald-800">모의고사 50문제</p>
+                    <p className="text-[10px] text-emerald-600">90분 · 실전 배점 · 비회원 이용 가능</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-500 whitespace-nowrap shrink-0">홈에서 시작 →</span>
+              </button>
             </div>
+
+            {/* 회원가입 잠금 해제 */}
+            <div className="px-5 py-3">
+              <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                회원가입하면 잠금 해제
+              </p>
+              <div className="grid grid-cols-2 gap-1.5 mb-3">
+                <div className="bg-indigo-50/40 border border-indigo-100 p-2.5">
+                  <div className="w-6 h-6 bg-indigo-100 flex items-center justify-center mb-1.5">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                      <rect x="1" y="11" width="4" height="8" rx="1" fill="#6366f1"/>
+                      <rect x="7" y="6.5" width="4" height="12.5" rx="1" fill="#6366f1" opacity={0.7}/>
+                      <rect x="13" y="2" width="4" height="17" rx="1" fill="#6366f1" opacity={0.45}/>
+                      <polyline points="3,10 9,5.5 15,1.5" stroke="#a78bfa" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                    </svg>
+                  </div>
+                  <p className="text-[10px] font-bold text-indigo-900 mb-0.5">약점 분석</p>
+                  <p className="text-[9px] text-stone-400 leading-tight">11개 카테고리 정답률 실시간 추적</p>
+                </div>
+                <div className="bg-indigo-50/40 border border-indigo-100 p-2.5">
+                  <div className="w-6 h-6 bg-indigo-100 flex items-center justify-center mb-1.5">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 3 A7 7 0 1 1 3.5 7" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                      <polyline points="1.5 4.5 3.5 7 6 4.5" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="7.5" y1="7.5" x2="12.5" y2="12.5" stroke="#6366f1" strokeWidth="1.4" strokeLinecap="round"/>
+                      <line x1="12.5" y1="7.5" x2="7.5" y2="12.5" stroke="#6366f1" strokeWidth="1.4" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <p className="text-[10px] font-bold text-indigo-900 mb-0.5">오답 회고</p>
+                  <p className="text-[9px] text-stone-400 leading-tight">틀린 문제 자동 저장 · 나중에 몰아 복습</p>
+                </div>
+                <div className="bg-indigo-50/40 border border-indigo-100 p-2.5">
+                  <div className="w-6 h-6 bg-indigo-100 flex items-center justify-center mb-1.5">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                      <rect x="1.5" y="1.5" width="17" height="17" rx="3" fill="#1e1b4b"/>
+                      <path d="M5.5 10 L8 7 L5.5 4.5" stroke="#818cf8" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="10" y1="14" x2="15" y2="14" stroke="#6ee7b7" strokeWidth="1.3" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <p className="text-[10px] font-bold text-indigo-900 mb-0.5">SQL 플레이그라운드</p>
+                  <p className="text-[9px] text-stone-400 leading-tight">쿼리 직접 실행하며 결과 눈으로 확인</p>
+                </div>
+                <div className="bg-indigo-50/40 border border-indigo-100 p-2.5">
+                  <div className="w-6 h-6 bg-indigo-100 flex items-center justify-center mb-1.5">
+                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="8.5" stroke="#6366f1" strokeWidth="1.1" opacity={0.25} fill="none"/>
+                      <circle cx="10" cy="10" r="5.5" stroke="#6366f1" strokeWidth="1.2" opacity={0.55} fill="none"/>
+                      <circle cx="10" cy="10" r="2.5" fill="#6366f1"/>
+                      <line x1="10" y1="1" x2="10" y2="4" stroke="#6366f1" strokeWidth="1.2" strokeLinecap="round"/>
+                      <line x1="10" y1="16" x2="10" y2="19" stroke="#6366f1" strokeWidth="1.2" strokeLinecap="round"/>
+                      <line x1="1" y1="10" x2="4" y2="10" stroke="#6366f1" strokeWidth="1.2" strokeLinecap="round"/>
+                      <line x1="16" y1="10" x2="19" y2="10" stroke="#6366f1" strokeWidth="1.2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <p className="text-[10px] font-bold text-indigo-900 mb-0.5">실력 진단 + 예상 점수</p>
+                  <p className="text-[9px] text-stone-400 leading-tight">8문제로 실력 파악 · 합격 가능성 추적</p>
+                </div>
+              </div>
+              <Link
+                href="/signup"
+                className="w-full bg-indigo-600 text-white py-3 text-[13px] font-black flex items-center justify-center gap-2 mb-2 hover:bg-indigo-700 transition-colors"
+              >
+                무료로 회원가입하고 시작하기
+                <span className="text-[9px] bg-white/20 px-1.5 py-px font-black tracking-wide">무료</span>
+              </Link>
+              <button
+                onClick={() => setShowGuestModal(false)}
+                className="w-full border border-indigo-200 text-stone-400 py-2.5 text-[11px] font-semibold hover:border-indigo-400 hover:text-indigo-500 transition-colors"
+              >
+                계속 체험하기
+              </button>
+            </div>
+
           </div>
         </div>
       )}
