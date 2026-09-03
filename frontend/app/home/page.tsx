@@ -503,11 +503,11 @@ function HomeContent() {
       </svg>
     );
     return (
-      <div className="md:h-[100dvh] md:overflow-hidden flex flex-col md:flex-row">
+      <div className="flex flex-col md:h-[100dvh] md:overflow-hidden">
 
-        {/* 게스트 안내 배너 */}
+        {/* 게스트 안내 배너 — 전체 너비 (flex-row 바깥) */}
         {showGuestBanner && (
-          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-indigo-600 text-white text-xs">
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-indigo-600 text-white text-xs shrink-0">
             <div className="flex items-center gap-2 min-w-0">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -527,8 +527,11 @@ function HomeContent() {
           </div>
         )}
 
+        {/* 두 패널 영역 */}
+        <div className="flex flex-col md:flex-row flex-1 md:overflow-hidden">
+
         {/* ── 왼쪽 패널 (보라) ── */}
-        <div className="md:w-[42%] md:min-h-screen md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>
+        <div className="md:w-[42%] md:min-h-full md:sticky md:top-0 md:max-h-screen md:overflow-y-auto flex flex-col p-7 md:p-10" style={{ background: "#dde1fb", color: "#1c1917" }}>
 
           {/* 앱 이름 + 로그인 버튼 */}
           <div className="flex items-start justify-between mb-6 md:mb-0">
@@ -717,6 +720,8 @@ function HomeContent() {
           </div>
 
         </div>
+
+        </div>{/* 두 패널 영역 끝 */}
       </div>
     );
   }
