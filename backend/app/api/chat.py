@@ -19,6 +19,28 @@ _rate_limit: dict[str, list[float]] = defaultdict(list)
 _LIMIT = 200   # 1시간에 최대 200회
 _WINDOW = 3600
 
+_guest_session_times: dict[str, float] = {}
+_GUEST_TTL = 7200        # 게스트 세션 유지 시간: 2시간
+_last_guest_cleanup: float = 0.0
+_CLEANUP_INTERVAL = 600  # 정리 실행 간격: 10분
+
+
+def _cleanup_old_guest_sessions() -> None:
+    global _last_guest_cleanup
+    now = time.time()
+    if now - _last_guest_cleanup < _CLEANUP_INTERVAL:
+        return
+    _last_guest_cleanup = now
+    expired = [tid for tid, t in list(_guest_session_times.items()) if now - t > _GUEST_TTL]
+    if not expired:
+        return
+    cp = guest_graph.checkpointer
+    for tid in expired:
+        _guest_session_times.pop(tid, None)
+        cp.storage.pop(tid, None)
+        if hasattr(cp, "writes"):
+            cp.writes.pop(tid, None)
+
 
 def _check_rate_limit(user_id: str) -> bool:
     now = time.time()
@@ -103,6 +125,9 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
         input_data = {**INITIAL_STATE, "messages": [HumanMessage(content=message)], "user_id": user_id, "target_score": target_score}
         if user_id:
             log_event(user_id, "session_start", {"thread_id": thread_id})
+        if is_guest:
+            _guest_session_times[thread_id] = time.time()
+            _cleanup_old_guest_sessions()
     else:
         input_data = {"messages": [HumanMessage(content=message)]}
         if clear_pending:
@@ -126,6 +151,8 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
                 input_data["attempts_by_category"] = _pq["_attempts_by_cat"]
             if isinstance(_pq.get("_accuracy_by_cat"), dict):
                 input_data["accuracy_by_category"] = _pq["_accuracy_by_cat"]
+            if isinstance(_pq.get("_correct_count_by_cat"), dict):
+                input_data["correct_count_by_category"] = _pq["_correct_count_by_cat"]
             if isinstance(_pq.get("_wrong_log"), dict):
                 input_data["wrong_answer_log"] = _pq["_wrong_log"]
             if isinstance(_pq.get("_streak"), int):
@@ -193,6 +220,7 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
                         _su_cache["total_answered"] = output.get("total_answered")
                         _su_cache["attempts_by_category"] = output.get("attempts_by_category")
                         _su_cache["accuracy_by_category"] = output.get("accuracy_by_category")
+                        _su_cache["correct_count_by_category"] = output.get("correct_count_by_category")
                         _su_cache["wrong_answer_log"] = output.get("wrong_answer_log")
                         _su_cache["streak"] = output.get("streak")
                         _su_cache["is_diagnostic"] = output.get("is_diagnostic")
@@ -217,6 +245,8 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
                             pq_payload["_attempts_by_cat"] = _su_cache["attempts_by_category"]
                         if _su_cache.get("accuracy_by_category") is not None:
                             pq_payload["_accuracy_by_cat"] = _su_cache["accuracy_by_category"]
+                        if _su_cache.get("correct_count_by_category") is not None:
+                            pq_payload["_correct_count_by_cat"] = _su_cache["correct_count_by_category"]
                         if _su_cache.get("wrong_answer_log") is not None:
                             pq_payload["_wrong_log"] = _su_cache["wrong_answer_log"]
                         if _su_cache.get("streak") is not None:

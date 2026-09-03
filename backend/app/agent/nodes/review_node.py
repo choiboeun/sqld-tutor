@@ -134,7 +134,7 @@ def review_node(state: TutorState) -> dict:
     match = _ANSWER.match(last_human.content) if last_human else None
 
     if not match:
-        note = "\n\n> 1~4번 중 하나를 선택해주세요."
+        note = "\n\n> 1~4번 중 하나를 선택해주세요. 맞히면 오답 목록에서 자동으로 삭제돼요!"
         return {"messages": [AIMessage(content=_format_question(pending) + note)]}
 
     ans_char = match.group(1)

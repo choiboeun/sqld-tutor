@@ -273,7 +273,7 @@ const mdComponents = {
     <h3 className="font-semibold text-sm mt-3 mb-1">{children}</h3>
   ),
   em: ({ children }: { children?: React.ReactNode }) => (
-    <span>{children}</span>
+    <em className="italic">{children}</em>
   ),
   img: ({ src, alt }: { src?: string; alt?: string }) => (
     <img
