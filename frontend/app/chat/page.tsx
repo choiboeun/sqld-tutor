@@ -1154,10 +1154,10 @@ function ChatContent() {
         {chipsVisible && sessionReady && !isLoading && !parseQuestionHeader(
           [...messages].reverse().find(m => m.role === "ai" && m.content !== "")?.content ?? ""
         ) && (
-          <div className="px-6 py-3 flex flex-wrap gap-2 border-t border-violet-200 bg-[#dde1fb]">
+          <div className="flex border-t border-indigo-100 bg-white overflow-x-auto scrollbar-hide">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-indigo-700 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] transition-colors"
             >
               문제 풀기
             </button>
@@ -1167,10 +1167,10 @@ function ChatContent() {
                   <button
                     key={label}
                     onClick={() => setShowGuestModal(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-400 bg-stone-100 border border-stone-300 cursor-not-allowed opacity-75 transition-colors"
+                    className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-400 border-r border-indigo-100 whitespace-nowrap shrink-0 cursor-not-allowed"
                     title="회원가입 후 사용 가능"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-amber-500">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-amber-400">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
                     {label}
@@ -1181,19 +1181,19 @@ function ChatContent() {
               <>
                 <button
                   onClick={() => streamChat("약점 분석해줘", true, true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-500 border-r border-indigo-100 whitespace-nowrap shrink-0 hover:text-indigo-700 hover:bg-indigo-50/50 transition-colors"
                 >
                   약점 분석
                 </button>
                 <button
                   onClick={() => streamChat("오답 복습해줘", true, true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-500 border-r border-indigo-100 whitespace-nowrap shrink-0 hover:text-indigo-700 hover:bg-indigo-50/50 transition-colors"
                 >
                   오답 복습
                 </button>
                 <button
                   onClick={handleWeakConceptChip}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-stone-700 bg-white border border-indigo-200 hover:bg-indigo-50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-500 border-r border-indigo-100 whitespace-nowrap shrink-0 hover:text-indigo-700 hover:bg-indigo-50/50 transition-colors"
                 >
                   틀린 개념 복습
                 </button>
@@ -1202,27 +1202,25 @@ function ChatContent() {
           </div>
         )}
 
-        <div className="px-6 py-4 border-t border-violet-200 bg-[#dde1fb]">
-          <div className="flex gap-3 items-end">
-            <textarea
-              ref={inputRef}
-              className={`flex-1 resize-none border border-stone-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
-              rows={1}
-              placeholder={inputPlaceholder}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={isLoading || !input.trim()}
-              className="p-3 bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 19V5M5 12l7-7 7 7"/>
-              </svg>
-            </button>
-          </div>
+        <div className="px-4 py-3 border-t border-indigo-100 bg-white flex items-center gap-3">
+          <textarea
+            ref={inputRef}
+            className={`flex-1 resize-none border-none bg-transparent py-1 text-sm focus:outline-none max-h-32 transition-opacity placeholder:text-stone-400 ${isLoading ? "opacity-50" : ""}`}
+            rows={1}
+            placeholder={inputPlaceholder}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={isLoading || !input.trim()}
+            className="w-8 h-8 bg-[#1e1b4b] text-white hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex-shrink-0 flex items-center justify-center"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 19V5M5 12l7-7 7 7"/>
+            </svg>
+          </button>
         </div>
       </div>
 

@@ -39,6 +39,9 @@ body {
   animation: card-in 0.35s cubic-bezier(0.22,1,0.36,1) both;
 }
 
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 @keyframes shimmer-text {
   0%   { background-position: -200% center; }
   100% { background-position:  200% center; }
