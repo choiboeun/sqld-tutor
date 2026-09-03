@@ -1157,9 +1157,10 @@ function ChatContent() {
           <div className="flex border-t border-indigo-100 bg-white overflow-x-auto scrollbar-hide">
             <button
               onClick={() => streamChat("문제 줘", true, true)}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-indigo-700 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-indigo-700 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] active:scale-[0.94] active:opacity-70 transition-all"
             >
               문제 풀기
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse shrink-0" />
             </button>
             {isGuest ? (
               <>
@@ -1181,21 +1182,24 @@ function ChatContent() {
               <>
                 <button
                   onClick={() => streamChat("약점 분석해줘", true, true)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-500 border-r border-indigo-100 whitespace-nowrap shrink-0 hover:text-indigo-700 hover:bg-indigo-50/50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-indigo-600 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] hover:bg-indigo-50/50 active:scale-[0.94] active:opacity-70 transition-all"
                 >
                   약점 분석
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0" />
                 </button>
                 <button
                   onClick={() => streamChat("오답 복습해줘", true, true)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-500 border-r border-indigo-100 whitespace-nowrap shrink-0 hover:text-indigo-700 hover:bg-indigo-50/50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-indigo-600 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] hover:bg-indigo-50/50 active:scale-[0.94] active:opacity-70 transition-all"
                 >
                   오답 복습
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0" />
                 </button>
                 <button
                   onClick={handleWeakConceptChip}
-                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-stone-500 border-r border-indigo-100 whitespace-nowrap shrink-0 hover:text-indigo-700 hover:bg-indigo-50/50 transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-indigo-600 border-r border-indigo-100 whitespace-nowrap shrink-0 shadow-[inset_0_-2px_0_#4f46e5] hover:bg-indigo-50/50 active:scale-[0.94] active:opacity-70 transition-all"
                 >
                   틀린 개념 복습
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0" />
                 </button>
               </>
             )}
