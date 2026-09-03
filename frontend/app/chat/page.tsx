@@ -757,11 +757,11 @@ function ChatContent() {
       />
 
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-6 h-[80px] border-b border-violet-200 bg-[#dde1fb] flex items-center justify-between">
+        <div className="px-6 h-[80px] border-b border-indigo-200/40 bg-gradient-to-br from-[#e8e6ff] to-[#d4d0ff] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-1 text-stone-500 hover:text-stone-700 transition-colors"
+              className="md:hidden p-1 text-indigo-400 hover:text-indigo-700 transition-colors"
               aria-label="메뉴 열기"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -780,7 +780,7 @@ function ChatContent() {
                   }
                 } catch {}
               }}
-              className="md:hidden flex items-center gap-2 text-lg font-semibold text-stone-900 hover:text-indigo-600 transition-colors"
+              className="md:hidden flex items-center gap-2 text-base font-extrabold text-[#312e81] tracking-tight hover:text-indigo-700 transition-colors"
             >
               <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
               SQLD AI 튜터
@@ -792,12 +792,12 @@ function ChatContent() {
           {/* SQL 패널 토글 버튼 — PC만 표시 */}
           <button
             onClick={() => isGuest ? setShowGuestModal(true) : setSqlPanelOpen((v) => !v)}
-            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 border transition-colors ${
+            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border backdrop-blur-sm transition-colors ${
               isGuest
-                ? "bg-stone-100/80 border-stone-300/80 text-stone-400 opacity-75 cursor-not-allowed"
+                ? "bg-white/30 border-indigo-200/30 text-indigo-300 cursor-not-allowed"
                 : sqlPanelOpen
-                  ? "bg-white border-white text-indigo-700"
-                  : "bg-white/70 border-white/60 text-indigo-600 hover:bg-white hover:text-indigo-700"
+                  ? "bg-white/80 border-indigo-300/50 text-indigo-700 shadow-sm"
+                  : "bg-white/50 border-indigo-200/40 text-indigo-600 hover:bg-white/75 hover:text-indigo-700"
             }`}
             title={isGuest ? "회원가입 후 사용 가능" : undefined}
           >

@@ -140,7 +140,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
       }>
 
         {/* Logo */}
-        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-violet-200 bg-[#dde1fb]">
+        <div className="px-5 h-[80px] flex flex-col justify-center gap-1.5 border-b border-indigo-200/40 bg-gradient-to-br from-[#e8e6ff] to-[#d4d0ff]">
           {isGuest ? (
             <button
               onClick={() => { onClose?.(); onGuestLeave?.(); }}
@@ -181,7 +181,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Image src="/icons/logo-mark-64.png" alt="SQLD AI 튜터" width={24} height={24} className="shrink-0" />
-              <span className="text-sm font-bold text-stone-800">SQLD AI 튜터</span>
+              <span className="text-sm font-extrabold text-[#312e81] tracking-tight">SQLD AI 튜터</span>
             </div>
             <button
               onClick={onClose}
