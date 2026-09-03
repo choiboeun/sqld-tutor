@@ -144,9 +144,13 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
           {isGuest ? (
             <button
               onClick={() => { onClose?.(); onGuestLeave?.(); }}
-              className={`inline-flex items-center gap-1 text-xs transition-colors text-indigo-500 hover:text-indigo-600`}
+              className="inline-flex items-center gap-1.5 text-xs transition-colors text-indigo-500 hover:text-indigo-700"
             >
-              ← 홈으로
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+                <polyline points="9 21 9 12 15 12 15 21"/>
+              </svg>
+              홈으로
             </button>
           ) : (
             <Link
@@ -160,13 +164,17 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                 } catch {}
                 onClose?.();
               }}
-              className={`inline-flex items-center gap-1 text-xs transition-colors ${
+              className={`inline-flex items-center gap-1.5 text-xs transition-colors ${
                 highlightHome
                   ? "text-indigo-700 font-semibold"
-                  : "text-indigo-500 hover:text-indigo-600"
+                  : "text-indigo-500 hover:text-indigo-700"
               }`}
             >
-              ← 홈으로
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+                <polyline points="9 21 9 12 15 12 15 21"/>
+              </svg>
+              홈으로
               {highlightHome && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse ml-0.5" />}
             </Link>
           )}
