@@ -813,14 +813,15 @@ function ChatContent() {
             SQL 실행
           </button>
 
-          {/* 홈으로 버튼 — 모바일 전용 */}
+          {/* 홈으로 버튼 — 모바일 전용 (pill 스타일) */}
           {isGuest ? (
             <button
               onClick={() => { setLeaveTarget("home"); setShowLeaveModal(true); }}
-              className="md:hidden flex items-center gap-1 text-sm text-stone-600 hover:text-indigo-600 transition-colors"
+              className="md:hidden flex items-center gap-1 bg-white rounded-full px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-sm whitespace-nowrap shrink-0 active:scale-95 transition-transform"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 5l-7 7 7 7"/>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+                <polyline points="9 21 9 12 15 12 15 21"/>
               </svg>
               홈
             </button>
@@ -835,10 +836,11 @@ function ChatContent() {
                   }
                 } catch {}
               }}
-              className="md:hidden flex items-center gap-1 text-sm text-stone-600 hover:text-indigo-600 transition-colors"
+              className="md:hidden flex items-center gap-1 bg-white rounded-full px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-sm whitespace-nowrap shrink-0 active:scale-95 transition-transform"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 5l-7 7 7 7"/>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+                <polyline points="9 21 9 12 15 12 15 21"/>
               </svg>
               홈
             </Link>
