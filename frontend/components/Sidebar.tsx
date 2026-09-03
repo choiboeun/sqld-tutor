@@ -151,7 +151,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
             {isGuest ? (
               <button
                 onClick={() => { onClose?.(); onGuestLeave?.(); }}
-                className="inline-flex items-center gap-1 bg-white/75 border border-indigo-200/40 rounded-full px-2.5 py-1 text-xs font-semibold text-[#3730a3] backdrop-blur-sm shadow-sm active:scale-95 transition-transform"
+                className="inline-flex items-center gap-1 bg-white/75 border border-indigo-200/40 rounded px-2.5 py-1 text-xs font-semibold text-[#3730a3] backdrop-blur-sm shadow-sm active:scale-95 transition-transform"
               >
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
@@ -171,7 +171,7 @@ export default function Sidebar({ threadId, refresh, liveStats, onStatsRefreshed
                   } catch {}
                   onClose?.();
                 }}
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-sm shadow-sm active:scale-95 transition-transform ${
+                className={`inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-semibold backdrop-blur-sm shadow-sm active:scale-95 transition-transform ${
                   highlightHome
                     ? "bg-indigo-100/80 border border-indigo-300/50 text-indigo-700"
                     : "bg-white/75 border border-indigo-200/40 text-[#3730a3]"

@@ -792,7 +792,7 @@ function ChatContent() {
           {/* SQL 패널 토글 버튼 — PC만 표시 */}
           <button
             onClick={() => isGuest ? setShowGuestModal(true) : setSqlPanelOpen((v) => !v)}
-            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border backdrop-blur-sm transition-colors ${
+            className={`hidden md:flex items-center gap-1.5 text-sm px-3 py-1.5 rounded border backdrop-blur-sm transition-colors ${
               isGuest
                 ? "bg-white/30 border-indigo-200/30 text-indigo-300 cursor-not-allowed"
                 : sqlPanelOpen
@@ -817,7 +817,7 @@ function ChatContent() {
           {isGuest ? (
             <button
               onClick={() => { setLeaveTarget("home"); setShowLeaveModal(true); }}
-              className="md:hidden flex items-center gap-1 bg-white rounded-full px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-sm whitespace-nowrap shrink-0 active:scale-95 transition-transform"
+              className="md:hidden flex items-center gap-1 bg-white rounded px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-sm whitespace-nowrap shrink-0 active:scale-95 transition-transform"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
@@ -836,7 +836,7 @@ function ChatContent() {
                   }
                 } catch {}
               }}
-              className="md:hidden flex items-center gap-1 bg-white rounded-full px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-sm whitespace-nowrap shrink-0 active:scale-95 transition-transform"
+              className="md:hidden flex items-center gap-1 bg-white rounded px-2.5 py-1 text-xs font-semibold text-stone-700 shadow-sm whitespace-nowrap shrink-0 active:scale-95 transition-transform"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
