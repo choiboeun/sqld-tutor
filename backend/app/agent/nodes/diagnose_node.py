@@ -49,7 +49,7 @@ def diagnose_node(state: TutorState) -> dict:
         lines += ["", "**취약 카테고리** (정답률 60% 미만)", ""]
         lines += ["| 카테고리 | 정답률 | 풀이 수 |", "|---|:---:|:---:|"]
         low_sample = False
-        for cat, acc, cnt in weak[:3]:
+        for cat, acc, cnt in weak:
             note = "" if is_initial else (" ⚠️" if cnt < 5 else "")
             lines.append(f"| {cat} | **{acc:.0%}** | {cnt}문제{note} |")
             if cnt < 5:
@@ -60,7 +60,7 @@ def diagnose_node(state: TutorState) -> dict:
     if strong:
         lines += ["", "**잘 하고 있는 카테고리**", ""]
         lines += ["| 카테고리 | 정답률 | 풀이 수 |", "|---|:---:|:---:|"]
-        for cat, acc, cnt in strong[:3]:
+        for cat, acc, cnt in strong:
             lines.append(f"| {cat} | {acc:.0%} | {cnt}문제 |")
 
     if not_attempted:
