@@ -204,8 +204,10 @@ export default function OnboardingTour() {
       const userId = data.user?.id ?? "anon";
       const key = TOUR_KEY(userId);
 
-      // 다기기 지원: Supabase user_metadata 우선 확인 (기기별 localStorage 한계 보완)
+      // 신규 회원만 투어 표시: onboarding에서 tour_pending을 심은 경우에만 진행
+      // (기존 회원은 tour_pending이 없으므로 절대 표시 안 됨)
       if (data.user?.user_metadata?.tour_done === true) return;
+      if (data.user?.user_metadata?.tour_pending !== true) return;
       try { if (localStorage.getItem(key)) return; } catch {}
 
       if (cancelled) return;
@@ -288,10 +290,10 @@ export default function OnboardingTour() {
 
   const finish = useCallback((goChat: boolean) => {
     try { if (tourKey) localStorage.setItem(tourKey, "1"); } catch {}
-    // 다기기 지원: Supabase user_metadata에도 완료 표시
+    // Supabase: tour 완료 표시 + pending 플래그 해제
     try {
       const supabase = createClient();
-      supabase.auth.updateUser({ data: { tour_done: true } });
+      supabase.auth.updateUser({ data: { tour_done: true, tour_pending: false } });
     } catch {}
     setVisible(false);
     if (goChat) router.push("/chat?new=true");

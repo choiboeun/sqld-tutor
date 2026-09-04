@@ -25,7 +25,7 @@ export default function OnboardingPage() {
     try {
       const supabase = createClient();
       const { error: updateError } = await supabase.auth.updateUser({
-        data: { onboarding_completed: true, target_score: targetScore },
+        data: { onboarding_completed: true, target_score: targetScore, tour_pending: true },
       });
       if (updateError) throw updateError;
       router.refresh();
