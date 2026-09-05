@@ -5,6 +5,7 @@ from app.analytics import log_event
 
 _ANY_NUMBER = re.compile(r"^\d")  # 범위 밖 숫자(5, 7 등)도 drill이 처리하도록
 _REVIEW = re.compile(r"오답|복습|틀린\s*문제")
+_CONCEPT_EXPLAIN = re.compile(r"틀린\s*개념|개념\s*복습")  # "틀린 개념 복습" → explain 우선
 _NEGATE_DRILL = re.compile(r"문제.{0,5}(주지마|하지마|싫|안\s*줘|필요\s*없)")
 _DRILL = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)?")
 _EXPLAIN = re.compile(r"설명|뭐야|뭐예요|무엇|개념|알려|이해[가하]")
@@ -52,6 +53,9 @@ def intent_classifier(state: TutorState) -> dict:
         if _DRILL_EXPLICIT.search(text):
             return {"current_mode": "drill", "follow_up_mode": False}
         # 오답 복습 / 약점 분석 / 개념 설명 / SQL은 follow_up_mode에서도 즉시 허용
+        # "틀린 개념 복습"은 _REVIEW보다 먼저 체크 (복습 키워드 오매칭 방지)
+        if _CONCEPT_EXPLAIN.search(text):
+            return {"current_mode": "explain", "follow_up_mode": False}
         if _REVIEW.search(text):
             return {"current_mode": "review", "follow_up_mode": False}
         if _DIAGNOSE.search(text):
@@ -64,7 +68,10 @@ def intent_classifier(state: TutorState) -> dict:
 
     # 명시적 drill 요청("문제 줘" 등)을 먼저 체크하고, 이후 설명 의도를 우선 처리.
     # bare "문제" 단독 매칭은 폴백으로 두어 "이 문제 개념이 뭐야?" 같은 입력이 explain으로 가도록 함.
-    if _REVIEW.search(text):
+    # "틀린 개념 복습"은 _REVIEW(복습 키워드)보다 먼저 체크
+    if _CONCEPT_EXPLAIN.search(text):
+        mode = "explain"
+    elif _REVIEW.search(text):
         mode = "review"
     elif _NEGATE_DRILL.search(text):
         mode = "chat"

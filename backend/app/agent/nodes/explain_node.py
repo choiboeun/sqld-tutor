@@ -5,8 +5,9 @@ from app.agent.state import TutorState
 from app.agent.tools.explain_tools import explain_concept
 
 _ANSWER_RE = re.compile(r"^[1-4①②③④]번?\s*$")
-# adaptive 트리거가 아닌 비개념 명령어("문제 줘", "다음 문제" 등)가 last_human으로 들어온 경우 감지
-_NON_CONCEPT = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)?|다음\s*문제|새\s*문제")
+# adaptive 트리거가 아닌 비개념 명령어 → last_wrong_tags/last_category로 폴백
+# "틀린 개념 복습" 같은 칩 입력도 포함 — 리터럴 텍스트가 아닌 오답 태그로 설명해야 의미 있음
+_NON_CONCEPT = re.compile(r"문제\s*(줘|내줘|풀게|풀어|주세요)?|다음\s*문제|새\s*문제|틀린\s*개념|개념\s*복습")
 
 
 def _pick_concept(wrong_tags: list[str], fallback: str) -> str:
