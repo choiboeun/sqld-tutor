@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -307,6 +307,7 @@ function HomeContent() {
   const [examDateInput, setExamDateInput] = useState("");
   const [examSaving, setExamSaving] = useState(false);
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null);
+  const [homeDataError, setHomeDataError] = useState(false);
   const [reviewTiming, setReviewTiming] = useState<ReviewTiming | null>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [inquiryMsg, setInquiryMsg] = useState("");
@@ -317,6 +318,27 @@ function HomeContent() {
     try { if (sessionStorage.getItem("guest_banner_dismissed")) setShowGuestBanner(false); } catch {}
   }, []);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const homeUserIdRef = useRef<string>("");
+
+  const loadHomeData = useCallback(async (uid: string) => {
+    setHomeDataError(false);
+    try {
+      const headers = await getAuthHeaders();
+      const res = await fetch(`/api/home-data/${uid}`, { headers });
+      if (res.ok) {
+        const { progress, calendar, review_timing } = await res.json();
+        setData(progress);
+        setCalendarData(calendar);
+        setReviewTiming(review_timing);
+      } else {
+        setHomeDataError(true);
+      }
+    } catch {
+      setHomeDataError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -328,22 +350,12 @@ function HomeContent() {
       }
 
       const uid = authData.user.id;
+      homeUserIdRef.current = uid;
       setUserEmail(authData.user.email ?? "");
       setExamDate(authData.user.user_metadata?.exam_date ?? "");
-
-      try {
-        const headers = await getAuthHeaders();
-        const res = await fetch(`/api/home-data/${uid}`, { headers });
-        if (res.ok) {
-          const { progress, calendar, review_timing } = await res.json();
-          setData(progress);
-          setCalendarData(calendar);
-          setReviewTiming(review_timing);
-        }
-      } catch {}
-      finally { setLoading(false); }
+      await loadHomeData(uid);
     })();
-  }, []);
+  }, [loadHomeData]);
 
   useEffect(() => {
     const handler = (e: MouseEvent | TouchEvent) => {
@@ -1114,7 +1126,14 @@ function HomeContent() {
           {/* 학습 캘린더 */}
           <div data-tour="m-cal" className="border border-indigo-200 p-5" style={{ background: "#fafaf9" }}>
             <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
-            {calendarData ? <CalendarHeatmap dates={calendarData.dates} /> : (
+            {calendarData ? <CalendarHeatmap dates={calendarData.dates} /> : homeDataError ? (
+              <div className="flex flex-col items-center gap-2 py-4">
+                <p className="text-xs text-stone-400">학습 캘린더를 불러오지 못했어요.</p>
+                <button onClick={() => loadHomeData(homeUserIdRef.current)} className="text-xs font-semibold text-indigo-500 underline">
+                  다시 시도
+                </button>
+              </div>
+            ) : (
               <div className="flex gap-2 animate-pulse">
                 {Array.from({ length: 14 }).map((_, wi) => (
                   <div key={wi} className="flex flex-col gap-2">
@@ -1195,6 +1214,13 @@ function HomeContent() {
               <p className="text-[15px] font-bold text-stone-800 mb-4">학습 캘린더</p>
               {calendarData ? (
                 <CalendarHeatmap dates={calendarData.dates} />
+              ) : homeDataError ? (
+                <div className="flex flex-col items-center gap-2 py-4">
+                  <p className="text-xs text-stone-400">학습 캘린더를 불러오지 못했어요.</p>
+                  <button onClick={() => loadHomeData(homeUserIdRef.current)} className="text-xs font-semibold text-indigo-500 underline">
+                    다시 시도
+                  </button>
+                </div>
               ) : (
                 <div className="flex gap-2 animate-pulse">
                   {Array.from({ length: 14 }).map((_, wi) => (

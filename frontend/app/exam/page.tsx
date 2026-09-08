@@ -290,6 +290,17 @@ export default function ExamPage() {
     };
   }, [startTimer, submit, persist, router]);
 
+  useEffect(() => {
+    if (loading || error || submittedRef.current) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      if (submittedRef.current) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [loading, error]);
+
   const selectAnswer = useCallback((questionNum: number, optNum: number) => {
     const next = { ...answersRef.current, [questionNum]: optNum };
     answersRef.current = next;

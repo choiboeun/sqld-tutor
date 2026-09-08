@@ -341,6 +341,10 @@ function ChatContent() {
   const threadIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    return () => abortStreamRef.current?.();
+  }, []);
+
+  useEffect(() => {
     // 게스트 모드: sessionStorage에 임시 ID 생성 (탭 닫으면 리셋)
     if (isGuestMode) {
       setIsGuest(true);
