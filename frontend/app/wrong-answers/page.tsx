@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 import BottomNav from "@/components/BottomNav";
+import MergeAvatar from "@/components/MergeAvatar";
 
 const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
   ssr: false,
@@ -298,7 +299,18 @@ export default function WrongAnswersPage() {
             </button>
           </div>
         ) : wrongAnswers.length === 0 ? (
-          <p className="text-center text-stone-400 py-12">아직 오답 기록이 없습니다.</p>
+          <div className="flex flex-col items-center gap-3 py-12">
+            <MergeAvatar expression="think" size={56} />
+            <p className="text-center text-stone-500 text-sm leading-relaxed">
+              아직 틀린 문제가 없어요.<br />문제부터 몇 개 풀어볼까요?
+            </p>
+            <button
+              onClick={() => router.push("/chat")}
+              className="text-xs font-semibold text-white bg-stone-900 px-4 py-2 hover:bg-stone-700 transition-colors"
+            >
+              문제 풀러 가기 →
+            </button>
+          </div>
         ) : (
           <div className="space-y-6">
             {groupedEntries.map(([cat, items]) => (

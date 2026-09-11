@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getAuthHeaders } from "@/lib/api";
 import OnboardingTour from "@/components/OnboardingTour";
+import MergeAvatar from "@/components/MergeAvatar";
 
 interface CategoryStat {
   accuracy: number;
@@ -1084,7 +1085,13 @@ function HomeContent() {
 
           {/* 오늘 할 일 */}
           <div data-tour="m-todo" className="bg-white border border-stone-100 p-5">
-            <p className="text-[15px] font-bold text-stone-800 mb-4">오늘 할 일</p>
+            <div className="flex items-center gap-2 mb-1">
+              <MergeAvatar size={26} />
+              <p className="text-[15px] font-bold text-stone-800">오늘 할 일</p>
+            </div>
+            {todayTasks.length > 0 && (
+              <p className="text-xs text-stone-400 mb-3 ml-8">머지가 정답률 낮은 순서로 담아봤어요</p>
+            )}
             {todayTasks.length > 0 && (
               <div className="flex items-baseline gap-2 mb-5">
                 <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>{todayTasks.length}</span>
@@ -1236,7 +1243,13 @@ function HomeContent() {
 
             {/* 오늘 할 일 카드 — flex-1으로 남은 공간 채움 */}
             <div data-tour="pc-todo" className="flex-1 bg-white border border-stone-100 rounded-none p-5">
-              <p className="text-[15px] font-bold text-stone-800 mb-4">오늘 할 일</p>
+              <div className="flex items-center gap-2 mb-1">
+                <MergeAvatar size={26} />
+                <p className="text-[15px] font-bold text-stone-800">오늘 할 일</p>
+              </div>
+              {todayTasks.length > 0 && (
+                <p className="text-xs text-stone-400 mb-3 ml-8">머지가 정답률 낮은 순서로 담아봤어요</p>
+              )}
               {todayTasks.length > 0 && (
                 <div className="flex items-baseline gap-2 mb-5">
                   <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-.04em", color: "#1c1917" }}>{todayTasks.length}</span>
