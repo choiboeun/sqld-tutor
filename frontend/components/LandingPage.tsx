@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import MergeAvatar from '@/components/MergeAvatar';
 
 const CSS = `
 :root{--accent:#dde1fb;--accent-h:#6366f1;--fg:#1c1917;--fg-2:#57534e;--fg-3:#a8a29e;--bg:#fafaf9;--bg-2:#eeece9;--bd:#e2e0dd;--badge-cat-bg:#e0e7ff;--badge-cat-fg:#3730a3;--badge-dif-bg:#dcfce7;--badge-dif-fg:#166534;--ok-bg:#f0fdf4;--ok-bd:#16a34a;--ok-fg:#15803d}
@@ -143,6 +144,7 @@ const CSS = `
 .trust-line{width:24px;height:1px;background:var(--bd);flex-shrink:0}
 .trust-text{font-size:13px;color:var(--fg-3)}
 .cta-sec{background:var(--accent);padding:96px 56px;text-align:center}
+.cta-mascot{display:inline-block;margin-bottom:16px}
 .cta-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(55,48,163,.6);margin-bottom:20px}
 .cta-h{font-size:clamp(36px,4vw,54px);font-weight:900;color:#1c1917;letter-spacing:-.025em;text-wrap:balance;margin-bottom:14px;text-shadow:1px 1px 0 rgba(49,46,129,.2),2px 2px 0 rgba(49,46,129,.13),3px 3px 0 rgba(49,46,129,.08)}
 .cta-sub{font-size:17px;color:#57534e;margin-bottom:44px}
@@ -837,8 +839,9 @@ export default function LandingPage() {
 
       {/* CTA */}
       <div className="cta-sec">
+        <MergeAvatar expression="happy" size={72} className="cta-mascot" />
         <p className="cta-label">지금 바로 시작하기</p>
-        <h2 className="cta-h">SQLD 합격,<br />AI와 함께 준비하세요</h2>
+        <h2 className="cta-h">SQLD AI 튜터 머지와 함께,<br />합격까지</h2>
         <p className="cta-sub">가입하고 8문제 진단부터 시작해보세요. 무료예요.</p>
         <div className="cta-btn-group">
           <Link className="btn-cta" href="/login">가입하고 시작하기</Link>
