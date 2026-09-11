@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import dynamic from "next/dynamic";
 import Sidebar, { LiveStats } from "@/components/Sidebar";
+import MergeAvatar from "@/components/MergeAvatar";
 import { visit } from 'unist-util-visit';
 
 const MermaidChart = dynamic(() => import("@/components/MermaidChart"), {
@@ -902,11 +903,16 @@ function ChatContent() {
             if (msg.role === "user" && /^[1-4]번?\s*$/.test(msg.content.trim())) return null;
             const isCorrect = msg.role === "ai" && /^정답입니다|^정답이에요/.test(msg.content);
             const isWrong   = msg.role === "ai" && /^오답입니다|^아직 틀렸어요/.test(msg.content);
+            const mergeExpression: "neutral" | "happy" | "warm" | "think" =
+              msg.content === "" && isLoading ? "think" : isCorrect ? "happy" : isWrong ? "warm" : "neutral";
             return (
             <React.Fragment key={i}>
             <div
-              className={`flex animate-msg-in ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex items-start gap-2 animate-msg-in ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
+              {msg.role === "ai" && (
+                <MergeAvatar expression={mergeExpression} size={28} className="mt-0.5 shrink-0" />
+              )}
               <div
                 className={`px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
