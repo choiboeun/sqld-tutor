@@ -233,13 +233,21 @@ const mdComponents = {
     <ul className="list-disc ml-5 space-y-0.5 my-1">{children}</ul>
   ),
   // Fix 4: 빈 li 숨김
+  // "느슨한 목록"(항목 사이 빈 줄)에서는 remark가 각 li의 내용을 <p>로 한 번 더
+  // 감싸서 children이 React 엘리먼트가 됨 — 얕은 문자열 검사로는 항상 "비어있다"고
+  // 오판해 실제 텍스트가 있는 항목까지 통째로 사라지는 버그가 있었음.
+  // props.children까지 재귀적으로 내려가 실제 텍스트를 찾도록 수정.
   li: ({ children }: { children?: React.ReactNode }) => {
-    const text = Array.isArray(children)
-      ? children.map((c) => (typeof c === "string" ? c : "")).join("").trim()
-      : typeof children === "string"
-      ? children.trim()
-      : "x";
-    if (text === "") return null;
+    const extractText = (node: React.ReactNode): string => {
+      if (node == null || typeof node === "boolean") return "";
+      if (typeof node === "string" || typeof node === "number") return String(node);
+      if (Array.isArray(node)) return node.map(extractText).join("");
+      if (React.isValidElement(node)) {
+        return extractText((node.props as { children?: React.ReactNode })?.children);
+      }
+      return "";
+    };
+    if (extractText(children).trim() === "") return null;
     return <li className="leading-relaxed">{children}</li>;
   },
   // 코드 블록 — mermaid는 다이어그램으로, 나머지는 코드 스타일
