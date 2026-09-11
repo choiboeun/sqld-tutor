@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import MergeAvatar from "@/components/MergeAvatar";
 
 const TOUR_KEY = (userId: string) => `sqld_tour_done_${userId}`;
 const PAD = 6;
@@ -24,14 +25,7 @@ function StepIcon({ name, isMobile }: { name: string; isMobile: boolean }) {
   const p = { width: size, height: size, viewBox: "0 0 44 44", fill: "none" as const };
 
   const icons: Record<string, React.ReactNode> = {
-    welcome: (
-      <svg {...p}>
-        <circle cx="22" cy="22" r="22" fill={bg} />
-        <circle cx="22" cy="17" r="5.5" stroke={c} strokeWidth="2" />
-        <path d="M11 35c0-5.5 4.9-9.5 11-9.5s11 4 11 9.5" stroke={c} strokeWidth="2" strokeLinecap="round" />
-        <path d="M30 12l2.5-2.5M33.5 16l2.5-1" stroke={c} strokeWidth="1.8" strokeLinecap="round" opacity="0.55" />
-      </svg>
-    ),
+    welcome: <MergeAvatar expression="happy" size={size} />,
     stats: (
       <svg {...p}>
         <circle cx="22" cy="22" r="22" fill={bg} />
