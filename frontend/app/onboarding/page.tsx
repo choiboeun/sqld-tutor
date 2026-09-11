@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import MergeAvatar from "@/components/MergeAvatar";
 
 const SCORES = [
   { value: 60, badge: "합격선", desc: "기초를 탄탄히 다져요" },
@@ -47,6 +48,15 @@ export default function OnboardingPage() {
       {/* 중앙 콘텐츠 */}
       <div className="flex-1 flex items-center justify-center px-5 py-12">
         <div className="w-full max-w-md">
+          <div className="flex items-center gap-3 mb-5 animate-card-in">
+            <MergeAvatar expression="happy" size={40} />
+            <p className="text-sm text-stone-600 leading-snug">
+              안녕하세요, <span className="font-bold text-stone-800">머지</span>예요.
+              <br />
+              목표 점수부터 같이 정해볼까요?
+            </p>
+          </div>
+
           <p className="text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-4">
             거의 다 왔어요
           </p>
