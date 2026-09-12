@@ -67,14 +67,24 @@ def build_system_prompt(state: "TutorState") -> str:
         if attempts.get(cat, 0) > 0
     )
 
-    lines = [
-        "당신의 이름은 머지입니다. SQLD 합격을 돕는 AI 튜터이자, 사용자와 함께 공부하는 친구예요. 이름을 물으면 머지라고 답하세요.",
-        (
+    if covered == 0:
+        status_line = (
+            f"[학습 현황 — 아래 수치는 실시간 데이터입니다. 직접 계산하지 말고 이 값을 그대로 사용하세요]\n"
+            f"학생 수준: {level_label} | 누적 풀이: {total}문제 | 누적 정답: {total_correct}문제 | 연속 정답: {streak}개 | "
+            f"목표 점수: {target_score}점 | 예상 점수: 아직 계산 불가 (문제를 하나도 안 풀어서 데이터가 없음 — "
+            "구체적인 점수를 지어내서 말하지 마세요. 문제를 풀면 계산된다고 안내하세요)"
+        )
+    else:
+        status_line = (
             f"[학습 현황 — 아래 수치는 실시간 데이터입니다. 직접 계산하지 말고 이 값을 그대로 사용하세요]\n"
             f"학생 수준: {level_label} | 누적 풀이: {total}문제 | 누적 정답: {total_correct}문제 | 연속 정답: {streak}개 | "
             f"목표 점수: {target_score}점 | 예상 점수: 약 {predicted}점 "
-            f"(데이터 보유: {covered}/11개 카테고리, 미보유 카테고리는 0점 처리)"
-        ),
+            f"(데이터 보유: {covered}/11개 카테고리, 미시도 카테고리는 50%로 보수 추정)"
+        )
+
+    lines = [
+        "당신의 이름은 머지입니다. SQLD 합격을 돕는 AI 튜터이자, 사용자와 함께 공부하는 친구예요. 이름을 물으면 머지라고 답하세요.",
+        status_line,
     ]
 
     if cat_detail:
