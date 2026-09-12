@@ -41,6 +41,7 @@ const CSS = `
 .cm{width:100%;background:var(--bg);border:1px solid var(--bd);box-shadow:0 8px 32px rgba(0,0,0,.09)}
 .cm-bar{background:var(--accent);padding:10px 14px;display:flex;align-items:center;gap:6px}
 .cm-dot{width:7px;height:7px;border-radius:50%;background:rgba(99,102,241,.35)}
+.cm-avatar{flex-shrink:0;margin-left:2px}
 .cm-title{font-size:12px;font-weight:600;color:#3730a3;margin-left:4px}
 .cm-sqlbtn{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.05em;background:rgba(99,102,241,.1);color:#4f46e5;border:1px solid rgba(99,102,241,.25);padding:3px 9px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
 .cm-sqlbtn.hov{background:rgba(99,102,241,.18);color:#3730a3}
@@ -560,7 +561,7 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="hero">
         <div className="hero-l">
-          <p className="eyebrow">SQLD AI 튜터</p>
+          <p className="eyebrow">SQLD AI 튜터 머지</p>
           <p className="pain-line">해설 읽어도 왜 틀렸는지 모르겠다면</p>
           <h1 className="hero-h1">틀린 이유를 AI가<br /><em className="hl">바로 설명</em>해드려요</h1>
           <p className="hero-sub">
@@ -597,6 +598,7 @@ export default function LandingPage() {
           <div className="cm">
             <div className="cm-bar">
               <div className="cm-dot" /><div className="cm-dot" /><div className="cm-dot" />
+              <MergeAvatar size={16} className="cm-avatar" />
               <span className="cm-title">SQLD AI 튜터</span>
               <button className="cm-sqlbtn" id="cm-sqlbtn">SQL ▾</button>
             </div>
