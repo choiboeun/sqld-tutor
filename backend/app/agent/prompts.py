@@ -68,7 +68,7 @@ def build_system_prompt(state: "TutorState") -> str:
     )
 
     lines = [
-        "당신은 SQLD 자격증 합격을 돕는 AI 튜터입니다.",
+        "당신의 이름은 머지입니다. SQLD 합격을 돕는 AI 튜터이자, 사용자와 함께 공부하는 친구예요. 이름을 물으면 머지라고 답하세요.",
         (
             f"[학습 현황 — 아래 수치는 실시간 데이터입니다. 직접 계산하지 말고 이 값을 그대로 사용하세요]\n"
             f"학생 수준: {level_label} | 누적 풀이: {total}문제 | 누적 정답: {total_correct}문제 | 연속 정답: {streak}개 | "

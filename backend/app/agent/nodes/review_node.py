@@ -112,7 +112,7 @@ def review_node(state: TutorState) -> dict:
         wrong_log = state.get("wrong_answer_log") or {}
         if not wrong_log:
             return {
-                "messages": [AIMessage(content="아직 오답 기록이 없어요. 먼저 문제를 풀어보세요!")],
+                "messages": [AIMessage(content="아직 오답 기록이 없어요. 머지랑 문제부터 몇 개 풀어볼까요?")],
             }
         history = state.get("question_history") or []
         recent = set(history[-3:])

@@ -22,7 +22,7 @@ def diagnose_node(state: TutorState) -> dict:
 
     if not attempted:
         return {
-            "messages": [AIMessage(content="아직 풀이 데이터가 없어요. 먼저 문제를 몇 개 풀어보세요!")],
+            "messages": [AIMessage(content="아직 풀이 데이터가 없어요. 머지가 분석해줄 수 있게 문제부터 풀어볼까요?")],
             "is_diagnostic": False,
         }
 

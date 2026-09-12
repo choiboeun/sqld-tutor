@@ -46,7 +46,7 @@ def state_updater(state: TutorState) -> dict:
     extra_messages = []
     if suggest_switch and not state.get("is_diagnostic", False):
         extra_messages.append(
-            AIMessage(content=f"연속 {streak}개 정답! 다른 카테고리로 넘어갈게요.")
+            AIMessage(content=f"연속 {streak}개 정답, 머지도 신나요! 다른 카테고리로 넘어갈게요.")
         )
 
     user_id = state.get("user_id") or "anonymous"
