@@ -949,7 +949,7 @@ function ChatContent() {
                             <div className="relative">
                               <div
                                 style={{
-                                  maxHeight: msg.conceptExpanded ? "2000px" : "112px",
+                                  maxHeight: msg.conceptExpanded ? "20000px" : "112px",
                                   overflow: "hidden",
                                   transition: "max-height 0.38s cubic-bezier(0.4,0,0.2,1)",
                                 }}
