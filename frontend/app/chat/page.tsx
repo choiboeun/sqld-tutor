@@ -220,7 +220,7 @@ const mdComponents = {
     </th>
   ),
   td: ({ children }: { children?: React.ReactNode }) => (
-    <td className="border-b border-stone-100 px-3 py-1.5 whitespace-nowrap text-stone-600 last:border-b-0">{children}</td>
+    <td className="border-b border-stone-100 px-3 py-1.5 text-stone-600 last:border-b-0">{children}</td>
   ),
   tbody: ({ children }: { children?: React.ReactNode }) => (
     <tbody className="divide-y divide-stone-100">{children}</tbody>
