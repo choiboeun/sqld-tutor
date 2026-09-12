@@ -114,10 +114,12 @@ def _get_text(content) -> str:
 
 
 async def _stream_response(message: str, thread_id: str, user_id: Optional[str] = None, target_score: int = 70, clear_pending: bool = False, client_pending_question: Optional[dict] = None, is_guest: bool = False):
+    _req_t0 = time.time()
     config = {"configurable": {"thread_id": thread_id}}
     active_graph = guest_graph if is_guest else graph
 
     existing = await active_graph.aget_state(config)
+    print(f"[chat_timing] 체크포인트 상태 로드: {time.time() - _req_t0:.2f}s", flush=True)
     existing_msgs = existing.values.get("messages", []) if existing.values else []
     is_new = len(existing_msgs) == 0
 
@@ -193,6 +195,7 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
             if kind_tag == "done":
                 break
             if kind_tag == "error":
+                print(f"[chat_timing] 에러 발생, 요청 시작 후 {time.time() - _req_t0:.2f}s 경과", flush=True)
                 yield f"data: {json.dumps({'type': 'error', 'content': str(payload)}, ensure_ascii=False)}\n\n"
                 yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
                 break
@@ -204,6 +207,7 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
 
             # 지정 노드 완료 → 채점/문제/진단/설명 메시지를 즉시 전송 (post-processing 적용됨)
             if kind == "on_chain_end" and name in NON_LLM_NODES:
+                print(f"[chat_timing] '{name}' 노드 완료, 요청 시작 후 {time.time() - _req_t0:.2f}s 경과", flush=True)
                 output = event["data"].get("output") or {}
                 if isinstance(output, dict):
                     for msg in output.get("messages", []):
@@ -269,6 +273,7 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
         except asyncio.CancelledError:
             pass
 
+    print(f"[chat_timing] 요청 전체 완료: {time.time() - _req_t0:.2f}s", flush=True)
     yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
 
 

@@ -80,11 +80,15 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     level: 학생 수준 ('beginner', 'intermediate', 'advanced')
     """
     from langchain_core.messages import HumanMessage, SystemMessage
+    import time
+
+    _t0 = time.time()
 
     if not concept or not concept.strip():
         concept = "SQLD 개념"
 
     docs = _cached_search(concept)
+    print(f"[explain_concept] RAG 검색: {time.time() - _t0:.2f}s", flush=True)
     # RAG 실패 시에도 LLM 자체 지식으로 설명 — 게스트 임베딩 API 쿼터 소진 시 fallback
     context = "\n\n---\n\n".join(doc.page_content for doc in docs) if docs else ""
 
@@ -93,8 +97,11 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
         SystemMessage(content=_PROMPT.format(level=level, context=prompt_context)),
         HumanMessage(content=f"{concept}에 대해 설명해주세요."),
     ]
+    _t1 = time.time()
     response = llm.invoke(messages)
+    print(f"[explain_concept] LLM 생성: {time.time() - _t1:.2f}s", flush=True)
     content = response.content
+    _t2 = time.time()
     # 인라인 * 단독 불릿 → 줄바꿈 불릿 (AI가 줄 바꿈 없이 "텍스트 * 항목" 형태로 쓸 때 수정)
     content = re.sub(r'(?<=[^\*\n]) \* (?!\*)', '\n- ', content)
     # 인라인 불릿(줄 중간의 •) → 새 줄 불릿으로 분리
@@ -128,4 +135,5 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
     content = re.sub(r'\(\*\)', r'(\\*)', content)
     # \n 은 줄 시작 * 불릿마커이므로 이스케이프 제외 → [ \t] 만 허용
     content = re.sub(r'(?<=[A-Za-z \t])\*(?=[\s,\n]|$)', r'\\*', content)
+    print(f"[explain_concept] 후처리: {time.time() - _t2:.2f}s, 전체: {time.time() - _t0:.2f}s", flush=True)
     return content.strip()
