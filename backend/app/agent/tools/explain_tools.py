@@ -9,6 +9,10 @@ from langchain_chroma import Chroma
 
 from app.agent.llm import llm
 
+# thinking(내부 추론) 비활성화 — 개념 설명은 단순 정리형 답변이라 reasoning 불필요.
+# 실측 결과 생성 시간이 절반 가까이 줄고(14~23s → 7초대) 품질 저하 없음 확인 (0.5 CPU 인스턴스 부하 완화 목적).
+_explain_llm = llm.bind(thinking_budget=0)
+
 CHROMA_DIR = Path(__file__).parent.parent.parent / "data" / "chroma_db"
 
 _PROMPT = """당신은 SQLD 자격증 시험 전문 튜터입니다.
@@ -93,7 +97,7 @@ def explain_concept(concept: str, level: str = "beginner") -> str:
         SystemMessage(content=_PROMPT.format(level=level, context=prompt_context)),
         HumanMessage(content=f"{concept}에 대해 설명해주세요."),
     ]
-    response = llm.invoke(messages)
+    response = _explain_llm.invoke(messages)
     content = response.content
     # 인라인 * 단독 불릿 → 줄바꿈 불릿 (AI가 줄 바꿈 없이 "텍스트 * 항목" 형태로 쓸 때 수정)
     content = re.sub(r'(?<=[^\*\n]) \* (?!\*)', '\n- ', content)
