@@ -19,8 +19,7 @@ const CSS = `
 .nav.glass{background:rgba(221,225,251,.75);backdrop-filter:blur(18px) saturate(200%);-webkit-backdrop-filter:blur(18px) saturate(200%);box-shadow:0 1px 0 rgba(129,140,248,.2),0 4px 28px rgba(79,70,229,.06)}
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 52px)}
 .hero-l{background:var(--accent);padding:80px 60px;display:flex;flex-direction:column;justify-content:center}
-.eyebrow-row{display:flex;align-items:center;gap:8px;margin-bottom:28px}
-.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(55,48,163,.6)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(55,48,163,.6);margin-bottom:28px}
 .hero-h1{font-size:clamp(32px,3.4vw,48px);font-weight:600;line-height:1.1;letter-spacing:-.025em;color:#1c1917;text-wrap:balance;margin-bottom:24px}
 .hero-sub{font-size:17px;line-height:1.8;color:#57534e;max-width:380px;margin-bottom:44px}
 .hero-sub strong{color:#1c1917;font-weight:700}
@@ -562,10 +561,7 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="hero">
         <div className="hero-l">
-          <div className="eyebrow-row">
-            <MergeAvatar size={28} />
-            <p className="eyebrow">SQLD AI 튜터 머지</p>
-          </div>
+          <p className="eyebrow">SQLD AI 튜터 머지</p>
           <p className="pain-line">해설 읽어도 왜 틀렸는지 모르겠다면</p>
           <h1 className="hero-h1">틀린 이유를 AI가<br /><em className="hl">바로 설명</em>해드려요</h1>
           <p className="hero-sub">
