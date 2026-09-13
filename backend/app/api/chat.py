@@ -115,6 +115,14 @@ def _get_text(content) -> str:
 
 async def _stream_response(message: str, thread_id: str, user_id: Optional[str] = None, target_score: int = 70, clear_pending: bool = False, client_pending_question: Optional[dict] = None, is_guest: bool = False):
     _req_t0 = time.time()
+
+    # 빈/공백 메시지는 LLM까지 보내지 않고 바로 안내 — Gemini API의 날것 에러
+    # ("contents are required.")가 그대로 사용자에게 노출되는 것을 방지
+    if not message.strip():
+        yield f"data: {json.dumps({'type': 'message', 'content': '메시지를 입력해주세요!'}, ensure_ascii=False)}\n\n"
+        yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
+        return
+
     config = {"configurable": {"thread_id": thread_id}}
     active_graph = guest_graph if is_guest else graph
 
@@ -197,7 +205,6 @@ async def _stream_response(message: str, thread_id: str, user_id: Optional[str] 
             if kind_tag == "error":
                 print(f"[chat_timing] 에러 발생, 요청 시작 후 {time.time() - _req_t0:.2f}s 경과", flush=True)
                 yield f"data: {json.dumps({'type': 'error', 'content': str(payload)}, ensure_ascii=False)}\n\n"
-                yield f"data: {json.dumps({'type': 'done'}, ensure_ascii=False)}\n\n"
                 break
 
             event = payload
