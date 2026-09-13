@@ -4,6 +4,16 @@ from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
 
+_sentry_dsn = os.getenv("SENTRY_DSN")
+if _sentry_dsn:
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=_sentry_dsn,
+        traces_sample_rate=0.0,  # 성능 트레이싱 비활성화 — 에러 캡처만 사용(무료 한도 절약)
+        send_default_pii=False,  # 사용자 IP·요청 헤더 등 개인정보는 전송하지 않음
+    )
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import chat, progress, wrong_answers, mini_chat, sql_execute, exam, home_data, inquiries
