@@ -30,13 +30,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "ko_KR",
     type: "website",
-    images: [{ url: "/icons/logo-mark-256.png", width: 256, height: 256, alt: SITE_NAME }],
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: ["/icons/logo-mark-256.png"],
+    images: ["/og-image.jpg"],
   },
   verification: {
     google: "q-nhv7v0WCdUC4u7ExAl2cmjfF8Q5nF9SU52nBTfEtg",
